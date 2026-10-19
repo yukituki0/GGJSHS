@@ -18,14 +18,16 @@ const SETTINGS_PATH := "user://settings.cfg"
 ## 캐릭터 목록. 새 캐릭터는 여기에 한 줄 추가 + scripts/characters/에 파일 추가
 ## club: [영어, 한국어]
 ## 일러스트: assets/characters/<id>.png 가 있으면 캐릭터 선택/VS 화면에 쓴다 (없으면 색 네모)
+## face: 일러스트에서 얼굴 위치 (얼굴 중심 x, 얼굴 중심 y, 얼굴 크기) — 셋 다 "그림 폭"에 대한 비율
+##       체력바 초상화와 필살기 컷인이 이 부분을 잘라 쓴다. 그림이 없으면 무시
 const CHARACTERS: Array[Dictionary] = [
 	{
 		"id": "chemikid", "name": "CHEMIKID", "club": ["CHEMISTRY CLUB  Chemikid", "화학 동아리  Chemikid"],
-		"color": Color(0.30, 0.85, 0.45), "script": "res://scripts/characters/chemikid.gd",
+		"color": Color(0.30, 0.85, 0.45), "script": "res://scripts/characters/chemikid.gd", "face": Vector3(0.52, 0.125, 0.24),
 	},
 	{
 		"id": "common", "name": "COMMON", "club": ["COMPUTER CLUB  COMMON", "정보 동아리  COMMON"],
-		"color": Color(0.30, 0.65, 1.00), "script": "res://scripts/characters/common.gd",
+		"color": Color(0.30, 0.65, 1.00), "script": "res://scripts/characters/common.gd", "face": Vector3(0.61, 0.115, 0.24),
 	},
 	{
 		"id": "globe", "name": "GLOBE", "club": ["EARTH SCIENCE CLUB  Globe", "지구과학 동아리  Globe"],
@@ -33,7 +35,7 @@ const CHARACTERS: Array[Dictionary] = [
 	},
 	{
 		"id": "chaos", "name": "CHAOS", "club": ["PHYSICS CLUB  Chaos", "물리 동아리  Chaos"],
-		"color": Color("a05cff"), "script": "res://scripts/characters/chaos.gd",
+		"color": Color("a05cff"), "script": "res://scripts/characters/chaos.gd", "face": Vector3(0.57, 0.12, 0.24),
 	},
 	{
 		"id": "root2", "name": "ROOT2", "club": ["MATH CLUB  Root2", "수학 동아리  Root2"],
@@ -304,6 +306,17 @@ func load_texture(path: String) -> Texture2D:
 
 func character_art(info: Dictionary) -> Texture2D:
 	return load_texture("res://assets/characters/%s.png" % info["id"])
+
+
+## 일러스트에서 얼굴 부분 (픽셀 단위). aspect = 가로/세로 비율, zoom > 1이면 얼굴 주변까지 넓게
+func face_rect(info: Dictionary, art: Texture2D, aspect := 1.0, zoom := 1.0) -> Rect2:
+	var f: Vector3 = info.get("face", Vector3(0.5, 0.15, 0.3))
+	var w := float(art.get_width())
+	var h := f.z * w * zoom
+	var size := Vector2(h * aspect, h)
+	var rect := Rect2(Vector2(f.x, f.y) * w - size / 2, size)
+	rect.position.y = maxf(rect.position.y, 0.0)  # 그림 위로 벗어나지 않게
+	return rect
 
 
 # ── 메뉴 입력 ─────────────────────────────────────────────

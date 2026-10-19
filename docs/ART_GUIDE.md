@@ -20,7 +20,7 @@
 |---|---|---|---|
 | HUD | `assets/ui/hud_*.png` | 체력 틀/채움, 타이머, 텐션 1P/2P | ✅ 완료 |
 | 스테이지 (**실제 학교 사진**) | `assets/stages/` `lab` `computer` `rooftop` `playground` `hallway` `.png` | 5 | ⬜ 사진 찍기 |
-| 캐릭터 전신 (투명 배경) | `assets/characters/<id>.png` | 6 (남3 여3) | ⬜ 아래 "캐릭터 6명" |
+| 캐릭터 전신 (투명 배경) | `assets/characters/<id>.png` | 6 (남3 여3) | 🔄 3/6 (CHEMIKID, COMMON, CHAOS) |
 | 타이틀 로고 | `assets/ui/logo.png` | 1 | ✅ 완료 |
 | 메뉴 배경 일러스트 | `assets/ui/key_art.png` | 1 | ✅ v2 완료 |
 | 메뉴/씬 배경 | `assets/ui/bg_*.png` | 7 | 🔄 6/7 (대기 화면 남음) |

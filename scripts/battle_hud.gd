@@ -198,7 +198,8 @@ func _draw_portrait_hex(f: Fighter, r: Rect2) -> void:
 		Style.fill(self, hex, f.color.darkened(0.3))  # 이니셜 글자는 뒤집히면 안 돼서 _draw_hud_images()에서 따로
 		return
 	# 얼굴 부분을 육각형 모양으로 (텍스처 좌표 uv로 잘라서 붙이기)
-	var face := Rect2(FACE_CROP.x, FACE_CROP.y * 1.0, FACE_CROP.z, FACE_CROP.z * art.get_width() / art.get_height())
+	var px := Game.face_rect(Game.character(f.player), art, r.size.x / r.size.y)
+	var face := Rect2(px.position / Vector2(art.get_size()), px.size / Vector2(art.get_size()))  # uv는 0~1
 	var uvs := PackedVector2Array()
 	for p in hex:
 		var t: Vector2 = (p - r.position) / r.size
@@ -229,11 +230,6 @@ func _draw_hud() -> void:
 
 const PORTRAIT := 82.0
 const TENSION_W := 320.0
-## 전신 일러스트에서 얼굴 부분을 잘라 쓸 영역 (그림 크기에 대한 비율: x, y, 폭)
-## 그림이 들어온 뒤 얼굴이 잘 안 맞으면 이 숫자만 조정하면 된다
-const FACE_CROP := Vector3(0.3, 0.03, 0.4)
-
-
 ## 체력바 옆 초상화 (그림이 있으면 얼굴 부분, 없으면 캐릭터 색)
 func _draw_portrait(f: Fighter, info: Dictionary, pos: Vector2, right: bool) -> void:
 	var slope := -10.0 if right else 10.0
@@ -242,8 +238,7 @@ func _draw_portrait(f: Fighter, info: Dictionary, pos: Vector2, right: bool) -> 
 	var inner := Rect2(pos, Vector2(PORTRAIT, PORTRAIT))
 	var art := Game.character_art(info)
 	if art != null:
-		var w := art.get_width() * FACE_CROP.z
-		var src := Rect2(art.get_width() * FACE_CROP.x, art.get_height() * FACE_CROP.y, w, w)
+		var src := Game.face_rect(info, art)
 		if right:  # 2P는 좌우 반전
 			draw_texture_rect_region(art, Rect2(inner.position + Vector2(inner.size.x, 0), Vector2(-inner.size.x, inner.size.y)), src)
 		else:
@@ -391,8 +386,7 @@ func _draw_superflash() -> void:
 	Style.fill(self, Style.slant(-100 + x_off, band_y + 184, 1480, 8, 40 if from_left else -40), Style.RED)
 	var art := Game.character_art(Game.character(f.player))
 	if art != null:
-		var face_w := art.get_width() * 0.6
-		var src := Rect2(art.get_width() * 0.2, art.get_height() * 0.02, face_w, face_w * 190.0 / 420.0)
+		var src := Game.face_rect(Game.character(f.player), art, 420.0 / 190.0, 1.3)
 		var dest := Rect2(Vector2((60.0 if from_left else 800.0) + x_off, band_y), Vector2(420, 190))
 		if not from_left:
 			dest = Rect2(dest.position + Vector2(dest.size.x, 0), Vector2(-dest.size.x, dest.size.y))
