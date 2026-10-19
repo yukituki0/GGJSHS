@@ -102,8 +102,8 @@ func _draw_art(art: Texture2D, rect: Rect2, flip: bool) -> void:
 func _draw_preview(p: int, rect: Rect2) -> void:
 	var c: Dictionary = Game.CHARACTERS[cursor[p]]
 	var col := _player_color(p)
-	var skew := 20.0 if p == 1 else -20.0
-	var panel := Style.slant(rect.position.x, rect.position.y, rect.size.x, rect.size.y, skew)
+	var slope := 20.0 if p == 1 else -20.0
+	var panel := Style.slant(rect.position.x, rect.position.y, rect.size.x, rect.size.y, slope)
 	Style.fill(self, panel, Color(c["color"].darkened(0.7), 0.9))
 	var art := Game.character_art(c)
 	if art != null:
@@ -113,7 +113,7 @@ func _draw_preview(p: int, rect: Rect2) -> void:
 		draw_rect(body, c["color"])
 		draw_rect(body, Style.WHITE, false, 3.0)
 	text("%dP" % p, rect.position.y + 40, 30, col, rect.get_center().x, 6)
-	Style.fill(self, Style.slant(rect.position.x, rect.end.y - 100, rect.size.x, 100, skew * 0.2), Color(Style.BLACK, 0.8))
+	Style.fill(self, Style.slant(rect.position.x, rect.end.y - 100, rect.size.x, 100, slope * 0.2), Color(Style.BLACK, 0.8))
 	text(c["name"], rect.end.y - 46, 44, Style.WHITE, rect.get_center().x, 8)
 	text(Game.club_name(c), rect.end.y - 16, 18, Style.GOLD, rect.get_center().x, 0)
 	Style.outline(self, panel, col if locked[p] else Color(1, 1, 1, 0.2), 5.0 if locked[p] else 2.0)

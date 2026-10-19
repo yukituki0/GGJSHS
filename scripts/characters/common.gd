@@ -48,8 +48,9 @@ func _build_specials() -> void:
 	a.hitstop = 20
 
 
-func _alive(p: Projectile) -> bool:
-	return p != null and is_instance_valid(p) and not p.dead
+## 타입을 안 붙인 이유: 이미 지워진(freed) 투사체가 들어오면 타입 검사에서 오류가 나기 때문
+func _alive(p) -> bool:
+	return is_instance_valid(p) and not p.dead
 
 
 func _can_use_special(attack_name: String) -> bool:

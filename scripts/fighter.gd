@@ -8,6 +8,7 @@ extends Node2D
 
 signal projectile_spawned(projectile: Projectile)  # Match가 받아서 관리
 signal super_flash(fighter: Fighter, attack: AttackData)  # 오버드라이브 컷인 (Match가 화면을 잠깐 멈춤)
+@warning_ignore("unused_signal")  # 캐릭터 스크립트(커몬 등)에서 emit 한다
 signal screen_tint(color: Color, frames: int)  # 화면 전체 색 효과 (블루스크린 등)
 
 enum State {
@@ -165,12 +166,12 @@ func _build_specials() -> void:
 
 
 ## 공격의 event_frame에 불린다 (투사체 만들기, 순간이동 등)
-func _on_attack_event(_attack: AttackData) -> void:
+func _on_attack_event(_attack_data: AttackData) -> void:
 	pass
 
 
 ## 내 공격이 맞았거나 막혔을 때 (블루스크린 효과 등)
-func _on_attack_result(_attack: AttackData, _blocked: bool) -> void:
+func _on_attack_result(_attack_data: AttackData, _blocked: bool) -> void:
 	pass
 
 

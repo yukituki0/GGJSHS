@@ -78,8 +78,8 @@ const FACE_CROP := Vector3(0.3, 0.03, 0.4)
 
 ## 체력바 옆 초상화 (그림이 있으면 얼굴 부분, 없으면 캐릭터 색)
 func _draw_portrait(f: Fighter, info: Dictionary, pos: Vector2, right: bool) -> void:
-	var skew := -10.0 if right else 10.0
-	var frame := Style.slant(pos.x - 4, pos.y - 4, PORTRAIT + 8, PORTRAIT + 8, skew)
+	var slope := -10.0 if right else 10.0
+	var frame := Style.slant(pos.x - 4, pos.y - 4, PORTRAIT + 8, PORTRAIT + 8, slope)
 	Style.fill(self, frame, Style.BLACK)
 	var inner := Rect2(pos, Vector2(PORTRAIT, PORTRAIT))
 	var art := Game.character_art(info)
@@ -91,7 +91,7 @@ func _draw_portrait(f: Fighter, info: Dictionary, pos: Vector2, right: bool) -> 
 		else:
 			draw_texture_rect_region(art, inner, src)
 	else:
-		Style.gradient(self, Style.slant(pos.x, pos.y, PORTRAIT, PORTRAIT, skew),
+		Style.gradient(self, Style.slant(pos.x, pos.y, PORTRAIT, PORTRAIT, slope),
 				[f.color.lightened(0.2), f.color.lightened(0.2), f.color.darkened(0.5), f.color.darkened(0.5)])
 		Style.text(self, f.display_name.substr(0, 1), pos + Vector2(0, 62), 56, Style.WHITE,
 				HORIZONTAL_ALIGNMENT_CENTER, PORTRAIT, 8)
@@ -101,30 +101,30 @@ func _draw_portrait(f: Fighter, info: Dictionary, pos: Vector2, right: bool) -> 
 ## dir: 1 = 1P(왼쪽, 바깥쪽 기준으로 채움), -1 = 2P(오른쪽, 좌우 반전)
 func _draw_hp_bar(f: Fighter, x: float, dir: float) -> void:
 	var y := 22.0
-	var skew := SKEW * dir
+	var slope := SKEW * dir
 	# 금속 느낌 테두리 (위는 밝고 아래는 어두운 회색)
-	Style.gradient(self, Style.slant(x - 7, y - 6, HP_W + 14, HP_H + 12, skew),
+	Style.gradient(self, Style.slant(x - 7, y - 6, HP_W + 14, HP_H + 12, slope),
 			[Color("9a9aa6"), Color("9a9aa6"), Color("2a2a32"), Color("2a2a32")])
-	Style.fill(self, Style.slant(x, y, HP_W, HP_H, skew), Color("1a0508"))
+	Style.fill(self, Style.slant(x, y, HP_W, HP_H, slope), Color("1a0508"))
 	var ratio := float(f.hp) / f.max_hp
 	var trail_ratio: float = _trail[f.player] / f.max_hp
 	# 빨간 잔상 → 노랑~주황 그라데이션 현재 체력 (1P는 왼쪽 기준, 2P는 오른쪽 기준)
-	_bar_part(x, y, trail_ratio, skew, dir, [Style.RED, Style.RED, Style.DARK_RED, Style.DARK_RED])
+	_bar_part(x, y, trail_ratio, slope, dir, [Style.RED, Style.RED, Style.DARK_RED, Style.DARK_RED])
 	var top := Color("ffe46b") if ratio > 0.25 else Color("ffb36b")
 	var bottom := Color("f08a17") if ratio > 0.25 else Color("e0301e")
 	if ratio <= 0.25 and Time.get_ticks_msec() % 400 < 200:
 		top = top.lightened(0.4)  # 체력 적으면 깜빡임
-	_bar_part(x, y, ratio, skew, dir, [top, top, bottom, bottom])
-	_bar_part(x, y, ratio, skew, dir, [Color(1, 1, 1, 0.45), Color(1, 1, 1, 0.45), Color(1, 1, 1, 0), Color(1, 1, 1, 0)], 10.0)
-	Style.outline(self, Style.slant(x, y, HP_W, HP_H, skew), Style.BLACK, 2.0)
+	_bar_part(x, y, ratio, slope, dir, [top, top, bottom, bottom])
+	_bar_part(x, y, ratio, slope, dir, [Color(1, 1, 1, 0.45), Color(1, 1, 1, 0.45), Color(1, 1, 1, 0), Color(1, 1, 1, 0)], 10.0)
+	Style.outline(self, Style.slant(x, y, HP_W, HP_H, slope), Style.BLACK, 2.0)
 
 
-func _bar_part(x: float, y: float, ratio: float, skew: float, dir: float, colors: Array, h := HP_H) -> void:
+func _bar_part(x: float, y: float, ratio: float, slope: float, dir: float, colors: Array, h := HP_H) -> void:
 	if ratio <= 0.0:
 		return
 	var w := HP_W * ratio
 	var start := x if dir > 0 else x + HP_W - w
-	Style.gradient(self, Style.slant(start, y, w, h, skew * h / HP_H), colors)
+	Style.gradient(self, Style.slant(start, y, w, h, slope * h / HP_H), colors)
 
 
 ## 체력바 아래 이름 (빨간 글자 + 검은 외곽선)
@@ -165,10 +165,10 @@ func _draw_tension_bar(f: Fighter, x: float, right: bool) -> void:
 	var y := 680.0
 	var w := TENSION_W
 	var h := 18.0
-	var skew := -10.0 if right else 10.0
-	Style.gradient(self, Style.slant(x - 6, y - 5, w + 12, h + 10, skew),
+	var slope := -10.0 if right else 10.0
+	Style.gradient(self, Style.slant(x - 6, y - 5, w + 12, h + 10, slope),
 			[Color("9a9aa6"), Color("9a9aa6"), Color("2a2a32"), Color("2a2a32")])
-	Style.fill(self, Style.slant(x, y, w, h, skew), Color("12100c"))
+	Style.fill(self, Style.slant(x, y, w, h, slope), Color("12100c"))
 	var ratio := f.tension / Fighter.MAX_TENSION
 	var fw := w * ratio
 	var start := x + w - fw if right else x
@@ -178,11 +178,11 @@ func _draw_tension_bar(f: Fighter, x: float, right: bool) -> void:
 	if rc_ready:
 		top = top.lightened(0.3 * (0.5 + 0.5 * sin(Time.get_ticks_msec() / 120.0)))  # 50% 넘으면 반짝
 	if fw > 0:
-		Style.gradient(self, Style.slant(start, y, fw, h, skew), [top, top, bottom, bottom])
+		Style.gradient(self, Style.slant(start, y, fw, h, slope), [top, top, bottom, bottom])
 	# 50% 눈금
 	var mid := x + w / 2
-	draw_line(Vector2(mid + skew, y), Vector2(mid, y + h), Style.WHITE, 2.0)
-	Style.outline(self, Style.slant(x, y, w, h, skew), Style.BLACK, 2.0)
+	draw_line(Vector2(mid + slope, y), Vector2(mid, y + h), Style.WHITE, 2.0)
+	Style.outline(self, Style.slant(x, y, w, h, slope), Style.BLACK, 2.0)
 	# "TENSION" 글자 + 숫자
 	var align := HORIZONTAL_ALIGNMENT_RIGHT if right else HORIZONTAL_ALIGNMENT_LEFT
 	Style.text(self, "TENSION", Vector2(x + (0.0 if right else 14.0), y + 15), 15, Style.WHITE, align, w - 14, 4)
