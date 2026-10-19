@@ -85,7 +85,7 @@ func set_mode(new_mode: Mode) -> void:
 
 
 ## 예: action_name(1, "hs") -> "p1_hs"
-static func action_name(player: int, action: String) -> String:
+func action_name(player: int, action: String) -> String:
 	return "p%d_%s" % [player, action]
 
 
