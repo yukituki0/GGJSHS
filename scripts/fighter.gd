@@ -175,6 +175,11 @@ func _on_attack_result(_attack_data: AttackData, _blocked: bool) -> void:
 	pass
 
 
+## 공격을 받기 직전에 불린다. true를 돌려주면 그 공격을 무효로 한다 (반격기)
+func _try_counter(_attack_data: AttackData) -> bool:
+	return false
+
+
 ## 이 필살기를 지금 쓸 수 있나 (투사체는 화면에 하나만 등)
 func _can_use_special(_attack_name: String) -> bool:
 	return true
@@ -584,6 +589,8 @@ func is_invulnerable() -> bool:
 
 ## Match가 호출: 공격을 받았다. 막았으면 true를 돌려준다
 func receive_attack(attack: AttackData, from_dir: int) -> bool:
+	if _try_counter(attack):
+		return true  # 반격 성공: 막은 것처럼 처리 (데미지 없음)
 	if can_block(attack.level):
 		add_tension(tension_guard_gain)
 		stun_frames = attack.blockstun

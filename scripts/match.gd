@@ -152,7 +152,7 @@ func _physics_process(_delta: float) -> void:
 		# 1P 이동 → 2P 이동 → 밀어내기 → 공격 판정 (항상 이 순서)
 		p1.tick()
 		p2.tick()
-		for proj in projectiles:
+		for proj in projectiles.duplicate():  # 도중에 새 투사체가 생길 수 있어서 복사본으로
 			proj.tick()
 		_resolve_push()
 		_resolve_hits()
@@ -327,7 +327,7 @@ func _apply_hit(attacker: Fighter, defender: Fighter, attack: AttackData, contac
 ## 투사체: 상대 몸에 맞기, 투사체끼리 부딪히기, 다 된 것 지우기
 func _resolve_projectiles() -> void:
 	for proj in projectiles:
-		if proj.dead or proj.attack == null or not proj.is_armed():
+		if proj.dead or proj.attack == null or not proj.is_armed() or proj.rehit_cd > 0:
 			continue
 		var target := p2 if proj.shooter == p1 else p1
 		if target.state == Fighter.State.KO or target.is_invulnerable():
@@ -337,7 +337,10 @@ func _resolve_projectiles() -> void:
 		if proj.rect().intersects(target.body_rect()):
 			var contact := proj.rect().intersection(target.body_rect()).get_center()
 			_apply_hit(proj.shooter, target, proj.attack, contact, proj.hit_direction())
-			proj.dead = true
+			if proj.rehit_interval > 0:
+				proj.rehit_cd = proj.rehit_interval  # 웅덩이처럼 남아서 또 맞힘
+			else:
+				proj.dead = true
 	# 투사체끼리: 방화벽은 상대 투사체를 지우고, 나머지는 서로 상쇄
 	for a in projectiles:
 		for b in projectiles:

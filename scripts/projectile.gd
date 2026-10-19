@@ -3,6 +3,8 @@ extends Node2D
 ## 투사체/설치물 공통 (패킷, 버그 함정, 방화벽, 나중에 케미 플라스크 등)
 ## 캐릭터가 만들어서 projectile_spawned 신호로 넘기면, Match가 매 프레임 움직이고 판정한다
 
+signal landed(pos: Vector2)     # 바닥(ground_y)에 닿아서 사라질 때 (플라스크 → 웅덩이 등)
+
 var shooter: Fighter            # 쏜 캐릭터
 var attack: AttackData          # 맞았을 때 효과. null이면 때리지 않음 (방화벽)
 var velocity := Vector2.ZERO
@@ -12,17 +14,26 @@ var lifetime := 600             # 이 프레임이 지나면 사라짐
 var arm_frames := 0             # 이 프레임이 지나야 작동 (함정 설치 직후엔 안 터지게)
 var blocks_projectiles := false # 상대 투사체를 막는가 (방화벽)
 var hits_airborne := true       # 공중에 뜬 상대도 맞히나 (바닥 함정은 false)
+var rehit_interval := 0         # 0이면 한 번 맞히고 사라짐, 아니면 이 간격마다 다시 맞힘 (웅덩이)
+var ground_y := INF             # 이 높이에 닿으면 landed 신호를 내고 사라짐
 var kind := ""                  # 그리기용 종류 이름
 var color := Color.WHITE
 
 var age := 0
 var dead := false
+var rehit_cd := 0               # 다시 맞힐 수 있을 때까지 남은 프레임
 
 
 func tick() -> void:
 	age += 1
 	velocity.y += gravity
 	position += velocity
+	if rehit_cd > 0:
+		rehit_cd -= 1
+	if position.y >= ground_y and not dead:
+		position.y = ground_y
+		dead = true
+		landed.emit(position)
 	if age >= lifetime or position.x < -200 or position.x > 1480 or position.y > 800:
 		dead = true
 	queue_redraw()
@@ -72,5 +83,25 @@ func _draw() -> void:
 				var y := r.position.y + i * 20 + fmod(age * 1.5, 20.0)
 				draw_line(Vector2(r.position.x, y), Vector2(r.end.x, y), Color(color, 0.8 * fade), 2.0)
 			draw_rect(r, Color(Color.WHITE, fade), false, 2.0)
+		"flask":
+			# 플라스크: 빙글빙글 도는 병 + 초록 액체
+			draw_set_transform(Vector2.ZERO, age * 0.35)
+			draw_circle(Vector2(0, 4), size.x / 2, Color(color, 0.85))
+			draw_rect(Rect2(-5, -size.y / 2 - 4, 10, 12), Color(0.9, 0.95, 1.0, 0.9))
+			draw_arc(Vector2(0, 4), size.x / 2, 0, TAU, 20, Color.WHITE, 2.0)
+			draw_set_transform(Vector2.ZERO, 0)
+		"acid":
+			# 산성 웅덩이: 납작한 초록 + 올라오는 거품
+			var fade := minf(1.0, (lifetime - age) / 30.0)
+			draw_rect(Rect2(r.position.x, -4, r.size.x, 10), Color(color, 0.55 * fade))
+			for i in 4:
+				var bx := r.position.x + fmod(i * 37.0 + age * 0.7, r.size.x)
+				var by := -fmod(age * 1.2 + i * 13.0, 30.0)
+				draw_circle(Vector2(bx, by), 4, Color(color, 0.7 * fade))
+		"explosion":
+			# 폭발: 커지면서 사라지는 원
+			var t := float(age) / lifetime
+			draw_circle(Vector2.ZERO, size.x * 0.3 + size.x * 0.4 * t, Color(1.0, 0.6, 0.15, 0.8 * (1.0 - t)))
+			draw_circle(Vector2.ZERO, size.x * 0.2 + size.x * 0.25 * t, Color(color, 0.9 * (1.0 - t)))
 		_:
 			draw_rect(r, color)
