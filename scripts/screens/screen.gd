@@ -18,7 +18,7 @@ func _process(_delta: float) -> void:
 
 ## 가운데 정렬 글자. x를 안 주면 화면 한가운데
 func text(s: String, y: float, size: int, color := Color.WHITE, x := W / 2) -> void:
-	draw_string(ThemeDB.fallback_font, Vector2(x - W, y), s,
+	draw_string(Game.FONT, Vector2(x - W, y), s,
 			HORIZONTAL_ALIGNMENT_CENTER, W * 2, size, color)
 
 

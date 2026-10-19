@@ -1,17 +1,18 @@
 extends Screen
 ## 조작법 화면: 지금 조작 모드의 버튼 배치를 보여준다
 
+## [글자 키, 액션들]
 const ROWS := [
-	["MOVE", ["up", "down", "left", "right"]],
-	["P  (Punch)", ["p"]],
-	["K  (Kick)", ["k"]],
-	["S  (Slash)", ["s"]],
-	["HS (Heavy Slash)", ["hs"]],
-	["D  (Dust)", ["d"]],
-	["RC (Roman Cancel)", ["rc"]],
-	["DASH", ["dash"]],
-	["GUARD", ["guard"]],
-	["START / PAUSE", ["start"]],
+	["move", ["up", "down", "left", "right"]],
+	["punch", ["p"]],
+	["kick", ["k"]],
+	["slash", ["s"]],
+	["heavy", ["hs"]],
+	["dust", ["d"]],
+	["rc", ["rc"]],
+	["dash", ["dash"]],
+	["guard", ["guard"]],
+	["start_pause", ["start"]],
 ]
 
 
@@ -37,19 +38,19 @@ func _input_name(player: int, action: String) -> String:
 
 func _draw() -> void:
 	background()
-	var mode_name := "KEYBOARD" if InputManager.mode == InputManager.Mode.KEYBOARD else "JOYSTICK"
-	text("CONTROLS  -  " + mode_name, 90, 44)
+	var mode_name := Game.t("keyboard" if InputManager.mode == InputManager.Mode.KEYBOARD else "joystick")
+	text("%s  -  %s" % [Game.t("controls"), mode_name], 90, 44)
 	text("1P", 150, 30, Color(1, 0.5, 0.5), 700)
 	text("2P", 150, 30, Color(0.5, 0.7, 1), 980)
 	for i in ROWS.size():
 		var y := 205 + i * 44
-		var label: String = ROWS[i][0]
+		var label := Game.t(ROWS[i][0])
 		var actions: Array = ROWS[i][1]
-		draw_string(ThemeDB.fallback_font, Vector2(200, y), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 24)
+		draw_string(Game.FONT, Vector2(200, y), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 24)
 		for p in [1, 2]:
 			var names: Array[String] = []
 			for a in actions:
 				names.append(_input_name(p, a))
 			text(" ".join(names), y, 24, Color.YELLOW, 700 if p == 1 else 980)
-	text("COMBO: hit or block, then press a stronger button (P > K > S > HS)", 650, 20, Color(1, 1, 1, 0.7))
-	text("K / START: BACK", 690, 18, Color(1, 1, 1, 0.4))
+	text(Game.t("combo_hint"), 650, 20, Color(1, 1, 1, 0.7))
+	text(Game.t("back_hint"), 690, 18, Color(1, 1, 1, 0.4))

@@ -24,3 +24,7 @@ renderer/rendering_method.mobile="gl_compatibility"
 
 InputManager="*res://scripts/input_manager.gd"
 Game="*res://scripts/game.gd"
+
+[gui]
+
+theme/custom_font="res://assets/fonts/Pretendard-Bold.otf"

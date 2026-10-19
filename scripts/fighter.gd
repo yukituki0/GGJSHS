@@ -551,14 +551,14 @@ func _draw() -> void:
 		draw_rect(box, Color(1, 1, 1, alpha))
 	# 머리 위 1P / 2P 표시
 	var tag_color := Color(1, 0.35, 0.35) if player == 1 else Color(0.35, 0.6, 1)
-	draw_string(ThemeDB.fallback_font, Vector2(-40, -size.y - 12), "%dP" % player,
+	draw_string(Game.FONT, Vector2(-40, -size.y - 12), "%dP" % player,
 			HORIZONTAL_ALIGNMENT_CENTER, 80, 22, tag_color)
 	if debug_draw_boxes:
 		# 디버그: 현재 상태 이름
 		var label: String = State.keys()[state]
 		if current_attack != null:
 			label += " " + current_attack.name
-		draw_string(ThemeDB.fallback_font, Vector2(-size.x / 2, -size.y - 38),
+		draw_string(Game.FONT, Vector2(-size.x / 2, -size.y - 38),
 				label, HORIZONTAL_ALIGNMENT_LEFT, -1, 16)
 		draw_rect(rect, Color.GREEN, false, 2.0)
 		var hit := hitbox_rect()

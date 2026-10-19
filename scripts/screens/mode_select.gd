@@ -1,12 +1,18 @@
 extends Screen
-## 모드 선택: VERSUS / TRAINING / CONTROLS / 조작 모드 전환
+## 모드 선택: 대전 / 트레이닝 / 조작법 / 조작 장치 전환 / 언어
 
 var cursor := 0
 
 
 func _items() -> Array:
-	var input_name := "KEYBOARD" if InputManager.mode == InputManager.Mode.KEYBOARD else "JOYSTICK"
-	return ["VERSUS", "TRAINING", "CONTROLS", "INPUT: " + input_name]
+	var input_name := Game.t("keyboard" if InputManager.mode == InputManager.Mode.KEYBOARD else "joystick")
+	return [
+		Game.t("versus"),
+		Game.t("training"),
+		Game.t("controls"),
+		"%s: %s" % [Game.t("input"), input_name],
+		"%s: %s" % [Game.t("language"), Game.t("language_name")],
+	]
 
 
 func _process(delta: float) -> void:
@@ -26,18 +32,21 @@ func _process(delta: float) -> void:
 				Game.goto("controls")
 			3:
 				InputManager.toggle_mode()
+			4:
+				Game.toggle_language()
 
 
 func _draw() -> void:
 	background()
-	text("SELECT MODE", 130, 56)
+	text(Game.t("select_mode"), 130, 56)
 	draw_rect(Rect2(W / 2 - 200, 150, 400, 4), ACCENT)
-	menu_list(_items(), cursor, 280)
+	menu_list(_items(), cursor, 260)
 	var help := [
-		"1P vs 2P. First to %d rounds wins." % Game.ROUNDS_TO_WIN,
-		"Practice freely. HP refills, tension is always full.",
-		"Check the button layout.",
-		"Switch between keyboard and arcade stick (or press F1).",
+		Game.t("help_versus") % Game.ROUNDS_TO_WIN,
+		Game.t("help_training"),
+		Game.t("help_controls"),
+		Game.t("help_input"),
+		Game.t("help_language"),
 	]
-	text(help[cursor], 560, 22, Color(1, 1, 1, 0.7))
-	text("P / START: OK      K: BACK", 680, 18, Color(1, 1, 1, 0.4))
+	text(help[cursor], 590, 22, Color(1, 1, 1, 0.7))
+	text(Game.t("menu_hint"), 680, 18, Color(1, 1, 1, 0.4))

@@ -208,8 +208,8 @@ func _update_training() -> void:
 
 
 # ── 일시정지 / 결과 메뉴 ──────────────────────────────────
-const PAUSE_ITEMS := ["RESUME", "CHARACTER SELECT", "TITLE"]
-const RESULT_ITEMS := ["REMATCH", "CHARACTER SELECT", "TITLE"]
+const PAUSE_ITEMS := ["resume", "to_char_select", "to_title"]    # Game.STRINGS 키
+const RESULT_ITEMS := ["rematch", "to_char_select", "to_title"]
 
 
 func _update_pause_menu() -> void:
@@ -338,7 +338,7 @@ func draw_overlay(c: CanvasItem) -> void:
 		Phase.RESULT:
 			_draw_result(c)
 	if paused:
-		_draw_menu(c, "PAUSE", PAUSE_ITEMS)
+		_draw_menu(c, Game.t("pause"), PAUSE_ITEMS)
 
 
 func _draw_sparks(c: CanvasItem) -> void:
@@ -355,7 +355,7 @@ func _draw_sparks(c: CanvasItem) -> void:
 
 
 func _draw_hud(c: CanvasItem) -> void:
-	var font := ThemeDB.fallback_font
+	var font := Game.FONT
 	# 체력바 (가운데 쪽부터 줄어든다)
 	_draw_hp_bar(c, Rect2(30, 30, 530, 32), p1, false)
 	_draw_hp_bar(c, Rect2(720, 30, 530, 32), p2, true)
@@ -371,7 +371,7 @@ func _draw_hud(c: CanvasItem) -> void:
 			_draw_round_pip(c, Vector2(545 - i * 26, 78), wins[1] > i)
 			_draw_round_pip(c, Vector2(735 + i * 26, 78), wins[2] > i)
 	else:
-		c.draw_string(font, Vector2(0, 112), "TRAINING", HORIZONTAL_ALIGNMENT_CENTER, 1280, 20, Color(1, 1, 1, 0.6))
+		c.draw_string(font, Vector2(0, 112), Game.t("training"), HORIZONTAL_ALIGNMENT_CENTER, 1280, 20, Color(1, 1, 1, 0.6))
 	# 텐션 게이지 (아래쪽)
 	_draw_tension_bar(c, Rect2(30, 672, 320, 16), p1, false)
 	_draw_tension_bar(c, Rect2(930, 672, 320, 16), p2, true)
@@ -405,19 +405,19 @@ func _draw_tension_bar(c: CanvasItem, rect: Rect2, f: Fighter, from_right: bool)
 	c.draw_line(Vector2(rect.get_center().x, rect.position.y), Vector2(rect.get_center().x, rect.end.y), Color.WHITE, 2.0)
 	c.draw_rect(rect, Color.WHITE, false, 2.0)
 	var align := HORIZONTAL_ALIGNMENT_RIGHT if from_right else HORIZONTAL_ALIGNMENT_LEFT
-	c.draw_string(ThemeDB.fallback_font, Vector2(rect.position.x, rect.position.y - 6),
+	c.draw_string(Game.FONT, Vector2(rect.position.x, rect.position.y - 6),
 			"TENSION %d%%" % int(f.tension), align, rect.size.x, 14)
 
 
 func _big_text(c: CanvasItem, s: String, color: Color) -> void:
-	var font := ThemeDB.fallback_font
+	var font := Game.FONT
 	c.draw_rect(Rect2(0, 290, 1280, 120), Color(0, 0, 0, 0.45))
 	c.draw_string(font, Vector2(6, 386), s, HORIZONTAL_ALIGNMENT_CENTER, 1280, 96, Color(0, 0, 0, 0.6))
 	c.draw_string(font, Vector2(0, 380), s, HORIZONTAL_ALIGNMENT_CENTER, 1280, 96, color)
 
 
 func _draw_vs(c: CanvasItem) -> void:
-	var font := ThemeDB.fallback_font
+	var font := Game.FONT
 	var t := minf(phase_frame / 20.0, 1.0)  # 0 → 1: 양쪽에서 미끄러져 들어옴
 	c.draw_rect(Rect2(0, 0, 1280, 720), Color(0, 0, 0, 0.85))
 	var slide := (1.0 - t) * 700
@@ -432,21 +432,21 @@ func _draw_vs(c: CanvasItem) -> void:
 func _draw_result(c: CanvasItem) -> void:
 	var title: String
 	if wins[1] >= Game.ROUNDS_TO_WIN and wins[2] >= Game.ROUNDS_TO_WIN:
-		title = "DRAW GAME"
+		title = Game.t("draw_game")
 	elif wins[1] >= Game.ROUNDS_TO_WIN:
-		title = "1P %s WINS!" % p1.display_name
+		title = Game.t("wins") % [1, p1.display_name]
 	else:
-		title = "2P %s WINS!" % p2.display_name
+		title = Game.t("wins") % [2, p2.display_name]
 	_draw_menu(c, title, RESULT_ITEMS if phase_frame >= 60 else [])
 
 
 func _draw_menu(c: CanvasItem, title: String, items: Array) -> void:
-	var font := ThemeDB.fallback_font
+	var font := Game.FONT
 	c.draw_rect(Rect2(0, 0, 1280, 720), Color(0, 0, 0, 0.6))
 	c.draw_string(font, Vector2(0, 250), title, HORIZONTAL_ALIGNMENT_CENTER, 1280, 72, Color.YELLOW)
 	for i in items.size():
 		var y := 360 + i * 60
 		var selected := i == menu_cursor
-		var s: String = ("> %s <" if selected else "%s") % items[i]
+		var s: String = ("> %s <" if selected else "%s") % Game.t(items[i])
 		c.draw_string(font, Vector2(0, y), s, HORIZONTAL_ALIGNMENT_CENTER, 1280, 36,
 				Color(1, 0.3, 0.35) if selected else Color(0.85, 0.85, 0.9))

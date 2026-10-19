@@ -50,8 +50,8 @@ func _card_rect(index: int) -> Rect2:
 
 func _draw() -> void:
 	background()
-	var title := "VERSUS" if Game.mode == Game.Mode.VERSUS else "TRAINING"
-	text("CHARACTER SELECT", 70, 48)
+	var title := Game.t("versus" if Game.mode == Game.Mode.VERSUS else "training")
+	text(Game.t("char_select"), 70, 48)
 	text(title, 108, 22, ACCENT)
 
 	# 양쪽 큰 미리보기
@@ -75,9 +75,9 @@ func _draw() -> void:
 		text("%dP" % p, rect.position.y - 8, 20, col, label_x)
 
 	if locked[1] and locked[2]:
-		text("READY!", 690, 32, Color.YELLOW)
+		text(Game.t("ready"), 690, 32, Color.YELLOW)
 	else:
-		text("LEFT/RIGHT: SELECT    P: OK    K: CANCEL", 690, 18, Color(1, 1, 1, 0.5))
+		text(Game.t("select_hint"), 690, 18, Color(1, 1, 1, 0.5))
 
 
 func _draw_preview(p: int, rect: Rect2) -> void:
@@ -90,7 +90,7 @@ func _draw_preview(p: int, rect: Rect2) -> void:
 	draw_rect(body, Color.WHITE, false, 3.0)
 	text("%dP" % p, rect.position.y + 40, 30, col, rect.get_center().x)
 	text(c["name"], rect.end.y - 60, 40, Color.WHITE, rect.get_center().x)
-	text(c["club"], rect.end.y - 28, 18, Color(1, 1, 1, 0.7), rect.get_center().x)
+	text(Game.club_name(c), rect.end.y - 28, 18, Color(1, 1, 1, 0.7), rect.get_center().x)
 	draw_rect(rect, col if locked[p] else Color(1, 1, 1, 0.2), false, 4.0 if locked[p] else 2.0)
 	if locked[p]:
-		text("OK!", rect.position.y + 90, 36, Color.YELLOW, rect.get_center().x)
+		text(Game.t("ok"), rect.position.y + 90, 36, Color.YELLOW, rect.get_center().x)
