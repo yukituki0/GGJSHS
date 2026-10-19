@@ -278,6 +278,19 @@ no text, no logo, no watermark.
 
 ### 캐릭터 설명 (기술 컨셉에 맞춤)
 
+**머리색으로 구분하기** (작은 초상화에서도 누군지 바로 보이게)
+| 캐릭터 | 머리색 | 상태 |
+|---|---|---|
+| CHEMIKID | 검정 (부스스) | ✅ 완료 |
+| COMMON | 검정 (후드) | ✅ 완료 |
+| CHAOS | 검보라 긴 머리 | ✅ 완료 |
+| ROOT2 | **금발** | ⬜ |
+| SEED | **연두** | ⬜ |
+| GLOBE | **주황** | ⬜ |
+
+- 완성된 그림을 첨부해서 화풍을 맞추면 **머리색까지 따라 검정으로 나오기 쉽다** → 프롬프트에 `(NOT black hair)`를 넣었다. 그래도 검정이면 "Change only the hair color to ..."로 다시 요청.
+- 흰 실험 가운은 이미 2명(CHEMIKID, CHAOS)이 입고 있으니 남은 3명에게는 **가운을 입히지 않는다**.
+
 **🧪 CHEMIKID (화학, 남)** → `chemikid.png` · 목업 왼쪽 캐릭터를 첨부해서 같은 얼굴로
 > A boy from the chemistry club, mad-scientist vibe. White lab coat worn over a black school uniform
 > with a tie, safety goggles pushed up on his messy dark hair, thick rubber gloves, a belt with glowing
@@ -290,7 +303,8 @@ no text, no logo, no watermark.
 > Color palette: cyan, deep blue, black, crimson accent.
 
 **🌍 GLOBE (지구과학, 여)** → `globe.png`
-> A girl from the earth science club, strong and grounded heavyweight vibe. Sturdy field-researcher
+> A girl from the earth science club, strong and grounded heavyweight vibe. Bright orange hair
+> in a high ponytail (NOT black hair). Sturdy field-researcher
 > jacket with many pockets over a school uniform, long pants, hiking boots, a geologist's hammer on
 > her belt, a small glowing globe floating above one hand, tiny star sparkles and a swirl of wind
 > around her. Color palette: earthy orange, ocean blue, night-sky navy, crimson accent.
@@ -302,13 +316,15 @@ no text, no logo, no watermark.
 > Color palette: violet, electric yellow, black, crimson accent.
 
 **📐 ROOT2 (수학, 남)** → `root2.png`
-> A boy from the math club, sharp and precise long-range fighter vibe. Neat school blazer with a
+> A boy from the math club, sharp and precise long-range fighter vibe. Neat short blond hair
+> (NOT black hair). Neat school blazer with a
 > long scarf, round glasses, holding a large drafting compass like a spear, a giant golden √2 symbol
 > spinning like a boomerang near him, floating golden formulas (∫, π, Σ) around him.
 > Color palette: gold, white, navy, crimson accent.
 
 **🌱 SEED (생명, 여)** → `seed.png`
-> A girl from the biology club, gentle but tricky summoner vibe. Long cardigan over a school uniform
+> A girl from the biology club, gentle but tricky summoner vibe. Soft lime-green hair in a
+> side braid (NOT black hair). Long cardigan over a school uniform
 > with a knee-length skirt and leggings, a flower hairpin, a magnifying glass on a cord,
 > green vines wrapping softly around her arms, a glowing pink DNA double helix floating beside her.
 > Color palette: blossom pink, leaf green, white, crimson accent.
