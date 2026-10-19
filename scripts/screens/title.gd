@@ -5,7 +5,10 @@ extends Screen
 ## 배경: assets/ui/key_art.png (메뉴 일러스트) → 없으면 title_bg.png (목업을 흐리게 만든 임시) → 없으면 코드 배경
 ## 로고: assets/ui/logo.png → 없으면 글자
 
-const LOGO_W := 760.0            # 로고 폭 (화면 좌표 1280 기준)
+const LOGO_W := 560.0            # 로고 폭 (화면 좌표 1280 기준)
+const LOGO_CENTER := Vector2(640, 150)   # 메뉴 일러스트의 하늘 쪽 (캐릭터 얼굴을 가리지 않게)
+const SUBTITLE_Y := 326.0
+const START_Y := 640.0
 
 var _quit_confirm := false
 var _bg: Texture2D
@@ -37,7 +40,7 @@ func _draw() -> void:
 	_draw_background()
 	# 로고: 크게 시작해서 쾅 하고 자리 잡음 (+ 잠깐 하얗게 번쩍)
 	var e := 1.0 - pow(1.0 - minf(frame / 22.0, 1.0), 3.0)
-	var center := Vector2(W / 2, 270)
+	var center := LOGO_CENTER
 	if _logo != null:
 		var w := LOGO_W * lerpf(1.8, 1.0, e)
 		var size := Vector2(w, w * _logo.get_height() / _logo.get_width())
@@ -47,12 +50,12 @@ func _draw() -> void:
 	if frame >= 22 and frame < 30:
 		draw_rect(Rect2(0, 0, W, H), Color(1, 1, 1, (30 - frame) / 8.0 * 0.6))
 	if frame > 22:
-		Style.fill(self, Style.slant(W / 2 - 430, 452, 860, 40, -16), Color(Style.BLACK, 0.75))
-		text(Game.t("subtitle"), 480, 22, Style.GOLD, W / 2, 4)
+		Style.fill(self, Style.slant(W / 2 - 430, SUBTITLE_Y - 28, 860, 40, -16), Color(Style.BLACK, 0.75))
+		text(Game.t("subtitle"), SUBTITLE_Y, 22, Style.GOLD, W / 2, 4)
 		# 깜빡이는 PRESS START
 		if frame % 60 < 36:
-			Style.fill(self, Style.slant(W / 2 - 220, 548, 440, 56, 18), Style.RED)
-			text(Game.t("press_start"), 588, 34, Style.WHITE)
+			Style.fill(self, Style.slant(W / 2 - 220, START_Y - 40, 440, 56, 18), Style.RED)
+			text(Game.t("press_start"), START_Y, 34, Style.WHITE)
 	text("%s    F11: FULLSCREEN    %s" % [Game.t("f1_hint"), Game.t("esc_hint")], 700, 16, Style.GRAY, W / 2, 0)
 	if _quit_confirm:
 		draw_rect(Rect2(0, 0, W, H), Color(0, 0, 0, 0.7))

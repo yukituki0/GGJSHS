@@ -22,7 +22,7 @@
 | 스테이지 (**실제 학교 사진**) | `assets/stages/` `lab` `computer` `rooftop` `playground` `hallway` `.png` | 5 | ⬜ 사진 찍기 |
 | 캐릭터 전신 (투명 배경) | `assets/characters/<id>.png` | 6 (남3 여3) | ⬜ 아래 "캐릭터 6명" |
 | 타이틀 로고 | `assets/ui/logo.png` | 1 | ✅ 완료 |
-| 메뉴 배경 일러스트 | `assets/ui/key_art.png` | 1 | ⬜ |
+| 메뉴 배경 일러스트 | `assets/ui/key_art.png` | 1 | ✅ 완료 |
 | 기술 이펙트 / 투사체 | 캐릭터 기술이 정해지면 목록 추가 | - | ⬜ 나중에 |
 
 캐릭터 id: `chemikid`(화학) `common`(정보) `root2`(수학) `chaos`(물리) `seed`(생명) `globe`(지구과학)
