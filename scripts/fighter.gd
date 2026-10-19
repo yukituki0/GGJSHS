@@ -84,6 +84,7 @@ var rc_flash := 0               # 로만 캔슬 이펙트 남은 프레임
 var history: Array[Vector2] = []  # 최근 위치 기록 (맨 앞이 가장 오래된 것)
 var _armor_used := 0            # 이번 공격에서 아머로 버틴 횟수
 var armor_flash := 0            # 아머로 버텼을 때 번쩍임 남은 프레임
+var shock_frames := 0           # 감전 표시 남은 프레임 (몸 주위에 노란 번개)
 
 
 func _ready() -> void:
@@ -108,6 +109,8 @@ func tick() -> void:
 		rc_flash -= 1
 	if armor_flash > 0:
 		armor_flash -= 1
+	if shock_frames > 0:
+		shock_frames -= 1
 	queue_redraw()
 
 
@@ -695,6 +698,13 @@ func _draw() -> void:
 	if armor_flash > 0:
 		body_color = body_color.lerp(Color(1, 0.85, 0.4), armor_flash / 12.0)  # 아머로 버팀: 금색 번쩍
 	draw_rect(rect, body_color)
+	if shock_frames > 0:
+		# 감전: 몸 둘레에 지직거리는 노란 번개
+		for i in 4:
+			var y0 := -size.y * (0.2 + i * 0.2)
+			var jitter := 10.0 if (shock_frames + i) % 4 < 2 else -10.0
+			draw_polyline(PackedVector2Array([Vector2(-size.x / 2 - 14, y0), Vector2(-size.x / 4, y0 + jitter),
+					Vector2(size.x / 4, y0 - jitter), Vector2(size.x / 2 + 14, y0)]), Color(1, 0.95, 0.3), 3.0)
 	draw_rect(rect, Color.WHITE, false, 3.0)
 	# 로만 캔슬: 퍼져 나가는 원
 	if rc_flash > 0:

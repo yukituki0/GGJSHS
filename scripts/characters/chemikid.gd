@@ -1,29 +1,36 @@
 extends Fighter
 ## CHEMIKID (화학 동아리): 플라스크를 던지는 매드 사이언티스트. 느리지만 한 방이 세다
 ##
-##   5D  플라스크 투척  포물선 투사체. 바닥에 깨지면 산성 웅덩이(밟으면 계속 조금씩 데미지, 하단)
-##   6D  촉매 돌진      앞으로 빠르게 돌진하며 타격
-##   2D  발열 반응      발밑에서 위로 폭발 (대공기, 시작할 때 무적)
-##   4D  중화 반응      반격 자세. 이때 공격을 받으면 무효로 하고 받아친다
-##   OD  연쇄 반응      (D+HS, 텐션 50%) 앞쪽으로 폭발이 연달아 터진다
+##   5D  플라스크 투척  (산·염기) 포물선 투사체. 바닥에 깨지면 산성 웅덩이(밟으면 계속 조금씩 데미지, 하단)
+##   6D  촉매 돌진      (반응 속도) 앞으로 빠르게 돌진하며 타격
+##   2D  발열 반응      (열화학) 발밑에서 위로 폭발 (대공기, 시작할 때 무적)
+##   4D  중화 반응      (산·염기) 반격 자세. 이때 공격을 받으면 무효로 하고 받아친다
+##   jD  앙금 생성      (침전 반응) 공중에서 앙금을 떨어뜨림 → 바닥에 굳어 상대 투사체를 막는 벽 (1개까지)
+##   OD  테르밋 반응    (산화환원, D+HS, 텐션 50%) 앞쪽 연쇄 폭발 → 마지막에 초고온 불꽃 기둥
 
 const ACID_GREEN := Color("7dff6a")
+const THERMITE := Color("ff8a1e")
+const SALT_WHITE := Color("eef4f6")
 const NEUTRAL_FLASH := Color(0.7, 1.0, 0.7, 0.25)
 
 ## 반격 자세에서 공격을 받아낼 수 있는 구간 (4D 시작 후 프레임)
 const COUNTER_START := 4
 const COUNTER_END := 26
 
-## 연쇄 반응 폭발: [공격 시작 후 프레임, 캐릭터 앞 거리]
-const CHAIN_BLASTS := [[8, 110], [14, 190], [20, 270], [26, 350], [32, 430]]
+## 테르밋 폭발: [공격 시작 후 프레임, 캐릭터 앞 거리]. 마지막은 불꽃 기둥
+const CHAIN_BLASTS := [[8, 110], [14, 190], [20, 270], [26, 350]]
+const PILLAR := [38, 300]
 
 ## 투사체/폭발이 맞았을 때의 효과 (기술 목록과 별개)
 var _flask_hit := AttackData.new("flask", 0, 0, 0, 32, Rect2(), AttackData.Level.MID, 18, 12)
 var _acid_hit := AttackData.new("acid", 0, 0, 0, 7, Rect2(), AttackData.Level.LOW, 10, 6)
-var _blast_hit := AttackData.new("blast", 0, 0, 0, 18, Rect2(), AttackData.Level.MID, 26, 14)
+var _blast_hit := AttackData.new("blast", 0, 0, 0, 16, Rect2(), AttackData.Level.MID, 26, 14)
+var _pillar_hit := AttackData.new("thermite", 0, 0, 0, 40, Rect2(), AttackData.Level.MID, 30, 16)
+var _salt_hit := AttackData.new("precipitate", 0, 0, 0, 20, Rect2(), AttackData.Level.MID, 16, 12)
 
 var _flask: Projectile
 var _puddle: Projectile
+var _salt_wall: Projectile
 var _counter_text := 0  # "NEUTRALIZE!" 글자 남은 프레임
 
 
@@ -33,6 +40,7 @@ func _init() -> void:
 	walk_forward_speed = 3.6
 	walk_back_speed = 2.9
 	run_speed = 8.5
+	_pillar_hit.launch = Vector2(4, -15)
 
 
 func _build_specials() -> void:
@@ -49,8 +57,10 @@ func _build_specials() -> void:
 	# 반격이 성공했을 때 바로 이어지는 공격 (빠르고 넓다)
 	a = _add(AttackData.new("4D_counter", 3, 6, 18, 55, Rect2(0, -170, 150, 150), M, 28, 16))
 	a.invuln_frames = 9
+	a = _add(AttackData.new("jD", 10, 0, 18, 0, Rect2(), M, 0, 0))
+	a.event_frame = 10
 	a = _add(AttackData.new("OD", 6, 0, 44, 0, Rect2(), M, 0, 0))
-	a.title = "CHAIN REACTION"
+	a.title = "THERMITE"
 	a.cost = Fighter.RC_COST
 	a.invuln_frames = 10
 
@@ -67,6 +77,18 @@ func _can_use_special(attack_name: String) -> bool:
 
 
 func _on_attack_event(attack: AttackData) -> void:
+	if attack.name == "jD":
+		var s := Projectile.new()
+		s.kind = "precipitate"
+		s.attack = _salt_hit
+		s.size = Vector2(34, 30)
+		s.color = SALT_WHITE
+		s.position = position + Vector2(50 * facing, -60)
+		s.velocity = Vector2(3.0 * facing, 2.0)
+		s.gravity = 0.7
+		s.ground_y = ground_y - 10
+		s.landed.connect(_on_salt_landed)
+		spawn(s)
 	if attack.name == "5D":
 		var p := Projectile.new()
 		p.kind = "flask"
@@ -99,6 +121,21 @@ func _on_flask_landed(pos: Vector2) -> void:
 	spawn(p)
 
 
+## 앙금이 바닥에 닿으면 그 자리에 굳은 벽 (상대 투사체를 막는다)
+func _on_salt_landed(pos: Vector2) -> void:
+	if _alive(_salt_wall):
+		_salt_wall.dead = true
+	var p := Projectile.new()
+	p.kind = "saltwall"
+	p.blocks_projectiles = true
+	p.size = Vector2(60, 110)
+	p.color = SALT_WHITE
+	p.position = Vector2(pos.x, ground_y - 55)
+	p.lifetime = 150
+	_salt_wall = p
+	spawn(p)
+
+
 ## 중화 반응: 반격 자세 중에 공격을 받으면 무효로 하고 받아친다
 func _try_counter(_attack_data: AttackData) -> bool:
 	if state != State.ATTACK or current_attack == null or current_attack.name != "4D":
@@ -124,10 +161,19 @@ func tick() -> void:
 				p.kind = "explosion"
 				p.attack = _blast_hit
 				p.size = Vector2(130, 170)
-				p.color = ACID_GREEN
+				p.color = THERMITE
 				p.position = Vector2(position.x + blast[1] * facing, ground_y - 85)
 				p.lifetime = 12
 				spawn(p)
+		if state_frame == PILLAR[0]:
+			var pillar := Projectile.new()
+			pillar.kind = "pillar"
+			pillar.attack = _pillar_hit
+			pillar.size = Vector2(150, 460)
+			pillar.color = THERMITE
+			pillar.position = Vector2(position.x + PILLAR[1] * facing, ground_y - 230)
+			pillar.lifetime = 22
+			spawn(pillar)
 
 
 func _draw() -> void:

@@ -149,6 +149,26 @@ func _draw() -> void:
 				var rad := size.x * (0.15 + i * 0.09)
 				var start := age * 0.25 + i * 1.3
 				draw_arc(Vector2(0, -i * 8), rad, start, start + PI * 1.3, 16, Color(color, (0.8 - i * 0.12) * fade), 6.0)
+		"precipitate":
+			# 앙금 덩어리: 하얀 결정
+			draw_rect(r, color)
+			draw_line(r.position, r.end, Color(0.7, 0.8, 0.85), 2.0)
+			draw_rect(r, Color(0.5, 0.6, 0.65), false, 2.0)
+		"saltwall":
+			# 굳은 앙금 벽: 하얀 결정 기둥 (사라질 때 흐려짐)
+			var fade := minf(1.0, (lifetime - age) / 20.0)
+			draw_rect(r, Color(color, 0.9 * fade))
+			for i in 4:
+				var y := r.position.y + 12 + i * 26
+				draw_line(Vector2(r.position.x, y), Vector2(r.end.x, y + 12), Color(0.6, 0.7, 0.75, fade), 2.0)
+			draw_rect(r, Color(0.5, 0.6, 0.65, fade), false, 3.0)
+		"pillar":
+			# 불꽃 기둥: 아래에서 위로 치솟는 초고온 불꽃
+			var t := float(age) / lifetime
+			var grow := minf(1.0, age / 5.0)
+			var col_rect := Rect2(r.position.x, r.end.y - r.size.y * grow, r.size.x, r.size.y * grow)
+			draw_rect(col_rect, Color(color, 0.75 * (1.0 - t)))
+			draw_rect(col_rect.grow_individual(-r.size.x * 0.3, 0, -r.size.x * 0.3, 0), Color(1, 0.95, 0.7, 1.0 - t))
 		"blackhole":
 			# 블랙홀: 검은 중심 + 빨려 들어가는 보라색 고리
 			var grow := minf(1.0, age / 15.0)

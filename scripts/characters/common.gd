@@ -1,11 +1,12 @@
 extends Fighter
 ## COMMON (정보 동아리): 함정과 순간이동으로 상대를 헷갈리게 하는 해커
 ##
-##   5D  패킷 전송   빠른 직선 투사체 (화면에 1개까지)
-##   6D  버그 설치   앞 바닥에 함정. 밟으면 오래 경직 (하단, 1개까지)
-##   2D  방화벽      앞에 벽(1.5초). 상대 투사체를 막는다 (1개까지)
-##   4D  Ctrl+Z      1초 전 위치로 되감기 (시작 6프레임 무적)
-##   OD  블루스크린  (D+HS, 텐션 50%) 넓은 범위 공격. 맞으면 화면이 파래지고 상대가 오래 멈춘다
+##   5D  패킷 전송   (네트워크) 빠른 직선 투사체 (화면에 1개까지)
+##   6D  버그 설치   (디버깅) 앞 바닥에 함정. 밟으면 오래 경직 (하단, 1개까지)
+##   2D  방화벽      (보안) 앞에 벽(1.5초). 상대 투사체를 막는다 (1개까지)
+##   4D  Ctrl+Z      (운영체제) 1초 전 위치로 되감기 (시작 6프레임 무적)
+##   jD  이진 탐색   (알고리즘) 공중에서 상대와의 가로 거리를 반씩 좁히며 내려꽂는다
+##   OD  블루스크린  (운영체제, D+HS, 텐션 50%) 넓은 범위 공격. 맞으면 화면이 파래지고 상대가 오래 멈춘다
 
 const CYAN := Color("37d6ff")
 const BUG_GREEN := Color("7dff6a")
@@ -41,6 +42,7 @@ func _build_specials() -> void:
 	a = _add(AttackData.new("4D", 6, 0, 14, 0, Rect2(), M, 0, 0))
 	a.event_frame = 6
 	a.invuln_frames = 6
+	a = _add(AttackData.new("jD", 8, 40, 14, 38, Rect2(-20, -120, 110, 130), AttackData.Level.OVERHEAD, 18, 14))
 	a = _add(AttackData.new("OD", 4, 8, 30, 60, Rect2(10, -220, 420, 220), M, 90, 20))
 	a.title = "BLUE SCREEN"
 	a.cost = Fighter.RC_COST
@@ -112,13 +114,31 @@ func _on_attack_result(attack: AttackData, blocked: bool) -> void:
 		screen_tint.emit(BLUE_SCREEN, 90)
 
 
+## 이진 탐색: 내려오는 속도는 일정, 가로는 매 프레임 남은 거리의 절반만큼 상대 쪽으로
+const SEARCH_FALL := 13.0
+const SEARCH_MAX_X := 14.0
+
+
 func tick() -> void:
+	if state == State.ATTACK and current_attack != null and current_attack.name == "jD" \
+			and state_frame >= current_attack.startup and opponent != null:
+		var dx := opponent.position.x - position.x
+		velocity = Vector2(clampf(dx * 0.5, -SEARCH_MAX_X, SEARCH_MAX_X), SEARCH_FALL)
 	super()
 	if _ghost_frames > 0:
 		_ghost_frames -= 1
 
 
 func _draw() -> void:
+	# 이진 탐색: 상대 위치를 가리키는 탐색 범위 괄호 [ mid ]
+	if state == State.ATTACK and current_attack != null and current_attack.name == "jD" and opponent != null:
+		var target := opponent.position - position
+		var half := maxf(20.0, absf(target.x) * 0.5)
+		var y := target.y - 20
+		draw_line(Vector2(target.x - half, y), Vector2(target.x + half, y), Color(CYAN, 0.8), 3.0)
+		draw_line(Vector2(target.x - half, y - 12), Vector2(target.x - half, y + 12), CYAN, 3.0)
+		draw_line(Vector2(target.x + half, y - 12), Vector2(target.x + half, y + 12), CYAN, 3.0)
+		draw_string(Game.FONT, Vector2(target.x - 60, y - 18), "O(log n)", HORIZONTAL_ALIGNMENT_CENTER, 120, 18, CYAN)
 	# Ctrl+Z 잔상 (되감기 전 위치에 흐린 몸)
 	if _ghost_frames > 0:
 		var size := body_size()
