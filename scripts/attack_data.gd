@@ -18,6 +18,7 @@ var level: Level
 var hitstun: int        # 맞은 쪽이 못 움직이는 프레임
 var blockstun: int      # 막은 쪽이 못 움직이는 프레임
 var pushback := 6.0     # 맞거나 막았을 때 밀려나는 속도
+var hitstop: int        # 맞은 순간 둘 다 멈추는 프레임 (센 기술일수록 길다 = 묵직한 손맛)
 var gatling: Array = []  # 맞히거나 막혔을 때 이어서 쓸 수 있는 기술
 
 
@@ -33,6 +34,7 @@ func _init(p_name: String, p_startup: int, p_active: int, p_recovery: int,
 	level = p_level
 	hitstun = p_hitstun
 	blockstun = p_blockstun
+	hitstop = 4 + int(p_damage / 6.0)  # 5P≈7F, 5H≈13F. 기술마다 따로 정하고 싶으면 생성 후 덮어쓰기
 	gatling = p_gatling
 
 

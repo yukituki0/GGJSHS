@@ -12,6 +12,10 @@ const KO_RESET_FRAMES := 150    # KO 후 다시 시작하기까지 (임시, 라�
 var p1: Fighter
 var p2: Fighter
 var _ko_timer := 0
+var _hitstop := 0               # 남은 히트스톱 프레임 (0보다 크면 둘 다 멈춤)
+var _shake := 0                 # 남은 화면 흔들림 프레임
+var _sparks: Array = []         # [위치, 남은 프레임, 막혔나] 타격 이펙트
+var _camera: Camera2D
 
 
 func _ready() -> void:
@@ -19,6 +23,10 @@ func _ready() -> void:
 	p2 = _spawn(2, Color(0.2, 0.4, 0.9), 840)
 	p1.opponent = p2
 	p2.opponent = p1
+	# 화면 흔들림용 카메라 (화면 가운데에 고정)
+	_camera = Camera2D.new()
+	_camera.position = Vector2(640, 360)
+	add_child(_camera)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -41,29 +49,59 @@ func _spawn(player: int, color: Color, x: float) -> Fighter:
 
 ## 매 프레임: 1P 이동 → 2P 이동 → 밀어내기 → 공격 판정 (항상 이 순서)
 func _physics_process(_delta: float) -> void:
-	p1.tick()
-	p2.tick()
-	_resolve_push()
-	_resolve_hits()
+	_update_effects()
+	if _hitstop > 0:
+		# 히트스톱: 둘 다 멈춘다 (입력은 버퍼에 기억)
+		_hitstop -= 1
+		p1.tick_frozen()
+		p2.tick_frozen()
+	else:
+		p1.tick()
+		p2.tick()
+		_resolve_push()
+		_resolve_hits()
 	_update_ko()
 	queue_redraw()
 
 
+func _update_effects() -> void:
+	for spark in _sparks:
+		spark[1] -= 1
+	_sparks = _sparks.filter(func(spark): return spark[1] > 0)
+	if _shake > 0:
+		_shake -= 1
+		_camera.offset = Vector2(randf_range(-6, 6), randf_range(-6, 6))
+	else:
+		_camera.offset = Vector2.ZERO
+
+
 ## 양쪽 공격을 "먼저 다 검사하고 나서" 적용한다 → 동시에 맞으면 둘 다 맞음(상쇄)
 func _resolve_hits() -> void:
-	var hits: Array = []  # [공격자, 방어자, 기술]
+	var hits: Array = []  # [공격자, 방어자, 기술, 맞은 위치]
 	for pair in [[p1, p2], [p2, p1]]:
 		var attacker: Fighter = pair[0]
 		var defender: Fighter = pair[1]
 		if defender.state == Fighter.State.KO:
 			continue
 		if attacker.hitbox_rect().intersects(defender.body_rect()):
-			hits.append([attacker, defender, attacker.current_attack])
+			var contact := attacker.hitbox_rect().intersection(defender.body_rect()).get_center()
+			hits.append([attacker, defender, attacker.current_attack, contact])
 	for hit in hits:
 		var attacker: Fighter = hit[0]
 		var defender: Fighter = hit[1]
-		attacker.on_attack_connected()
-		defender.receive_attack(hit[2], attacker.facing)
+		var attack: AttackData = hit[2]
+		var contact: Vector2 = hit[3]
+		var blocked := defender.receive_attack(attack, attacker.facing)
+		attacker.on_attack_connected(blocked)
+		_hitstop = maxi(_hitstop, attack.hitstop)
+		_sparks.append([contact, 10, blocked])
+		if not blocked:
+			_shake = maxi(_shake, attack.hitstop)
+		# 상대가 벽에 붙어 있어서 못 밀려나면, 대신 때린 쪽이 뒤로 밀려난다
+		var half := defender.body_size().x / 2
+		if defender.position.x - half <= WALL_LEFT + 1 or defender.position.x + half >= WALL_RIGHT - 1:
+			if attacker.is_on_ground():
+				attacker.velocity.x = -attack.pushback * attacker.facing
 
 
 ## KO가 나오면 잠시 뒤 처음부터 다시 (라운드 시스템은 나중에)
@@ -113,9 +151,36 @@ func _draw() -> void:
 	# 체력바 (1P는 왼쪽에서, 2P는 오른쪽에서 줄어든다)
 	_draw_hp_bar(Rect2(40, 640, 540, 28), p1, false)
 	_draw_hp_bar(Rect2(700, 640, 540, 28), p2, true)
+	_draw_tension_bar(Rect2(40, 676, 300, 14), p1, false)
+	_draw_tension_bar(Rect2(940, 676, 300, 14), p2, true)
+	# 타격 이펙트: 맞으면 노란 별, 막히면 파란 원
+	for spark in _sparks:
+		var pos: Vector2 = spark[0]
+		var t: float = spark[1] / 10.0
+		if spark[2]:
+			draw_arc(pos, 30 * (1.5 - t), 0, TAU, 24, Color(0.5, 0.8, 1.0, t), 5.0)
+		else:
+			for i in 8:
+				var dir := Vector2.RIGHT.rotated(i * TAU / 8)
+				draw_line(pos + dir * 10, pos + dir * (20 + 40 * (1.0 - t)), Color(1, 0.9, 0.3, t), 5.0)
 	if _ko_timer > 0:
 		draw_string(ThemeDB.fallback_font, Vector2(0, 330), "K.O.",
 				HORIZONTAL_ALIGNMENT_CENTER, 1280, 96, Color.YELLOW)
+
+
+func _draw_tension_bar(rect: Rect2, f: Fighter, from_right: bool) -> void:
+	draw_rect(rect, Color(0.1, 0.1, 0.2))
+	var ratio := f.tension / Fighter.MAX_TENSION
+	var filled := Rect2(rect.position, Vector2(rect.size.x * ratio, rect.size.y))
+	if from_right:
+		filled.position.x = rect.end.x - filled.size.x
+	# 로만 캔슬 가능(50% 이상)하면 밝은 색
+	var rc_ready := f.tension >= Fighter.RC_COST
+	draw_rect(filled, Color(0.3, 0.9, 1.0) if rc_ready else Color(0.2, 0.4, 0.7))
+	draw_line(Vector2(rect.get_center().x, rect.position.y), Vector2(rect.get_center().x, rect.end.y), Color.WHITE, 2.0)
+	draw_rect(rect, Color.WHITE, false, 2.0)
+	draw_string(ThemeDB.fallback_font, Vector2(rect.position.x, rect.end.y + 16),
+			"TENSION %d%%" % int(f.tension), HORIZONTAL_ALIGNMENT_LEFT, -1, 14)
 
 
 func _draw_hp_bar(rect: Rect2, f: Fighter, from_right: bool) -> void:

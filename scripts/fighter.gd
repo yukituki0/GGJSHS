@@ -27,7 +27,16 @@ enum State {
 @export var airdash_speed := 11.0
 @export var air_actions := 1            # 공중에서 2단 점프/공중 대시를 몇 번 쓸 수 있나 (둘이 공유)
 @export var ground_friction := 0.85     # 밀려날 때 속도가 줄어드는 비율
-@export var input_buffer_frames := 5    # 버튼을 몇 프레임 전에 눌러도 기억해 둘지
+@export var input_buffer_frames := 8    # 버튼을 몇 프레임 전에 눌러도 기억해 둘지
+
+# ── 텐션 게이지 ───────────────────────────────────────────
+const MAX_TENSION := 100.0
+const RC_COST := 50.0                   # 로만 캔슬 비용 (게이지 절반)
+@export var tension_walk_gain := 0.06   # 앞으로 걸을 때 프레임당
+@export var tension_run_gain := 0.10    # 달릴 때 프레임당
+@export var tension_hit_gain := 4.0     # 공격이 맞았을 때
+@export var tension_block_gain := 2.0   # 공격이 막혔을 때 (공격한 쪽)
+@export var tension_guard_gain := 1.0   # 공격을 막았을 때 (막은 쪽)
 
 # ── 몸 크기 (임시 네모 그래픽 + 밀어내기/피격 판정) ─────────
 const BODY_SIZE := Vector2(70, 160)
@@ -36,7 +45,7 @@ const CROUCH_SIZE := Vector2(80, 100)
 ## 버튼 우선순위: 동시에 눌렀으면 강한 버튼이 이긴다
 const ATTACK_BUTTONS: Array[String] = ["hs", "s", "k", "p"]
 ## 입력 버퍼에 기억해 둘 버튼 (누르는 "순간"이 중요한 것들)
-const BUFFERED_ACTIONS: Array[String] = ["hs", "s", "k", "p", "dash", "up"]
+const BUFFERED_ACTIONS: Array[String] = ["hs", "s", "k", "p", "dash", "up", "rc"]
 
 var player := 1                 # 1P / 2P
 var color := Color.RED
@@ -56,6 +65,9 @@ var current_attack: AttackData
 var attack_connected := false   # 이번 공격이 이미 맞았거나 막혔나 (한 번만 판정 + 개틀링 조건)
 var stun_frames := 0            # 히트스턴/가드스턴 남은 프레임
 var _buffer := {}               # 액션 -> 남은 기억 프레임 (0이면 없음)
+var tension := 0.0
+var hit_shake := 0              # 히트스톱 동안 맞은 쪽이 부르르 떠는 남은 프레임
+var rc_flash := 0               # 로만 캔슬 이펙트 남은 프레임
 
 
 func _ready() -> void:
@@ -69,7 +81,24 @@ func tick() -> void:
 	_update_buffer()
 	_update_state()
 	position += velocity
+	if rc_flash > 0:
+		rc_flash -= 1
 	queue_redraw()
+
+
+## 히트스톱 중에 Match가 tick() 대신 호출한다.
+## 캐릭터는 멈춰 있지만, 이때 누른 버튼은 버퍼에 기억해 둔다 (히트스톱 중 개틀링 입력 가능)
+func tick_frozen() -> void:
+	for action in BUFFERED_ACTIONS:
+		if Input.is_action_just_pressed(InputManager.action_name(player, action)):
+			_buffer[action] = input_buffer_frames
+	if hit_shake > 0:
+		hit_shake -= 1
+	queue_redraw()
+
+
+func add_tension(amount: float) -> void:
+	tension = clampf(tension + amount, 0.0, MAX_TENSION)
 
 
 # ── 기술 목록 (캐릭터마다 덮어쓸 부분) ─────────────────────
@@ -205,6 +234,7 @@ func _ground_neutral() -> void:
 		_change_state(State.STAND)
 	if fwd > 0:
 		velocity.x = walk_forward_speed * facing
+		add_tension(tension_walk_gain)
 	elif fwd < 0:
 		velocity.x = -walk_back_speed * facing
 	else:
@@ -225,6 +255,7 @@ func _run() -> void:
 	var fwd := _input_forward()
 	if fwd >= 0 and (_held("dash") or fwd > 0):
 		velocity.x = run_speed * facing
+		add_tension(tension_run_gain)
 	else:
 		velocity.x = 0
 		_change_state(State.STAND)
@@ -310,6 +341,12 @@ func _attack() -> void:
 	else:
 		velocity.x *= ground_friction
 
+	# 로만 캔슬: 게이지 절반을 써서 공격을 즉시 취소하고 다시 움직일 수 있게 된다
+	if _pressed("rc") and tension >= RC_COST:
+		_consume("rc")
+		_roman_cancel(airborne)
+		return
+
 	if attack_connected:
 		var prefix := "j" if airborne else ("2" if _held("down") else "5")
 		var next := _pressed_attack(prefix)
@@ -322,6 +359,19 @@ func _attack() -> void:
 		_change_state(State.AIR if airborne else State.STAND)
 		if not airborne:
 			_ground_neutral()  # 버퍼에 남은 입력이 있으면 같은 프레임에 바로 나가도록
+
+
+func _roman_cancel(airborne: bool) -> void:
+	add_tension(-RC_COST)
+	rc_flash = 20
+	current_attack = null
+	if airborne:
+		velocity = Vector2(velocity.x * 0.3, 0)  # 공중에서 쓰면 그 자리에 살짝 멈춘다
+		air_actions_left = maxi(air_actions_left, 1)
+		_change_state(State.AIR)
+	else:
+		velocity.x = 0
+		_change_state(State.STAND)
 
 
 func _start_attack(attack_name: String) -> void:
@@ -422,19 +472,22 @@ func can_block(level: AttackData.Level) -> bool:
 
 
 ## Match가 호출: 공격이 맞았거나 막혔다고 알려준다
-func on_attack_connected() -> void:
+func on_attack_connected(blocked: bool) -> void:
 	attack_connected = true
+	add_tension(tension_block_gain if blocked else tension_hit_gain)
 
 
 ## Match가 호출: 공격을 받았다. 막았으면 true를 돌려준다
 func receive_attack(attack: AttackData, from_dir: int) -> bool:
 	if can_block(attack.level):
+		add_tension(tension_guard_gain)
 		stun_frames = attack.blockstun
 		velocity.x = attack.pushback * from_dir
 		_change_state(State.BLOCKSTUN)
 		return true
 
 	hp = maxi(hp - attack.damage, 0)
+	hit_shake = attack.hitstop
 	current_attack = null
 	if hp == 0:
 		velocity = Vector2(6.0 * from_dir, -10.0)
@@ -455,7 +508,8 @@ var debug_draw_boxes := false   # F2로 판정 박스 보기
 
 func _draw() -> void:
 	var size := body_size()
-	var rect := Rect2(-size.x / 2, -size.y, size.x, size.y)
+	var shake_x := (4.0 if hit_shake % 2 == 0 else -4.0) if hit_shake > 0 else 0.0
+	var rect := Rect2(-size.x / 2 + shake_x, -size.y, size.x, size.y)
 	var body_color := color
 	match state:
 		State.HITSTUN, State.KO:
@@ -464,6 +518,11 @@ func _draw() -> void:
 			body_color = color.darkened(0.4)
 	draw_rect(rect, body_color)
 	draw_rect(rect, Color.WHITE, false, 3.0)
+	# 로만 캔슬: 퍼져 나가는 원
+	if rc_flash > 0:
+		var t := 1.0 - rc_flash / 20.0
+		draw_arc(Vector2(0, -size.y / 2), 40 + t * 160, 0, TAU, 48,
+				Color(1, 0.2, 0.3, 1.0 - t), 6.0)
 	# 바라보는 방향 표시 (눈)
 	draw_circle(Vector2(facing * size.x * 0.25, -size.y + 25), 7, Color.WHITE)
 	# 공격 중이면 히트박스 위치에 팔 모양을 그린다 (발생 중엔 흐리게, 지속 중엔 진하게)
