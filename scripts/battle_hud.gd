@@ -14,7 +14,8 @@ var _use_images := false
 
 
 func _ready() -> void:
-	for n in ["hud_hp_frame", "hud_hp_fill", "hud_timer", "hud_tension_frame", "hud_tension_fill"]:
+	for n in ["hud_hp_frame", "hud_hp_fill", "hud_timer",
+			"hud_tension_p1_empty", "hud_tension_p1_full", "hud_tension_p2_empty", "hud_tension_p2_full"]:
 		_tex[n] = Game.load_texture("res://assets/ui/%s.png" % n)
 	_use_images = not _tex.values().has(null)
 
@@ -67,8 +68,11 @@ const IMG_TIMER_W := 150.0
 const IMG_TIMER_CENTER := Vector2(640, 52)
 const IMG_TEN_FRAME_W := 360.0
 const IMG_TEN_BOTTOM := 712.0
-const IMG_TEN_BAR_SLOT := Rect2(0.333, 0.43, 0.56, 0.30)
-const IMG_TEN_FILL_SRC := Rect2(0.08, 0.28, 0.85, 0.48)
+## 텐션바는 1P/2P 그림이 따로 있다 (빈 것 + 꽉 찬 것). 꽉 찬 그림의 채움 자리를 비율만큼 잘라 빈 그림 위에 덮는다
+const IMG_TEN_SLOT := {
+	1: Rect2(0.3237, 0.4408, 0.5779, 0.2796),
+	2: Rect2(0.105, 0.3824, 0.629, 0.2821),
+}
 const TRAIL_TINT := Color(1.0, 0.2, 0.15)
 
 
@@ -111,21 +115,23 @@ func _draw_hud_images() -> void:
 	var col := Style.RED if not m.is_training() and secs <= 10 else Style.WHITE
 	Style.text(self, time_text, IMG_TIMER_CENTER + Vector2(-50, 17), 46, col, HORIZONTAL_ALIGNMENT_CENTER, 100, 7)
 
-	# 텐션 (TENSION 글자가 있어서 2P도 뒤집지 않음. 대신 2P는 오른쪽부터 채움)
-	var ten_frame: Texture2D = _tex["hud_tension_frame"]
-	var ten_h := IMG_TEN_FRAME_W * ten_frame.get_height() / ten_frame.get_width()
+	# 텐션: 1P는 왼쪽(TENSION 글자 쪽)부터, 2P는 오른쪽(글자 쪽)부터 채움
 	for f: Fighter in [m.p1, m.p2]:
 		var right := f.player == 2
+		var empty: Texture2D = _tex["hud_tension_p%d_empty" % f.player]
+		var full: Texture2D = _tex["hud_tension_p%d_full" % f.player]
+		var ten_h := IMG_TEN_FRAME_W * empty.get_height() / empty.get_width()
 		var tframe := Rect2(10.0 if not right else 1270.0 - IMG_TEN_FRAME_W, IMG_TEN_BOTTOM - ten_h, IMG_TEN_FRAME_W, ten_h)
-		draw_texture_rect(ten_frame, tframe, false)
-		var tslot := _sub(tframe, IMG_TEN_BAR_SLOT)
+		draw_texture_rect(empty, tframe, false)
+		var slot_n: Rect2 = IMG_TEN_SLOT[f.player]
+		var tslot := _sub(tframe, slot_n)
 		var rc_ready := f.tension >= Fighter.RC_COST
-		var tint := Color(0.6, 0.6, 0.6)
+		var tint := Color(0.65, 0.65, 0.65)
 		if rc_ready:
 			tint = Color.WHITE.lerp(Color(1.5, 1.4, 1.2), 0.5 + 0.5 * sin(Time.get_ticks_msec() / 120.0))  # 50% 넘으면 반짝
-		_fill_part(_tex["hud_tension_fill"], IMG_TEN_FILL_SRC, tslot, f.tension / Fighter.MAX_TENSION, right, tint)
+		_fill_part(full, slot_n, tslot, f.tension / Fighter.MAX_TENSION, right, tint)
 		var mid := tslot.get_center().x
-		draw_line(Vector2(mid, tslot.position.y), Vector2(mid, tslot.end.y), Color(1, 1, 1, 0.7), 2.0)
+		draw_line(Vector2(mid, tslot.position.y + 2), Vector2(mid, tslot.end.y - 2), Color(1, 1, 1, 0.6), 2.0)
 		var num_x := tframe.end.x + 4 if not right else tframe.position.x - 84
 		Style.text(self, "%d%%" % int(f.tension), Vector2(num_x, tframe.end.y - 14), 26,
 				Style.GOLD if rc_ready else Style.GRAY, HORIZONTAL_ALIGNMENT_CENTER, 80, 5)
