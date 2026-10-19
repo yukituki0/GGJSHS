@@ -7,7 +7,7 @@ extends Screen
 
 const LOGO_W := 560.0            # 로고 폭 (화면 좌표 1280 기준)
 const LOGO_CENTER := Vector2(640, 150)   # 메뉴 일러스트의 하늘 쪽 (캐릭터 얼굴을 가리지 않게)
-const SUBTITLE_Y := 326.0
+const SUBTITLE_Y := 572.0          # PRESS START 바로 위 (가운데 해와 에너지가 만나는 곳을 가리지 않게)
 const START_Y := 640.0
 
 var _quit_confirm := false
@@ -50,7 +50,7 @@ func _draw() -> void:
 	if frame >= 22 and frame < 30:
 		draw_rect(Rect2(0, 0, W, H), Color(1, 1, 1, (30 - frame) / 8.0 * 0.6))
 	if frame > 22:
-		Style.fill(self, Style.slant(W / 2 - 430, SUBTITLE_Y - 28, 860, 40, -16), Color(Style.BLACK, 0.75))
+		Style.fill(self, Style.slant(W / 2 - 360, SUBTITLE_Y - 28, 720, 40, -16), Color(Style.BLACK, 0.75))
 		text(Game.t("subtitle"), SUBTITLE_Y, 22, Style.GOLD, W / 2, 4)
 		# 깜빡이는 PRESS START
 		if frame % 60 < 36:
