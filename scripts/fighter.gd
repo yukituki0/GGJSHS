@@ -49,6 +49,9 @@ const BUFFERED_ACTIONS: Array[String] = ["hs", "s", "k", "p", "dash", "up", "rc"
 
 var player := 1                 # 1P / 2P
 var color := Color.RED
+var display_name := ""
+var input_enabled := true       # 라운드 시작 전/끝난 뒤에는 Match가 입력을 막는다
+var can_die := true             # 트레이닝 모드에서는 false (체력이 1 밑으로 안 내려감)
 var opponent: Fighter
 var ground_y := 600.0           # 바닥 높이 (Match가 정해줌)
 
@@ -90,11 +93,25 @@ func tick() -> void:
 ## 캐릭터는 멈춰 있지만, 이때 누른 버튼은 버퍼에 기억해 둔다 (히트스톱 중 개틀링 입력 가능)
 func tick_frozen() -> void:
 	for action in BUFFERED_ACTIONS:
-		if Input.is_action_just_pressed(InputManager.action_name(player, action)):
+		if input_enabled and Input.is_action_just_pressed(InputManager.action_name(player, action)):
 			_buffer[action] = input_buffer_frames
 	if hit_shake > 0:
 		hit_shake -= 1
 	queue_redraw()
+
+
+## 새 라운드: 위치와 체력, 상태를 처음으로 (텐션은 유지)
+func reset_for_round(x: float) -> void:
+	position = Vector2(x, ground_y)
+	hp = max_hp
+	velocity = Vector2.ZERO
+	current_attack = null
+	stun_frames = 0
+	hit_shake = 0
+	rc_flash = 0
+	_buffer.clear()
+	_change_state(State.STAND)
+	_face_opponent()
 
 
 func add_tension(amount: float) -> void:
@@ -128,7 +145,7 @@ func _add(attack: AttackData) -> void:
 
 # ── 입력 헬퍼 ─────────────────────────────────────────────
 func _held(action: String) -> bool:
-	return Input.is_action_pressed(InputManager.action_name(player, action))
+	return input_enabled and Input.is_action_pressed(InputManager.action_name(player, action))
 
 
 ## "최근 몇 프레임 안에 눌렀나" (입력 버퍼). 실제로 행동에 썼으면 _consume()으로 지운다
@@ -144,7 +161,7 @@ func _consume(action: String) -> void:
 ## 후딜 중에 조금 일찍 눌러도, 움직일 수 있게 되는 순간 바로 나간다.
 func _update_buffer() -> void:
 	for action in BUFFERED_ACTIONS:
-		if Input.is_action_just_pressed(InputManager.action_name(player, action)):
+		if input_enabled and Input.is_action_just_pressed(InputManager.action_name(player, action)):
 			_buffer[action] = input_buffer_frames
 		elif _buffer.get(action, 0) > 0:
 			_buffer[action] -= 1
@@ -486,7 +503,7 @@ func receive_attack(attack: AttackData, from_dir: int) -> bool:
 		_change_state(State.BLOCKSTUN)
 		return true
 
-	hp = maxi(hp - attack.damage, 0)
+	hp = maxi(hp - attack.damage, 0 if can_die else 1)
 	hit_shake = attack.hitstop
 	current_attack = null
 	if hp == 0:
@@ -532,13 +549,17 @@ func _draw() -> void:
 			box.position.x = -box.position.x - box.size.x
 		var alpha := 1.0 if current_attack.is_active(state_frame) else 0.3
 		draw_rect(box, Color(1, 1, 1, alpha))
-	# 디버그
-	var label: String = State.keys()[state]
-	if current_attack != null:
-		label += " " + current_attack.name
-	draw_string(ThemeDB.fallback_font, Vector2(-size.x / 2, -size.y - 10),
-			label, HORIZONTAL_ALIGNMENT_LEFT, -1, 18)
+	# 머리 위 1P / 2P 표시
+	var tag_color := Color(1, 0.35, 0.35) if player == 1 else Color(0.35, 0.6, 1)
+	draw_string(ThemeDB.fallback_font, Vector2(-40, -size.y - 12), "%dP" % player,
+			HORIZONTAL_ALIGNMENT_CENTER, 80, 22, tag_color)
 	if debug_draw_boxes:
+		# 디버그: 현재 상태 이름
+		var label: String = State.keys()[state]
+		if current_attack != null:
+			label += " " + current_attack.name
+		draw_string(ThemeDB.fallback_font, Vector2(-size.x / 2, -size.y - 38),
+				label, HORIZONTAL_ALIGNMENT_LEFT, -1, 16)
 		draw_rect(rect, Color.GREEN, false, 2.0)
 		var hit := hitbox_rect()
 		if hit.has_area():
