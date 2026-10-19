@@ -17,14 +17,32 @@ const SETTINGS_PATH := "user://settings.cfg"
 
 ## 캐릭터 목록. 새 캐릭터는 여기에 한 줄 추가 + scripts/characters/에 파일 추가
 ## club: [영어, 한국어]
+## 일러스트: assets/characters/<id>.png 가 있으면 캐릭터 선택/VS 화면에 쓴다 (없으면 색 네모)
 const CHARACTERS: Array[Dictionary] = [
 	{
-		"name": "CHEMIKID", "club": ["CHEMISTRY CLUB  Chemikid", "화학 동아리  Chemikid"],
+		"id": "chemikid", "name": "CHEMIKID", "club": ["CHEMISTRY CLUB  Chemikid", "화학 동아리  Chemikid"],
 		"color": Color(0.30, 0.85, 0.45), "script": "res://scripts/characters/chemikid.gd",
 	},
 	{
-		"name": "COMMON", "club": ["COMPUTER CLUB  COMMON", "정보 동아리  COMMON"],
+		"id": "common", "name": "COMMON", "club": ["COMPUTER CLUB  COMMON", "정보 동아리  COMMON"],
 		"color": Color(0.30, 0.65, 1.00), "script": "res://scripts/characters/common.gd",
+	},
+]
+
+## 스테이지 목록. 배경 그림: assets/stages/<id>.png (1920x1080 권장, 없으면 코드로 그린 임시 배경)
+## sky: 임시 배경의 [위, 아래] 색
+const STAGES: Array[Dictionary] = [
+	{
+		"id": "lab", "name": ["CHEMISTRY LAB", "화학 실험실"],
+		"sky": [Color("1d2b2a"), Color("0d1414")], "floor": Color("2b2f2e"),
+	},
+	{
+		"id": "computer", "name": ["COMPUTER ROOM", "컴퓨터실"],
+		"sky": [Color("101a33"), Color("070b16")], "floor": Color("1e2433"),
+	},
+	{
+		"id": "rooftop", "name": ["ROOFTOP - JEJU SEA", "옥상 - 제주 바다"],
+		"sky": [Color("f08a4b"), Color("6a2c5a")], "floor": Color("3a3440"),
 	},
 ]
 
@@ -90,6 +108,7 @@ const SCENES := {
 var mode: Mode = Mode.VERSUS
 var language: Language = Language.EN
 var selected := { 1: 0, 2: 1 }  # 플레이어 -> CHARACTERS 인덱스
+var stage := 0                  # STAGES 인덱스
 
 
 func _ready() -> void:
@@ -144,6 +163,19 @@ func character(player: int) -> Dictionary:
 
 func club_name(info: Dictionary) -> String:
 	return info["club"][language]
+
+
+func stage_info() -> Dictionary:
+	return STAGES[stage]
+
+
+## 그림 파일이 있으면 불러오고, 없으면 null (그림이 아직 없어도 게임이 돌아가게)
+func load_texture(path: String) -> Texture2D:
+	return load(path) if ResourceLoader.exists(path) else null
+
+
+func character_art(info: Dictionary) -> Texture2D:
+	return load_texture("res://assets/characters/%s.png" % info["id"])
 
 
 # ── 메뉴 입력 ─────────────────────────────────────────────

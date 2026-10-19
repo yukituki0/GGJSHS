@@ -38,9 +38,8 @@ func _process(delta: float) -> void:
 
 func _draw() -> void:
 	background()
-	text(Game.t("select_mode"), 130, 56)
-	draw_rect(Rect2(W / 2 - 200, 150, 400, 4), ACCENT)
-	menu_list(_items(), cursor, 260)
+	header(Game.t("select_mode"))
+	menu_list(_items(), cursor, 220)
 	var help := [
 		Game.t("help_versus") % Game.ROUNDS_TO_WIN,
 		Game.t("help_training"),
@@ -48,5 +47,6 @@ func _draw() -> void:
 		Game.t("help_input"),
 		Game.t("help_language"),
 	]
-	text(help[cursor], 590, 22, Color(1, 1, 1, 0.7))
-	text(Game.t("menu_hint"), 680, 18, Color(1, 1, 1, 0.4))
+	Style.fill(self, Style.slant(W / 2 - 400, 556, 800, 46, 14), Color(Style.BLACK, 0.8))
+	text(help[cursor], 588, 22, Style.GOLD, W / 2, 0)
+	text(Game.t("menu_hint"), 690, 18, Style.GRAY, W / 2, 0)

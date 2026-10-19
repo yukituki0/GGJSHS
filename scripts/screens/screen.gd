@@ -1,12 +1,11 @@
 class_name Screen
 extends Node2D
-## 메뉴 화면 공통: 매 프레임 다시 그리기 + 글자/배경 그리기 도우미
-## 그래픽은 아직 전부 코드로 그린다 (나중에 이미지로 교체 예정)
+## 메뉴 화면 공통: 매 프레임 다시 그리기 + 글자/배경/메뉴 그리기 도우미
+## 색과 모양은 Style(길티기어 느낌)을 따른다
 
 const W := 1280.0
 const H := 720.0
-const BG := Color(0.07, 0.07, 0.11)
-const ACCENT := Color(1.0, 0.25, 0.35)
+const ACCENT := Style.RED
 
 var frame := 0  # 화면이 열린 뒤 지난 프레임 (깜빡임, 등장 연출용)
 
@@ -16,30 +15,40 @@ func _process(_delta: float) -> void:
 	queue_redraw()
 
 
-## 가운데 정렬 글자. x를 안 주면 화면 한가운데
-func text(s: String, y: float, size: int, color := Color.WHITE, x := W / 2) -> void:
-	draw_string(Game.FONT, Vector2(x - W, y), s,
-			HORIZONTAL_ALIGNMENT_CENTER, W * 2, size, color)
+## 가운데 정렬 글자 (검은 외곽선). x를 안 주면 화면 한가운데
+func text(s: String, y: float, size: int, color := Style.WHITE, x := W / 2, outline := 6) -> void:
+	Style.text(self, s, Vector2(x - W, y), size, color, HORIZONTAL_ALIGNMENT_CENTER, W * 2, outline)
 
 
-## 배경: 어두운 바탕 + 비스듬한 줄무늬 (길티기어 메뉴 느낌)
+## 배경: 검은 바탕 + 흘러가는 붉은 사선 + 아래쪽 붉은 빛
 func background() -> void:
-	draw_rect(Rect2(0, 0, W, H), BG)
-	var offset := fmod(frame * 0.6, 80.0)
-	for i in range(-12, 24):
-		var x := i * 80.0 + offset
-		draw_line(Vector2(x, 0), Vector2(x - 300, H), Color(1, 1, 1, 0.03), 18.0)
+	draw_rect(Rect2(0, 0, W, H), Style.BLACK)
+	var offset := fmod(frame * 0.8, 120.0)
+	for i in range(-10, 16):
+		var x := i * 120.0 + offset
+		Style.fill(self, Style.slant(x, 0, 26, H, -260), Color(Style.RED, 0.06))
+	draw_polygon(PackedVector2Array([Vector2(0, H * 0.55), Vector2(W, H * 0.55), Vector2(W, H), Vector2(0, H)]),
+			PackedColorArray([Color(Style.RED, 0), Color(Style.RED, 0), Color(Style.RED, 0.22), Color(Style.RED, 0.22)]))
 
 
-## 세로 메뉴. 고른 항목은 강조색 + 화살표
-func menu_list(items: Array, cursor: int, top: float, gap := 56.0, size := 34) -> void:
+## 화면 제목: 비스듬한 빨간 띠 위에 큰 글자
+func header(s: String, y := 70.0) -> void:
+	Style.fill(self, Style.slant(-20, y - 52, 620, 70, 24), Style.RED)
+	Style.fill(self, Style.slant(-20, y + 22, 600, 6, 24), Style.WHITE)
+	Style.text(self, s, Vector2(50, y), 46, Style.WHITE, HORIZONTAL_ALIGNMENT_LEFT, -1, 8)
+
+
+## 세로 메뉴: 비스듬한 판. 고른 항목은 빨간 판 + 흰 테두리 + 살짝 오른쪽으로
+func menu_list(items: Array, cursor: int, top: float, gap := 64.0, size := 30) -> void:
 	for i in items.size():
 		var y := top + i * gap
-		if i == cursor:
-			draw_rect(Rect2(W / 2 - 230, y - size - 2, 460, size + 18), Color(ACCENT, 0.25))
-			text("> " + items[i] + " <", y, size, ACCENT)
-		else:
-			text(items[i], y, size, Color(0.8, 0.8, 0.85))
+		var selected := i == cursor
+		var x := W / 2 - 240 + (16.0 if selected else 0.0)
+		Style.fill(self, Style.slant(x, y - size - 6, 480, size + 22, 16), Style.RED if selected else Style.PANEL)
+		if selected:
+			Style.outline(self, Style.slant(x, y - size - 6, 480, size + 22, 16), Style.WHITE, 3.0)
+		Style.text(self, items[i], Vector2(x, y), size, Style.WHITE if selected else Style.GRAY,
+				HORIZONTAL_ALIGNMENT_CENTER, 496, 4)
 
 
 ## 위/아래로 커서 이동 (끝에서 반대쪽으로 넘어감)

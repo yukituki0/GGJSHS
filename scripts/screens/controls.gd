@@ -39,18 +39,19 @@ func _input_name(player: int, action: String) -> String:
 func _draw() -> void:
 	background()
 	var mode_name := Game.t("keyboard" if InputManager.mode == InputManager.Mode.KEYBOARD else "joystick")
-	text("%s  -  %s" % [Game.t("controls"), mode_name], 90, 44)
-	text("1P", 150, 30, Color(1, 0.5, 0.5), 700)
-	text("2P", 150, 30, Color(0.5, 0.7, 1), 980)
+	header("%s  -  %s" % [Game.t("controls"), mode_name])
+	text("1P", 150, 30, Color(1, 0.45, 0.45), 700)
+	text("2P", 150, 30, Color(0.45, 0.7, 1), 980)
 	for i in ROWS.size():
 		var y := 205 + i * 44
 		var label := Game.t(ROWS[i][0])
 		var actions: Array = ROWS[i][1]
-		draw_string(Game.FONT, Vector2(200, y), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 24)
+		Style.fill(self, Style.slant(180, y - 30, 920, 38, 10), Color(Style.PANEL, 0.85 if i % 2 == 0 else 0.5))
+		Style.text(self, label, Vector2(200, y), 24, Style.WHITE)
 		for p in [1, 2]:
 			var names: Array[String] = []
 			for a in actions:
 				names.append(_input_name(p, a))
-			text(" ".join(names), y, 24, Color.YELLOW, 700 if p == 1 else 980)
-	text(Game.t("combo_hint"), 650, 20, Color(1, 1, 1, 0.7))
-	text(Game.t("back_hint"), 690, 18, Color(1, 1, 1, 0.4))
+			text(" ".join(names), y, 24, Style.GOLD, 700 if p == 1 else 980, 0)
+	text(Game.t("combo_hint"), 660, 20, Style.WHITE, W / 2, 4)
+	text(Game.t("back_hint"), 700, 18, Style.GRAY, W / 2, 0)

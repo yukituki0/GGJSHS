@@ -50,47 +50,73 @@ func _card_rect(index: int) -> Rect2:
 
 func _draw() -> void:
 	background()
+	header(Game.t("char_select"))
 	var title := Game.t("versus" if Game.mode == Game.Mode.VERSUS else "training")
-	text(Game.t("char_select"), 70, 48)
-	text(title, 108, 22, ACCENT)
+	Style.text(self, title, Vector2(56, 118), 22, Style.GOLD, HORIZONTAL_ALIGNMENT_LEFT, -1, 4)
 
 	# 양쪽 큰 미리보기
-	_draw_preview(1, Rect2(40, 140, 360, 520))
-	_draw_preview(2, Rect2(W - 400, 140, 360, 520))
+	_draw_preview(1, Rect2(40, 140, 380, 520))
+	_draw_preview(2, Rect2(W - 420, 140, 380, 520))
 
 	# 가운데 캐릭터 카드
 	for i in Game.CHARACTERS.size():
 		var c: Dictionary = Game.CHARACTERS[i]
 		var rect := _card_rect(i)
-		draw_rect(rect, Color(0.15, 0.15, 0.2))
-		draw_rect(Rect2(rect.position + Vector2(45, 40), Vector2(80, 120)), c["color"])
-		text(c["name"], rect.end.y - 18, 22, Color.WHITE, rect.get_center().x)
-		draw_rect(rect, Color(1, 1, 1, 0.3), false, 2.0)
+		Style.fill(self, Style.slant(rect.position.x, rect.position.y, rect.size.x, rect.size.y, 12), Style.PANEL)
+		var art := Game.character_art(c)
+		if art != null:
+			_draw_art(art, Rect2(rect.position + Vector2(10, 8), rect.size - Vector2(20, 50)), false)
+		else:
+			draw_rect(Rect2(rect.position + Vector2(45, 40), Vector2(80, 120)), c["color"])
+		Style.fill(self, Style.slant(rect.position.x, rect.end.y - 42, rect.size.x, 42, 6), Style.BLACK)
+		text(c["name"], rect.end.y - 13, 22, Style.WHITE, rect.get_center().x, 0)
 	# 커서 (1P 빨강 / 2P 파랑, 같은 칸이면 겹쳐서 보이게 크기 다르게)
 	for p in [1, 2]:
 		var rect := _card_rect(cursor[p]).grow(6 if p == 1 else 12)
-		var col := Color(1, 0.3, 0.3) if p == 1 else Color(0.3, 0.6, 1)
-		draw_rect(rect, col, false, 4.0)
-		var label_x := rect.position.x + 14 if p == 1 else rect.end.x - 14
-		text("%dP" % p, rect.position.y - 8, 20, col, label_x)
+		var col := _player_color(p)
+		Style.outline(self, Style.slant(rect.position.x, rect.position.y, rect.size.x, rect.size.y, 12), col, 4.0)
+		var label_x := rect.position.x + 24 if p == 1 else rect.end.x - 10
+		text("%dP" % p, rect.position.y - 8, 22, col, label_x, 4)
 
 	if locked[1] and locked[2]:
-		text(Game.t("ready"), 690, 32, Color.YELLOW)
+		Style.banner(self, Game.t("ready"), Style.GOLD, _done_frames / 10.0)
 	else:
-		text(Game.t("select_hint"), 690, 18, Color(1, 1, 1, 0.5))
+		text(Game.t("select_hint"), 700, 18, Style.GRAY, W / 2, 0)
+
+
+func _player_color(p: int) -> Color:
+	return Color(1, 0.35, 0.35) if p == 1 else Color(0.35, 0.65, 1)
+
+
+## 그림을 rect 안에 비율 유지해서 맞춰 그린다 (flip이면 좌우 반전)
+func _draw_art(art: Texture2D, rect: Rect2, flip: bool) -> void:
+	var s := minf(rect.size.x / art.get_width(), rect.size.y / art.get_height())
+	var size := Vector2(art.get_width(), art.get_height()) * s
+	var pos := Vector2(rect.get_center().x - size.x / 2, rect.end.y - size.y)
+	if flip:
+		draw_texture_rect(art, Rect2(pos + Vector2(size.x, 0), Vector2(-size.x, size.y)), false)
+	else:
+		draw_texture_rect(art, Rect2(pos, size), false)
 
 
 func _draw_preview(p: int, rect: Rect2) -> void:
 	var c: Dictionary = Game.CHARACTERS[cursor[p]]
-	var col := Color(1, 0.3, 0.3) if p == 1 else Color(0.3, 0.6, 1)
-	draw_rect(rect, Color(0.1, 0.1, 0.15))
-	# 임시 캐릭터 그림 (나중에 이미지로 교체)
-	var body := Rect2(rect.get_center() - Vector2(70, 150), Vector2(140, 260))
-	draw_rect(body, c["color"])
-	draw_rect(body, Color.WHITE, false, 3.0)
-	text("%dP" % p, rect.position.y + 40, 30, col, rect.get_center().x)
-	text(c["name"], rect.end.y - 60, 40, Color.WHITE, rect.get_center().x)
-	text(Game.club_name(c), rect.end.y - 28, 18, Color(1, 1, 1, 0.7), rect.get_center().x)
-	draw_rect(rect, col if locked[p] else Color(1, 1, 1, 0.2), false, 4.0 if locked[p] else 2.0)
+	var col := _player_color(p)
+	var skew := 20.0 if p == 1 else -20.0
+	var panel := Style.slant(rect.position.x, rect.position.y, rect.size.x, rect.size.y, skew)
+	Style.fill(self, panel, Color(c["color"].darkened(0.7), 0.9))
+	var art := Game.character_art(c)
+	if art != null:
+		_draw_art(art, rect.grow(-10), p == 2)  # 2P는 좌우 반전 (서로 마주 보게)
+	else:
+		var body := Rect2(rect.get_center() - Vector2(70, 150), Vector2(140, 260))
+		draw_rect(body, c["color"])
+		draw_rect(body, Style.WHITE, false, 3.0)
+	text("%dP" % p, rect.position.y + 40, 30, col, rect.get_center().x, 6)
+	Style.fill(self, Style.slant(rect.position.x, rect.end.y - 100, rect.size.x, 100, skew * 0.2), Color(Style.BLACK, 0.8))
+	text(c["name"], rect.end.y - 46, 44, Style.WHITE, rect.get_center().x, 8)
+	text(Game.club_name(c), rect.end.y - 16, 18, Style.GOLD, rect.get_center().x, 0)
+	Style.outline(self, panel, col if locked[p] else Color(1, 1, 1, 0.2), 5.0 if locked[p] else 2.0)
 	if locked[p]:
-		text(Game.t("ok"), rect.position.y + 90, 36, Color.YELLOW, rect.get_center().x)
+		Style.fill(self, Style.slant(rect.position.x + 60, rect.position.y + 64, rect.size.x - 120, 50, 10), Style.RED)
+		text(Game.t("ok"), rect.position.y + 101, 34, Style.WHITE, rect.get_center().x + 5, 4)

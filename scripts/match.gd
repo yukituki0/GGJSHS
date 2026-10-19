@@ -1,3 +1,4 @@
+class_name Match
 extends Node2D
 ## 대전 화면: 캐릭터 2명, 라운드 진행, 판정, 화면 연출, HUD
 ##
@@ -30,14 +31,18 @@ var menu_cursor := 0
 
 var _hitstop := 0               # 남은 히트스톱 프레임 (0보다 크면 둘 다 멈춤)
 var _shake := 0                 # 남은 화면 흔들림 프레임
-var _sparks: Array = []         # [위치, 남은 프레임, 막혔나] 타격 이펙트
+var sparks: Array = []          # [위치, 남은 프레임, 막혔나] 타격 이펙트 (HUD가 그림)
 var _camera: Camera2D
 var _training_idle := { 1: 0, 2: 0 }  # 트레이닝: 안 맞고 지난 프레임 (체력 회복용)
+var _stage_texture: Texture2D
 
 @onready var _input_debug: Node2D = $InputDebug
 
 
 func _ready() -> void:
+	if not is_training():
+		Game.stage = randi() % Game.STAGES.size()  # 대전은 스테이지 랜덤
+	_stage_texture = Game.load_texture("res://assets/stages/%s.png" % Game.stage_info()["id"])
 	p1 = _spawn(1)
 	p2 = _spawn(2)
 	p1.opponent = p2
@@ -135,7 +140,7 @@ func _start_round() -> void:
 	p2.reset_for_round(START_X[2])
 	timer_frames = Game.ROUND_SECONDS * 60
 	round_result = ""
-	_sparks.clear()
+	sparks.clear()
 	_hitstop = 0
 
 
@@ -262,7 +267,7 @@ func _resolve_hits() -> void:
 		var blocked := defender.receive_attack(attack, attacker.facing)
 		attacker.on_attack_connected(blocked)
 		_hitstop = maxi(_hitstop, attack.hitstop)
-		_sparks.append([contact, 10, blocked])
+		sparks.append([contact, 10, blocked])
 		if not blocked:
 			_shake = maxi(_shake, attack.hitstop)
 		# 상대가 벽에 붙어 있어서 못 밀려나면, 대신 때린 쪽이 뒤로 밀려난다
@@ -301,9 +306,9 @@ func _clamp_to_walls(f: Fighter) -> void:
 
 
 func _update_effects() -> void:
-	for spark in _sparks:
+	for spark in sparks:
 		spark[1] -= 1
-	_sparks = _sparks.filter(func(spark): return spark[1] > 0)
+	sparks = sparks.filter(func(spark): return spark[1] > 0)
 	if _shake > 0:
 		_shake -= 1
 		_camera.offset = Vector2(randf_range(-6, 6), randf_range(-6, 6))
@@ -312,141 +317,20 @@ func _update_effects() -> void:
 
 
 # ── 그리기 ───────────────────────────────────────────────
+## 배경 (Match가 먼저 그리고, 캐릭터와 HUD는 그 위에 그려진다)
+## HUD와 연출 글자는 battle_hud.gd가 그린다
 func _draw() -> void:
-	# 배경과 바닥 (Match가 먼저 그리고, 캐릭터는 그 위에 그려진다)
-	draw_rect(Rect2(0, 0, 1280, 720), Color(0.12, 0.12, 0.16))
-	draw_rect(Rect2(0, GROUND_Y, 1280, 720 - GROUND_Y), Color(0.25, 0.25, 0.3))
-	draw_line(Vector2(0, GROUND_Y), Vector2(1280, GROUND_Y), Color.WHITE, 2.0)
-
-
-## HUD와 연출 글자는 캐릭터보다 위에 그려야 해서 별도 노드(Overlay)가 이 함수를 부른다
-func draw_overlay(c: CanvasItem) -> void:
-	_draw_sparks(c)
-	_draw_hud(c)
-	match phase:
-		Phase.VS_INTRO:
-			_draw_vs(c)
-		Phase.ROUND_INTRO:
-			if phase_frame < 60:
-				var label := "FINAL ROUND" if wins[1] == Game.ROUNDS_TO_WIN - 1 and wins[2] == Game.ROUNDS_TO_WIN - 1 \
-						else "ROUND %d" % round_number
-				_big_text(c, label, Color.WHITE)
-			else:
-				_big_text(c, "FIGHT!", Color(1, 0.3, 0.3))
-		Phase.ROUND_END:
-			_big_text(c, round_result, Color.YELLOW)
-		Phase.RESULT:
-			_draw_result(c)
-	if paused:
-		_draw_menu(c, Game.t("pause"), PAUSE_ITEMS)
-
-
-func _draw_sparks(c: CanvasItem) -> void:
-	# 타격 이펙트: 맞으면 노란 별, 막히면 파란 원
-	for spark in _sparks:
-		var pos: Vector2 = spark[0]
-		var t: float = spark[1] / 10.0
-		if spark[2]:
-			c.draw_arc(pos, 30 * (1.5 - t), 0, TAU, 24, Color(0.5, 0.8, 1.0, t), 5.0)
-		else:
-			for i in 8:
-				var dir := Vector2.RIGHT.rotated(i * TAU / 8)
-				c.draw_line(pos + dir * 10, pos + dir * (20 + 40 * (1.0 - t)), Color(1, 0.9, 0.3, t), 5.0)
-
-
-func _draw_hud(c: CanvasItem) -> void:
-	var font := Game.FONT
-	# 체력바 (가운데 쪽부터 줄어든다)
-	_draw_hp_bar(c, Rect2(30, 30, 530, 32), p1, false)
-	_draw_hp_bar(c, Rect2(720, 30, 530, 32), p2, true)
-	c.draw_string(font, Vector2(34, 88), p1.display_name, HORIZONTAL_ALIGNMENT_LEFT, -1, 24)
-	c.draw_string(font, Vector2(720, 88), p2.display_name, HORIZONTAL_ALIGNMENT_RIGHT, 526, 24)
-	# 타이머
-	c.draw_rect(Rect2(580, 20, 120, 70), Color(0, 0, 0, 0.6))
-	var time_text := "--" if is_training() else str(ceili(maxi(timer_frames, 0) / 60.0))
-	c.draw_string(font, Vector2(580, 75), time_text, HORIZONTAL_ALIGNMENT_CENTER, 120, 52, Color.WHITE)
-	# 이긴 라운드 수 (● = 이김)
-	if not is_training():
-		for i in Game.ROUNDS_TO_WIN:
-			_draw_round_pip(c, Vector2(545 - i * 26, 78), wins[1] > i)
-			_draw_round_pip(c, Vector2(735 + i * 26, 78), wins[2] > i)
-	else:
-		c.draw_string(font, Vector2(0, 112), Game.t("training"), HORIZONTAL_ALIGNMENT_CENTER, 1280, 20, Color(1, 1, 1, 0.6))
-	# 텐션 게이지 (아래쪽)
-	_draw_tension_bar(c, Rect2(30, 672, 320, 16), p1, false)
-	_draw_tension_bar(c, Rect2(930, 672, 320, 16), p2, true)
-
-
-func _draw_round_pip(c: CanvasItem, pos: Vector2, won: bool) -> void:
-	c.draw_circle(pos, 9, Color.YELLOW if won else Color(0.2, 0.2, 0.2))
-	c.draw_arc(pos, 9, 0, TAU, 16, Color.WHITE, 2.0)
-
-
-func _draw_hp_bar(c: CanvasItem, rect: Rect2, f: Fighter, from_right: bool) -> void:
-	c.draw_rect(rect, Color(0.3, 0.05, 0.05))
-	var ratio := float(f.hp) / f.max_hp
-	var filled := Rect2(rect.position, Vector2(rect.size.x * ratio, rect.size.y))
-	if from_right:
-		filled.position.x = rect.end.x - filled.size.x
-	var col := Color(1.0, 0.8, 0.1) if ratio > 0.25 else Color(1.0, 0.35, 0.2)  # 체력이 적으면 빨갛게
-	c.draw_rect(filled, col)
-	c.draw_rect(rect, Color.WHITE, false, 2.0)
-
-
-func _draw_tension_bar(c: CanvasItem, rect: Rect2, f: Fighter, from_right: bool) -> void:
-	c.draw_rect(rect, Color(0.1, 0.1, 0.2))
-	var ratio := f.tension / Fighter.MAX_TENSION
-	var filled := Rect2(rect.position, Vector2(rect.size.x * ratio, rect.size.y))
-	if from_right:
-		filled.position.x = rect.end.x - filled.size.x
-	# 로만 캔슬 가능(50% 이상)하면 밝은 색
-	var rc_ready := f.tension >= Fighter.RC_COST
-	c.draw_rect(filled, Color(0.3, 0.9, 1.0) if rc_ready else Color(0.2, 0.4, 0.7))
-	c.draw_line(Vector2(rect.get_center().x, rect.position.y), Vector2(rect.get_center().x, rect.end.y), Color.WHITE, 2.0)
-	c.draw_rect(rect, Color.WHITE, false, 2.0)
-	var align := HORIZONTAL_ALIGNMENT_RIGHT if from_right else HORIZONTAL_ALIGNMENT_LEFT
-	c.draw_string(Game.FONT, Vector2(rect.position.x, rect.position.y - 6),
-			"TENSION %d%%" % int(f.tension), align, rect.size.x, 14)
-
-
-func _big_text(c: CanvasItem, s: String, color: Color) -> void:
-	var font := Game.FONT
-	c.draw_rect(Rect2(0, 290, 1280, 120), Color(0, 0, 0, 0.45))
-	c.draw_string(font, Vector2(6, 386), s, HORIZONTAL_ALIGNMENT_CENTER, 1280, 96, Color(0, 0, 0, 0.6))
-	c.draw_string(font, Vector2(0, 380), s, HORIZONTAL_ALIGNMENT_CENTER, 1280, 96, color)
-
-
-func _draw_vs(c: CanvasItem) -> void:
-	var font := Game.FONT
-	var t := minf(phase_frame / 20.0, 1.0)  # 0 → 1: 양쪽에서 미끄러져 들어옴
-	c.draw_rect(Rect2(0, 0, 1280, 720), Color(0, 0, 0, 0.85))
-	var slide := (1.0 - t) * 700
-	c.draw_rect(Rect2(-slide, 200, 640, 320), Color(p1.color, 0.85))
-	c.draw_rect(Rect2(640 + slide, 200, 640, 320), Color(p2.color, 0.85))
-	c.draw_string(font, Vector2(-slide, 390), p1.display_name, HORIZONTAL_ALIGNMENT_CENTER, 640, 64)
-	c.draw_string(font, Vector2(640 + slide, 390), p2.display_name, HORIZONTAL_ALIGNMENT_CENTER, 640, 64)
-	if t >= 1.0:
-		c.draw_string(font, Vector2(0, 400), "VS", HORIZONTAL_ALIGNMENT_CENTER, 1280, 120, Color.YELLOW)
-
-
-func _draw_result(c: CanvasItem) -> void:
-	var title: String
-	if wins[1] >= Game.ROUNDS_TO_WIN and wins[2] >= Game.ROUNDS_TO_WIN:
-		title = Game.t("draw_game")
-	elif wins[1] >= Game.ROUNDS_TO_WIN:
-		title = Game.t("wins") % [1, p1.display_name]
-	else:
-		title = Game.t("wins") % [2, p2.display_name]
-	_draw_menu(c, title, RESULT_ITEMS if phase_frame >= 60 else [])
-
-
-func _draw_menu(c: CanvasItem, title: String, items: Array) -> void:
-	var font := Game.FONT
-	c.draw_rect(Rect2(0, 0, 1280, 720), Color(0, 0, 0, 0.6))
-	c.draw_string(font, Vector2(0, 250), title, HORIZONTAL_ALIGNMENT_CENTER, 1280, 72, Color.YELLOW)
-	for i in items.size():
-		var y := 360 + i * 60
-		var selected := i == menu_cursor
-		var s: String = ("> %s <" if selected else "%s") % Game.t(items[i])
-		c.draw_string(font, Vector2(0, y), s, HORIZONTAL_ALIGNMENT_CENTER, 1280, 36,
-				Color(1, 0.3, 0.35) if selected else Color(0.85, 0.85, 0.9))
+	if _stage_texture != null:
+		draw_texture_rect(_stage_texture, Rect2(0, 0, 1280, 720), false)
+		return
+	# 임시 배경: 위아래 그라데이션 + 바닥
+	var info := Game.stage_info()
+	var top: Color = info["sky"][0]
+	var bottom: Color = info["sky"][1]
+	draw_polygon(PackedVector2Array([Vector2(0, 0), Vector2(1280, 0), Vector2(1280, GROUND_Y), Vector2(0, GROUND_Y)]),
+			PackedColorArray([top, top, bottom, bottom]))
+	draw_rect(Rect2(0, GROUND_Y, 1280, 720 - GROUND_Y), info["floor"])
+	draw_line(Vector2(0, GROUND_Y), Vector2(1280, GROUND_Y), Color(1, 1, 1, 0.5), 2.0)
+	var name_text: String = info["name"][Game.language]
+	Style.text(self, name_text, Vector2(0, GROUND_Y - 200), 64, Color(1, 1, 1, 0.06),
+			HORIZONTAL_ALIGNMENT_CENTER, 1280)
