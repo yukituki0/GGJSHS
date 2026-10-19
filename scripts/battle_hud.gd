@@ -75,80 +75,83 @@ const TRAIL_TINT := Color(1.0, 0.2, 0.15)
 func _draw_hud_images() -> void:
 	var hp_frame: Texture2D = _tex["hud_hp_frame"]
 	var frame_h := IMG_HP_FRAME_W * hp_frame.get_height() / hp_frame.get_width()
+	var frame := Rect2(0, IMG_HP_FRAME_Y, IMG_HP_FRAME_W, frame_h)  # 1P 기준
+	var slot := _sub(frame, IMG_HP_BAR_SLOT)
 	for f: Fighter in [m.p1, m.p2]:
-		var flip: bool = f.player == 2
-		var frame := Rect2(0.0 if not flip else 1280.0 - IMG_HP_FRAME_W, IMG_HP_FRAME_Y, IMG_HP_FRAME_W, frame_h)
-		var slot := _sub(frame, IMG_HP_BAR_SLOT, flip)
-		_draw_portrait_hex(f, _sub(frame, IMG_HP_PORTRAIT_SLOT, flip), flip)
+		# 2P는 화면 가운데(x=640)를 기준으로 거울처럼 뒤집어서 1P와 같은 좌표로 그린다
+		if f.player == 2:
+			draw_set_transform(Vector2(1280, 0), 0.0, Vector2(-1, 1))
+		_draw_portrait_hex(f, _sub(frame, IMG_HP_PORTRAIT_SLOT))
 		# 빨간 잔상 → 현재 체력 (초상화 쪽 기준으로 채움)
 		var ratio := float(f.hp) / f.max_hp
 		var tint := Color.WHITE
 		if ratio <= 0.25 and Time.get_ticks_msec() % 400 < 200:
 			tint = Color(1.4, 1.1, 1.1)  # 체력 적으면 깜빡임
-		_fill_part(_tex["hud_hp_fill"], IMG_HP_FILL_SRC, slot, _trail[f.player] / f.max_hp, flip, TRAIL_TINT)
-		_fill_part(_tex["hud_hp_fill"], IMG_HP_FILL_SRC, slot, ratio, flip, tint)
-		_tex_rect(hp_frame, frame, flip)
+		_fill_part(_tex["hud_hp_fill"], IMG_HP_FILL_SRC, slot, _trail[f.player] / f.max_hp, false, TRAIL_TINT)
+		_fill_part(_tex["hud_hp_fill"], IMG_HP_FILL_SRC, slot, ratio, false, tint)
+		draw_texture_rect(hp_frame, frame, false)
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+		# 여기부터 글자: 뒤집으면 안 되니까 변환 없이
+		if Game.character_art(Game.character(f.player)) == null:
+			var port := _sub(frame, IMG_HP_PORTRAIT_SLOT)
+			var port_x := port.position.x if f.player == 1 else 1280.0 - port.end.x
+			Style.text(self, f.display_name.substr(0, 1), Vector2(port_x, port.get_center().y + 20), 54,
+					Style.WHITE, HORIZONTAL_ALIGNMENT_CENTER, port.size.x, 8)
 		# 이름: 바 아래
-		Style.text(self, f.display_name, Vector2(slot.position.x + (0.0 if not flip else -10.0), slot.end.y + 26), 24,
-				Color("ff3b3b"), HORIZONTAL_ALIGNMENT_RIGHT if flip else HORIZONTAL_ALIGNMENT_LEFT, slot.size.x + 10, 7)
+		var name_x := slot.position.x if f.player == 1 else 1280.0 - slot.end.x - 10.0
+		Style.text(self, f.display_name, Vector2(name_x, slot.end.y + 26), 24, Color("ff3b3b"),
+				HORIZONTAL_ALIGNMENT_LEFT if f.player == 1 else HORIZONTAL_ALIGNMENT_RIGHT, slot.size.x + 10, 7)
 
 	# 타이머
 	var timer: Texture2D = _tex["hud_timer"]
 	var timer_size := Vector2(IMG_TIMER_W, IMG_TIMER_W * timer.get_height() / timer.get_width())
-	_tex_rect(timer, Rect2(IMG_TIMER_CENTER - timer_size / 2, timer_size), false)
+	draw_texture_rect(timer, Rect2(IMG_TIMER_CENTER - timer_size / 2, timer_size), false)
 	var secs := ceili(maxi(m.timer_frames, 0) / 60.0)
 	var time_text := "--" if m.is_training() else str(secs)
 	var col := Style.RED if not m.is_training() and secs <= 10 else Style.WHITE
 	Style.text(self, time_text, IMG_TIMER_CENTER + Vector2(-50, 17), 46, col, HORIZONTAL_ALIGNMENT_CENTER, 100, 7)
 
-	# 텐션
+	# 텐션 (TENSION 글자가 있어서 2P도 뒤집지 않음. 대신 2P는 오른쪽부터 채움)
 	var ten_frame: Texture2D = _tex["hud_tension_frame"]
 	var ten_h := IMG_TEN_FRAME_W * ten_frame.get_height() / ten_frame.get_width()
 	for f: Fighter in [m.p1, m.p2]:
-		var right: bool = f.player == 2
-		var frame := Rect2(10.0 if not right else 1270.0 - IMG_TEN_FRAME_W, IMG_TEN_BOTTOM - ten_h, IMG_TEN_FRAME_W, ten_h)
-		_tex_rect(ten_frame, frame, false)
-		var slot := _sub(frame, IMG_TEN_BAR_SLOT, false)
+		var right := f.player == 2
+		var tframe := Rect2(10.0 if not right else 1270.0 - IMG_TEN_FRAME_W, IMG_TEN_BOTTOM - ten_h, IMG_TEN_FRAME_W, ten_h)
+		draw_texture_rect(ten_frame, tframe, false)
+		var tslot := _sub(tframe, IMG_TEN_BAR_SLOT)
 		var rc_ready := f.tension >= Fighter.RC_COST
 		var tint := Color(0.6, 0.6, 0.6)
 		if rc_ready:
 			tint = Color.WHITE.lerp(Color(1.5, 1.4, 1.2), 0.5 + 0.5 * sin(Time.get_ticks_msec() / 120.0))  # 50% 넘으면 반짝
-		_fill_part(_tex["hud_tension_fill"], IMG_TEN_FILL_SRC, slot, f.tension / Fighter.MAX_TENSION, right, tint)
-		var mid := slot.get_center().x
-		draw_line(Vector2(mid, slot.position.y), Vector2(mid, slot.end.y), Color(1, 1, 1, 0.7), 2.0)
-		var num_x := frame.end.x + 4 if not right else frame.position.x - 84
-		Style.text(self, "%d%%" % int(f.tension), Vector2(num_x, frame.end.y - 14), 26,
+		_fill_part(_tex["hud_tension_fill"], IMG_TEN_FILL_SRC, tslot, f.tension / Fighter.MAX_TENSION, right, tint)
+		var mid := tslot.get_center().x
+		draw_line(Vector2(mid, tslot.position.y), Vector2(mid, tslot.end.y), Color(1, 1, 1, 0.7), 2.0)
+		var num_x := tframe.end.x + 4 if not right else tframe.position.x - 84
+		Style.text(self, "%d%%" % int(f.tension), Vector2(num_x, tframe.end.y - 14), 26,
 				Style.GOLD if rc_ready else Style.GRAY, HORIZONTAL_ALIGNMENT_CENTER, 80, 5)
 
 
-## 비율 영역 n을 rect 안의 실제 영역으로 (flip이면 좌우 반전된 위치)
-func _sub(r: Rect2, n: Rect2, flip := false) -> Rect2:
-	var nx := 1.0 - n.position.x - n.size.x if flip else n.position.x
-	return Rect2(r.position + Vector2(nx * r.size.x, n.position.y * r.size.y), n.size * r.size)
+## 비율 영역 n을 rect 안의 실제 영역으로
+func _sub(r: Rect2, n: Rect2) -> Rect2:
+	return Rect2(r.position + n.position * r.size, n.size * r.size)
 
 
-func _tex_rect(t: Texture2D, rect: Rect2, flip: bool, tint := Color.WHITE) -> void:
-	if flip:
-		rect = Rect2(rect.position + Vector2(rect.size.x, 0), Vector2(-rect.size.x, rect.size.y))
-	draw_texture_rect(t, rect, false, tint)
-
-
-## 채움 그림을 ratio만큼만 slot에 그린다 (flip이면 오른쪽 기준으로 채우고 좌우 반전)
-func _fill_part(t: Texture2D, src_n: Rect2, slot: Rect2, ratio: float, flip: bool, tint := Color.WHITE) -> void:
+## 채움 그림을 ratio만큼만 slot에 그린다 (from_right면 오른쪽부터 채움)
+func _fill_part(t: Texture2D, src_n: Rect2, slot: Rect2, ratio: float, from_right: bool, tint := Color.WHITE) -> void:
 	ratio = clampf(ratio, 0.0, 1.0)
 	if ratio <= 0.0:
 		return
 	var ts := t.get_size()
-	var src := Rect2(src_n.position * ts, Vector2(src_n.size.x * ts.x * ratio, src_n.size.y * ts.y))
+	var full_w := src_n.size.x * ts.x
+	var src_x := src_n.position.x * ts.x + (full_w * (1.0 - ratio) if from_right else 0.0)
+	var src := Rect2(src_x, src_n.position.y * ts.y, full_w * ratio, src_n.size.y * ts.y)
 	var w := slot.size.x * ratio
-	var dest := Rect2(slot.position + Vector2(slot.size.x - w if flip else 0.0, 0), Vector2(w, slot.size.y))
-	if flip:
-		dest = Rect2(dest.position + Vector2(dest.size.x, 0), Vector2(-dest.size.x, dest.size.y))
+	var dest := Rect2(slot.position.x + (slot.size.x - w if from_right else 0.0), slot.position.y, w, slot.size.y)
 	draw_texture_rect_region(t, dest, src, tint)
 
 
 ## 육각형 초상화 칸: 일러스트가 있으면 얼굴 부분, 없으면 캐릭터 색 + 이니셜
-func _draw_portrait_hex(f: Fighter, r: Rect2, flip: bool) -> void:
+func _draw_portrait_hex(f: Fighter, r: Rect2) -> void:
 	var c := r.get_center()
 	var hex := PackedVector2Array([
 		Vector2(r.position.x, c.y), Vector2(r.position.x + r.size.x * 0.27, r.position.y),
@@ -157,17 +160,13 @@ func _draw_portrait_hex(f: Fighter, r: Rect2, flip: bool) -> void:
 	])
 	var art := Game.character_art(Game.character(f.player))
 	if art == null:
-		Style.fill(self, hex, f.color.darkened(0.3))
-		Style.text(self, f.display_name.substr(0, 1), Vector2(r.position.x, c.y + 20), 54, Style.WHITE,
-				HORIZONTAL_ALIGNMENT_CENTER, r.size.x, 8)
+		Style.fill(self, hex, f.color.darkened(0.3))  # 이니셜 글자는 뒤집히면 안 돼서 _draw_hud_images()에서 따로
 		return
 	# 얼굴 부분을 육각형 모양으로 (텍스처 좌표 uv로 잘라서 붙이기)
 	var face := Rect2(FACE_CROP.x, FACE_CROP.y * 1.0, FACE_CROP.z, FACE_CROP.z * art.get_width() / art.get_height())
 	var uvs := PackedVector2Array()
 	for p in hex:
 		var t: Vector2 = (p - r.position) / r.size
-		if flip:
-			t.x = 1.0 - t.x
 		uvs.append(face.position + t * face.size)
 	draw_polygon(hex, PackedColorArray([Color.WHITE]), uvs, art)
 
