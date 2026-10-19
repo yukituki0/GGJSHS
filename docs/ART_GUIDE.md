@@ -20,8 +20,8 @@
 |---|---|---|---|
 | HUD | `assets/ui/hud_*.png` | 체력 틀/채움, 타이머, 텐션 1P/2P | ✅ 완료 |
 | 스테이지 (**실제 학교 사진**) | `assets/stages/` `lab` `computer` `rooftop` `playground` `hallway` `.png` | 5 | ⬜ 사진 찍기 |
-| 캐릭터 전신 (투명 배경) | `assets/characters/<id>.png` | 6 | ⬜ |
-| 타이틀 로고 | `assets/ui/logo.png` | 1 | ⬜ |
+| 캐릭터 전신 (투명 배경) | `assets/characters/<id>.png` | 6 (남3 여3) | ⬜ 아래 "캐릭터 6명" |
+| 타이틀 로고 | `assets/ui/logo.png` | 1 | ✅ 완료 |
 | 메뉴 배경 일러스트 | `assets/ui/key_art.png` | 1 | ⬜ |
 | 기술 이펙트 / 투사체 | 캐릭터 기술이 정해지면 목록 추가 | - | ⬜ 나중에 |
 
@@ -146,38 +146,76 @@ no text, no logo, no watermark.
 
 ---
 
-## 캐릭터 2명
+## 캐릭터 6명 (목업 첨부)
 
-캐릭터 공통 조건 (나중에 팔다리를 잘라서 움직이게 만들 것이라 중요):
+### 성비와 선정성 기준
+- **남 3 : 여 3**으로 고정한다 (선택형으로 하면 그림이 12장 + 컷아웃 작업도 2배라 축제 전에 어려움)
+  - 남: CHEMIKID, COMMON, ROOT2 / 여: GLOBE, CHAOS, SEED
+- 학교 축제용이니까 **모든 캐릭터에 아래 "안전 조건"을 꼭 붙인다.** 그래도 노출이 있거나 몸매를 강조한 그림이 나오면 버리고 다시 뽑는다.
+
+**안전 조건 (모든 캐릭터 프롬프트에 붙이기)**
+```
+Age-appropriate high school student, fully clothed in a modest school uniform or club outfit,
+long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands,
+non-sexualized, natural body proportions, confident heroic pose, wholesome.
+```
+
+### 공통 조건 (나중에 팔다리를 잘라서 움직이게 만들 것이라 중요)
 - **전신**, **오른쪽을 보는** 격투 자세 (3/4 측면)
 - **팔과 다리가 몸통에 겹치지 않게** 약간 벌린 자세
-- **투명 배경** (안 되면 완전히 흰 배경 또는 초록 배경 `#00FF00`)
+- **투명 배경** (안 되면 완전한 초록 배경 `#00FF00` → 내가 지워서 넣는다)
 
 ```
-Full-body character design for a 2D fighting game, standing in a fighting stance facing right
-(three-quarter side view), arms and legs slightly apart and not overlapping the torso,
-whole body visible from head to feet, transparent background, no text, no logo, no watermark.
+Same art style as the attached image. Full-body character design for a 2D fighting game,
+standing in a fighting stance facing right (three-quarter side view), arms and legs slightly apart
+and not overlapping the torso, whole body visible from head to feet, transparent background,
+no text, no logo, no watermark.
 [캐릭터 설명]
+[안전 조건]
 [공통 스타일 문장]
 ```
 
-**CHEMIKID (화학 동아리)**
-> A mad-scientist high school student from the chemistry club. A white lab coat worn open over a
-> black school uniform, safety goggles pushed up on the forehead, thick rubber gloves, a belt with
-> glowing test tubes. Holding a glowing green flask in one hand. Confident grin. Color palette:
-> toxic green, black, white, with a crimson red accent.
+### 캐릭터 설명 (기술 컨셉에 맞춤)
 
-**COMMON (정보 동아리)**
-> A hacker high school student from the computer club. An oversized black hoodie with glowing cyan
-> circuit-board patterns, large headphones around the neck, fingerless gloves. Carries a mechanical
-> keyboard slung over the shoulder like an electric guitar. Cyan holographic code swirling around the hands.
-> Cool, sharp expression. Color palette: cyan, deep blue, black, with a crimson red accent.
+**🧪 CHEMIKID (화학, 남)** → `chemikid.png` · 목업 왼쪽 캐릭터를 첨부해서 같은 얼굴로
+> A boy from the chemistry club, mad-scientist vibe. White lab coat worn over a black school uniform
+> with a tie, safety goggles pushed up on his messy dark hair, thick rubber gloves, a belt with glowing
+> test tubes. Holding a glowing green flask. Color palette: toxic green, white, black, crimson accent.
+
+**💻 COMMON (정보, 남)** → `common.png` · 목업 오른쪽 캐릭터를 첨부해서 같은 얼굴로
+> A boy from the computer club, cool hacker vibe. Oversized black hoodie with glowing cyan
+> circuit-board lines, headphones around the neck, fingerless gloves, a mechanical keyboard slung
+> over the shoulder like an electric guitar, cyan holographic code around his hands.
+> Color palette: cyan, deep blue, black, crimson accent.
+
+**🌍 GLOBE (지구과학, 여)** → `globe.png`
+> A girl from the earth science club, strong and grounded heavyweight vibe. Sturdy field-researcher
+> jacket with many pockets over a school uniform, long pants, hiking boots, a geologist's hammer on
+> her belt, a small glowing globe floating above one hand, tiny star sparkles and a swirl of wind
+> around her. Color palette: earthy orange, ocean blue, night-sky navy, crimson accent.
+
+**🌀 CHAOS (물리, 여)** → `chaos.png`
+> A girl from the physics club, calm but dangerous grappler vibe. Fitted lab jacket with rolled
+> sleeves over a school uniform, long pants, sneakers, fingerless gloves crackling with small
+> purple electric arcs, a tiny black-hole orb orbiting her, faint gravity distortion rings.
+> Color palette: violet, electric yellow, black, crimson accent.
+
+**📐 ROOT2 (수학, 남)** → `root2.png`
+> A boy from the math club, sharp and precise long-range fighter vibe. Neat school blazer with a
+> long scarf, round glasses, holding a large drafting compass like a spear, a giant golden √2 symbol
+> spinning like a boomerang near him, floating golden formulas (∫, π, Σ) around him.
+> Color palette: gold, white, navy, crimson accent.
+
+**🌱 SEED (생명, 여)** → `seed.png`
+> A girl from the biology club, gentle but tricky summoner vibe. Long cardigan over a school uniform
+> with a knee-length skirt and leggings, a flower hairpin, a magnifying glass on a cord,
+> green vines wrapping softly around her arms, a glowing pink DNA double helix floating beside her.
+> Color palette: blossom pink, leaf green, white, crimson accent.
 
 ### 같은 캐릭터를 계속 똑같이 나오게 하는 팁
 1. 전신 일러스트를 **먼저 1장** 마음에 들 때까지 뽑는다.
-2. 이후 다른 그림(컷인용 얼굴 클로즈업 등)은 그 그림을 **첨부**하고
-   `Same character as the attached image, ...`로 시작해서 요청한다.
-3. 두 캐릭터를 **같은 대화(채팅방)** 안에서 만들면 스타일이 더 비슷하게 나온다.
+2. 다른 그림(컷인용 얼굴 등)은 그 그림을 **첨부**하고 `Same character as the attached image, ...`로 시작한다.
+3. 6명을 **같은 대화(채팅방)** 안에서 만들면 스타일이 더 비슷하게 나온다.
 
 ## 사용 전 확인할 것
 - 쓰는 툴(ChatGPT / Gemini)의 **이용약관**에서 생성 이미지 사용 조건을 직접 확인하기.

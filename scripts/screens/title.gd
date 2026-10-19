@@ -1,8 +1,22 @@
 extends Screen
 ## 타이틀 화면: 아무나 START(또는 P)를 누르면 모드 선택으로
 ## 키보드 ESC → "게임을 종료할까요?" (축제 운영용. 조이스틱만으로는 게임이 꺼지지 않게)
+##
+## 배경: assets/ui/key_art.png (메뉴 일러스트) → 없으면 title_bg.png (목업을 흐리게 만든 임시) → 없으면 코드 배경
+## 로고: assets/ui/logo.png → 없으면 글자
+
+const LOGO_W := 760.0            # 로고 폭 (화면 좌표 1280 기준)
 
 var _quit_confirm := false
+var _bg: Texture2D
+var _logo: Texture2D
+
+
+func _ready() -> void:
+	_bg = Game.load_texture("res://assets/ui/key_art.png")
+	if _bg == null:
+		_bg = Game.load_texture("res://assets/ui/title_bg.png")
+	_logo = Game.load_texture("res://assets/ui/logo.png")
 
 
 func _process(delta: float) -> void:
@@ -20,22 +34,42 @@ func _process(delta: float) -> void:
 
 
 func _draw() -> void:
-	background()
-	# 제목: 크게 시작해서 쾅 하고 자리 잡음
+	_draw_background()
+	# 로고: 크게 시작해서 쾅 하고 자리 잡음 (+ 잠깐 하얗게 번쩍)
 	var e := 1.0 - pow(1.0 - minf(frame / 22.0, 1.0), 3.0)
-	var size := int(lerpf(260, 130, e))
-	var y := 300.0
-	Style.fill(self, Style.slant(W / 2 - 520 * e, y + 22, 1040 * e, 14, -30), Style.RED)
-	text(Game.GAME_TITLE, y, size, Style.WHITE, W / 2, 16)
+	var center := Vector2(W / 2, 270)
+	if _logo != null:
+		var w := LOGO_W * lerpf(1.8, 1.0, e)
+		var size := Vector2(w, w * _logo.get_height() / _logo.get_width())
+		draw_texture_rect(_logo, Rect2(center - size / 2, size), false, Color(1, 1, 1, minf(1.0, frame / 6.0)))
+	else:
+		text(Game.GAME_TITLE, center.y + 40, int(lerpf(260, 130, e)), Style.WHITE, W / 2, 16)
+	if frame >= 22 and frame < 30:
+		draw_rect(Rect2(0, 0, W, H), Color(1, 1, 1, (30 - frame) / 8.0 * 0.6))
 	if frame > 22:
-		text(Game.t("subtitle"), y + 82, 24, Style.GOLD, W / 2, 4)
+		Style.fill(self, Style.slant(W / 2 - 430, 452, 860, 40, -16), Color(Style.BLACK, 0.75))
+		text(Game.t("subtitle"), 480, 22, Style.GOLD, W / 2, 4)
 		# 깜빡이는 PRESS START
 		if frame % 60 < 36:
-			Style.fill(self, Style.slant(W / 2 - 220, 520, 440, 56, 18), Color(Style.BLACK, 0.8))
-			text(Game.t("press_start"), 560, 36, Style.WHITE)
+			Style.fill(self, Style.slant(W / 2 - 220, 548, 440, 56, 18), Style.RED)
+			text(Game.t("press_start"), 588, 34, Style.WHITE)
 	text("%s    F11: FULLSCREEN    %s" % [Game.t("f1_hint"), Game.t("esc_hint")], 700, 16, Style.GRAY, W / 2, 0)
 	if _quit_confirm:
 		draw_rect(Rect2(0, 0, W, H), Color(0, 0, 0, 0.7))
 		Style.fill(self, Style.slant(-20, 280, W + 40, 150, 24), Style.RED)
 		text(Game.t("quit_confirm"), 350, 52, Style.WHITE, W / 2, 10)
 		text(Game.t("quit_hint"), 405, 26, Style.WHITE, W / 2, 4)
+
+
+## 배경 그림 + 천천히 확대(살아 있는 느낌) + 아래쪽 붉은 빛 + 비스듬한 빛줄기
+func _draw_background() -> void:
+	if _bg == null:
+		background()
+		return
+	var zoom := 1.0 + 0.04 * sin(frame * 0.01)
+	var size := Vector2(W, H) * zoom
+	draw_texture_rect(_bg, Rect2((Vector2(W, H) - size) / 2, size), false)
+	draw_polygon(PackedVector2Array([Vector2(0, H * 0.5), Vector2(W, H * 0.5), Vector2(W, H), Vector2(0, H)]),
+			PackedColorArray([Color(Style.RED, 0), Color(Style.RED, 0), Color(Style.RED, 0.35), Color(Style.RED, 0.35)]))
+	var sweep := fmod(frame * 4.0, W + 600) - 300
+	Style.fill(self, Style.slant(sweep, 0, 90, H, -300), Color(1, 1, 1, 0.05))
