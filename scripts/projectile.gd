@@ -9,6 +9,7 @@ var shooter: Fighter            # 쏜 캐릭터
 var attack: AttackData          # 맞았을 때 효과. null이면 때리지 않음 (방화벽)
 var velocity := Vector2.ZERO
 var gravity := 0.0              # 포물선으로 날아가는 투사체용
+var accel := Vector2.ZERO       # 매 프레임 속도에 더해짐 (부메랑처럼 되돌아오는 투사체)
 var size := Vector2(40, 30)     # 판정 크기 (position이 가운데)
 var lifetime := 600             # 이 프레임이 지나면 사라짐
 var arm_frames := 0             # 이 프레임이 지나야 작동 (함정 설치 직후엔 안 터지게)
@@ -28,6 +29,7 @@ var rehit_cd := 0               # 다시 맞힐 수 있을 때까지 남은 프�
 func tick() -> void:
 	age += 1
 	velocity.y += gravity
+	velocity += accel
 	position += velocity
 	if rehit_cd > 0:
 		rehit_cd -= 1
@@ -169,6 +171,67 @@ func _draw() -> void:
 			var col_rect := Rect2(r.position.x, r.end.y - r.size.y * grow, r.size.x, r.size.y * grow)
 			draw_rect(col_rect, Color(color, 0.75 * (1.0 - t)))
 			draw_rect(col_rect.grow_individual(-r.size.x * 0.3, 0, -r.size.x * 0.3, 0), Color(1, 0.95, 0.7, 1.0 - t))
+		"text":
+			# 글자 투사체 (숫자, 수식): extra.text, extra.size
+			var s: String = extra.get("text", "?")
+			var fs: int = extra.get("size", 32)
+			var fade := minf(1.0, (lifetime - age) / 10.0)
+			Style.text(self, s, Vector2(-100, fs * 0.35), fs, Color(color, fade), HORIZONTAL_ALIGNMENT_CENTER, 200, 6)
+		"boomerang":
+			# √2 부메랑: 빙글빙글 도는 루트 기호
+			draw_set_transform(Vector2.ZERO, age * 0.4)
+			Style.text(self, "√2", Vector2(-50, 12), 36, color, HORIZONTAL_ALIGNMENT_CENTER, 100, 6)
+			draw_set_transform(Vector2.ZERO, 0)
+		"integral":
+			# 적분 기둥: 작동 전엔 좌표축 표시, 작동하면 기둥이 솟음
+			if not is_armed():
+				var blink := 0.5 + 0.5 * sin(age * 0.6)
+				draw_line(Vector2(-60, r.end.y - 4), Vector2(60, r.end.y - 4), Color(color, blink), 3.0)
+				draw_line(Vector2(0, r.end.y - 70), Vector2(0, r.end.y), Color(color, blink), 3.0)
+				Style.text(self, "∫", Vector2(-40, r.end.y - 20), 40, Color(color, blink), HORIZONTAL_ALIGNMENT_CENTER, 80, 4)
+			else:
+				var grow := minf(1.0, (age - arm_frames) / 5.0)
+				var col_rect := Rect2(r.position.x, r.end.y - r.size.y * grow, r.size.x, r.size.y * grow)
+				draw_rect(col_rect, Color(color, 0.55))
+				Style.text(self, "∫", Vector2(-60, col_rect.position.y + 90), 110, Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER, 120, 8)
+		"dice":
+			# 주사위: 하얀 정육면체 + 나온 눈 숫자
+			draw_set_transform(Vector2.ZERO, age * 0.3)
+			draw_rect(r, Color.WHITE)
+			draw_rect(r, Style.BLACK, false, 3.0)
+			draw_set_transform(Vector2.ZERO, 0)
+			Style.text(self, str(extra.get("n", 1)), Vector2(-30, 10), 28, Style.RED, HORIZONTAL_ALIGNMENT_CENTER, 60, 4)
+		"seed":
+			# 씨앗: 땅에 박힌 작은 씨 + 자라나는 싹
+			draw_circle(Vector2.ZERO, 7, Color("8a5a2a"))
+			var sprout := minf(1.0, age / 30.0) * 18
+			draw_line(Vector2.ZERO, Vector2(0, -sprout), color, 3.0)
+		"vine":
+			# 덩굴: 아래에서 위로 솟는 굵은 줄기 + 잎
+			var grow := minf(1.0, age / 5.0)
+			var top := r.end.y - r.size.y * grow
+			var pts := PackedVector2Array()
+			for i in 9:
+				var y := lerpf(r.end.y, top, i / 8.0)
+				pts.append(Vector2(sin(i * 1.2 + age * 0.3) * 14, y))
+			draw_polyline(pts, color.darkened(0.3), 16.0)
+			draw_polyline(pts, color, 8.0)
+			for i in range(2, 9, 2):
+				draw_circle(pts[i] + Vector2(12 if i % 4 == 0 else -12, 0), 9, color.lightened(0.2))
+		"clone":
+			# 분신: 반투명한 몸 + 세포막 테두리
+			var fade := minf(1.0, (lifetime - age) / 10.0)
+			draw_rect(r, Color(color, 0.35 * fade))
+			draw_rect(r, Color(color.lightened(0.4), 0.8 * fade), false, 3.0)
+			draw_circle(Vector2(0, -r.size.y * 0.15), 12, Color(color.darkened(0.3), 0.6 * fade))
+		"helix":
+			# DNA 이중나선: 꼬인 두 줄 + 사다리
+			for i in 7:
+				var y := -r.size.y / 2 + i * r.size.y / 6
+				var x := sin(age * 0.5 + i * 0.9) * r.size.x * 0.4
+				draw_line(Vector2(-x, y), Vector2(x, y), Color(Color.WHITE, 0.6), 2.0)
+				draw_circle(Vector2(x, y), 5, color)
+				draw_circle(Vector2(-x, y), 5, Style.CYAN)
 		"blackhole":
 			# 블랙홀: 검은 중심 + 빨려 들어가는 보라색 고리
 			var grow := minf(1.0, age / 15.0)

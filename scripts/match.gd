@@ -344,7 +344,7 @@ func _resolve_hits() -> void:
 
 ## 맞히기 공통 처리 (몸 공격, 투사체 둘 다). 막혔으면 true
 func _apply_hit(attacker: Fighter, defender: Fighter, attack: AttackData, contact: Vector2, dir: int) -> bool:
-	var blocked := defender.receive_attack(attack, dir)
+	var blocked := defender.receive_attack(attack, dir, attacker.damage_mult)
 	attacker.on_attack_connected(attack, blocked)
 	_hitstop = maxi(_hitstop, attack.hitstop)
 	sparks.append([contact, 10, blocked])

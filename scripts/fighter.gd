@@ -85,6 +85,7 @@ var history: Array[Vector2] = []  # 최근 위치 기록 (맨 앞이 가장 오�
 var _armor_used := 0            # 이번 공격에서 아머로 버틴 횟수
 var armor_flash := 0            # 아머로 버텼을 때 번쩍임 남은 프레임
 var shock_frames := 0           # 감전 표시 남은 프레임 (몸 주위에 노란 번개)
+var damage_mult := 1.0          # 내 공격의 데미지 배율 (강화 상태 등)
 
 
 func _ready() -> void:
@@ -640,7 +641,8 @@ func is_invulnerable() -> bool:
 
 
 ## Match가 호출: 공격을 받았다. 막았으면 true를 돌려준다
-func receive_attack(attack: AttackData, from_dir: int) -> bool:
+func receive_attack(attack: AttackData, from_dir: int, damage_scale := 1.0) -> bool:
+	var damage := int(round(attack.damage * damage_scale))
 	if _try_counter(attack):
 		return true  # 반격 성공: 막은 것처럼 처리 (데미지 없음)
 	# 아머: 돌진기 등의 발생~지속 동안은 맞아도 멈추지 않는다 (데미지는 받음)
@@ -648,7 +650,7 @@ func receive_attack(attack: AttackData, from_dir: int) -> bool:
 			and state_frame <= current_attack.startup + current_attack.active:
 		_armor_used += 1
 		armor_flash = 12
-		hp = maxi(hp - attack.damage, 0 if can_die else 1)
+		hp = maxi(hp - damage, 0 if can_die else 1)
 		hit_shake = attack.hitstop
 		if hp == 0:
 			current_attack = null
@@ -662,7 +664,7 @@ func receive_attack(attack: AttackData, from_dir: int) -> bool:
 		_change_state(State.BLOCKSTUN)
 		return true
 
-	hp = maxi(hp - attack.damage, 0 if can_die else 1)
+	hp = maxi(hp - damage, 0 if can_die else 1)
 	hit_shake = attack.hitstop
 	current_attack = null
 	if hp == 0:

@@ -35,6 +35,14 @@ const CHARACTERS: Array[Dictionary] = [
 		"id": "chaos", "name": "CHAOS", "club": ["PHYSICS CLUB  Chaos", "물리 동아리  Chaos"],
 		"color": Color("a05cff"), "script": "res://scripts/characters/chaos.gd",
 	},
+	{
+		"id": "root2", "name": "ROOT2", "club": ["MATH CLUB  Root2", "수학 동아리  Root2"],
+		"color": Color("e8d84a"), "script": "res://scripts/characters/root2.gd",
+	},
+	{
+		"id": "seed", "name": "SEED", "club": ["BIOLOGY CLUB  Seed", "생명 동아리  Seed"],
+		"color": Color("ff7ab8"), "script": "res://scripts/characters/seed.gd",
+	},
 ]
 
 ## 스테이지 목록. 배경 그림: assets/stages/<id>.png (1920x1080 권장, 없으면 코드로 그린 임시 배경)

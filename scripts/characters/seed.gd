@@ -1,0 +1,180 @@
+extends Fighter
+## SEED (생명 동아리): 심고, 나누고, 진화하는 설치·변칙형
+##
+##   5D  씨앗 심기     (생태) 앞 바닥에 씨앗 → 잠시 뒤 덩굴이 솟아 상대를 띄운다 (1개까지)
+##   6D  덩굴 채찍     (식물) 리치가 긴 채찍
+##   2D  세포분열      (세포) 분신이 앞으로 걸어가며 부딪히면 공격 (1개까지)
+##   4D  광합성        (식물) 1초 동안 가만히 서서 체력 회복 (맞으면 끊김)
+##   jD  DNA 이중나선  (유전) 나선이 아래 대각선으로 내려가며 여러 번 때린다
+##   OD  진화          (진화, D+HS, 텐션 50%) 6초 동안 공격력 x1.3, 이동 속도 x1.25
+
+const LEAF := Color("ff7ab8")      # 캐릭터 색 (꽃분홍)
+const VINE_GREEN := Color("5cc85a")
+const DNA_PINK := Color("ff6fae")
+
+const SEED_GROW_FRAMES := 40       # 씨앗이 덩굴이 되기까지
+const PHOTOSYNTHESIS_HEAL := 0.6   # 광합성 프레임당 회복량
+const EVOLVE_FRAMES := 360         # 진화 지속 (6초)
+const EVOLVE_DAMAGE := 1.3
+const EVOLVE_SPEED := 1.25
+
+var _vine_hit := AttackData.new("vine", 0, 0, 0, 40, Rect2(), AttackData.Level.MID, 24, 14)
+var _clone_hit := AttackData.new("cell", 0, 0, 0, 30, Rect2(), AttackData.Level.MID, 20, 14)
+var _helix_hit := AttackData.new("dna", 0, 0, 0, 12, Rect2(), AttackData.Level.OVERHEAD, 16, 10)
+
+var _seed: Projectile
+var _clone: Projectile
+var _heal_acc := 0.0
+var _evolve_frames := 0
+var _base_speed := {}
+
+
+func _init() -> void:
+	max_hp = 400
+	_vine_hit.launch = Vector2(1, -12)
+	_helix_hit.hitstop = 3
+
+
+func _build_specials() -> void:
+	var M := AttackData.Level.MID
+	#                                 이름  발생 지속 후딜 데미지 판정 범위                  단계 히트 가드
+	var a := _add(AttackData.new("5D", 12, 0, 20, 0, Rect2(), M, 0, 0))
+	a.event_frame = 12
+	a = _add(AttackData.new("6D", 12, 5, 22, 38, Rect2(20, -115, 230, 40), M, 18, 14))
+	a = _add(AttackData.new("2D", 10, 0, 22, 0, Rect2(), M, 0, 0))
+	a.event_frame = 10
+	a = _add(AttackData.new("4D", 4, 60, 10, 0, Rect2(), M, 0, 0))
+	a = _add(AttackData.new("jD", 8, 0, 16, 0, Rect2(), M, 0, 0))
+	a.event_frame = 8
+	a = _add(AttackData.new("OD", 10, 0, 30, 0, Rect2(), M, 0, 0))
+	a.title = "EVOLUTION"
+	a.cost = Fighter.RC_COST
+	a.invuln_frames = 10
+	a.event_frame = 10
+
+
+## 타입을 안 붙인 이유: 이미 지워진(freed) 투사체가 들어오면 타입 검사에서 오류가 나기 때문
+func _alive(p) -> bool:
+	return is_instance_valid(p) and not p.dead
+
+
+func _can_use_special(attack_name: String) -> bool:
+	match attack_name:
+		"5D":
+			return not _alive(_seed)
+		"2D":
+			return not _alive(_clone)
+	return true
+
+
+func _on_attack_event(attack: AttackData) -> void:
+	match attack.name:
+		"5D":
+			var p := Projectile.new()
+			p.kind = "seed"
+			p.size = Vector2(20, 20)
+			p.color = VINE_GREEN
+			p.position = Vector2(position.x + 150 * facing, ground_y - 8)
+			p.lifetime = SEED_GROW_FRAMES
+			_seed = p
+			spawn(p)
+		"2D":
+			var p := Projectile.new()
+			p.kind = "clone"
+			p.attack = _clone_hit
+			p.size = Vector2(60, 150)
+			p.color = LEAF
+			p.position = Vector2(position.x + 50 * facing, ground_y - 75)
+			p.velocity = Vector2(5.0 * facing, 0)
+			p.lifetime = 60
+			_clone = p
+			spawn(p)
+		"jD":
+			var p := Projectile.new()
+			p.kind = "helix"
+			p.attack = _helix_hit
+			p.size = Vector2(60, 70)
+			p.color = DNA_PINK
+			p.position = position + Vector2(40 * facing, 20)
+			p.velocity = Vector2(6.0 * facing, 7.0)
+			p.lifetime = 30
+			p.rehit_interval = 8
+			spawn(p)
+		"OD":
+			_start_evolution()
+
+
+func _start_evolution() -> void:
+	if _evolve_frames == 0:
+		_base_speed = { "walk": walk_forward_speed, "back": walk_back_speed, "run": run_speed }
+	_evolve_frames = EVOLVE_FRAMES
+	damage_mult = EVOLVE_DAMAGE
+	walk_forward_speed = _base_speed["walk"] * EVOLVE_SPEED
+	walk_back_speed = _base_speed["back"] * EVOLVE_SPEED
+	run_speed = _base_speed["run"] * EVOLVE_SPEED
+
+
+func _end_evolution() -> void:
+	damage_mult = 1.0
+	walk_forward_speed = _base_speed["walk"]
+	walk_back_speed = _base_speed["back"]
+	run_speed = _base_speed["run"]
+
+
+func reset_for_round(x: float) -> void:
+	if _evolve_frames > 0:
+		_evolve_frames = 0
+		_end_evolution()
+	super(x)
+
+
+func tick() -> void:
+	super()
+	# 씨앗이 다 자라면 그 자리에서 덩굴이 솟는다
+	if _alive(_seed) and _seed.age >= SEED_GROW_FRAMES - 1:
+		var v := Projectile.new()
+		v.kind = "vine"
+		v.attack = _vine_hit
+		v.size = Vector2(60, 220)
+		v.color = VINE_GREEN
+		v.position = Vector2(_seed.position.x, ground_y - 110)
+		v.lifetime = 30
+		_seed.dead = true
+		spawn(v)
+	# 광합성: 지속 시간 동안 체력 회복 (소수점은 모아서)
+	if state == State.ATTACK and current_attack != null and current_attack.name == "4D" \
+			and current_attack.is_active(state_frame):
+		_heal_acc += PHOTOSYNTHESIS_HEAL
+		var whole := int(_heal_acc)
+		if whole > 0:
+			hp = mini(max_hp, hp + whole)
+			_heal_acc -= whole
+	# 진화 시간 끝
+	if _evolve_frames > 0:
+		_evolve_frames -= 1
+		if _evolve_frames == 0:
+			_end_evolution()
+
+
+func _draw() -> void:
+	var size := body_size()
+	# 진화 중: 몸 주위로 올라가는 분홍빛
+	if _evolve_frames > 0:
+		for i in 5:
+			var t := fmod(_evolve_frames * 0.02 + i * 0.2, 1.0)
+			draw_circle(Vector2(sin(i * 2.4) * size.x * 0.6, -size.y * t), 6, Color(LEAF, 1.0 - t))
+		draw_rect(Rect2(-size.x / 2 - 6, -size.y - 6, size.x + 12, size.y + 12), Color(LEAF, 0.5), false, 3.0)
+	# 광합성 중: 위에서 내려오는 햇빛
+	if state == State.ATTACK and current_attack != null and current_attack.name == "4D":
+		for i in 3:
+			var x := (i - 1) * 24.0
+			draw_line(Vector2(x - 20, -size.y - 120), Vector2(x, -size.y - 10), Color(1, 0.95, 0.5, 0.6), 4.0)
+	# 덩굴 채찍
+	if state == State.ATTACK and current_attack != null and current_attack.name == "6D" \
+			and current_attack.is_active(state_frame):
+		var pts := PackedVector2Array()
+		for i in 7:
+			pts.append(Vector2((20 + i * 36) * facing, -95 + sin(i * 1.1 + state_frame) * 10))
+		draw_polyline(pts, VINE_GREEN.darkened(0.3), 10.0)
+		draw_polyline(pts, VINE_GREEN, 5.0)
+	super()
