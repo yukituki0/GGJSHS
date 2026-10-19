@@ -136,9 +136,72 @@ const STRINGS := {
 	"rematch": ["REMATCH", "재경기"],
 	"to_char_select": ["CHARACTER SELECT", "캐릭터 선택"],
 	"to_title": ["TITLE", "타이틀로"],
+	"command_list": ["COMMAND LIST", "기술표"],
+	"command_hint": ["K / START: CLOSE", "K / START: 닫기"],
+	"common_moves": ["COMMON", "공통"],
 	"wins": ["%dP %s WINS!", "%dP %s 승리!"],
 	"draw_game": ["DRAW GAME", "무승부"],
 }
+
+## 기술표: 캐릭터 id -> [입력, 영어 이름, 한국어 이름, 한국어 설명]  (→ = 상대 쪽, ← = 반대쪽)
+## 기술을 바꾸면 여기와 docs/MOVES.md도 같이 고친다
+const MOVE_LISTS := {
+	"chemikid": [
+		["D", "Flask Toss", "플라스크 투척", "포물선, 깨지면 산성 웅덩이"],
+		["→ + D", "Catalyst Rush", "촉매 돌진", "빠른 돌진 공격"],
+		["↓ + D", "Exotherm", "발열 반응", "위로 폭발하는 대공기 (무적)"],
+		["← + D", "Neutralize", "중화 반응", "반격 자세"],
+		["AIR D", "Precipitate", "앙금 생성", "바닥에 굳어 투사체를 막는 벽"],
+		["D + HS", "THERMITE", "테르밋 반응", "연쇄 폭발 + 불꽃 기둥 (50%)"],
+	],
+	"common": [
+		["D", "Packet Send", "패킷 전송", "빠른 직선 투사체"],
+		["→ + D", "Bug Trap", "버그 설치", "바닥 함정 (하단)"],
+		["↓ + D", "Firewall", "방화벽", "투사체를 막는 벽"],
+		["← + D", "Ctrl+Z", "Ctrl+Z", "1초 전 위치로 되감기"],
+		["AIR D", "Binary Search", "이진 탐색", "상대를 따라 내려꽂기"],
+		["D + HS", "BLUE SCREEN", "블루스크린", "넓은 공격 + 긴 경직 (50%)"],
+	],
+	"globe": [
+		["D", "Meteor Shower", "유성우", "별똥별 3개"],
+		["→ + D", "Tectonic Rush", "지각 돌진", "한 대 버티는 돌진 (아머)"],
+		["↓ + D", "Tsunami", "지진해일", "바닥 파도 (하단, 점프로 회피)"],
+		["← + D", "Constellation", "별자리 잇기", "별 설치 → 한 번 더 누르면 연결"],
+		["AIR D", "Lightning", "낙뢰", "앞쪽에 번개"],
+		["D + HS", "TYPHOON", "태풍", "끌어당기며 여러 번 타격 (50%)"],
+	],
+	"chaos": [
+		["D", "Gravitation", "만유인력", "상대를 끌어당김"],
+		["→ + D", "Momentum Throw", "운동량 던지기", "가드 불가 잡기"],
+		["↓ + D", "EM Pulse", "전자기 펄스", "주변 방전, 감전"],
+		["← + D", "Quantum Tunnel", "양자 터널링", "상대 뒤로 순간이동"],
+		["AIR D", "Thermal Burst", "열팽창 폭발", "아래 대각선 증기 폭발"],
+		["D + HS", "BLACK HOLE", "블랙홀", "빨아들이고 폭발 (50%)"],
+	],
+	"root2": [
+		["D", "√2 Boomerang", "√2 부메랑", "갔다가 돌아오는 투사체"],
+		["→ + D", "Compass Thrust", "컴퍼스 찌르기", "아주 긴 리치"],
+		["↓ + D", "Integral Pillar", "적분 기둥", "상대 발밑에 기둥"],
+		["← + D", "Probability Dice", "확률 주사위", "데미지 = 눈 x 9"],
+		["AIR D", "Fibonacci Drop", "피보나치 낙하", "1, 1, 2, 3, 5 낙하"],
+		["D + HS", "Q.E.D.", "Q.E.D.", "수식 낙하 + 도장 (50%)"],
+	],
+	"seed": [
+		["D", "Plant Seed", "씨앗 심기", "잠시 뒤 덩굴이 솟음"],
+		["→ + D", "Vine Whip", "덩굴 채찍", "긴 리치 채찍"],
+		["↓ + D", "Mitosis", "세포분열", "걸어가는 분신"],
+		["← + D", "Photosynthesis", "광합성", "체력 회복"],
+		["AIR D", "Double Helix", "DNA 이중나선", "여러 번 타격"],
+		["D + HS", "EVOLUTION", "진화", "6초 강화 (50%)"],
+	],
+}
+
+## 모든 캐릭터 공통 조작 (기술표 아래쪽에 표시)
+const COMMON_MOVES := [
+	["P → K → S → HS", "Gatling", "개틀링", "맞히거나 막히면 더 강한 버튼으로"],
+	["RC", "Roman Cancel", "로만 캔슬", "공격 취소 (텐션 50%)"],
+	["DASH", "Dash / Air Dash", "대시 / 공중 대시", "← + DASH = 백스텝"],
+]
 
 const SCENES := {
 	"title": "res://scenes/title.tscn",

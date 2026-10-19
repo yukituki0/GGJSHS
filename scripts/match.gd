@@ -27,6 +27,7 @@ var wins := { 1: 0, 2: 0 }
 var timer_frames := 0           # 남은 시간 (프레임)
 var round_result := ""          # "K.O." / "TIME UP" / "DOUBLE K.O." / "DRAW"
 var paused := false
+var show_moves := false         # 일시정지 메뉴에서 기술표를 보는 중
 var menu_cursor := 0
 
 var _hitstop := 0               # 남은 히트스톱 프레임 (0보다 크면 둘 다 멈춤)
@@ -261,8 +262,8 @@ const RESULT_ITEMS := ["rematch", "to_char_select", "to_title"]  # Game.STRINGS 
 ## 일시정지 메뉴 항목 (트레이닝이면 더미 설정이 추가된다)
 func pause_items() -> Array:
 	if is_training():
-		return ["resume", "dummy", "to_char_select", "to_title"]
-	return ["resume", "to_char_select", "to_title"]
+		return ["resume", "command_list", "dummy", "to_char_select", "to_title"]
+	return ["resume", "command_list", "to_char_select", "to_title"]
 
 
 ## 메뉴 항목에 보일 글자 (더미는 현재 설정까지)
@@ -273,6 +274,10 @@ func menu_label(key: String) -> String:
 
 
 func _update_pause_menu() -> void:
+	if show_moves:
+		if Game.menu_back() or Game.pause_pressed() or Game.menu_pressed("p"):
+			show_moves = false
+		return
 	var items := pause_items()
 	menu_cursor = _move_menu(menu_cursor, items.size())
 	if Game.pause_pressed() or Game.menu_back():
@@ -287,6 +292,8 @@ func _update_pause_menu() -> void:
 			# 누를 때마다 다음 동작으로
 			Game.dummy_mode = (Game.dummy_mode + 1) % Game.DUMMY_KEYS.size()
 			p2.dummy = Game.dummy_mode as Fighter.Dummy
+		"command_list":
+			show_moves = true
 		"to_char_select":
 			Game.goto("char_select")
 		"to_title":

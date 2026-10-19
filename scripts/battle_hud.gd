@@ -53,7 +53,10 @@ func _draw() -> void:
 		Match.Phase.RESULT:
 			_draw_result()
 	if m.paused:
-		_draw_menu(Game.t("pause"), m.pause_items())
+		if m.show_moves:
+			_draw_move_lists()
+		else:
+			_draw_menu(Game.t("pause"), m.pause_items())
 
 
 # ── 그림 HUD (assets/ui/hud_*.png) ─────────────────────────
@@ -426,6 +429,37 @@ func _draw_result() -> void:
 	else:
 		title = Game.t("wins") % [2, m.p2.display_name]
 	_draw_menu(title, Match.RESULT_ITEMS if m.phase_frame >= 60 else [])
+
+
+## 기술표: 1P(왼쪽) / 2P(오른쪽) 캐릭터 기술 + 아래에 공통 조작
+func _draw_move_lists() -> void:
+	draw_rect(Rect2(0, 0, 1280, 720), Color(0, 0, 0, 0.82))
+	Style.fill(self, Style.slant(-20, 22, 560, 60, 20), Style.RED)
+	Style.text(self, Game.t("command_list"), Vector2(40, 66), 38, Style.WHITE, HORIZONTAL_ALIGNMENT_LEFT, -1, 8)
+	for f: Fighter in [m.p1, m.p2]:
+		var x := 40.0 if f.player == 1 else 660.0
+		var info := Game.character(f.player)
+		Style.text(self, "%dP  %s" % [f.player, f.display_name], Vector2(x, 128), 28, f.color.lightened(0.3),
+				HORIZONTAL_ALIGNMENT_LEFT, -1, 6)
+		var moves: Array = Game.MOVE_LISTS.get(info["id"], [])
+		for i in moves.size():
+			_draw_move_row(moves[i], x, 172 + i * 62)
+	Style.text(self, Game.t("common_moves"), Vector2(40, 562), 22, Style.GOLD, HORIZONTAL_ALIGNMENT_LEFT, -1, 4)
+	for i in Game.COMMON_MOVES.size():
+		var mv: Array = Game.COMMON_MOVES[i]
+		var desc: String = (" - " + mv[3]) if Game.language == Game.Language.KO else ""
+		Style.text(self, "%s   %s%s" % [mv[0], mv[1 + Game.language], desc], Vector2(40, 594 + i * 30), 18,
+				Style.WHITE, HORIZONTAL_ALIGNMENT_LEFT, -1, 3)
+	Style.text(self, Game.t("command_hint"), Vector2(0, 708), 16, Style.GRAY, HORIZONTAL_ALIGNMENT_RIGHT, 1250, 0)
+
+
+func _draw_move_row(mv: Array, x: float, y: float) -> void:
+	Style.fill(self, Style.slant(x, y - 30, 580, 56, 10), Color(Style.PANEL, 0.9))
+	Style.fill(self, Style.slant(x, y - 30, 110, 56, 10), Style.RED.darkened(0.3))
+	Style.text(self, mv[0], Vector2(x + 4, y + 6), 20, Style.WHITE, HORIZONTAL_ALIGNMENT_CENTER, 110, 4)
+	Style.text(self, mv[1 + Game.language], Vector2(x + 126, y - 4), 22, Style.GOLD, HORIZONTAL_ALIGNMENT_LEFT, -1, 4)
+	if Game.language == Game.Language.KO:  # 설명은 한국어로만 적어 둠
+		Style.text(self, mv[3], Vector2(x + 126, y + 20), 16, Style.WHITE, HORIZONTAL_ALIGNMENT_LEFT, -1, 0)
 
 
 func _draw_menu(title: String, items: Array) -> void:
