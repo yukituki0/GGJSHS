@@ -14,6 +14,7 @@ const ROWS := [
 	["dash", ["dash"]],
 	["guard", ["guard"]],
 	["start_pause", ["start"]],
+	["select_back", ["select"]],
 ]
 
 

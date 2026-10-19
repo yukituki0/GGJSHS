@@ -14,6 +14,23 @@
 | 타이틀/메뉴 배경 | `assets/ui/key_art.png` | 1920×1080 (16:9), PNG |
 | HUD 부품 | `assets/ui/hud_*.png` | 아래 "1단계: HUD 부품" 참고 |
 
+## 📋 게임 전체 그림 목록 (진행 상황)
+
+| 구분 | 파일 | 개수 | 상태 |
+|---|---|---|---|
+| HUD | `assets/ui/hud_*.png` | 체력 틀/채움, 타이머, 텐션 1P/2P | ✅ 완료 |
+| 스테이지 (**실제 학교 사진**) | `assets/stages/` `lab` `computer` `rooftop` `playground` `hallway` `.png` | 5 | ⬜ 사진 찍기 |
+| 캐릭터 전신 (투명 배경) | `assets/characters/<id>.png` | 6 | ⬜ |
+| 타이틀 로고 | `assets/ui/logo.png` | 1 | ⬜ |
+| 메뉴 배경 일러스트 | `assets/ui/key_art.png` | 1 | ⬜ |
+| 기술 이펙트 / 투사체 | 캐릭터 기술이 정해지면 목록 추가 | - | ⬜ 나중에 |
+
+캐릭터 id: `chemikid`(화학) `common`(정보) `root2`(수학) `chaos`(물리) `seed`(생명) `globe`(지구과학)
+
+### 학교 사진 찍을 때
+- 가로로, 가능하면 16:9 / 아래쪽 1/3은 바닥이 보이게 / 정면·수평으로 / **사람이 안 나오게** / 조명 켜고
+- 보내주면 1920×1080으로 자르고, HUD와 어울리게 색 보정(어둡게, 대비 강하게)까지 해서 넣는다
+
 ## 공통 스타일 문장 (모든 프롬프트 끝에 붙이기)
 
 > Japanese anime fighting game art style, cel-shaded with hard-edged shadows,

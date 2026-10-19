@@ -89,6 +89,7 @@ const STRINGS := {
 	"dash": ["DASH", "대시"],
 	"guard": ["GUARD", "가드"],
 	"start_pause": ["START / PAUSE", "시작 / 일시정지"],
+	"select_back": ["SELECT (BACK / PAUSE)", "SELECT (뒤로 / 일시정지)"],
 	"combo_hint": ["COMBO: hit or block, then press a stronger button (P > K > S > HS)",
 			"콤보: 맞히거나 막히면 더 강한 버튼으로 이어서 (P > K > S > HS)"],
 
