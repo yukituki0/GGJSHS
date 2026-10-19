@@ -1,14 +1,18 @@
 class_name Fighter
 extends Node2D
-## 캐릭터 공통 몸통: 이동, 앉기, 점프(2단), 대시/백스텝, 공중 대시
+## 캐릭터 공통 몸통: 이동, 점프(2단), 대시/백스텝, 공중 대시, 공격, 가드, 피격
 ##
 ## 격투겜은 "프레임" 단위로 생각하는 게 편해서, 모든 시간 값은 프레임(1/60초) 단위다.
 ## 물리 엔진은 쓰지 않고 위치를 직접 계산한다 (격투겜은 정확한 제어가 더 중요해서).
-## 캐릭터별 기술은 나중에 이 클래스를 상속해서 추가한다.
+## 캐릭터별 기술은 나중에 이 클래스를 상속해서 _build_attacks()를 바꾸면 된다.
 
-enum State { STAND, CROUCH, RUN, BACKDASH, PREJUMP, AIR, AIRDASH }
+enum State {
+	STAND, CROUCH, RUN, BACKDASH, PREJUMP, AIR, AIRDASH,
+	GUARD, ATTACK, HITSTUN, BLOCKSTUN, KO,
+}
 
 # ── 튜닝 값 (단위: 픽셀 / 프레임) ─────────────────────────
+@export var max_hp := 420
 @export var walk_forward_speed := 4.0
 @export var walk_back_speed := 3.2
 @export var run_speed := 9.0
@@ -22,22 +26,37 @@ enum State { STAND, CROUCH, RUN, BACKDASH, PREJUMP, AIR, AIRDASH }
 @export var airdash_frames := 14
 @export var airdash_speed := 11.0
 @export var air_actions := 1            # 공중에서 2단 점프/공중 대시를 몇 번 쓸 수 있나 (둘이 공유)
+@export var ground_friction := 0.85     # 밀려날 때 속도가 줄어드는 비율
 
-# ── 몸 크기 (임시 네모 그래픽 + 밀어내기 판정) ─────────────
+# ── 몸 크기 (임시 네모 그래픽 + 밀어내기/피격 판정) ─────────
 const BODY_SIZE := Vector2(70, 160)
 const CROUCH_SIZE := Vector2(80, 100)
+
+## 버튼 우선순위: 동시에 눌렀으면 강한 버튼이 이긴다
+const ATTACK_BUTTONS: Array[String] = ["hs", "s", "k", "p"]
 
 var player := 1                 # 1P / 2P
 var color := Color.RED
 var opponent: Fighter
 var ground_y := 600.0           # 바닥 높이 (Match가 정해줌)
 
+var hp := 0
 var state: State = State.STAND
 var velocity := Vector2.ZERO
 var facing := 1                 # 1 = 오른쪽을 봄, -1 = 왼쪽을 봄
 var state_frame := 0            # 현재 상태에 들어온 뒤 지난 프레임 수
 var air_actions_left := 0
 var _jump_dir := 0              # 점프 직전에 정한 방향 (-1 뒤, 0 제자리, 1 앞)
+
+var attacks := {}               # "5P" -> AttackData
+var current_attack: AttackData
+var attack_connected := false   # 이번 공격이 이미 맞았거나 막혔나 (한 번만 판정 + 개틀링 조건)
+var stun_frames := 0            # 히트스턴/가드스턴 남은 프레임
+
+
+func _ready() -> void:
+	hp = max_hp
+	_build_attacks()
 
 
 ## 1프레임 진행. Match가 매 프레임 1P → 2P 순서로 직접 호출한다 (처리 순서를 고정하려고)
@@ -46,6 +65,31 @@ func tick() -> void:
 	_update_state()
 	position += velocity
 	queue_redraw()
+
+
+# ── 기술 목록 (캐릭터마다 덮어쓸 부분) ─────────────────────
+## Rect2(x, y, 너비, 높이): 오른쪽을 볼 때 기준, 발 위치가 (0, 0), 위쪽이 음수
+func _build_attacks() -> void:
+	var M := AttackData.Level.MID
+	var L := AttackData.Level.LOW
+	var O := AttackData.Level.OVERHEAD
+	#                         이름   발생 지속 후딜 데미지  판정 범위                       단계 히트 가드  개틀링
+	_add(AttackData.new("5P",  4, 3,  8, 22, Rect2(25, -115, 70, 25), M, 12, 9,  ["5P", "5K", "2K", "5S", "2S"]))
+	_add(AttackData.new("5K",  6, 3, 12, 30, Rect2(25, -80, 85, 25),  M, 15, 11, ["5S", "2S", "5H"]))
+	_add(AttackData.new("5S",  8, 4, 16, 40, Rect2(25, -120, 120, 35), M, 17, 13, ["5H", "2S"]))
+	_add(AttackData.new("5H", 12, 5, 22, 55, Rect2(20, -150, 140, 60), M, 20, 15))
+	_add(AttackData.new("2P",  4, 3,  8, 18, Rect2(25, -70, 65, 22),  M, 11, 8,  ["2P", "5P", "2K", "5S", "2S"]))
+	_add(AttackData.new("2K",  5, 3, 10, 20, Rect2(25, -25, 90, 25),  L, 13, 10, ["5S", "2S", "5H"]))
+	_add(AttackData.new("2S",  8, 4, 16, 35, Rect2(25, -45, 120, 30), L, 16, 12, ["5H"]))
+	_add(AttackData.new("2H", 11, 5, 22, 50, Rect2(10, -190, 90, 110), M, 20, 15))
+	_add(AttackData.new("jP",  4, 4,  6, 20, Rect2(20, -110, 70, 30), O, 12, 9,  ["jK", "jS"]))
+	_add(AttackData.new("jK",  6, 5,  8, 28, Rect2(20, -60, 80, 35),  O, 14, 10, ["jS", "jH"]))
+	_add(AttackData.new("jS",  8, 5, 10, 38, Rect2(15, -100, 110, 60), O, 16, 12, ["jH"]))
+	_add(AttackData.new("jH", 11, 6, 12, 50, Rect2(0, -60, 130, 70),  O, 18, 14))
+
+
+func _add(attack: AttackData) -> void:
+	attacks[attack.name] = attack
 
 
 # ── 입력 헬퍼 ─────────────────────────────────────────────
@@ -61,6 +105,16 @@ func _pressed(action: String) -> bool:
 func _input_forward() -> int:
 	var x := int(_held("right")) - int(_held("left"))
 	return x * facing
+
+
+## 이번 프레임에 누른 공격 버튼으로 기술 이름을 만든다. 없으면 ""
+## prefix: "5"(서서), "2"(앉아서), "j"(공중)
+func _pressed_attack(prefix: String) -> String:
+	for button in ATTACK_BUTTONS:
+		if _pressed(button):
+			var suffix := "H" if button == "hs" else button.to_upper()
+			return prefix + suffix
+	return ""
 
 
 func is_on_ground() -> bool:
@@ -87,13 +141,29 @@ func _update_state() -> void:
 			_air()
 		State.AIRDASH:
 			_airdash()
+		State.GUARD:
+			_guard()
+		State.ATTACK:
+			_attack()
+		State.HITSTUN, State.BLOCKSTUN:
+			_stunned()
+		State.KO:
+			_ko()
 
 
-## 서 있거나 앉아 있을 때: 걷기, 앉기, 점프, 대시 시작
+## 서 있거나 앉아 있을 때: 공격, 가드, 점프, 대시, 앉기, 걷기
 func _ground_neutral() -> void:
 	_face_opponent()
 	var fwd := _input_forward()
 
+	var attack := _pressed_attack("2" if _held("down") else "5")
+	if attack != "":
+		_start_attack(attack)
+		return
+	if _held("guard"):
+		velocity.x = 0
+		_change_state(State.GUARD)
+		return
 	if _held("up"):
 		_start_prejump(fwd)
 		return
@@ -122,6 +192,12 @@ func _ground_neutral() -> void:
 
 ## 달리기: 대시 버튼이나 앞 방향을 누르고 있는 동안 계속 달린다
 func _run() -> void:
+	var attack := _pressed_attack("5")
+	if attack != "":
+		var run_velocity := velocity.x
+		_start_attack(attack)
+		velocity.x = run_velocity * 0.5  # 달리던 관성을 살짝 남긴 채 공격
+		return
 	if _held("up"):
 		_start_prejump(1)
 		return
@@ -160,9 +236,14 @@ func _prejump() -> void:
 		_change_state(State.AIR)
 
 
-## 공중: 중력, 2단 점프, 공중 대시, 착지
+## 공중: 중력, 공중 공격, 2단 점프, 공중 대시, 착지
 func _air() -> void:
 	velocity.y += gravity
+
+	var attack := _pressed_attack("j")
+	if attack != "":
+		_start_attack(attack)
+		return
 
 	if air_actions_left > 0:
 		if _pressed("up"):
@@ -175,8 +256,7 @@ func _air() -> void:
 			_change_state(State.AIRDASH)
 			return
 
-	if position.y + velocity.y >= ground_y:
-		_land()
+	_check_landing()
 
 
 ## 공중 대시: 정해진 프레임 동안 중력 없이 수평으로 날아간다
@@ -187,9 +267,77 @@ func _airdash() -> void:
 		_change_state(State.AIR)
 
 
+## 가드 버튼을 누르고 있는 동안 (↓를 같이 누르면 앉아서 가드)
+func _guard() -> void:
+	_face_opponent()
+	velocity.x = 0
+	if not _held("guard"):
+		_change_state(State.STAND)
+
+
+## 공격 중: 발생 → 지속 → 후딜이 끝나면 원래 상태로. 맞히거나 막히면 개틀링 가능
+func _attack() -> void:
+	var airborne := not is_on_ground() or velocity.y < 0
+	if airborne:
+		velocity.y += gravity
+		if position.y + velocity.y >= ground_y:
+			_land()  # 공중 공격은 착지하면 끝
+			return
+	else:
+		velocity.x *= ground_friction
+
+	if attack_connected:
+		var prefix := "j" if airborne else ("2" if _held("down") else "5")
+		var next := _pressed_attack(prefix)
+		if next != "" and next in current_attack.gatling:
+			_start_attack(next)
+			return
+
+	if state_frame >= current_attack.total_frames():
+		current_attack = null
+		_change_state(State.AIR if airborne else State.STAND)
+
+
+func _start_attack(attack_name: String) -> void:
+	current_attack = attacks[attack_name]
+	attack_connected = false
+	if is_on_ground():
+		velocity.x = 0
+	_change_state(State.ATTACK)
+
+
+## 히트스턴/가드스턴: 시간이 다 지나면 다시 움직일 수 있다
+func _stunned() -> void:
+	if is_on_ground() and velocity.y >= 0:
+		velocity.x *= ground_friction
+		stun_frames -= 1
+		if stun_frames <= 0:
+			_change_state(State.GUARD if state == State.BLOCKSTUN and _held("guard") else State.STAND)
+	else:
+		# 공중에서 맞으면 땅에 떨어질 때까지 못 움직인다
+		velocity.y += gravity
+		if position.y + velocity.y >= ground_y:
+			_land()
+
+
+func _ko() -> void:
+	velocity.y += gravity
+	if position.y + velocity.y >= ground_y:
+		position.y = ground_y
+		velocity = Vector2.ZERO
+	else:
+		velocity.x *= 0.98
+
+
+func _check_landing() -> void:
+	if position.y + velocity.y >= ground_y:
+		_land()
+
+
 func _land() -> void:
 	position.y = ground_y
 	velocity = Vector2.ZERO
+	current_attack = null
 	_change_state(State.STAND)
 
 
@@ -203,25 +351,109 @@ func _face_opponent() -> void:
 		facing = -1
 
 
-# ── 판정용 몸통 (밀어내기에 사용) ─────────────────────────
+# ── 판정 ─────────────────────────────────────────────────
 func body_size() -> Vector2:
-	return CROUCH_SIZE if state == State.CROUCH or state == State.PREJUMP else BODY_SIZE
+	var low := state == State.CROUCH or state == State.PREJUMP \
+			or (state == State.GUARD and _held("down")) \
+			or (state == State.ATTACK and current_attack != null and current_attack.name.begins_with("2"))
+	return CROUCH_SIZE if low else BODY_SIZE
 
 
-## 발 위치(position)를 기준으로 한 몸통 사각형
+## 몸통 사각형 (밀어내기 + 맞는 판정 = 허트박스)
 func body_rect() -> Rect2:
 	var size := body_size()
 	return Rect2(position.x - size.x / 2, position.y - size.y, size.x, size.y)
 
 
+## 지금 살아있는 공격 판정(히트박스). 없으면 크기 0
+func hitbox_rect() -> Rect2:
+	if state != State.ATTACK or attack_connected or not current_attack.is_active(state_frame):
+		return Rect2()
+	var box := current_attack.hitbox
+	if facing < 0:  # 왼쪽을 보면 좌우 반전
+		box.position.x = -box.position.x - box.size.x
+	box.position += position
+	return box
+
+
+## 이 공격을 막을 수 있는 상태인가
+func can_block(level: AttackData.Level) -> bool:
+	var guarding := state == State.GUARD or state == State.BLOCKSTUN \
+			or (_held("guard") and state in [State.STAND, State.CROUCH, State.AIR])
+	if not guarding:
+		return false
+	if not is_on_ground():
+		return true  # 공중 가드는 모든 공격을 막는다
+	var crouching := _held("down")
+	match level:
+		AttackData.Level.LOW:
+			return crouching
+		AttackData.Level.OVERHEAD:
+			return not crouching
+	return true
+
+
+## Match가 호출: 공격이 맞았거나 막혔다고 알려준다
+func on_attack_connected() -> void:
+	attack_connected = true
+
+
+## Match가 호출: 공격을 받았다. 막았으면 true를 돌려준다
+func receive_attack(attack: AttackData, from_dir: int) -> bool:
+	if can_block(attack.level):
+		stun_frames = attack.blockstun
+		velocity.x = attack.pushback * from_dir
+		_change_state(State.BLOCKSTUN)
+		return true
+
+	hp = maxi(hp - attack.damage, 0)
+	current_attack = null
+	if hp == 0:
+		velocity = Vector2(6.0 * from_dir, -10.0)
+		_change_state(State.KO)
+		return false
+	stun_frames = attack.hitstun
+	if is_on_ground():
+		velocity.x = attack.pushback * from_dir
+	else:
+		velocity = Vector2(3.0 * from_dir, -6.0)  # 공중에서 맞으면 살짝 띄워진다
+	_change_state(State.HITSTUN)
+	return false
+
+
 # ── 임시 그래픽 ───────────────────────────────────────────
+var debug_draw_boxes := false   # F2로 판정 박스 보기
+
+
 func _draw() -> void:
 	var size := body_size()
 	var rect := Rect2(-size.x / 2, -size.y, size.x, size.y)
-	draw_rect(rect, color)
+	var body_color := color
+	match state:
+		State.HITSTUN, State.KO:
+			body_color = color.lightened(0.5)
+		State.GUARD, State.BLOCKSTUN:
+			body_color = color.darkened(0.4)
+	draw_rect(rect, body_color)
 	draw_rect(rect, Color.WHITE, false, 3.0)
 	# 바라보는 방향 표시 (눈)
 	draw_circle(Vector2(facing * size.x * 0.25, -size.y + 25), 7, Color.WHITE)
-	# 디버그: 현재 상태 이름
+	# 공격 중이면 히트박스 위치에 팔 모양을 그린다 (발생 중엔 흐리게, 지속 중엔 진하게)
+	if state == State.ATTACK and current_attack != null:
+		var box := current_attack.hitbox
+		if facing < 0:
+			box.position.x = -box.position.x - box.size.x
+		var alpha := 1.0 if current_attack.is_active(state_frame) else 0.3
+		draw_rect(box, Color(1, 1, 1, alpha))
+	# 디버그
+	var label: String = State.keys()[state]
+	if current_attack != null:
+		label += " " + current_attack.name
 	draw_string(ThemeDB.fallback_font, Vector2(-size.x / 2, -size.y - 10),
-			State.keys()[state], HORIZONTAL_ALIGNMENT_LEFT, -1, 18)
+			label, HORIZONTAL_ALIGNMENT_LEFT, -1, 18)
+	if debug_draw_boxes:
+		draw_rect(rect, Color.GREEN, false, 2.0)
+		var hit := hitbox_rect()
+		if hit.has_area():
+			hit.position -= position
+			draw_rect(hit, Color.RED, false, 2.0)

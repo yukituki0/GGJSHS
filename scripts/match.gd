@@ -7,8 +7,11 @@ const GROUND_Y := 620.0
 const WALL_LEFT := 40.0
 const WALL_RIGHT := 1240.0
 
+const KO_RESET_FRAMES := 150    # KO 후 다시 시작하기까지 (임시, 라운드 시스템 전까지)
+
 var p1: Fighter
 var p2: Fighter
+var _ko_timer := 0
 
 
 func _ready() -> void:
@@ -16,6 +19,14 @@ func _ready() -> void:
 	p2 = _spawn(2, Color(0.2, 0.4, 0.9), 840)
 	p1.opponent = p2
 	p2.opponent = p1
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	# F2: 판정 박스 보기 (초록 = 몸통/피격, 빨강 = 공격)
+	if event is InputEventKey and event.pressed and not event.echo \
+			and event.physical_keycode == KEY_F2:
+		for f in [p1, p2]:
+			f.debug_draw_boxes = not f.debug_draw_boxes
 
 
 func _spawn(player: int, color: Color, x: float) -> Fighter:
@@ -28,11 +39,40 @@ func _spawn(player: int, color: Color, x: float) -> Fighter:
 	return f
 
 
-## 매 프레임: 1P 이동 → 2P 이동 → 밀어내기 (항상 이 순서)
+## 매 프레임: 1P 이동 → 2P 이동 → 밀어내기 → 공격 판정 (항상 이 순서)
 func _physics_process(_delta: float) -> void:
 	p1.tick()
 	p2.tick()
 	_resolve_push()
+	_resolve_hits()
+	_update_ko()
+	queue_redraw()
+
+
+## 양쪽 공격을 "먼저 다 검사하고 나서" 적용한다 → 동시에 맞으면 둘 다 맞음(상쇄)
+func _resolve_hits() -> void:
+	var hits: Array = []  # [공격자, 방어자, 기술]
+	for pair in [[p1, p2], [p2, p1]]:
+		var attacker: Fighter = pair[0]
+		var defender: Fighter = pair[1]
+		if defender.state == Fighter.State.KO:
+			continue
+		if attacker.hitbox_rect().intersects(defender.body_rect()):
+			hits.append([attacker, defender, attacker.current_attack])
+	for hit in hits:
+		var attacker: Fighter = hit[0]
+		var defender: Fighter = hit[1]
+		attacker.on_attack_connected()
+		defender.receive_attack(hit[2], attacker.facing)
+
+
+## KO가 나오면 잠시 뒤 처음부터 다시 (라운드 시스템은 나중에)
+func _update_ko() -> void:
+	if p1.state != Fighter.State.KO and p2.state != Fighter.State.KO:
+		return
+	_ko_timer += 1
+	if _ko_timer >= KO_RESET_FRAMES:
+		get_tree().reload_current_scene()
 
 
 ## 두 몸통이 겹치면 반씩 밀어내고, 벽 밖으로 못 나가게 막는다
@@ -68,3 +108,21 @@ func _draw() -> void:
 	draw_rect(Rect2(0, 0, 1280, 720), Color(0.12, 0.12, 0.16))
 	draw_rect(Rect2(0, GROUND_Y, 1280, 720 - GROUND_Y), Color(0.25, 0.25, 0.3))
 	draw_line(Vector2(0, GROUND_Y), Vector2(1280, GROUND_Y), Color.WHITE, 2.0)
+	if p1 == null:
+		return
+	# 체력바 (1P는 왼쪽에서, 2P는 오른쪽에서 줄어든다)
+	_draw_hp_bar(Rect2(40, 640, 540, 28), p1, false)
+	_draw_hp_bar(Rect2(700, 640, 540, 28), p2, true)
+	if _ko_timer > 0:
+		draw_string(ThemeDB.fallback_font, Vector2(0, 330), "K.O.",
+				HORIZONTAL_ALIGNMENT_CENTER, 1280, 96, Color.YELLOW)
+
+
+func _draw_hp_bar(rect: Rect2, f: Fighter, from_right: bool) -> void:
+	draw_rect(rect, Color(0.3, 0.05, 0.05))
+	var ratio := float(f.hp) / f.max_hp
+	var filled := Rect2(rect.position, Vector2(rect.size.x * ratio, rect.size.y))
+	if from_right:
+		filled.position.x = rect.end.x - filled.size.x
+	draw_rect(filled, Color(1.0, 0.8, 0.1))
+	draw_rect(rect, Color.WHITE, false, 2.0)
