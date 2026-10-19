@@ -13,7 +13,7 @@ signal mode_changed(new_mode: Mode)
 const ACTIONS: Array[String] = [
 	"up", "down", "left", "right",
 	"p", "k", "s", "hs", "d",
-	"rc", "dash", "guard", "start",
+	"rc", "dash", "guard", "start", "select",
 ]
 
 ## 키보드 배치 (physical_keycode 기준 = 키보드 언어 설정과 상관없이 "자리"로 인식)
@@ -23,14 +23,14 @@ const KEYBOARD_MAP := {
 		"p": KEY_Y, "k": KEY_U, "s": KEY_I, "hs": KEY_O,
 		"d": KEY_H, "rc": KEY_J,
 		"dash": KEY_K, "guard": KEY_L,
-		"start": KEY_1,
+		"start": KEY_1, "select": KEY_2,
 	},
 	2: {
 		"up": KEY_UP, "down": KEY_DOWN, "left": KEY_LEFT, "right": KEY_RIGHT,
 		"p": KEY_KP_4, "k": KEY_KP_5, "s": KEY_KP_6, "hs": KEY_KP_ADD,
 		"d": KEY_KP_1, "rc": KEY_KP_2,
 		"dash": KEY_KP_3, "guard": KEY_KP_ENTER,
-		"start": KEY_0,
+		"start": KEY_0, "select": KEY_9,
 	},
 }
 
@@ -39,7 +39,7 @@ const KEYBOARD_MAP := {
 const JOY_BUTTON_MAP := {
 	"p": 0, "k": 1, "s": 2, "hs": 3,
 	"d": 4, "rc": 5, "dash": 6, "guard": 7,
-	"start": 9,
+	"start": 9, "select": 8,
 }
 
 ## 조이스틱은 축(axis)으로 들어올 수도, 방향 버튼(D-pad)으로 들어올 수도 있어서 둘 다 등록한다.

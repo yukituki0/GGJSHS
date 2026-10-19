@@ -46,8 +46,8 @@ var _stage_texture: Texture2D
 
 
 func _ready() -> void:
-	if not is_training():
-		Game.stage = randi() % Game.STAGES.size()  # 대전은 스테이지 랜덤
+	if Game.stage_random:
+		Game.stage = randi() % Game.STAGES.size()
 	_stage_texture = Game.load_texture("res://assets/stages/%s.png" % Game.stage_info()["id"])
 	p1 = _spawn(1)
 	p2 = _spawn(2)
@@ -62,6 +62,7 @@ func _ready() -> void:
 	if is_training():
 		for f in [p1, p2]:
 			f.can_die = false
+		p2.dummy = Game.dummy_mode as Fighter.Dummy  # 2P 자리는 더미 (혼자 연습)
 		_start_round()
 		_set_phase(Phase.FIGHT)
 	else:
@@ -132,7 +133,7 @@ func _physics_process(_delta: float) -> void:
 		_update_result_menu()
 		queue_redraw()
 		return
-	if phase == Phase.FIGHT and Game.menu_pressed("start"):
+	if phase == Phase.FIGHT and Game.pause_pressed():
 		paused = true
 		menu_cursor = 0
 		return
@@ -254,19 +255,42 @@ func _update_training() -> void:
 
 
 # ── 일시정지 / 결과 메뉴 ──────────────────────────────────
-const PAUSE_ITEMS := ["resume", "to_char_select", "to_title"]    # Game.STRINGS 키
-const RESULT_ITEMS := ["rematch", "to_char_select", "to_title"]
+const RESULT_ITEMS := ["rematch", "to_char_select", "to_title"]  # Game.STRINGS 키
+
+
+## 일시정지 메뉴 항목 (트레이닝이면 더미 설정이 추가된다)
+func pause_items() -> Array:
+	if is_training():
+		return ["resume", "dummy", "to_char_select", "to_title"]
+	return ["resume", "to_char_select", "to_title"]
+
+
+## 메뉴 항목에 보일 글자 (더미는 현재 설정까지)
+func menu_label(key: String) -> String:
+	if key == "dummy":
+		return "%s: %s" % [Game.t("dummy"), Game.t(Game.DUMMY_KEYS[Game.dummy_mode])]
+	return Game.t(key)
 
 
 func _update_pause_menu() -> void:
-	menu_cursor = _move_menu(menu_cursor, PAUSE_ITEMS.size())
-	if Game.menu_pressed("start") or Game.menu_back():
+	var items := pause_items()
+	menu_cursor = _move_menu(menu_cursor, items.size())
+	if Game.pause_pressed() or Game.menu_back():
 		paused = false
-	elif Game.menu_pressed("p"):
-		match menu_cursor:
-			0: paused = false
-			1: Game.goto("char_select")
-			2: Game.goto("title")
+		return
+	if not Game.menu_pressed("p"):
+		return
+	match items[menu_cursor]:
+		"resume":
+			paused = false
+		"dummy":
+			# 누를 때마다 다음 동작으로
+			Game.dummy_mode = (Game.dummy_mode + 1) % Game.DUMMY_KEYS.size()
+			p2.dummy = Game.dummy_mode as Fighter.Dummy
+		"to_char_select":
+			Game.goto("char_select")
+		"to_title":
+			Game.goto("title")
 
 
 func _update_result_menu() -> void:

@@ -1,6 +1,7 @@
 extends Screen
 ## 캐릭터 선택: 1P / 2P가 동시에 좌우로 고르고 P로 결정, K로 취소
-## 둘 다 결정하면 잠깐 뒤 대전 화면으로
+## 트레이닝은 혼자서도 할 수 있게 "내 캐릭터 → 더미 캐릭터" 순서로 한 사람이 고른다
+## 둘 다 결정하면 잠깐 뒤 스테이지 선택으로
 
 const CARD_SIZE := Vector2(170, 210)
 
@@ -13,31 +14,61 @@ func _ready() -> void:
 	cursor = Game.selected.duplicate()
 
 
+func _training() -> bool:
+	return Game.mode == Game.Mode.TRAINING
+
+
 func _process(delta: float) -> void:
 	super(delta)
-	var count := Game.CHARACTERS.size()
-	for p in [1, 2]:
-		if locked[p]:
-			if Game.menu_back(p):
-				locked[p] = false
-			continue
-		if Game.menu_pressed("left", p):
-			cursor[p] = (cursor[p] - 1 + count) % count
-		elif Game.menu_pressed("right", p):
-			cursor[p] = (cursor[p] + 1) % count
-		elif Game.menu_confirm(p):
-			locked[p] = true
-		elif Game.menu_back(p):
-			Game.goto("mode_select")
-			return
+	if Input.is_action_just_pressed("ui_cancel"):
+		Game.goto("mode_select")
+		return
+	if _training():
+		_update_training_select()
+	else:
+		for p in [1, 2]:
+			if not _update_slot(p, p):
+				return
 
 	if locked[1] and locked[2]:
 		_done_frames += 1
 		if _done_frames >= 40:
 			Game.selected = cursor.duplicate()
-			Game.goto("battle")
+			Game.goto("stage_select")
 	else:
 		_done_frames = 0
+
+
+## slot(1P/2P 자리)을 player의 입력으로 조작. 화면을 나가면 false
+func _update_slot(slot: int, player: int) -> bool:
+	var count := Game.CHARACTERS.size()
+	if locked[slot]:
+		if Game.menu_back(player):
+			locked[slot] = false
+		return true
+	if Game.menu_pressed("left", player):
+		cursor[slot] = (cursor[slot] - 1 + count) % count
+	elif Game.menu_pressed("right", player):
+		cursor[slot] = (cursor[slot] + 1) % count
+	elif Game.menu_confirm(player):
+		locked[slot] = true
+	elif Game.menu_back(player):
+		Game.goto("mode_select")
+		return false
+	return true
+
+
+## 트레이닝: 아무나(0) 입력으로 1P 자리 → 다 고르면 2P(더미) 자리
+func _update_training_select() -> void:
+	if not locked[1]:
+		_update_slot(1, 0)
+	elif not locked[2]:
+		if Game.menu_back():
+			locked[1] = false  # 더미 고르다가 뒤로 → 내 캐릭터 다시
+			return
+		_update_slot(2, 0)
+	elif Game.menu_back():
+		locked[2] = false
 
 
 func _card_rect(index: int) -> Rect2:
@@ -81,7 +112,7 @@ func _draw() -> void:
 	if locked[1] and locked[2]:
 		Style.banner(self, Game.t("ready"), Style.GOLD, _done_frames / 10.0)
 	else:
-		text(Game.t("select_hint"), 700, 18, Style.GRAY, W / 2, 0)
+		text(Game.t("training_select_hint" if _training() else "select_hint"), 700, 18, Style.GRAY, W / 2, 0)
 
 
 func _player_color(p: int) -> Color:

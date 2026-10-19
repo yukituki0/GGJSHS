@@ -53,7 +53,7 @@ func _draw() -> void:
 		Match.Phase.RESULT:
 			_draw_result()
 	if m.paused:
-		_draw_menu(Game.t("pause"), Match.PAUSE_ITEMS)
+		_draw_menu(Game.t("pause"), m.pause_items())
 
 
 # ── 그림 HUD (assets/ui/hud_*.png) ─────────────────────────
@@ -438,5 +438,5 @@ func _draw_menu(title: String, items: Array) -> void:
 		Style.fill(self, Style.slant(440, y, 400, 52, 14), Style.RED if selected else Style.PANEL)
 		if selected:
 			Style.outline(self, Style.slant(440, y, 400, 52, 14), Style.WHITE, 3.0)
-		Style.text(self, Game.t(items[i]), Vector2(440, y + 37), 30,
+		Style.text(self, m.menu_label(items[i]), Vector2(440, y + 37), 30,
 				Style.WHITE if selected else Style.GRAY, HORIZONTAL_ALIGNMENT_CENTER, 414)

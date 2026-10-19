@@ -44,6 +44,14 @@ const STAGES: Array[Dictionary] = [
 		"id": "rooftop", "name": ["ROOFTOP - JEJU SEA", "옥상 - 제주 바다"],
 		"sky": [Color("f08a4b"), Color("6a2c5a")], "floor": Color("3a3440"),
 	},
+	{
+		"id": "playground", "name": ["PLAYGROUND", "운동장"],
+		"sky": [Color("5aa0d8"), Color("b8d8ea")], "floor": Color("8a6a48"),
+	},
+	{
+		"id": "hallway", "name": ["HALLWAY", "복도"],
+		"sky": [Color("3a3a42"), Color("1c1c22")], "floor": Color("5a5550"),
+	},
 ]
 
 ## 화면 글자: 키 -> [영어, 한국어]
@@ -89,6 +97,23 @@ const STRINGS := {
 	"ok": ["OK!", "결정!"],
 	"ready": ["READY!", "준비 완료!"],
 
+	"stage_select": ["STAGE SELECT", "스테이지 선택"],
+	"random": ["RANDOM", "랜덤"],
+	"stage_hint": ["LEFT/RIGHT: SELECT    P: OK    K: BACK", "좌우: 선택    P: 결정    K: 뒤로"],
+	"training_select_hint": ["Pick your character, then the dummy's    P: OK    K: BACK",
+			"내 캐릭터 → 더미 캐릭터 순서로 고르기    P: 결정    K: 뒤로"],
+	"dummy": ["DUMMY", "더미"],
+	"dummy_human": ["2P CONTROL", "2P가 조작"],
+	"dummy_stand": ["STAND", "서 있기"],
+	"dummy_crouch": ["CROUCH", "앉기"],
+	"dummy_jump": ["JUMP", "점프"],
+	"dummy_guard": ["STAND GUARD", "서서 가드"],
+	"dummy_guard_low": ["CROUCH GUARD", "앉아서 가드"],
+	"dummy_guard_auto": ["AUTO GUARD", "자동 가드"],
+	"quit_confirm": ["Quit the game?", "게임을 종료할까요?"],
+	"quit_hint": ["P: YES    K / ESC: NO", "P: 예    K / ESC: 아니오"],
+	"esc_hint": ["ESC: QUIT", "ESC: 종료"],
+
 	"pause": ["PAUSE", "일시정지"],
 	"resume": ["RESUME", "계속하기"],
 	"rematch": ["REMATCH", "재경기"],
@@ -103,6 +128,7 @@ const SCENES := {
 	"mode_select": "res://scenes/mode_select.tscn",
 	"controls": "res://scenes/controls.tscn",
 	"char_select": "res://scenes/char_select.tscn",
+	"stage_select": "res://scenes/stage_select.tscn",
 	"battle": "res://scenes/battle.tscn",
 }
 
@@ -110,6 +136,12 @@ var mode: Mode = Mode.VERSUS
 var language: Language = Language.EN
 var selected := { 1: 0, 2: 1 }  # 플레이어 -> CHARACTERS 인덱스
 var stage := 0                  # STAGES 인덱스
+var stage_random := true        # 스테이지 선택에서 RANDOM을 골랐으면 매 경기 랜덤
+
+## 트레이닝 더미 (2P 자리) 동작. Fighter.Dummy와 순서가 같다
+const DUMMY_KEYS := ["dummy_human", "dummy_stand", "dummy_crouch", "dummy_jump",
+		"dummy_guard", "dummy_guard_low", "dummy_guard_auto"]
+var dummy_mode := 1             # 기본: 서 있기 (혼자서도 연습할 수 있게)
 
 
 func _ready() -> void:
@@ -193,6 +225,12 @@ func menu_confirm(player := 0) -> bool:
 	return menu_pressed("p", player) or menu_pressed("start", player)
 
 
-## 메뉴의 "뒤로" (K)
+## 메뉴의 "뒤로" (K, SELECT, 키보드 ESC)
 func menu_back(player := 0) -> bool:
-	return menu_pressed("k", player)
+	return menu_pressed("k", player) or menu_pressed("select", player) \
+			or (player == 0 and Input.is_action_just_pressed("ui_cancel"))
+
+
+## 일시정지 (START, SELECT, 키보드 ESC)
+func pause_pressed() -> bool:
+	return menu_pressed("start") or menu_pressed("select") or Input.is_action_just_pressed("ui_cancel")

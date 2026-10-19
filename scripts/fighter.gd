@@ -57,6 +57,10 @@ var player := 1                 # 1P / 2P
 var color := Color.RED
 var display_name := ""
 var input_enabled := true       # 라운드 시작 전/끝난 뒤에는 Match가 입력을 막는다
+
+## 트레이닝 더미: HUMAN이면 사람이 조작, 아니면 정해진 동작만 한다 (Game.DUMMY_KEYS와 순서 같음)
+enum Dummy { HUMAN, STAND, CROUCH, JUMP, GUARD, GUARD_LOW, GUARD_AUTO }
+var dummy: Dummy = Dummy.HUMAN
 var can_die := true             # 트레이닝 모드에서는 false (체력이 1 밑으로 안 내려감)
 var opponent: Fighter
 var ground_y := 600.0           # 바닥 높이 (Match가 정해줌)
@@ -107,7 +111,8 @@ func tick() -> void:
 ## 캐릭터는 멈춰 있지만, 이때 누른 버튼은 버퍼에 기억해 둔다 (히트스톱 중 개틀링 입력 가능)
 func tick_frozen() -> void:
 	for action in BUFFERED_ACTIONS:
-		if input_enabled and Input.is_action_just_pressed(InputManager.action_name(player, action)):
+		if input_enabled and dummy == Dummy.HUMAN \
+				and Input.is_action_just_pressed(InputManager.action_name(player, action)):
 			_buffer[action] = input_buffer_frames
 	if hit_shake > 0:
 		hit_shake -= 1
@@ -192,7 +197,32 @@ func spawn(projectile: Projectile) -> void:
 
 # ── 입력 헬퍼 ─────────────────────────────────────────────
 func _held(action: String) -> bool:
-	return input_enabled and Input.is_action_pressed(InputManager.action_name(player, action))
+	if not input_enabled:
+		return false
+	if dummy != Dummy.HUMAN:
+		return _dummy_held(action)
+	return Input.is_action_pressed(InputManager.action_name(player, action))
+
+
+## 더미가 "누르고 있는" 버튼
+func _dummy_held(action: String) -> bool:
+	match dummy:
+		Dummy.CROUCH:
+			return action == "down"
+		Dummy.JUMP:
+			return action == "up"
+		Dummy.GUARD:
+			return action == "guard"
+		Dummy.GUARD_LOW:
+			return action == "guard" or action == "down"
+		Dummy.GUARD_AUTO:
+			# 상대가 하단 공격 중이면 앉아서, 아니면 서서 가드
+			if action == "guard":
+				return true
+			if action == "down":
+				return opponent != null and opponent.current_attack != null \
+						and opponent.current_attack.level == AttackData.Level.LOW
+	return false
 
 
 ## "최근 몇 프레임 안에 눌렀나" (입력 버퍼). 실제로 행동에 썼으면 _consume()으로 지운다
@@ -208,7 +238,8 @@ func _consume(action: String) -> void:
 ## 후딜 중에 조금 일찍 눌러도, 움직일 수 있게 되는 순간 바로 나간다.
 func _update_buffer() -> void:
 	for action in BUFFERED_ACTIONS:
-		if input_enabled and Input.is_action_just_pressed(InputManager.action_name(player, action)):
+		if input_enabled and dummy == Dummy.HUMAN \
+				and Input.is_action_just_pressed(InputManager.action_name(player, action)):
 			_buffer[action] = input_buffer_frames
 		elif _buffer.get(action, 0) > 0:
 			_buffer[action] -= 1
