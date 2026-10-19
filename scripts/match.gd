@@ -321,6 +321,11 @@ func _resolve_hits() -> void:
 		var defender: Fighter = pair[1]
 		if defender.state == Fighter.State.KO or defender.is_invulnerable():
 			continue
+		# 잡기는 땅에 서 있고 경직 중이 아닌 상대만 잡힌다
+		var atk := attacker.current_attack
+		if atk != null and atk.is_throw and (not defender.is_on_ground() \
+				or defender.state == Fighter.State.HITSTUN or defender.state == Fighter.State.BLOCKSTUN):
+			continue
 		if attacker.hitbox_rect().intersects(defender.body_rect()):
 			var contact := attacker.hitbox_rect().intersection(defender.body_rect()).get_center()
 			hits.append([attacker, defender, attacker.current_attack, contact])

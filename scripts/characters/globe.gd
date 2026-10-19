@@ -158,7 +158,5 @@ func _connect_stars() -> void:
 func tick() -> void:
 	super()
 	# 태풍: 근처의 상대를 소용돌이 쪽으로 끌어당긴다
-	if _alive(_typhoon) and opponent != null and opponent.state != State.KO:
-		var dx := _typhoon.position.x - opponent.position.x
-		if absf(dx) < 450 and absf(dx) > 10:
-			opponent.position.x += signf(dx) * 3.0
+	if _alive(_typhoon):
+		pull_opponent(_typhoon.position.x, 3.0, 450.0)

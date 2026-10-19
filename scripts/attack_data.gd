@@ -28,6 +28,9 @@ var event_frame := -1    # 이 프레임에 캐릭터의 _on_attack_event()가 �
 var invuln_frames := 0   # 시작부터 이 프레임까지 무적 (공격을 안 맞음)
 var move_speed := 0.0    # 공격 중 앞으로 움직이는 속도 (돌진기)
 var armor_hits := 0      # 발생~지속 동안 이 횟수만큼 맞아도 안 멈춤 (데미지는 받음)
+var unblockable := false # 가드 불가
+var is_throw := false    # 잡기: 가드 불가 + 땅에 있고 경직 중이 아닌 상대만 잡힌다
+var launch := Vector2.ZERO  # 맞으면 이 속도로 날아감 (x는 공격 방향 기준). 0이면 보통 넉백
 
 
 func _init(p_name: String, p_startup: int, p_active: int, p_recovery: int,

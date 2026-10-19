@@ -149,6 +149,14 @@ func _draw() -> void:
 				var rad := size.x * (0.15 + i * 0.09)
 				var start := age * 0.25 + i * 1.3
 				draw_arc(Vector2(0, -i * 8), rad, start, start + PI * 1.3, 16, Color(color, (0.8 - i * 0.12) * fade), 6.0)
+		"blackhole":
+			# 블랙홀: 검은 중심 + 빨려 들어가는 보라색 고리
+			var grow := minf(1.0, age / 15.0)
+			for i in 4:
+				var rad := size.x * 0.5 * grow * (1.0 - fmod(age * 0.03 + i * 0.25, 1.0))
+				draw_arc(Vector2.ZERO, rad, 0, TAU, 32, Color(color, 0.6), 4.0)
+			draw_circle(Vector2.ZERO, size.x * 0.22 * grow, Color(0.02, 0.0, 0.05))
+			draw_arc(Vector2.ZERO, size.x * 0.22 * grow, 0, TAU, 32, Color(color.lightened(0.4), 0.9), 3.0)
 		_:
 			draw_rect(r, color)
 

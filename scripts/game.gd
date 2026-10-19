@@ -31,6 +31,10 @@ const CHARACTERS: Array[Dictionary] = [
 		"id": "globe", "name": "GLOBE", "club": ["EARTH SCIENCE CLUB  Globe", "지구과학 동아리  Globe"],
 		"color": Color("e08a3c"), "script": "res://scripts/characters/globe.gd",
 	},
+	{
+		"id": "chaos", "name": "CHAOS", "club": ["PHYSICS CLUB  Chaos", "물리 동아리  Chaos"],
+		"color": Color("a05cff"), "script": "res://scripts/characters/chaos.gd",
+	},
 ]
 
 ## 스테이지 목록. 배경 그림: assets/stages/<id>.png (1920x1080 권장, 없으면 코드로 그린 임시 배경)

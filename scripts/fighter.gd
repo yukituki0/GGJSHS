@@ -194,6 +194,15 @@ func _can_use_special(_attack_name: String) -> bool:
 	return true
 
 
+## 상대를 target_x 쪽으로 끌어당긴다 (max_dist 안에 있을 때만)
+func pull_opponent(target_x: float, strength: float, max_dist: float) -> void:
+	if opponent == null or opponent.state == State.KO:
+		return
+	var dx := target_x - opponent.position.x
+	if absf(dx) < max_dist and absf(dx) > 8:
+		opponent.position.x += signf(dx) * minf(strength, absf(dx))
+
+
 func spawn(projectile: Projectile) -> void:
 	projectile.shooter = self
 	projectile_spawned.emit(projectile)
@@ -643,7 +652,7 @@ func receive_attack(attack: AttackData, from_dir: int) -> bool:
 			velocity = Vector2(6.0 * from_dir, -10.0)
 			_change_state(State.KO)
 		return false
-	if can_block(attack.level):
+	if not attack.unblockable and not attack.is_throw and can_block(attack.level):
 		add_tension(tension_guard_gain)
 		stun_frames = attack.blockstun
 		velocity.x = attack.pushback * from_dir
@@ -658,7 +667,10 @@ func receive_attack(attack: AttackData, from_dir: int) -> bool:
 		_change_state(State.KO)
 		return false
 	stun_frames = attack.hitstun
-	if is_on_ground():
+	if attack.launch != Vector2.ZERO:
+		velocity = Vector2(attack.launch.x * from_dir, attack.launch.y)  # 던지기 등: 크게 날아감
+		position.y -= 1  # 땅에서 떨어뜨려야 공중 경직으로 처리된다
+	elif is_on_ground():
 		velocity.x = attack.pushback * from_dir
 	else:
 		velocity = Vector2(3.0 * from_dir, -6.0)  # 공중에서 맞으면 살짝 띄워진다
