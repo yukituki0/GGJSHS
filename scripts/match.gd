@@ -47,6 +47,7 @@ var _stage_texture: Texture2D
 
 
 func _ready() -> void:
+	Sfx.play_bgm("bgm_battle")
 	if Game.stage_random:
 		Game.stage = randi() % Game.STAGES.size()
 	_stage_texture = Game.load_texture("res://assets/stages/%s.png" % Game.stage_info()["id"])
@@ -194,6 +195,8 @@ func _update_phase() -> void:
 				_start_round()
 				_set_phase(Phase.ROUND_INTRO)
 		Phase.ROUND_INTRO:
+			if phase_frame == 60:
+				Sfx.play("fight")  # "FIGHT!" 글자와 같이
 			if phase_frame >= ROUND_INTRO_FRAMES:
 				_set_input(true)
 				_set_phase(Phase.FIGHT)
@@ -234,6 +237,7 @@ func _update_fight() -> void:
 ## winner: 1, 2, 또는 0(무승부 = 둘 다 1승)
 func _end_round(winner: int, result: String) -> void:
 	round_result = result
+	Sfx.play("ko")
 	if winner == 0:
 		wins[1] += 1
 		wins[2] += 1
@@ -352,6 +356,14 @@ func _resolve_hits() -> void:
 ## 맞히기 공통 처리 (몸 공격, 투사체 둘 다). 막혔으면 true
 func _apply_hit(attacker: Fighter, defender: Fighter, attack: AttackData, contact: Vector2, dir: int) -> bool:
 	var blocked := defender.receive_attack(attack, dir, attacker.damage_mult)
+	if blocked:
+		Sfx.play("guard", -2.0, 0.08)
+	elif attack.damage >= 45:
+		Sfx.play("hit_heavy", 0.0, 0.05)
+	elif attack.damage >= 25:
+		Sfx.play("hit_medium", -1.0, 0.08)
+	else:
+		Sfx.play("hit_light", -2.0, 0.1)
 	attacker.on_attack_connected(attack, blocked)
 	_hitstop = maxi(_hitstop, attack.hitstop)
 	sparks.append([contact, 10, blocked])

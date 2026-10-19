@@ -357,8 +357,10 @@ func _ground_neutral() -> void:
 		_consume("dash")
 		if fwd < 0:
 			_change_state(State.BACKDASH)
+			Sfx.play("dash", -4.0, 0.05)
 		else:
 			_change_state(State.RUN)
+			Sfx.play("dash", -4.0, 0.05)
 		return
 
 	if _held("down"):
@@ -422,6 +424,7 @@ func _prejump() -> void:
 			_jump_dir = fwd
 		var speed := run_speed if _jump_dir > 0 and _held("dash") else jump_forward_speed
 		velocity = Vector2(_jump_dir * speed * facing, jump_velocity)
+		Sfx.play("jump", -6.0, 0.05)
 		air_actions_left = air_actions
 		_change_state(State.AIR)
 
@@ -444,12 +447,14 @@ func _air() -> void:
 			_consume("up")
 			air_actions_left -= 1
 			velocity = Vector2(_input_forward() * jump_forward_speed * facing, double_jump_velocity)
+			Sfx.play("jump", -6.0, 0.1)
 		elif _pressed("dash"):
 			_consume("dash")
 			air_actions_left -= 1
 			var dir := -1 if _input_forward() < 0 else 1
 			velocity = Vector2(dir * airdash_speed * facing, 0)
 			_change_state(State.AIRDASH)
+			Sfx.play("dash", -4.0, 0.05)
 			return
 
 	_check_landing()
@@ -512,6 +517,7 @@ func _attack() -> void:
 
 
 func _roman_cancel(airborne: bool) -> void:
+	Sfx.play("rc")
 	add_tension(-RC_COST)
 	rc_flash = 20
 	current_attack = null
@@ -538,6 +544,11 @@ func _start_attack(attack_name: String) -> void:
 		add_tension(-current_attack.cost)
 	if attack_name == "OD":
 		super_flash.emit(self, current_attack)
+		Sfx.play("overdrive")
+	elif attack_name.ends_with("D"):
+		Sfx.play("special", -3.0, 0.08)
+	else:
+		Sfx.play("whoosh", -8.0, 0.15)
 
 
 ## 히트스턴/가드스턴: 시간이 다 지나면 다시 움직일 수 있다

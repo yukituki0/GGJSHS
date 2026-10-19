@@ -23,8 +23,10 @@ func _process(delta: float) -> void:
 	super(delta)
 	if Game.menu_pressed("left"):
 		cursor = (cursor - 1 + _count()) % _count()
+		Sfx.play("menu_move")
 	elif Game.menu_pressed("right"):
 		cursor = (cursor + 1) % _count()
+		Sfx.play("menu_move")
 	elif Game.menu_confirm():
 		Game.stage_random = cursor == 0
 		if cursor > 0:

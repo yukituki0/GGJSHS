@@ -49,6 +49,7 @@ func _update_slot(slot: int, player: int) -> bool:
 		if Game.menu_back(player):
 			locked[slot] = false
 		return true
+	var before: int = cursor[slot]
 	if Game.menu_pressed("left", player):
 		cursor[slot] = (cursor[slot] - 1 + count) % count
 	elif Game.menu_pressed("right", player):
@@ -62,6 +63,8 @@ func _update_slot(slot: int, player: int) -> bool:
 	elif Game.menu_back(player):
 		Game.goto("mode_select")
 		return false
+	if cursor[slot] != before:
+		Sfx.play("menu_move")
 	return true
 
 

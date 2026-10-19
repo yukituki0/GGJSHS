@@ -10,6 +10,10 @@ const ACCENT := Style.RED
 var frame := 0  # 화면이 열린 뒤 지난 프레임 (깜빡임, 등장 연출용)
 
 
+func _enter_tree() -> void:
+	Sfx.play_bgm("bgm_menu")
+
+
 func _process(_delta: float) -> void:
 	frame += 1
 	queue_redraw()
@@ -54,7 +58,9 @@ func menu_list(items: Array, cursor: int, top: float, gap := 64.0, size := 30) -
 ## 위/아래로 커서 이동 (끝에서 반대쪽으로 넘어감)
 func move_cursor(cursor: int, count: int, player := 0) -> int:
 	if Game.menu_pressed("up", player):
+		Sfx.play("menu_move")
 		return (cursor - 1 + count) % count
 	if Game.menu_pressed("down", player):
+		Sfx.play("menu_move")
 		return (cursor + 1) % count
 	return cursor

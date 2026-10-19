@@ -300,15 +300,21 @@ func menu_pressed(action: String, player := 0) -> bool:
 	return false
 
 
-## 메뉴의 "결정" (P 또는 START)
+## 메뉴의 "결정" (P 또는 START). 눌렸으면 결정음
 func menu_confirm(player := 0) -> bool:
-	return menu_pressed("p", player) or menu_pressed("start", player)
+	var pressed := menu_pressed("p", player) or menu_pressed("start", player)
+	if pressed:
+		Sfx.play("menu_ok")
+	return pressed
 
 
 ## 메뉴의 "뒤로" (K, SELECT, 키보드 ESC)
 func menu_back(player := 0) -> bool:
-	return menu_pressed("k", player) or menu_pressed("select", player) \
+	var pressed := menu_pressed("k", player) or menu_pressed("select", player) \
 			or (player == 0 and Input.is_action_just_pressed("ui_cancel"))
+	if pressed:
+		Sfx.play("menu_back")
+	return pressed
 
 
 ## 일시정지 (START, SELECT, 키보드 ESC)
