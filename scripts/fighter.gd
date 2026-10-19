@@ -27,6 +27,7 @@ enum State {
 @export var airdash_speed := 11.0
 @export var air_actions := 1            # 공중에서 2단 점프/공중 대시를 몇 번 쓸 수 있나 (둘이 공유)
 @export var ground_friction := 0.85     # 밀려날 때 속도가 줄어드는 비율
+@export var input_buffer_frames := 5    # 버튼을 몇 프레임 전에 눌러도 기억해 둘지
 
 # ── 몸 크기 (임시 네모 그래픽 + 밀어내기/피격 판정) ─────────
 const BODY_SIZE := Vector2(70, 160)
@@ -34,6 +35,8 @@ const CROUCH_SIZE := Vector2(80, 100)
 
 ## 버튼 우선순위: 동시에 눌렀으면 강한 버튼이 이긴다
 const ATTACK_BUTTONS: Array[String] = ["hs", "s", "k", "p"]
+## 입력 버퍼에 기억해 둘 버튼 (누르는 "순간"이 중요한 것들)
+const BUFFERED_ACTIONS: Array[String] = ["hs", "s", "k", "p", "dash", "up"]
 
 var player := 1                 # 1P / 2P
 var color := Color.RED
@@ -52,6 +55,7 @@ var attacks := {}               # "5P" -> AttackData
 var current_attack: AttackData
 var attack_connected := false   # 이번 공격이 이미 맞았거나 막혔나 (한 번만 판정 + 개틀링 조건)
 var stun_frames := 0            # 히트스턴/가드스턴 남은 프레임
+var _buffer := {}               # 액션 -> 남은 기억 프레임 (0이면 없음)
 
 
 func _ready() -> void:
@@ -62,6 +66,7 @@ func _ready() -> void:
 ## 1프레임 진행. Match가 매 프레임 1P → 2P 순서로 직접 호출한다 (처리 순서를 고정하려고)
 func tick() -> void:
 	state_frame += 1
+	_update_buffer()
 	_update_state()
 	position += velocity
 	queue_redraw()
@@ -97,8 +102,23 @@ func _held(action: String) -> bool:
 	return Input.is_action_pressed(InputManager.action_name(player, action))
 
 
+## "최근 몇 프레임 안에 눌렀나" (입력 버퍼). 실제로 행동에 썼으면 _consume()으로 지운다
 func _pressed(action: String) -> bool:
-	return Input.is_action_just_pressed(InputManager.action_name(player, action))
+	return _buffer.get(action, 0) > 0
+
+
+func _consume(action: String) -> void:
+	_buffer[action] = 0
+
+
+## 입력 버퍼: 누른 순간부터 input_buffer_frames 동안 "눌렀음"을 기억한다.
+## 후딜 중에 조금 일찍 눌러도, 움직일 수 있게 되는 순간 바로 나간다.
+func _update_buffer() -> void:
+	for action in BUFFERED_ACTIONS:
+		if Input.is_action_just_pressed(InputManager.action_name(player, action)):
+			_buffer[action] = input_buffer_frames
+		elif _buffer.get(action, 0) > 0:
+			_buffer[action] -= 1
 
 
 ## 좌우 입력을 "상대 기준"으로 바꿔준다: 1 = 앞(상대 쪽), -1 = 뒤, 0 = 없음
@@ -168,6 +188,7 @@ func _ground_neutral() -> void:
 		_start_prejump(fwd)
 		return
 	if _pressed("dash"):
+		_consume("dash")
 		if fwd < 0:
 			_change_state(State.BACKDASH)
 		else:
@@ -218,6 +239,7 @@ func _backdash() -> void:
 
 
 func _start_prejump(dir: int) -> void:
+	_consume("up")  # 안 지우면 점프하자마자 버퍼에 남은 ↑ 때문에 2단 점프가 나가버린다
 	_jump_dir = dir
 	velocity.x = 0
 	_change_state(State.PREJUMP)
@@ -247,9 +269,11 @@ func _air() -> void:
 
 	if air_actions_left > 0:
 		if _pressed("up"):
+			_consume("up")
 			air_actions_left -= 1
 			velocity = Vector2(_input_forward() * jump_forward_speed * facing, double_jump_velocity)
 		elif _pressed("dash"):
+			_consume("dash")
 			air_actions_left -= 1
 			var dir := -1 if _input_forward() < 0 else 1
 			velocity = Vector2(dir * airdash_speed * facing, 0)
@@ -296,9 +320,13 @@ func _attack() -> void:
 	if state_frame >= current_attack.total_frames():
 		current_attack = null
 		_change_state(State.AIR if airborne else State.STAND)
+		if not airborne:
+			_ground_neutral()  # 버퍼에 남은 입력이 있으면 같은 프레임에 바로 나가도록
 
 
 func _start_attack(attack_name: String) -> void:
+	for button in ATTACK_BUTTONS:  # 같이 눌린 다른 공격 버튼도 같이 소모
+		_consume(button)
 	current_attack = attacks[attack_name]
 	attack_connected = false
 	if is_on_ground():
