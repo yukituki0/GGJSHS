@@ -97,6 +97,15 @@ func _ready() -> void:
 	InputManager.mode_changed.connect(func(_m): save_settings())
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	# F11: 전체 화면 켜기/끄기 (축제 때는 전체 화면으로)
+	if event is InputEventKey and event.pressed and not event.echo \
+			and event.physical_keycode == KEY_F11:
+		var full := DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN
+		DisplayServer.window_set_mode(
+				DisplayServer.WINDOW_MODE_WINDOWED if full else DisplayServer.WINDOW_MODE_FULLSCREEN)
+
+
 ## 번역된 글자. 예: Game.t("press_start")
 func t(key: String) -> String:
 	return STRINGS[key][language]
