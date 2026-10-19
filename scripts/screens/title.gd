@@ -69,7 +69,7 @@ func _draw_background() -> void:
 	if _bg == null:
 		background()
 		return
-	var zoom := 1.0 + 0.04 * sin(frame * 0.01)
+	var zoom := 1.03 + 0.02 * sin(frame * 0.006)  # 항상 1보다 크게 (작아지면 가장자리가 비어 보임)
 	var size := Vector2(W, H) * zoom
 	draw_texture_rect(_bg, Rect2((Vector2(W, H) - size) / 2, size), false)
 	draw_polygon(PackedVector2Array([Vector2(0, H * 0.5), Vector2(W, H * 0.5), Vector2(W, H), Vector2(0, H)]),

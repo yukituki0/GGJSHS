@@ -2,6 +2,11 @@ extends Screen
 ## 스테이지 선택: 맨 앞은 RANDOM, 나머지는 Game.STAGES 순서. 아무나 좌우로 고르고 P로 결정
 ## 카드에는 스테이지 사진(assets/stages/<id>.png)이 있으면 사진, 없으면 임시 색
 
+
+func _init() -> void:
+	bg_name = "stage_select"  # assets/ui/bg_stage_select.png
+
+
 const CARD := Vector2(300, 170)
 const GAP := 30.0
 

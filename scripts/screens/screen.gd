@@ -8,6 +8,9 @@ const H := 720.0
 const ACCENT := Style.RED
 
 var frame := 0  # 화면이 열린 뒤 지난 프레임 (깜빡임, 등장 연출용)
+var bg_name := ""  # 이 화면의 배경 그림 이름 → assets/ui/bg_<이름>.png (없으면 코드 배경)
+var _bg_tex: Texture2D
+var _bg_loaded := false
 
 
 func _enter_tree() -> void:
@@ -24,9 +27,17 @@ func text(s: String, y: float, size: int, color := Style.WHITE, x := W / 2, outl
 	Style.text(self, s, Vector2(x - W, y), size, color, HORIZONTAL_ALIGNMENT_CENTER, W * 2, outline)
 
 
-## 배경: 검은 바탕 + 흘러가는 붉은 사선 + 아래쪽 붉은 빛
+## 배경: 그림(bg_name)이 있으면 그림 + 어둡게, 없으면 검은 바탕. 그 위에 흘러가는 붉은 사선 + 아래쪽 붉은 빛
 func background() -> void:
-	draw_rect(Rect2(0, 0, W, H), Style.BLACK)
+	if not _bg_loaded:
+		_bg_loaded = true
+		if bg_name != "":
+			_bg_tex = Game.load_texture("res://assets/ui/bg_%s.png" % bg_name)
+	if _bg_tex != null:
+		draw_texture_rect(_bg_tex, Rect2(0, 0, W, H), false)
+		draw_rect(Rect2(0, 0, W, H), Color(0, 0, 0, 0.35))  # 메뉴 글자가 잘 보이게 살짝 어둡게
+	else:
+		draw_rect(Rect2(0, 0, W, H), Style.BLACK)
 	var offset := fmod(frame * 0.8, 120.0)
 	for i in range(-10, 16):
 		var x := i * 120.0 + offset

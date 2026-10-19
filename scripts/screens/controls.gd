@@ -1,6 +1,11 @@
 extends Screen
 ## 조작법 화면: 지금 조작 모드의 버튼 배치를 보여준다
 
+
+func _init() -> void:
+	bg_name = "controls"  # assets/ui/bg_controls.png
+
+
 ## [글자 키, 액션들]
 const ROWS := [
 	["move", ["up", "down", "left", "right"]],

@@ -1,6 +1,11 @@
 extends Screen
 ## 모드 선택: 대전 / CPU 대전 / 트레이닝 / 조작법 / 조작 장치 전환 / 언어
 
+
+func _init() -> void:
+	bg_name = "mode_select"  # assets/ui/bg_mode_select.png
+
+
 ## 항목 순서 (글자는 _items()에서)
 enum Item { VERSUS, CPU, TRAINING, CONTROLS, INPUT, LANGUAGE }
 

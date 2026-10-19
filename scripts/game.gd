@@ -73,7 +73,7 @@ const STAGES: Array[Dictionary] = [
 ## 화면 글자: 키 -> [영어, 한국어]
 ## 라운드 연출(ROUND 1, FIGHT!, K.O.)은 격투겜 관례라 영어 그대로 둔다
 const STRINGS := {
-	"subtitle": ["- JEJU SCIENCE HIGH SCHOOL CLUB FIGHTING FESTIVAL -", "- 제주과학고등학교 동아리 파이팅 페스티벌 -"],
+	"subtitle": ["- JEJU SCIENCE HIGH SCHOOL CLUB SHOWDOWN -", "- 제주과학고등학교 동아리 최강자 결정전 -"],
 	"press_start": ["PRESS START", "START 버튼을 누르세요"],
 	"f1_hint": ["F1: KEYBOARD / JOYSTICK", "F1: 키보드 / 조이스틱 전환"],
 

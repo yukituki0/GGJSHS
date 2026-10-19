@@ -3,6 +3,11 @@ extends Screen
 ## 트레이닝은 혼자서도 할 수 있게 "내 캐릭터 → 더미 캐릭터" 순서로 한 사람이 고른다
 ## 둘 다 결정하면 잠깐 뒤 스테이지 선택으로
 
+
+func _init() -> void:
+	bg_name = "char_select"  # assets/ui/bg_char_select.png
+
+
 const CARD_SIZE := Vector2(110, 140)
 const COLUMNS := 3         # 카드 격자 가로 칸 수 (6명 = 3 x 2)
 const CARD_GAP := 14.0

@@ -22,7 +22,8 @@
 | 스테이지 (**실제 학교 사진**) | `assets/stages/` `lab` `computer` `rooftop` `playground` `hallway` `.png` | 5 | ⬜ 사진 찍기 |
 | 캐릭터 전신 (투명 배경) | `assets/characters/<id>.png` | 6 (남3 여3) | ⬜ 아래 "캐릭터 6명" |
 | 타이틀 로고 | `assets/ui/logo.png` | 1 | ✅ 완료 |
-| 메뉴 배경 일러스트 | `assets/ui/key_art.png` | 1 | ✅ 완료 |
+| 메뉴 배경 일러스트 | `assets/ui/key_art.png` | 1 | 🔄 v2 (사람을 양옆으로) |
+| 메뉴/씬 배경 | `assets/ui/bg_*.png` | 7 | ⬜ 아래 "메뉴 / 씬 배경" |
 | 기술 이펙트 / 투사체 | 캐릭터 기술이 정해지면 목록 추가 | - | ⬜ 나중에 |
 
 캐릭터 id: `chemikid`(화학) `common`(정보) `root2`(수학) `chaos`(물리) `seed`(생명) `globe`(지구과학)
@@ -106,15 +107,115 @@ transparent background, centered, no other text.
 ```
 (글자가 틀리게 나오면 여러 번 다시 뽑거나, 글자 없는 장식만 만들고 글자는 게임이 쓴다)
 
-**메뉴/타이틀 배경 일러스트** → `assets/ui/key_art.png` (1920×1080)
+**메뉴/타이틀 배경 일러스트 v2** → `assets/ui/key_art.png` (1920×1080)
+
+v1은 두 사람이 가운데에서 부딪혀서 풍경이 거의 안 보였다. v2는 **두 사람을 양쪽 끝으로** 밀고 가운데를 풍경으로 비운다.
+(게임은 이 그림을 1.01~1.05배로 천천히 확대/축소하므로 **가장자리 5%에는 중요한 것을 두지 않는다**)
 ```
-Key art for a 2D anime fighting game, 16:9. A chemistry-club student (white lab coat, glowing
-green flask) and a computer-club hacker (black hoodie with cyan circuits, mechanical keyboard
-like a guitar) clash in the center, green chemical energy colliding with cyan digital code,
-sparks and smoke, Jeju island sea at sunset in the background. Leave the upper center area
-fairly simple for a title logo. No text, no logo, no watermark.
+Wide key art for a 2D anime fighting game, 16:9 landscape.
+Composition: two rival students stand at the FAR LEFT and FAR RIGHT edges of the image,
+each taking up only about 20% of the width, cropped from the knees up, facing toward the center.
+Left: a chemistry-club student (white lab coat, glowing green flask).
+Right: a computer-club student (black hoodie with cyan circuit lines, mechanical keyboard).
+The wide CENTER 60% is open scenery: the rooftop of a Korean science high school overlooking
+the Jeju island sea at sunset, Hallasan mountain silhouette on the horizon, basalt stone walls,
+warm orange sky with drifting clouds. A thin line of green and cyan energy streams from each
+character toward the center and meets far away above the sea.
+Keep the upper center sky empty and simple for a title logo, and keep the lower center calm
+for menu text. Keep important details away from the outer 5% border.
+No text, no logo, no watermark.
+[공통 스타일 문장] [부드럽게 문장]
+```
+
+### "너무 날카로워 보일 때" 부드럽게 문장 (캐릭터가 나오는 모든 프롬프트에 선택으로 붙이기)
+학생 축제용이라 길티기어 느낌(굵은 선, 셀 음영, 빨강/검정)은 유지하되, **얼굴과 실루엣만 둥글게** 만드는 문장이다.
+둥근 모양은 친근하게, 뾰족한 모양은 공격적으로 보인다는 형태 언어 원리를 이용한다.
+```
+Friendly, confident teenage students, not villains. Softer facial features: rounded cheeks,
+gentle jawline, bright eyes, an excited grin or a determined smile instead of a glare.
+Hair with soft volume and rounded clumps, not spiky blades. Clean smooth line art,
+fewer sharp spikes and jagged edges on clothes and effects. Keep thick outlines and cel shading.
+Avoid: menacing glare, sharp angular face, spiky hair tips, harsh jagged lines.
+```
+
+---
+
+## 메뉴 / 씬 배경 (전부 1920×1080 PNG)
+
+`assets/ui/bg_<이름>.png`로 넣으면 그 화면 배경이 자동으로 그림으로 바뀐다.
+게임이 위에 **35% 검은 막 + 빨간 사선 무늬 + 메뉴 글자**를 얹으므로, 배경은 **복잡하지 않고 조금 어두워도 된다**.
+모든 씬 배경 공통 문장 (각 프롬프트 끝에 붙이기):
+```
+Background only, no characters in the foreground unless described. 16:9, 1920x1080.
+Slightly dark and low-detail so white menu text stays readable. No text, no logo, no UI, no watermark.
 [공통 스타일 문장]
 ```
+
+| 화면 | 파일 | 위에 올라가는 것 | 코드 연결 |
+|---|---|---|---|
+| 모드 선택 | `bg_mode_select.png` | 가운데 메뉴 목록, 아래 설명 띠 | ✅ |
+| 캐릭터 선택 | `bg_char_select.png` | 왼쪽·오른쪽 큰 캐릭터 칸, 가운데 카드 6장 | ✅ |
+| 스테이지 선택 | `bg_stage_select.png` | 가운데 스테이지 미리보기 | ✅ |
+| 조작법 | `bg_controls.png` | 표가 화면 대부분 | ✅ |
+| VS 화면 | `bg_vs.png` | 양쪽 캐릭터 + 가운데 VS | ⬜ 그림 오면 연결 |
+| 승리/결과 | `bg_result.png` | 이긴 캐릭터 + 글자 | ⬜ 그림 오면 연결 |
+| 대기 화면 (아무도 안 할 때) | `bg_standby.png` | INSERT COIN 같은 글자 | ⬜ 그림 오면 연결 |
+
+**모드 선택** → `bg_mode_select.png`
+```
+A dim science high school corridor at night lit by red emergency light, lockers and
+club posters on the walls blurred out of focus, strong perspective lines toward the center,
+subtle red diagonal light streaks. Center area plain and dark for a vertical menu list.
+```
+
+**캐릭터 선택** → `bg_char_select.png`
+```
+An empty arena-like school gymnasium at night, two spotlights: a crimson spotlight on the
+left third and a blue spotlight on the right third, both on empty floor, a dark center area
+with faint hexagonal science-lab tile pattern. Symmetrical composition.
+```
+(왼쪽=1P 빨강, 오른쪽=2P 파랑 칸과 색을 맞춘 것)
+
+**스테이지 선택** → `bg_stage_select.png`
+```
+A top-down stylized map of a science high school campus on Jeju island at dusk, buildings,
+playground, rooftop, and the sea drawn in flat dark navy and crimson tones like a tactical map,
+thin glowing red route lines, very low detail in the center.
+```
+
+**조작법** → `bg_controls.png`
+```
+A dark blueprint-style background: faint white technical drawings of an arcade joystick and
+buttons, grid lines, chemistry and circuit diagrams in the margins, mostly dark navy and black,
+very low contrast so a table of text can sit on top.
+```
+
+**VS 화면** → `bg_vs.png`
+```
+A dramatic split background for a fighting game versus screen: left half crimson red, right half
+deep blue, divided by a jagged diagonal lightning crack through the center, sparks, smoke and
+speed lines. No characters.
+```
+
+**승리/결과** → `bg_result.png`
+```
+A school rooftop at sunset after a battle, confetti and floating sparks, scattered science
+papers drifting in the wind, warm golden light from the right, dark empty left half for a
+winner character pose.
+```
+
+**대기 화면 (데모 / 아무도 안 할 때)** → `bg_standby.png`
+축제 부스에서 지나가는 사람 시선을 끄는 그림. 캐릭터 6명이 다 나온다 (부드럽게 문장 추천).
+```
+A group key art of six science-club students as an anime fighting game cast, standing in a wide
+line across the image, all full-body and the same height scale: chemistry (white lab coat,
+green flask), computer (black hoodie, cyan circuits), math (geometric compass, golden ratio
+spiral), physics (magnetic field lines, pendulum), biology (plants and vines, DNA motif),
+earth science (stars, ocean waves and weather icons). Behind them a huge Jeju sea sunset.
+Lower 25% darker for blinking text.
+[부드럽게 문장]
+```
+(캐릭터 6명 그림이 확정된 다음 그 그림들을 **첨부해서** 만들면 얼굴이 맞는다)
 
 ---
 
