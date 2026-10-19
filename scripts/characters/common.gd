@@ -3,7 +3,7 @@ extends Fighter
 ##
 ##   5D  패킷 전송   빠른 직선 투사체 (화면에 1개까지)
 ##   6D  버그 설치   앞 바닥에 함정. 밟으면 오래 경직 (하단, 1개까지)
-##   2D  방화벽      앞에 벽. 상대 투사체를 막는다 (1개까지)
+##   2D  방화벽      앞에 벽(1.5초). 상대 투사체를 막는다 (1개까지)
 ##   4D  Ctrl+Z      1초 전 위치로 되감기 (시작 6프레임 무적)
 ##   OD  블루스크린  (D+HS, 텐션 50%) 넓은 범위 공격. 맞으면 화면이 파래지고 상대가 오래 멈춘다
 
@@ -94,7 +94,7 @@ func _on_attack_event(attack: AttackData) -> void:
 			p.size = Vector2(34, 220)
 			p.color = CYAN
 			p.position = Vector2(position.x + 100 * facing, ground_y - 110)
-			p.lifetime = 150
+			p.lifetime = 90  # 1.5초
 			_wall = p
 			spawn(p)
 		"4D":
