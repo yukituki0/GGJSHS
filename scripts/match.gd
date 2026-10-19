@@ -32,6 +32,12 @@ var menu_cursor := 0
 var _hitstop := 0               # 남은 히트스톱 프레임 (0보다 크면 둘 다 멈춤)
 var _shake := 0                 # 남은 화면 흔들림 프레임
 var sparks: Array = []          # [위치, 남은 프레임, 막혔나] 타격 이펙트 (HUD가 그림)
+var projectiles: Array[Projectile] = []
+var superflash := 0             # 오버드라이브 컷인으로 화면이 멈춘 남은 프레임
+var superflash_fighter: Fighter
+var superflash_attack: AttackData
+var tint_color := Color.TRANSPARENT  # 화면 전체 색 효과 (HUD가 그림)
+var tint_frames := 0
 var _camera: Camera2D
 var _training_idle := { 1: 0, 2: 0 }  # 트레이닝: 안 맞고 지난 프레임 (체력 회복용)
 var _stage_texture: Texture2D
@@ -79,7 +85,29 @@ func _spawn(player: int) -> Fighter:
 	f.ground_y = GROUND_Y
 	f.position = Vector2(START_X[player], GROUND_Y)
 	add_child(f)
+	f.projectile_spawned.connect(_on_projectile_spawned)
+	f.super_flash.connect(_on_super_flash)
+	f.screen_tint.connect(_on_screen_tint)
 	return f
+
+
+func _on_screen_tint(color: Color, frames: int) -> void:
+	tint_color = color
+	tint_frames = frames
+
+
+func _on_projectile_spawned(p: Projectile) -> void:
+	projectiles.append(p)
+	add_child(p)
+
+
+const SUPERFLASH_FRAMES := 45
+
+
+func _on_super_flash(f: Fighter, attack: AttackData) -> void:
+	superflash = SUPERFLASH_FRAMES
+	superflash_fighter = f
+	superflash_attack = attack
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -110,7 +138,12 @@ func _physics_process(_delta: float) -> void:
 		return
 
 	_update_effects()
-	if _hitstop > 0:
+	if superflash > 0:
+		# 오버드라이브 컷인: 둘 다 멈춤 (입력은 버퍼에 기억)
+		superflash -= 1
+		p1.tick_frozen()
+		p2.tick_frozen()
+	elif _hitstop > 0:
 		# 히트스톱: 둘 다 멈춘다 (입력은 버퍼에 기억)
 		_hitstop -= 1
 		p1.tick_frozen()
@@ -119,8 +152,11 @@ func _physics_process(_delta: float) -> void:
 		# 1P 이동 → 2P 이동 → 밀어내기 → 공격 판정 (항상 이 순서)
 		p1.tick()
 		p2.tick()
+		for proj in projectiles:
+			proj.tick()
 		_resolve_push()
 		_resolve_hits()
+		_resolve_projectiles()
 	_update_phase()
 	queue_redraw()
 
@@ -141,7 +177,12 @@ func _start_round() -> void:
 	timer_frames = Game.ROUND_SECONDS * 60
 	round_result = ""
 	sparks.clear()
+	for proj in projectiles:
+		proj.queue_free()
+	projectiles.clear()
 	_hitstop = 0
+	superflash = 0
+	tint_frames = 0
 
 
 func _update_phase() -> void:
@@ -254,7 +295,7 @@ func _resolve_hits() -> void:
 	for pair in [[p1, p2], [p2, p1]]:
 		var attacker: Fighter = pair[0]
 		var defender: Fighter = pair[1]
-		if defender.state == Fighter.State.KO:
+		if defender.state == Fighter.State.KO or defender.is_invulnerable():
 			continue
 		if attacker.hitbox_rect().intersects(defender.body_rect()):
 			var contact := attacker.hitbox_rect().intersection(defender.body_rect()).get_center()
@@ -264,17 +305,57 @@ func _resolve_hits() -> void:
 		var defender: Fighter = hit[1]
 		var attack: AttackData = hit[2]
 		var contact: Vector2 = hit[3]
-		var blocked := defender.receive_attack(attack, attacker.facing)
-		attacker.on_attack_connected(blocked)
-		_hitstop = maxi(_hitstop, attack.hitstop)
-		sparks.append([contact, 10, blocked])
-		if not blocked:
-			_shake = maxi(_shake, attack.hitstop)
+		_apply_hit(attacker, defender, attack, contact, attacker.facing)
 		# 상대가 벽에 붙어 있어서 못 밀려나면, 대신 때린 쪽이 뒤로 밀려난다
 		var half := defender.body_size().x / 2
 		if defender.position.x - half <= WALL_LEFT + 1 or defender.position.x + half >= WALL_RIGHT - 1:
 			if attacker.is_on_ground():
 				attacker.velocity.x = -attack.pushback * attacker.facing
+
+
+## 맞히기 공통 처리 (몸 공격, 투사체 둘 다). 막혔으면 true
+func _apply_hit(attacker: Fighter, defender: Fighter, attack: AttackData, contact: Vector2, dir: int) -> bool:
+	var blocked := defender.receive_attack(attack, dir)
+	attacker.on_attack_connected(attack, blocked)
+	_hitstop = maxi(_hitstop, attack.hitstop)
+	sparks.append([contact, 10, blocked])
+	if not blocked:
+		_shake = maxi(_shake, attack.hitstop)
+	return blocked
+
+
+## 투사체: 상대 몸에 맞기, 투사체끼리 부딪히기, 다 된 것 지우기
+func _resolve_projectiles() -> void:
+	for proj in projectiles:
+		if proj.dead or proj.attack == null or not proj.is_armed():
+			continue
+		var target := p2 if proj.shooter == p1 else p1
+		if target.state == Fighter.State.KO or target.is_invulnerable():
+			continue
+		if not proj.hits_airborne and not target.is_on_ground():
+			continue
+		if proj.rect().intersects(target.body_rect()):
+			var contact := proj.rect().intersection(target.body_rect()).get_center()
+			_apply_hit(proj.shooter, target, proj.attack, contact, proj.hit_direction())
+			proj.dead = true
+	# 투사체끼리: 방화벽은 상대 투사체를 지우고, 나머지는 서로 상쇄
+	for a in projectiles:
+		for b in projectiles:
+			if a == b or a.dead or b.dead or a.shooter == b.shooter:
+				continue
+			if not a.rect().intersects(b.rect()):
+				continue
+			if a.blocks_projectiles and not b.blocks_projectiles:
+				b.dead = true
+			elif b.blocks_projectiles and not a.blocks_projectiles:
+				a.dead = true
+			elif not a.blocks_projectiles and not b.blocks_projectiles and a.attack != null and b.attack != null:
+				a.dead = true
+				b.dead = true
+				sparks.append([a.rect().intersection(b.rect()).get_center(), 10, true])
+	for proj in projectiles.filter(func(x): return x.dead):
+		proj.queue_free()
+	projectiles.assign(projectiles.filter(func(x): return not x.dead))
 
 
 ## 두 몸통이 겹치면 반씩 밀어내고, 벽 밖으로 못 나가게 막는다
@@ -309,6 +390,8 @@ func _update_effects() -> void:
 	for spark in sparks:
 		spark[1] -= 1
 	sparks = sparks.filter(func(spark): return spark[1] > 0)
+	if tint_frames > 0:
+		tint_frames -= 1
 	if _shake > 0:
 		_shake -= 1
 		_camera.offset = Vector2(randf_range(-6, 6), randf_range(-6, 6))

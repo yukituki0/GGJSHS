@@ -9,6 +9,7 @@ const ROWS := [
 	["slash", ["s"]],
 	["heavy", ["hs"]],
 	["dust", ["d"]],
+	["overdrive", ["d", "hs"]],
 	["rc", ["rc"]],
 	["dash", ["dash"]],
 	["guard", ["guard"]],
@@ -43,11 +44,11 @@ func _draw() -> void:
 	text("1P", 150, 30, Color(1, 0.45, 0.45), 700)
 	text("2P", 150, 30, Color(0.45, 0.7, 1), 980)
 	for i in ROWS.size():
-		var y := 205 + i * 44
+		var y := 200 + i * 40
 		var label := Game.t(ROWS[i][0])
 		var actions: Array = ROWS[i][1]
-		Style.fill(self, Style.slant(180, y - 30, 920, 38, 10), Color(Style.PANEL, 0.85 if i % 2 == 0 else 0.5))
-		Style.text(self, label, Vector2(200, y), 24, Style.WHITE)
+		Style.fill(self, Style.slant(180, y - 28, 920, 36, 10), Color(Style.PANEL, 0.85 if i % 2 == 0 else 0.5))
+		Style.text(self, label, Vector2(200, y), 21, Style.WHITE)
 		for p in [1, 2]:
 			var names: Array[String] = []
 			for a in actions:

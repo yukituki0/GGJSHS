@@ -6,6 +6,10 @@ extends Node2D
 ## 물리 엔진은 쓰지 않고 위치를 직접 계산한다 (격투겜은 정확한 제어가 더 중요해서).
 ## 캐릭터별 기술은 나중에 이 클래스를 상속해서 _build_attacks()를 바꾸면 된다.
 
+signal projectile_spawned(projectile: Projectile)  # Match가 받아서 관리
+signal super_flash(fighter: Fighter, attack: AttackData)  # 오버드라이브 컷인 (Match가 화면을 잠깐 멈춤)
+signal screen_tint(color: Color, frames: int)  # 화면 전체 색 효과 (블루스크린 등)
+
 enum State {
 	STAND, CROUCH, RUN, BACKDASH, PREJUMP, AIR, AIRDASH,
 	GUARD, ATTACK, HITSTUN, BLOCKSTUN, KO,
@@ -45,7 +49,8 @@ const CROUCH_SIZE := Vector2(80, 100)
 ## 버튼 우선순위: 동시에 눌렀으면 강한 버튼이 이긴다
 const ATTACK_BUTTONS: Array[String] = ["hs", "s", "k", "p"]
 ## 입력 버퍼에 기억해 둘 버튼 (누르는 "순간"이 중요한 것들)
-const BUFFERED_ACTIONS: Array[String] = ["hs", "s", "k", "p", "dash", "up", "rc"]
+const BUFFERED_ACTIONS: Array[String] = ["hs", "s", "k", "p", "d", "dash", "up", "rc"]
+const HISTORY_FRAMES := 60      # 위치 기록 길이 (커몬 Ctrl+Z 등에서 사용)
 
 var player := 1                 # 1P / 2P
 var color := Color.RED
@@ -71,11 +76,13 @@ var _buffer := {}               # 액션 -> 남은 기억 프레임 (0이면 없
 var tension := 0.0
 var hit_shake := 0              # 히트스톱 동안 맞은 쪽이 부르르 떠는 남은 프레임
 var rc_flash := 0               # 로만 캔슬 이펙트 남은 프레임
+var history: Array[Vector2] = []  # 최근 위치 기록 (맨 앞이 가장 오래된 것)
 
 
 func _ready() -> void:
 	hp = max_hp
 	_build_attacks()
+	_build_specials()
 
 
 ## 1프레임 진행. Match가 매 프레임 1P → 2P 순서로 직접 호출한다 (처리 순서를 고정하려고)
@@ -83,7 +90,13 @@ func tick() -> void:
 	state_frame += 1
 	_update_buffer()
 	_update_state()
+	if state == State.ATTACK and current_attack != null and current_attack.move_speed != 0.0 \
+			and state_frame <= current_attack.startup + current_attack.active:
+		velocity.x = current_attack.move_speed * facing  # 돌진기
 	position += velocity
+	history.append(position)
+	if history.size() > HISTORY_FRAMES:
+		history.pop_front()
 	if rc_flash > 0:
 		rc_flash -= 1
 	queue_redraw()
@@ -109,6 +122,7 @@ func reset_for_round(x: float) -> void:
 	stun_frames = 0
 	hit_shake = 0
 	rc_flash = 0
+	history.clear()
 	_buffer.clear()
 	_change_state(State.STAND)
 	_face_opponent()
@@ -139,8 +153,35 @@ func _build_attacks() -> void:
 	_add(AttackData.new("jH", 11, 6, 12, 50, Rect2(0, -60, 130, 70),  O, 18, 14))
 
 
-func _add(attack: AttackData) -> void:
+func _add(attack: AttackData) -> AttackData:
 	attacks[attack.name] = attack
+	return attack
+
+
+# ── 캐릭터별로 덮어쓰는 부분 ──────────────────────────────
+## 필살기 목록. 캐릭터 스크립트에서 _build_specials()를 덮어써서 "5D", "6D", "4D", "2D", "OD"를 추가
+func _build_specials() -> void:
+	pass
+
+
+## 공격의 event_frame에 불린다 (투사체 만들기, 순간이동 등)
+func _on_attack_event(_attack: AttackData) -> void:
+	pass
+
+
+## 내 공격이 맞았거나 막혔을 때 (블루스크린 효과 등)
+func _on_attack_result(_attack: AttackData, _blocked: bool) -> void:
+	pass
+
+
+## 이 필살기를 지금 쓸 수 있나 (투사체는 화면에 하나만 등)
+func _can_use_special(_attack_name: String) -> bool:
+	return true
+
+
+func spawn(projectile: Projectile) -> void:
+	projectile.shooter = self
+	projectile_spawned.emit(projectile)
 
 
 # ── 입력 헬퍼 ─────────────────────────────────────────────
@@ -183,6 +224,27 @@ func _pressed_attack(prefix: String) -> String:
 	return ""
 
 
+## 이번 프레임의 필살기 입력 → 기술 이름. 없거나 못 쓰면 ""
+## D + HS 동시 = 오버드라이브(텐션 50%), D + 방향 = 6D(앞) 4D(뒤) 2D(아래), D만 = 5D
+func _pressed_special() -> String:
+	if not _pressed("d"):
+		return ""
+	var move := ""
+	if _pressed("hs") and attacks.has("OD") and tension >= attacks["OD"].cost:
+		move = "OD"
+	elif _held("down"):
+		move = "2D"
+	elif _input_forward() > 0:
+		move = "6D"
+	elif _input_forward() < 0:
+		move = "4D"
+	else:
+		move = "5D"
+	if not attacks.has(move) or not _can_use_special(move):
+		return ""
+	return move
+
+
 func is_on_ground() -> bool:
 	return position.y >= ground_y
 
@@ -222,6 +284,10 @@ func _ground_neutral() -> void:
 	_face_opponent()
 	var fwd := _input_forward()
 
+	var special := _pressed_special()
+	if special != "":
+		_start_attack(special)
+		return
 	var attack := _pressed_attack("2" if _held("down") else "5")
 	if attack != "":
 		_start_attack(attack)
@@ -364,7 +430,16 @@ func _attack() -> void:
 		_roman_cancel(airborne)
 		return
 
+	if state_frame == current_attack.event_frame:
+		_on_attack_event(current_attack)
+
 	if attack_connected:
+		# 일반기가 맞거나 막히면 필살기로 캔슬 가능 (필살기끼리는 안 됨)
+		if not airborne and not current_attack.name.ends_with("D") and current_attack.name != "OD":
+			var special := _pressed_special()
+			if special != "":
+				_start_attack(special)
+				return
 		var prefix := "j" if airborne else ("2" if _held("down") else "5")
 		var next := _pressed_attack(prefix)
 		if next != "" and next in current_attack.gatling:
@@ -394,11 +469,16 @@ func _roman_cancel(airborne: bool) -> void:
 func _start_attack(attack_name: String) -> void:
 	for button in ATTACK_BUTTONS:  # 같이 눌린 다른 공격 버튼도 같이 소모
 		_consume(button)
+	_consume("d")
 	current_attack = attacks[attack_name]
 	attack_connected = false
 	if is_on_ground():
 		velocity.x = 0
 	_change_state(State.ATTACK)
+	if current_attack.cost > 0:
+		add_tension(-current_attack.cost)
+	if attack_name == "OD":
+		super_flash.emit(self, current_attack)
 
 
 ## 히트스턴/가드스턴: 시간이 다 지나면 다시 움직일 수 있다
@@ -489,9 +569,16 @@ func can_block(level: AttackData.Level) -> bool:
 
 
 ## Match가 호출: 공격이 맞았거나 막혔다고 알려준다
-func on_attack_connected(blocked: bool) -> void:
-	attack_connected = true
+func on_attack_connected(attack: AttackData, blocked: bool) -> void:
+	if attack == current_attack:
+		attack_connected = true  # 투사체가 맞은 경우엔 지금 하는 공격과 상관없음
 	add_tension(tension_block_gain if blocked else tension_hit_gain)
+	_on_attack_result(attack, blocked)
+
+
+## 공격 시작부터 invuln_frames 동안은 무적
+func is_invulnerable() -> bool:
+	return state == State.ATTACK and current_attack != null and state_frame <= current_attack.invuln_frames
 
 
 ## Match가 호출: 공격을 받았다. 막았으면 true를 돌려준다

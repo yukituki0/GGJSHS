@@ -22,7 +22,11 @@ func _process(_delta: float) -> void:
 
 
 func _draw() -> void:
+	if m.tint_frames > 0:  # 화면 전체 색 효과 (블루스크린 등)
+		draw_rect(Rect2(-20, -20, 1320, 760), Color(m.tint_color, m.tint_color.a * minf(1.0, m.tint_frames / 15.0)))
 	_draw_sparks()
+	if m.superflash > 0:
+		_draw_superflash()
 	if m.phase != Match.Phase.VS_INTRO:
 		_draw_hud()
 	match m.phase:
@@ -200,6 +204,36 @@ func _draw_sparks() -> void:
 				var dir := Vector2.RIGHT.rotated(i * TAU / 8 + 0.2)
 				draw_line(pos + dir * 10, pos + dir * (24 + 46 * (1.0 - t)), Color(Style.GOLD, t), 6.0)
 			draw_circle(pos, 16 * t, Color(1, 1, 1, t))
+
+
+# ── 오버드라이브 컷인 ─────────────────────────────────────
+func _draw_superflash() -> void:
+	var f := m.superflash_fighter
+	var t := 1.0 - float(m.superflash) / Match.SUPERFLASH_FRAMES  # 0 → 1
+	draw_rect(Rect2(-20, -20, 1320, 760), Color(0, 0, 0, 0.55))
+	# 캐릭터 주변 빛
+	var center := f.position + Vector2(0, -80)
+	draw_circle(center, 60 + t * 500, Color(f.color, 0.25 * (1.0 - t)))
+	# 화면을 가로지르는 띠 + 일러스트 + 기술 이름
+	var from_left := f.player == 1
+	var slide := minf(t * 4.0, 1.0)
+	var band_y := 250.0
+	var x_off := (1.0 - slide) * (-1400.0 if from_left else 1400.0)
+	Style.fill(self, Style.slant(-100 + x_off, band_y, 1480, 190, 40 if from_left else -40), Color(f.color.darkened(0.6), 0.92))
+	Style.fill(self, Style.slant(-100 + x_off, band_y + 184, 1480, 8, 40 if from_left else -40), Style.RED)
+	var art := Game.character_art(Game.character(f.player))
+	if art != null:
+		var face_w := art.get_width() * 0.6
+		var src := Rect2(art.get_width() * 0.2, art.get_height() * 0.02, face_w, face_w * 190.0 / 420.0)
+		var dest := Rect2(Vector2((60.0 if from_left else 800.0) + x_off, band_y), Vector2(420, 190))
+		if not from_left:
+			dest = Rect2(dest.position + Vector2(dest.size.x, 0), Vector2(-dest.size.x, dest.size.y))
+		draw_texture_rect_region(art, dest, src)
+	var title := m.superflash_attack.title
+	Style.text(self, title, Vector2(x_off, band_y + 120), 72, Style.WHITE,
+			HORIZONTAL_ALIGNMENT_RIGHT if from_left else HORIZONTAL_ALIGNMENT_LEFT, 1280, 12, Style.RED)
+	Style.text(self, f.display_name, Vector2(x_off + (0.0 if from_left else 60.0), band_y + 168), 28, Style.GOLD,
+			HORIZONTAL_ALIGNMENT_RIGHT if from_left else HORIZONTAL_ALIGNMENT_LEFT, 1220, 5)
 
 
 # ── VS 화면 ───────────────────────────────────────────────

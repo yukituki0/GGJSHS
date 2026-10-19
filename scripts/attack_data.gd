@@ -21,6 +21,13 @@ var pushback := 6.0     # 맞거나 막았을 때 밀려나는 속도
 var hitstop: int        # 맞은 순간 둘 다 멈추는 프레임 (센 기술일수록 길다 = 묵직한 손맛)
 var gatling: Array = []  # 맞히거나 막혔을 때 이어서 쓸 수 있는 기술
 
+# ── 필살기용 추가 정보 (생성 후 필요한 것만 설정) ─────────
+var title := ""          # 화면에 띄울 기술 이름 (오버드라이브 컷인 등)
+var cost := 0.0          # 텐션 소모량 (오버드라이브 50)
+var event_frame := -1    # 이 프레임에 캐릭터의 _on_attack_event()가 불린다 (투사체 생성 등)
+var invuln_frames := 0   # 시작부터 이 프레임까지 무적 (공격을 안 맞음)
+var move_speed := 0.0    # 공격 중 앞으로 움직이는 속도 (돌진기)
+
 
 func _init(p_name: String, p_startup: int, p_active: int, p_recovery: int,
 		p_damage: int, p_hitbox: Rect2, p_level: Level,
