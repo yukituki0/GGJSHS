@@ -87,6 +87,21 @@ var armor_flash := 0            # 아머로 버텼을 때 번쩍임 남은 프�
 var shock_frames := 0           # 감전 표시 남은 프레임 (몸 주위에 노란 번개)
 var damage_mult := 1.0          # 내 공격의 데미지 배율 (강화 상태 등)
 
+# ── 가드 게이지 (길티기어 R.I.S.C. 게이지를 단순화) ─────────
+## 막을 때마다 차고, 꽉 찬 상태에서 또 막으면 가드 크러시(가드가 깨져 잠깐 무방비).
+## 공격을 맞으면 0으로, 한동안 안 막으면 천천히 줄어든다
+const GUARD_MAX := 100.0
+const GUARD_PER_BLOCK := 2.0       # 막을 때 = 가드 경직 x 이 값
+const GUARD_DECAY := 0.25          # 안 막는 동안 프레임당 감소 (1초 뒤부터)
+const GUARD_CRUSH_STUN := 45       # 가드 크러시 무방비 시간
+var guard_gauge := 0.0
+var _since_block := 999
+var crush_text := 0                # "GUARD CRUSH!" 글자 남은 프레임
+
+# ── 일반 잡기 ─────────────────────────────────────────────
+## 상대에게 붙어서 → 또는 ← + HS. 가드 불가. 상대가 땅에 있고 경직 중이 아닐 때만
+const THROW_RANGE := 40.0          # 몸끼리 이 거리 안이면 잡을 수 있다
+
 
 func _ready() -> void:
 	hp = max_hp
@@ -112,6 +127,11 @@ func tick() -> void:
 		armor_flash -= 1
 	if shock_frames > 0:
 		shock_frames -= 1
+	if crush_text > 0:
+		crush_text -= 1
+	_since_block += 1
+	if _since_block > 60:
+		guard_gauge = maxf(0.0, guard_gauge - GUARD_DECAY)
 	queue_redraw()
 
 
@@ -136,6 +156,8 @@ func reset_for_round(x: float) -> void:
 	stun_frames = 0
 	hit_shake = 0
 	rc_flash = 0
+	guard_gauge = 0.0
+	crush_text = 0
 	history.clear()
 	_buffer.clear()
 	_change_state(State.STAND)
@@ -149,6 +171,7 @@ func add_tension(amount: float) -> void:
 # ── 기술 목록 (캐릭터마다 덮어쓸 부분) ─────────────────────
 ## Rect2(x, y, 너비, 높이): 오른쪽을 볼 때 기준, 발 위치가 (0, 0), 위쪽이 음수
 func _build_attacks() -> void:
+	_add_throws()
 	var M := AttackData.Level.MID
 	var L := AttackData.Level.LOW
 	var O := AttackData.Level.OVERHEAD
@@ -165,6 +188,26 @@ func _build_attacks() -> void:
 	_add(AttackData.new("jK",  6, 5,  8, 28, Rect2(20, -60, 80, 35),  O, 14, 10, ["jS", "jH"]))
 	_add(AttackData.new("jS",  8, 5, 10, 38, Rect2(15, -100, 110, 60), O, 16, 12, ["jH"]))
 	_add(AttackData.new("jH", 11, 6, 12, 50, Rect2(0, -60, 130, 70),  O, 18, 14))
+
+
+## 일반 잡기 (모든 캐릭터 공통): 앞 던지기 / 뒤 던지기
+func _add_throws() -> void:
+	for dir in [1, -1]:
+		var t := _add(AttackData.new("throw_f" if dir > 0 else "throw_b", 2, 3, 22, 40,
+				Rect2(10, -150, 80, 140), AttackData.Level.MID, 30, 0))
+		t.is_throw = true
+		t.launch = Vector2(8.0 * dir, -10.0)  # 앞(1) 또는 뒤(-1)로 던진다
+		t.hitstop = 12
+
+
+## 지금 상대를 잡을 수 있는 거리/상태인가
+func _in_throw_range() -> bool:
+	if opponent == null or not opponent.is_on_ground() or not is_on_ground():
+		return false
+	if opponent.state in [State.HITSTUN, State.BLOCKSTUN, State.KO]:
+		return false
+	var gap := absf(opponent.position.x - position.x) - (body_size().x + opponent.body_size().x) / 2
+	return gap <= THROW_RANGE
 
 
 func _add(attack: AttackData) -> AttackData:
@@ -341,6 +384,10 @@ func _ground_neutral() -> void:
 	var special := _pressed_special()
 	if special != "":
 		_start_attack(special)
+		return
+	# 일반 잡기: 붙어서 → / ← + HS (아니면 그냥 5H가 나간다)
+	if _pressed("hs") and fwd != 0 and not _held("down") and _in_throw_range():
+		_start_attack("throw_f" if fwd > 0 else "throw_b")
 		return
 	var attack := _pressed_attack("2" if _held("down") else "5")
 	if attack != "":
@@ -670,10 +717,23 @@ func receive_attack(attack: AttackData, from_dir: int, damage_scale := 1.0) -> b
 		return false
 	if not attack.unblockable and not attack.is_throw and can_block(attack.level):
 		add_tension(tension_guard_gain)
+		_since_block = 0
+		if guard_gauge >= GUARD_MAX:
+			# 가드 크러시: 가드가 깨지고 잠깐 무방비 (데미지는 없음)
+			guard_gauge = 0.0
+			crush_text = 50
+			stun_frames = GUARD_CRUSH_STUN
+			velocity.x = attack.pushback * 0.5 * from_dir
+			_change_state(State.HITSTUN)
+			Sfx.play("hit_heavy")
+			return false
+		guard_gauge = minf(GUARD_MAX, guard_gauge + attack.blockstun * GUARD_PER_BLOCK)
 		stun_frames = attack.blockstun
 		velocity.x = attack.pushback * from_dir
 		_change_state(State.BLOCKSTUN)
 		return true
+
+	guard_gauge = 0.0  # 맞으면 가드 게이지 초기화
 
 	hp = maxi(hp - damage, 0 if can_die else 1)
 	hit_shake = attack.hitstop
@@ -737,6 +797,9 @@ func _draw() -> void:
 	var tag_color := Color(1, 0.35, 0.35) if player == 1 else Color(0.35, 0.6, 1)
 	draw_string(Game.FONT, Vector2(-40, -size.y - 12), "%dP" % player,
 			HORIZONTAL_ALIGNMENT_CENTER, 80, 22, tag_color)
+	if crush_text > 0:
+		Style.text(self, "GUARD CRUSH!", Vector2(-150, -size.y - 50), 30, Color(1, 0.4, 0.3, minf(1.0, crush_text / 15.0)),
+				HORIZONTAL_ALIGNMENT_CENTER, 300, 6)
 	if debug_draw_boxes:
 		# 디버그: 현재 상태 이름
 		var label: String = State.keys()[state]

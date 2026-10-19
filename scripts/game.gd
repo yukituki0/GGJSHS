@@ -198,6 +198,7 @@ const MOVE_LISTS := {
 
 ## 모든 캐릭터 공통 조작 (기술표 아래쪽에 표시)
 const COMMON_MOVES := [
+	["→/← + HS", "Throw", "잡기", "붙어서. 가드 불가 (경직·공중 상대는 X)"],
 	["P → K → S → HS", "Gatling", "개틀링", "맞히거나 막히면 더 강한 버튼으로"],
 	["RC", "Roman Cancel", "로만 캔슬", "공격 취소 (텐션 50%)"],
 	["DASH", "Dash / Air Dash", "대시 / 공중 대시", "← + DASH = 백스텝"],

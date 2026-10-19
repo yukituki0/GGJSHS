@@ -109,6 +109,9 @@ func _draw_hud_images() -> void:
 		var name_x := slot.position.x if f.player == 1 else 1280.0 - slot.end.x - 10.0
 		Style.text(self, f.display_name, Vector2(name_x, slot.end.y + 26), 24, Color("ff3b3b"),
 				HORIZONTAL_ALIGNMENT_LEFT if f.player == 1 else HORIZONTAL_ALIGNMENT_RIGHT, slot.size.x + 10, 7)
+		# 가드 게이지: 이름 아래 얇은 바 (꽉 차면 다음 가드가 깨짐)
+		var gx := slot.position.x if f.player == 1 else 1280.0 - slot.position.x - GUARD_BAR_W
+		_draw_guard_gauge(f, Rect2(gx, slot.end.y + 36, GUARD_BAR_W, 8), f.player == 2)
 
 	# 타이머
 	var timer: Texture2D = _tex["hud_timer"]
@@ -139,6 +142,24 @@ func _draw_hud_images() -> void:
 		var num_x := tframe.end.x + 4 if not right else tframe.position.x - 84
 		Style.text(self, "%d%%" % int(f.tension), Vector2(num_x, tframe.end.y - 14), 26,
 				Style.GOLD if rc_ready else Style.GRAY, HORIZONTAL_ALIGNMENT_CENTER, 80, 5)
+
+
+const GUARD_BAR_W := 220.0
+
+
+func _draw_guard_gauge(f: Fighter, r: Rect2, from_right: bool) -> void:
+	var ratio := f.guard_gauge / Fighter.GUARD_MAX
+	Style.fill(self, Style.slant(r.position.x, r.position.y, r.size.x, r.size.y, 4), Color(0, 0, 0, 0.7))
+	if ratio > 0.0:
+		var w := r.size.x * ratio
+		var x := r.end.x - w if from_right else r.position.x
+		var col := Color("b45cff").lerp(Color("ff3030"), ratio)  # 찰수록 빨개짐
+		if ratio >= 1.0 and Time.get_ticks_msec() % 300 < 150:
+			col = Color.WHITE  # 꽉 차면 깜빡 (다음 가드에서 깨짐)
+		Style.fill(self, Style.slant(x, r.position.y, w, r.size.y, 4), col)
+	Style.outline(self, Style.slant(r.position.x, r.position.y, r.size.x, r.size.y, 4), Color(1, 1, 1, 0.6), 1.5)
+	Style.text(self, "GUARD", Vector2(r.position.x if not from_right else r.end.x - 60, r.end.y + 14), 12,
+			Style.GRAY, HORIZONTAL_ALIGNMENT_LEFT if not from_right else HORIZONTAL_ALIGNMENT_RIGHT, 60, 0)
 
 
 ## 비율 영역 n을 rect 안의 실제 영역으로

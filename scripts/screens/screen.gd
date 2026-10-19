@@ -11,7 +11,7 @@ var frame := 0  # 화면이 열린 뒤 지난 프레임 (깜빡임, 등장 연�
 
 
 func _enter_tree() -> void:
-	Sfx.play_bgm("bgm_menu")
+	Sfx.play_bgm.call_deferred("bgm_menu")  # 시작 직후엔 Sfx가 아직 준비 전일 수 있어서 한 프레임 뒤에
 
 
 func _process(_delta: float) -> void:

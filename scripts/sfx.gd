@@ -14,7 +14,10 @@ var _bgm: AudioStreamPlayer
 var _bgm_name := ""
 
 
-func _ready() -> void:
+## 재생기 만들기. _ready()보다 먼저 불릴 수 있어서(첫 화면의 _enter_tree 등) 처음 쓸 때 만든다
+func _setup() -> void:
+	if _bgm != null:
+		return
 	for i in POOL_SIZE:
 		var p := AudioStreamPlayer.new()
 		add_child(p)
@@ -40,6 +43,7 @@ func _stream(sound: String) -> AudioStream:
 
 ## 효과음 재생. pitch_jitter를 주면 매번 음높이가 살짝 달라져서 덜 반복적으로 들린다
 func play(sound: String, volume_db := 0.0, pitch_jitter := 0.0) -> void:
+	_setup()
 	var stream := _stream(sound)
 	if stream == null:
 		return
@@ -53,6 +57,7 @@ func play(sound: String, volume_db := 0.0, pitch_jitter := 0.0) -> void:
 
 ## 배경음 바꾸기. 같은 곡이 이미 나오고 있으면 그대로 둔다. 파일이 없으면 멈춤
 func play_bgm(sound: String) -> void:
+	_setup()
 	if sound == _bgm_name and _bgm.playing:
 		return
 	_bgm_name = sound
