@@ -12,7 +12,7 @@
 | COMMON 전신 일러스트 | `assets/characters/common.png` | 세로로 긴 그림, **투명 배경** PNG |
 | 타이틀 로고 | `assets/ui/logo.png` | 가로로 긴 그림, **투명 배경** PNG |
 | 타이틀/메뉴 배경 | `assets/ui/key_art.png` | 1920×1080 (16:9), PNG |
-| HUD/메뉴 부품 | `assets/ui/` | 목업에서 잘라낸 PNG (이름은 넣을 때 같이 정하기) |
+| HUD 부품 | `assets/ui/hud_*.png` | 아래 "1단계: HUD 부품" 참고 |
 
 ## 공통 스타일 문장 (모든 프롬프트 끝에 붙이기)
 
@@ -43,6 +43,41 @@ center showing "60"; at the bottom, two slanted metallic "tension" gauges with o
 [공통 스타일 문장]
 ```
 (HUD 글자는 AI가 틀리게 쓰기 쉬우니, 글자는 나중에 게임이 직접 그린다. 모양만 참고)
+
+### ✅ 확정된 목업: `docs/reference/mockup.webp`
+이후 그림은 전부 이 목업을 **첨부**하고 `Same art style as the attached image.`로 시작한다.
+
+---
+
+## 1단계: HUD 부품 (목업 첨부해서 하나씩)
+
+목업에서 직접 잘라내면 뒤의 배경이 같이 잘려서, **부품만 따로** 다시 그려 달라고 하는 게 깔끔하다.
+투명 배경이 안 되면 **완전한 초록색(#00FF00) 배경**으로 받아오기 → 초록색은 지워서 넣을 수 있다.
+
+공통 앞부분:
+```
+Same art style as the attached image. Draw ONLY the following UI element, isolated,
+centered, on a transparent background (or a flat pure green #00FF00 background),
+no characters, no scenery, no text unless stated, no watermark.
+```
+
+| 파일 이름 | 요청 내용 |
+|---|---|
+| `hud_hp_frame.png` | The LEFT player's health bar frame from the image: the long slanted ornate metallic frame with the small portrait window at the left end. The bar and the portrait window must be EMPTY (hollow / transparent inside). |
+| `hud_hp_fill.png` | Only the yellow-to-orange gritty health bar fill: a long slanted strip, no frame. |
+| `hud_timer.png` | Only the gear-shaped round timer emblem with the red spikes, with an EMPTY center (no numbers). |
+| `hud_tension_frame.png` | The LEFT player's "TENSION" gauge frame from the bottom of the image, with the word "TENSION", the bar inside EMPTY. |
+| `hud_tension_fill.png` | Only the orange gauge fill strip, no frame. |
+
+- 2P 쪽은 게임이 **좌우 반전**해서 쓰니까 1P(왼쪽)용만 있으면 된다.
+- 체력바/텐션바 채움은 "바가 꽉 찬 상태" 그림 하나면 된다. 줄어드는 건 게임이 잘라서 보여준다.
+
+## 2단계: 배경과 캐릭터 (목업 첨부)
+
+- 실험실 배경: `Same scene as the attached image but with NO characters and NO HUD, empty lab, 16:9.`
+- 캐릭터: `The left character (chemistry club) from the attached image, full body, ...` + 아래 "캐릭터 2명" 조건
+
+---
 
 ## 타이틀 로고 + 메뉴 배경
 
