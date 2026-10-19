@@ -23,7 +23,7 @@
 | 캐릭터 전신 (투명 배경) | `assets/characters/<id>.png` | 6 (남3 여3) | ⬜ 아래 "캐릭터 6명" |
 | 타이틀 로고 | `assets/ui/logo.png` | 1 | ✅ 완료 |
 | 메뉴 배경 일러스트 | `assets/ui/key_art.png` | 1 | ✅ v2 완료 |
-| 메뉴/씬 배경 | `assets/ui/bg_*.png` | 7 | ⬜ 아래 "메뉴 / 씬 배경" |
+| 메뉴/씬 배경 | `assets/ui/bg_*.png` | 7 | 🔄 5/7 (스테이지 선택, 대기 화면 남음) |
 | 기술 이펙트 / 투사체 | 캐릭터 기술이 정해지면 목록 추가 | - | ⬜ 나중에 |
 
 캐릭터 id: `chemikid`(화학) `common`(정보) `root2`(수학) `chaos`(물리) `seed`(생명) `globe`(지구과학)
@@ -157,8 +157,8 @@ Slightly dark and low-detail so white menu text stays readable. No text, no logo
 | 캐릭터 선택 | `bg_char_select.png` | 왼쪽·오른쪽 큰 캐릭터 칸, 가운데 카드 6장 | ✅ |
 | 스테이지 선택 | `bg_stage_select.png` | 가운데 스테이지 미리보기 | ✅ |
 | 조작법 | `bg_controls.png` | 표가 화면 대부분 | ✅ |
-| VS 화면 | `bg_vs.png` | 양쪽 캐릭터 + 가운데 VS | ⬜ 그림 오면 연결 |
-| 승리/결과 | `bg_result.png` | 이긴 캐릭터 + 글자 | ⬜ 그림 오면 연결 |
+| VS 화면 | `bg_vs.png` | 양쪽 캐릭터 + 가운데 VS | ✅ |
+| 승리/결과 | `bg_result.png` | 이긴 캐릭터 + 글자 | ✅ |
 | 대기 화면 (아무도 안 할 때) | `bg_standby.png` | INSERT COIN 같은 글자 | ⬜ 그림 오면 연결 |
 
 **모드 선택** → `bg_mode_select.png`

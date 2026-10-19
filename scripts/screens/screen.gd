@@ -27,7 +27,7 @@ func text(s: String, y: float, size: int, color := Style.WHITE, x := W / 2, outl
 	Style.text(self, s, Vector2(x - W, y), size, color, HORIZONTAL_ALIGNMENT_CENTER, W * 2, outline)
 
 
-## 배경: 그림(bg_name)이 있으면 그림 + 어둡게, 없으면 검은 바탕. 그 위에 흘러가는 붉은 사선 + 아래쪽 붉은 빛
+## 배경: 그림(bg_name)이 있으면 그림 + 살짝 어둡게, 없으면 검은 바탕 + 흘러가는 붉은 사선 + 아래쪽 붉은 빛
 func background() -> void:
 	if not _bg_loaded:
 		_bg_loaded = true
@@ -35,9 +35,9 @@ func background() -> void:
 			_bg_tex = Game.load_texture("res://assets/ui/bg_%s.png" % bg_name)
 	if _bg_tex != null:
 		draw_texture_rect(_bg_tex, Rect2(0, 0, W, H), false)
-		draw_rect(Rect2(0, 0, W, H), Color(0, 0, 0, 0.35))  # 메뉴 글자가 잘 보이게 살짝 어둡게
-	else:
-		draw_rect(Rect2(0, 0, W, H), Style.BLACK)
+		draw_rect(Rect2(0, 0, W, H), Color(0, 0, 0, 0.15))  # 그림이 이미 어두우니 살짝만
+		return  # 그림이 있으면 그림 분위기 그대로 (붉은 사선/빛은 코드 배경일 때만)
+	draw_rect(Rect2(0, 0, W, H), Style.BLACK)
 	var offset := fmod(frame * 0.8, 120.0)
 	for i in range(-10, 16):
 		var x := i * 120.0 + offset

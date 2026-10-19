@@ -11,6 +11,8 @@ const SKEW := 14.0
 var _trail := { 1: 0.0, 2: 0.0 }  # 빨간 "방금 깎인 체력" 표시 (천천히 따라 줄어든다)
 var _tex := {}                     # HUD 그림 (assets/ui/hud_*.png). 하나라도 없으면 코드로 그린 HUD 사용
 var _use_images := false
+var _bg_vs: Texture2D               # assets/ui/bg_vs.png (없으면 검은 배경)
+var _bg_result: Texture2D           # assets/ui/bg_result.png (없으면 경기 화면 위에 메뉴만)
 
 
 func _ready() -> void:
@@ -18,6 +20,8 @@ func _ready() -> void:
 			"hud_tension_p1_empty", "hud_tension_p1_full", "hud_tension_p2_empty", "hud_tension_p2_full"]:
 		_tex[n] = Game.load_texture("res://assets/ui/%s.png" % n)
 	_use_images = not _tex.values().has(null)
+	_bg_vs = Game.load_texture("res://assets/ui/bg_vs.png")
+	_bg_result = Game.load_texture("res://assets/ui/bg_result.png")
 
 
 func _process(_delta: float) -> void:
@@ -404,7 +408,10 @@ func _draw_superflash() -> void:
 func _draw_vs() -> void:
 	var t := minf(m.phase_frame / 18.0, 1.0)
 	var slide := (1.0 - t) * 800
-	draw_rect(Rect2(0, 0, 1280, 720), Style.BLACK)
+	if _bg_vs != null:
+		draw_texture_rect(_bg_vs, Rect2(0, 0, 1280, 720), false)
+	else:
+		draw_rect(Rect2(0, 0, 1280, 720), Style.BLACK)
 	_draw_vs_side(m.p1, Game.character(1), -slide, false)
 	_draw_vs_side(m.p2, Game.character(2), slide, true)
 	# 가운데 사선
@@ -423,7 +430,8 @@ func _draw_vs_side(f: Fighter, info: Dictionary, offset: float, right: bool) -> 
 			Vector2(x0 + 640 - (0 if right else 60), 720), Vector2(x0 - (60 if right else 0), 720)])
 	for i in poly.size():
 		poly[i] = poly[i] + Vector2(offset, 0)
-	Style.fill(self, poly, f.color.darkened(0.55))
+	# 배경 그림이 있으면 반투명 (빨강/파랑 배경이 비치게)
+	Style.fill(self, poly, Color(f.color.darkened(0.55), 0.45 if _bg_vs != null else 1.0))
 	var art := Game.character_art(info)
 	if art != null:
 		# 일러스트: 화면 높이에 맞춰서 (2P는 좌우 반전)
@@ -449,7 +457,16 @@ func _draw_result() -> void:
 		title = Game.t("wins") % [1, m.p1.display_name]
 	else:
 		title = Game.t("wins") % [2, m.p2.display_name]
-	_draw_menu(title, Match.RESULT_ITEMS if m.phase_frame >= 60 else [])
+	if _bg_result != null:
+		# 결과 배경이 천천히 나타나고, 이긴 캐릭터 그림을 왼쪽 빈 곳에
+		var fade := minf(m.phase_frame / 20.0, 1.0)
+		draw_texture_rect(_bg_result, Rect2(0, 0, 1280, 720), false, Color(1, 1, 1, fade))
+		var winner: int = 1 if m.wins[1] >= Game.ROUNDS_TO_WIN else 2
+		var art := Game.character_art(Game.character(winner))
+		if art != null and m.wins[3 - winner] < Game.ROUNDS_TO_WIN:
+			var size := Vector2(art.get_width(), art.get_height()) * (660.0 / art.get_height())
+			draw_texture_rect(art, Rect2(Vector2(220 - size.x / 2, 720 - size.y), size), false, Color(1, 1, 1, fade))
+	_draw_menu(title, Match.RESULT_ITEMS if m.phase_frame >= 60 else [], 0.3 if _bg_result != null else 0.65)
 
 
 ## 기술표: 1P(왼쪽) / 2P(오른쪽) 캐릭터 기술 + 아래에 공통 조작
@@ -483,8 +500,8 @@ func _draw_move_row(mv: Array, x: float, y: float) -> void:
 		Style.text(self, mv[3], Vector2(x + 126, y + 20), 16, Style.WHITE, HORIZONTAL_ALIGNMENT_LEFT, -1, 0)
 
 
-func _draw_menu(title: String, items: Array) -> void:
-	draw_rect(Rect2(0, 0, 1280, 720), Color(0, 0, 0, 0.65))
+func _draw_menu(title: String, items: Array, dim := 0.65) -> void:
+	draw_rect(Rect2(0, 0, 1280, 720), Color(0, 0, 0, dim))
 	Style.fill(self, Style.slant(-20, 190, 1320, 90, 20), Style.RED)
 	Style.text(self, title, Vector2(0, 258), 64, Style.WHITE, HORIZONTAL_ALIGNMENT_CENTER, 1280, 12)
 	for i in items.size():
