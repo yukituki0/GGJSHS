@@ -1,0 +1,21 @@
+; Engine configuration file.
+; Godot 에디터에서 열면 자동으로 정리/갱신됨
+
+config_version=5
+
+[application]
+
+config/name="GGJSHS"
+run/main_scene="res://scenes/main.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
