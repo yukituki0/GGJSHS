@@ -17,8 +17,9 @@ func _ready() -> void:
 	cursor = Game.selected.duplicate()
 
 
-func _training() -> bool:
-	return Game.mode == Game.Mode.TRAINING
+## 트레이닝 / CPU 대전: 한 사람이 내 캐릭터 → 상대 캐릭터 순서로 고른다
+func _solo() -> bool:
+	return Game.is_solo()
 
 
 func _process(delta: float) -> void:
@@ -26,8 +27,8 @@ func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("ui_cancel"):
 		Game.goto("mode_select")
 		return
-	if _training():
-		_update_training_select()
+	if _solo():
+		_update_solo_select()
 	else:
 		for p in [1, 2]:
 			if not _update_slot(p, p):
@@ -68,8 +69,8 @@ func _update_slot(slot: int, player: int) -> bool:
 	return true
 
 
-## 트레이닝: 아무나(0) 입력으로 1P 자리 → 다 고르면 2P(더미) 자리
-func _update_training_select() -> void:
+## 혼자: 아무나(0) 입력으로 1P 자리 → 다 고르면 2P(더미/CPU) 자리
+func _update_solo_select() -> void:
 	if not locked[1]:
 		_update_slot(1, 0)
 	elif not locked[2]:
@@ -93,7 +94,7 @@ func _card_rect(index: int) -> Rect2:
 func _draw() -> void:
 	background()
 	header(Game.t("char_select"))
-	var title := Game.t("versus" if Game.mode == Game.Mode.VERSUS else "training")
+	var title := Game.t(["versus", "training", "vs_cpu"][Game.mode])
 	Style.text(self, title, Vector2(56, 118), 22, Style.GOLD, HORIZONTAL_ALIGNMENT_LEFT, -1, 4)
 
 	# 양쪽 큰 미리보기
@@ -123,7 +124,12 @@ func _draw() -> void:
 	if locked[1] and locked[2]:
 		Style.banner(self, Game.t("ready"), Style.GOLD, _done_frames / 10.0)
 	else:
-		text(Game.t("training_select_hint" if _training() else "select_hint"), 700, 18, Style.GRAY, W / 2, 0)
+		var hint := "select_hint"
+		if Game.mode == Game.Mode.TRAINING:
+			hint = "training_select_hint"
+		elif Game.mode == Game.Mode.CPU:
+			hint = "cpu_select_hint"
+		text(Game.t(hint), 700, 18, Style.GRAY, W / 2, 0)
 
 
 func _player_color(p: int) -> Color:

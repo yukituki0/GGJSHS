@@ -61,6 +61,7 @@ var input_enabled := true       # 라운드 시작 전/끝난 뒤에는 Match가
 ## 트레이닝 더미: HUMAN이면 사람이 조작, 아니면 정해진 동작만 한다 (Game.DUMMY_KEYS와 순서 같음)
 enum Dummy { HUMAN, STAND, CROUCH, JUMP, GUARD, GUARD_LOW, GUARD_AUTO }
 var dummy: Dummy = Dummy.HUMAN
+var brain: CpuBrain             # 있으면 CPU가 조작 (사람 입력 대신 brain의 버튼을 읽는다)
 var can_die := true             # 트레이닝 모드에서는 false (체력이 1 밑으로 안 내려감)
 var opponent: Fighter
 var ground_y := 600.0           # 바닥 높이 (Match가 정해줌)
@@ -112,6 +113,8 @@ func _ready() -> void:
 ## 1프레임 진행. Match가 매 프레임 1P → 2P 순서로 직접 호출한다 (처리 순서를 고정하려고)
 func tick() -> void:
 	state_frame += 1
+	if brain != null and input_enabled:
+		brain.think(self)
 	_update_buffer()
 	_update_state()
 	if state == State.ATTACK and current_attack != null and current_attack.move_speed != 0.0 \
@@ -139,8 +142,7 @@ func tick() -> void:
 ## 캐릭터는 멈춰 있지만, 이때 누른 버튼은 버퍼에 기억해 둔다 (히트스톱 중 개틀링 입력 가능)
 func tick_frozen() -> void:
 	for action in BUFFERED_ACTIONS:
-		if input_enabled and dummy == Dummy.HUMAN \
-				and Input.is_action_just_pressed(InputManager.action_name(player, action)):
+		if brain == null and _just_pressed(action):
 			_buffer[action] = input_buffer_frames
 	if hit_shake > 0:
 		hit_shake -= 1
@@ -259,6 +261,8 @@ func spawn(projectile: Projectile) -> void:
 func _held(action: String) -> bool:
 	if not input_enabled:
 		return false
+	if brain != null:
+		return brain.held(action)
 	if dummy != Dummy.HUMAN:
 		return _dummy_held(action)
 	return Input.is_action_pressed(InputManager.action_name(player, action))
@@ -298,11 +302,21 @@ func _consume(action: String) -> void:
 ## 후딜 중에 조금 일찍 눌러도, 움직일 수 있게 되는 순간 바로 나간다.
 func _update_buffer() -> void:
 	for action in BUFFERED_ACTIONS:
-		if input_enabled and dummy == Dummy.HUMAN \
-				and Input.is_action_just_pressed(InputManager.action_name(player, action)):
+		if _just_pressed(action):
 			_buffer[action] = input_buffer_frames
 		elif _buffer.get(action, 0) > 0:
 			_buffer[action] -= 1
+
+
+## 이번 프레임에 새로 눌렀나 (사람 / CPU / 더미에 따라)
+func _just_pressed(action: String) -> bool:
+	if not input_enabled:
+		return false
+	if brain != null:
+		return brain.just_pressed(action)
+	if dummy != Dummy.HUMAN:
+		return false
+	return Input.is_action_just_pressed(InputManager.action_name(player, action))
 
 
 ## 좌우 입력을 "상대 기준"으로 바꿔준다: 1 = 앞(상대 쪽), -1 = 뒤, 0 = 없음

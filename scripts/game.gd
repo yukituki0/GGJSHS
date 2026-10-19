@@ -2,7 +2,7 @@ extends Node
 ## 게임 전체 상태 (Autoload 싱글톤, 이름: Game)
 ## 화면이 바뀌어도 유지돼야 하는 것들: 모드, 고른 캐릭터, 언어, 화면 이동
 
-enum Mode { VERSUS, TRAINING }
+enum Mode { VERSUS, TRAINING, CPU }
 enum Language { EN, KO }
 
 const GAME_TITLE := "Guilty JSHS"
@@ -79,6 +79,13 @@ const STRINGS := {
 
 	"select_mode": ["SELECT MODE", "모드 선택"],
 	"versus": ["VERSUS", "대전"],
+	"vs_cpu": ["VS CPU", "CPU 대전"],
+	"cpu_easy": ["EASY", "쉬움"],
+	"cpu_normal": ["NORMAL", "보통"],
+	"cpu_hard": ["HARD", "어려움"],
+	"help_cpu": ["1P vs computer.  LEFT/RIGHT: difficulty", "컴퓨터와 대전.  좌우: 난이도 바꾸기"],
+	"cpu_select_hint": ["Pick your character, then the CPU's    P: OK    K: BACK",
+			"내 캐릭터 → CPU 캐릭터 순서로 고르기    P: 결정    K: 뒤로"],
 	"training": ["TRAINING", "트레이닝"],
 	"controls": ["CONTROLS", "조작법"],
 	"input": ["INPUT", "조작 장치"],
@@ -223,6 +230,13 @@ var stage_random := true        # 스테이지 선택에서 RANDOM을 골랐으�
 const DUMMY_KEYS := ["dummy_human", "dummy_stand", "dummy_crouch", "dummy_jump",
 		"dummy_guard", "dummy_guard_low", "dummy_guard_auto"]
 var dummy_mode := 1             # 기본: 서 있기 (혼자서도 연습할 수 있게)
+var cpu_level := 1              # CpuBrain.Level (0 쉬움, 1 보통, 2 어려움)
+const CPU_LEVEL_KEYS := ["cpu_easy", "cpu_normal", "cpu_hard"]
+
+
+## 혼자 하는 모드 (캐릭터를 한 사람이 둘 다 고른다)
+func is_solo() -> bool:
+	return mode == Mode.TRAINING or mode == Mode.CPU
 
 
 func _ready() -> void:

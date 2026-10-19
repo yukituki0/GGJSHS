@@ -81,6 +81,9 @@ func _spawn(player: int) -> Fighter:
 	var f: Fighter = load(info["script"]).new()
 	f.player = player
 	f.display_name = info["name"]
+	if player == 2 and Game.mode == Game.Mode.CPU:
+		f.brain = CpuBrain.new(Game.cpu_level)
+		f.display_name = "CPU " + f.display_name
 	f.color = info["color"]
 	# 같은 캐릭터끼리 붙으면 2P를 어둡게
 	if player == 2 and Game.selected[1] == Game.selected[2]:
