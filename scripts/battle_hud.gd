@@ -60,12 +60,13 @@ func _draw() -> void:
 ## 위치/크기는 1P(왼쪽) 기준. 2P는 좌우 반전 (텐션바는 글자가 있어서 반전 안 함)
 ## *_SLOT, *_SRC는 그림 크기에 대한 비율 (x, y, 폭, 높이). 그림을 바꾸면 이 숫자를 다시 재야 한다
 const IMG_HP_FRAME_W := 560.0
-const IMG_HP_FRAME_Y := -40.0
+const IMG_TOP_OFFSET := 30.0       # 위쪽 HUD 전체를 아래로 내리는 양 (화면 위에서 잘리지 않게)
+const IMG_HP_FRAME_Y := -40.0 + IMG_TOP_OFFSET
 const IMG_HP_BAR_SLOT := Rect2(0.2645, 0.3859, 0.6682, 0.212)      # 틀 안의 빈 바 자리
 const IMG_HP_PORTRAIT_SLOT := Rect2(0.0909, 0.2554, 0.16, 0.4402)   # 틀 안의 육각형 초상화 자리
 const IMG_HP_FILL_SRC := Rect2(0.0809, 0.2343, 0.8664, 0.5486)      # 채움 그림에서 실제 색 부분
 const IMG_TIMER_W := 150.0
-const IMG_TIMER_CENTER := Vector2(640, 52)
+const IMG_TIMER_CENTER := Vector2(640, 52 + IMG_TOP_OFFSET)
 const IMG_TEN_FRAME_W := 360.0
 const IMG_TEN_BOTTOM := 712.0
 ## 텐션바는 1P/2P 그림이 따로 있다 (빈 것 + 꽉 찬 것). 꽉 찬 그림의 채움 자리를 비율만큼 잘라 빈 그림 위에 덮는다
@@ -181,7 +182,7 @@ func _draw_portrait_hex(f: Fighter, r: Rect2) -> void:
 func _draw_hud() -> void:
 	if _use_images:
 		_draw_hud_images()
-		_draw_round_info(128.0)
+		_draw_round_info(128.0 + IMG_TOP_OFFSET)
 		return
 	# 위쪽 어두운 띠 (밝은 배경에서도 HUD가 잘 보이게)
 	draw_polygon(PackedVector2Array([Vector2(0, 0), Vector2(1280, 0), Vector2(1280, 130), Vector2(0, 130)]),
