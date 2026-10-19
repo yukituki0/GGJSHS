@@ -25,6 +25,11 @@ static func fill(c: CanvasItem, points: PackedVector2Array, color: Color) -> voi
 	c.draw_colored_polygon(points, color)
 
 
+## 꼭짓점마다 색을 줘서 그라데이션으로 칠하기 (slant()와 같이 쓰면 [왼위, 오위, 오아래, 왼아래])
+static func gradient(c: CanvasItem, points: PackedVector2Array, colors: Array) -> void:
+	c.draw_polygon(points, PackedColorArray(colors))
+
+
 static func outline(c: CanvasItem, points: PackedVector2Array, color: Color, width := 2.0) -> void:
 	var closed := points.duplicate()
 	closed.append(points[0])

@@ -2,7 +2,7 @@ extends Node2D
 ## 대전 화면 HUD + 연출 (캐릭터보다 위에 그려지도록 z_index가 높은 노드)
 ## 체력/텐션/타이머/라운드, ROUND·FIGHT·K.O. 띠, VS 화면, 일시정지·결과 메뉴, 타격 이펙트
 
-const HP_W := 500.0
+const HP_W := 470.0
 const HP_H := 30.0
 const SKEW := 14.0
 
@@ -30,7 +30,7 @@ func _draw() -> void:
 			_draw_vs()
 		Match.Phase.ROUND_INTRO:
 			if m.phase_frame < 60:
-				var last := m.wins[1] == Game.ROUNDS_TO_WIN - 1 and m.wins[2] == Game.ROUNDS_TO_WIN - 1
+				var last: bool = m.wins[1] == Game.ROUNDS_TO_WIN - 1 and m.wins[2] == Game.ROUNDS_TO_WIN - 1
 				Style.banner(self, "FINAL ROUND" if last else "ROUND %d" % m.round_number,
 						Style.WHITE, m.phase_frame / 14.0)
 			else:
@@ -43,74 +43,111 @@ func _draw() -> void:
 		_draw_menu(Game.t("pause"), Match.PAUSE_ITEMS)
 
 
-# ── 위쪽: 체력, 이름, 타이머, 라운드 ───────────────────────
+# ── 위쪽: 초상화, 체력, 이름, 타이머, 라운드 ──────────────
 func _draw_hud() -> void:
 	# 위쪽 어두운 띠 (밝은 배경에서도 HUD가 잘 보이게)
-	draw_polygon(PackedVector2Array([Vector2(0, 0), Vector2(1280, 0), Vector2(1280, 120), Vector2(0, 120)]),
-			PackedColorArray([Color(0, 0, 0, 0.7), Color(0, 0, 0, 0.7), Color(0, 0, 0, 0), Color(0, 0, 0, 0)]))
-	_draw_hp_bar(m.p1, 46.0, 1.0)
-	_draw_hp_bar(m.p2, 1280.0 - 46.0 - HP_W, -1.0)
-	_draw_name_plate(m.p1, 40.0, false)
-	_draw_name_plate(m.p2, 1280.0 - 40.0 - 230.0, true)
+	draw_polygon(PackedVector2Array([Vector2(0, 0), Vector2(1280, 0), Vector2(1280, 130), Vector2(0, 130)]),
+			PackedColorArray([Color(0, 0, 0, 0.65), Color(0, 0, 0, 0.65), Color(0, 0, 0, 0), Color(0, 0, 0, 0)]))
+	_draw_hp_bar(m.p1, 104.0, 1.0)
+	_draw_hp_bar(m.p2, 1280.0 - 104.0 - HP_W, -1.0)
+	_draw_portrait(m.p1, Game.character(1), Vector2(14, 10), false)
+	_draw_portrait(m.p2, Game.character(2), Vector2(1280 - 14 - PORTRAIT, 10), true)
+	_draw_name(m.p1, 104.0, false)
+	_draw_name(m.p2, 1280.0 - 104.0 - HP_W, true)
 	_draw_timer()
 	if m.is_training():
-		Style.text(self, Game.t("training"), Vector2(0, 132), 18, Style.GOLD, HORIZONTAL_ALIGNMENT_CENTER, 1280, 6)
+		Style.text(self, Game.t("training"), Vector2(0, 128), 18, Style.GOLD, HORIZONTAL_ALIGNMENT_CENTER, 1280, 6)
 	else:
 		for i in Game.ROUNDS_TO_WIN:
-			_draw_round_pip(Vector2(560 - i * 24, 104), m.wins[1] > i)
-			_draw_round_pip(Vector2(720 + i * 24, 104), m.wins[2] > i)
+			_draw_round_pip(Vector2(566 - i * 24, 98), m.wins[1] > i)
+			_draw_round_pip(Vector2(714 + i * 24, 98), m.wins[2] > i)
 	_draw_tension_bar(m.p1, 40.0, false)
-	_draw_tension_bar(m.p2, 1280.0 - 40.0 - 300.0, true)
+	_draw_tension_bar(m.p2, 1280.0 - 40.0 - TENSION_W, true)
+
+
+const PORTRAIT := 82.0
+const TENSION_W := 320.0
+## 전신 일러스트에서 얼굴 부분을 잘라 쓸 영역 (그림 크기에 대한 비율: x, y, 폭)
+## 그림이 들어온 뒤 얼굴이 잘 안 맞으면 이 숫자만 조정하면 된다
+const FACE_CROP := Vector3(0.3, 0.03, 0.4)
+
+
+## 체력바 옆 초상화 (그림이 있으면 얼굴 부분, 없으면 캐릭터 색)
+func _draw_portrait(f: Fighter, info: Dictionary, pos: Vector2, right: bool) -> void:
+	var skew := -10.0 if right else 10.0
+	var frame := Style.slant(pos.x - 4, pos.y - 4, PORTRAIT + 8, PORTRAIT + 8, skew)
+	Style.fill(self, frame, Style.BLACK)
+	var inner := Rect2(pos, Vector2(PORTRAIT, PORTRAIT))
+	var art := Game.character_art(info)
+	if art != null:
+		var w := art.get_width() * FACE_CROP.z
+		var src := Rect2(art.get_width() * FACE_CROP.x, art.get_height() * FACE_CROP.y, w, w)
+		if right:  # 2P는 좌우 반전
+			draw_texture_rect_region(art, Rect2(inner.position + Vector2(inner.size.x, 0), Vector2(-inner.size.x, inner.size.y)), src)
+		else:
+			draw_texture_rect_region(art, inner, src)
+	else:
+		Style.gradient(self, Style.slant(pos.x, pos.y, PORTRAIT, PORTRAIT, skew),
+				[f.color.lightened(0.2), f.color.lightened(0.2), f.color.darkened(0.5), f.color.darkened(0.5)])
+		Style.text(self, f.display_name.substr(0, 1), pos + Vector2(0, 62), 56, Style.WHITE,
+				HORIZONTAL_ALIGNMENT_CENTER, PORTRAIT, 8)
+	Style.outline(self, frame, Style.GOLD.darkened(0.2), 3.0)
 
 
 ## dir: 1 = 1P(왼쪽, 바깥쪽 기준으로 채움), -1 = 2P(오른쪽, 좌우 반전)
 func _draw_hp_bar(f: Fighter, x: float, dir: float) -> void:
-	var y := 26.0
+	var y := 22.0
 	var skew := SKEW * dir
-	# 바깥 검은 테두리
-	Style.fill(self, Style.slant(x - 6, y - 5, HP_W + 12, HP_H + 10, skew), Style.BLACK)
-	Style.fill(self, Style.slant(x, y, HP_W, HP_H, skew), Style.DARK_RED.darkened(0.5))
+	# 금속 느낌 테두리 (위는 밝고 아래는 어두운 회색)
+	Style.gradient(self, Style.slant(x - 7, y - 6, HP_W + 14, HP_H + 12, skew),
+			[Color("9a9aa6"), Color("9a9aa6"), Color("2a2a32"), Color("2a2a32")])
+	Style.fill(self, Style.slant(x, y, HP_W, HP_H, skew), Color("1a0508"))
 	var ratio := float(f.hp) / f.max_hp
 	var trail_ratio: float = _trail[f.player] / f.max_hp
-	# 빨간 잔상 → 금색 현재 체력 (1P는 왼쪽 기준, 2P는 오른쪽 기준으로 채움)
-	_bar_part(x, y, trail_ratio, skew, dir, Style.RED)
-	var col := Style.GOLD if ratio > 0.25 else Color("ff6a2a")
+	# 빨간 잔상 → 노랑~주황 그라데이션 현재 체력 (1P는 왼쪽 기준, 2P는 오른쪽 기준)
+	_bar_part(x, y, trail_ratio, skew, dir, [Style.RED, Style.RED, Style.DARK_RED, Style.DARK_RED])
+	var top := Color("ffe46b") if ratio > 0.25 else Color("ffb36b")
+	var bottom := Color("f08a17") if ratio > 0.25 else Color("e0301e")
 	if ratio <= 0.25 and Time.get_ticks_msec() % 400 < 200:
-		col = col.lightened(0.3)  # 체력 적으면 깜빡임
-	_bar_part(x, y, ratio, skew, dir, col)
-	# 위쪽 하이라이트 줄
-	_bar_part(x, y, ratio, skew, dir, Color(1, 1, 1, 0.25), 6.0)
-	Style.outline(self, Style.slant(x, y, HP_W, HP_H, skew), Style.WHITE, 2.0)
+		top = top.lightened(0.4)  # 체력 적으면 깜빡임
+	_bar_part(x, y, ratio, skew, dir, [top, top, bottom, bottom])
+	_bar_part(x, y, ratio, skew, dir, [Color(1, 1, 1, 0.45), Color(1, 1, 1, 0.45), Color(1, 1, 1, 0), Color(1, 1, 1, 0)], 10.0)
+	Style.outline(self, Style.slant(x, y, HP_W, HP_H, skew), Style.BLACK, 2.0)
 
 
-func _bar_part(x: float, y: float, ratio: float, skew: float, dir: float, color: Color, h := HP_H) -> void:
+func _bar_part(x: float, y: float, ratio: float, skew: float, dir: float, colors: Array, h := HP_H) -> void:
 	if ratio <= 0.0:
 		return
 	var w := HP_W * ratio
 	var start := x if dir > 0 else x + HP_W - w
-	Style.fill(self, Style.slant(start, y, w, h, skew * h / HP_H), color)
+	Style.gradient(self, Style.slant(start, y, w, h, skew * h / HP_H), colors)
 
 
-func _draw_name_plate(f: Fighter, x: float, right: bool) -> void:
-	var skew := -10.0 if right else 10.0
-	Style.fill(self, Style.slant(x, 66, 230, 26, skew), Style.BLACK)
-	Style.fill(self, Style.slant(x + (226.0 if right else 0.0), 66, 4, 26, skew), Style.RED)
-	var tag := "%dP  %s" % [f.player, f.display_name]
-	Style.text(self, tag, Vector2(x + 12, 87), 20, Style.WHITE,
-			HORIZONTAL_ALIGNMENT_RIGHT if right else HORIZONTAL_ALIGNMENT_LEFT, 206)
+## 체력바 아래 이름 (빨간 글자 + 검은 외곽선)
+func _draw_name(f: Fighter, x: float, right: bool) -> void:
+	Style.text(self, f.display_name, Vector2(x + (0.0 if right else 18.0), 82), 26, Color("ff3b3b"),
+			HORIZONTAL_ALIGNMENT_RIGHT if right else HORIZONTAL_ALIGNMENT_LEFT, HP_W - 18, 7)
 
 
+## 톱니바퀴 모양 타이머
 func _draw_timer() -> void:
-	var c := Vector2(640, 54)
-	var hex := PackedVector2Array()
-	for i in 6:
-		hex.append(c + Vector2(50, 0).rotated(i * TAU / 6) * Vector2(1.0, 0.85))
-	Style.fill(self, hex, Style.BLACK)
-	Style.outline(self, hex, Style.RED, 3.0)
+	var c := Vector2(640, 46)
+	var gear := PackedVector2Array()
+	var teeth := 12
+	for i in teeth * 2:
+		var r := 52.0 if i % 2 == 0 else 44.0
+		var a0 := (i - 0.5) * TAU / (teeth * 2)
+		var a1 := (i + 0.5) * TAU / (teeth * 2)
+		gear.append(c + Vector2(r, 0).rotated(a0))
+		gear.append(c + Vector2(r, 0).rotated(a1))
+	Style.fill(self, gear, Color("3a3a44"))
+	Style.outline(self, gear, Color("15151a"), 3.0)
+	draw_circle(c, 38, Style.BLACK)
+	draw_arc(c, 38, 0, TAU, 40, Style.RED, 3.0)
 	var secs := ceili(maxi(m.timer_frames, 0) / 60.0)
 	var time_text := "--" if m.is_training() else str(secs)
 	var col := Style.RED if not m.is_training() and secs <= 10 else Style.WHITE
-	Style.text(self, time_text, Vector2(590, 74), 52, col, HORIZONTAL_ALIGNMENT_CENTER, 100, 6)
+	Style.text(self, time_text, Vector2(590, 64), 48, col, HORIZONTAL_ALIGNMENT_CENTER, 100, 6)
 
 
 func _draw_round_pip(pos: Vector2, won: bool) -> void:
@@ -121,29 +158,33 @@ func _draw_round_pip(pos: Vector2, won: bool) -> void:
 
 # ── 아래쪽: 텐션 게이지 ───────────────────────────────────
 func _draw_tension_bar(f: Fighter, x: float, right: bool) -> void:
-	var y := 676.0
-	var w := 300.0
-	var h := 16.0
-	var skew := -8.0 if right else 8.0
-	Style.fill(self, Style.slant(x - 4, y - 4, w + 8, h + 8, skew), Style.BLACK)
+	var y := 680.0
+	var w := TENSION_W
+	var h := 18.0
+	var skew := -10.0 if right else 10.0
+	Style.gradient(self, Style.slant(x - 6, y - 5, w + 12, h + 10, skew),
+			[Color("9a9aa6"), Color("9a9aa6"), Color("2a2a32"), Color("2a2a32")])
+	Style.fill(self, Style.slant(x, y, w, h, skew), Color("12100c"))
 	var ratio := f.tension / Fighter.MAX_TENSION
 	var fw := w * ratio
 	var start := x + w - fw if right else x
 	var rc_ready := f.tension >= Fighter.RC_COST
-	var col := Style.CYAN if rc_ready else Style.CYAN.darkened(0.55)
+	var top := Color("ffd35a") if rc_ready else Color("c98a2a")
+	var bottom := Color("e0501e") if rc_ready else Color("7a3a12")
 	if rc_ready:
-		col = col.lightened(0.25 * (0.5 + 0.5 * sin(Time.get_ticks_msec() / 120.0)))  # 50% 넘으면 반짝
+		top = top.lightened(0.3 * (0.5 + 0.5 * sin(Time.get_ticks_msec() / 120.0)))  # 50% 넘으면 반짝
 	if fw > 0:
-		Style.fill(self, Style.slant(start, y, fw, h, skew), col)
+		Style.gradient(self, Style.slant(start, y, fw, h, skew), [top, top, bottom, bottom])
 	# 50% 눈금
 	var mid := x + w / 2
 	draw_line(Vector2(mid + skew, y), Vector2(mid, y + h), Style.WHITE, 2.0)
-	Style.outline(self, Style.slant(x, y, w, h, skew), Style.WHITE, 2.0)
-	# "TENSION 50%"
-	var label_x := x if not right else x + w - 200
+	Style.outline(self, Style.slant(x, y, w, h, skew), Style.BLACK, 2.0)
+	# "TENSION" 글자 + 숫자
 	var align := HORIZONTAL_ALIGNMENT_RIGHT if right else HORIZONTAL_ALIGNMENT_LEFT
-	Style.text(self, "TENSION  %d%%" % int(f.tension), Vector2(label_x, y - 8), 18,
-			Style.CYAN if rc_ready else Style.GRAY, align, 200, 4)
+	Style.text(self, "TENSION", Vector2(x + (0.0 if right else 14.0), y + 15), 15, Style.WHITE, align, w - 14, 4)
+	var num_x := x - 90 if right else x + w + 16
+	Style.text(self, "%d%%" % int(f.tension), Vector2(num_x, y + 18), 26,
+			Style.GOLD if rc_ready else Style.GRAY, HORIZONTAL_ALIGNMENT_CENTER, 74, 5)
 
 
 # ── 타격 이펙트 ───────────────────────────────────────────
