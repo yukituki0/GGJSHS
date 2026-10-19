@@ -3,7 +3,10 @@ extends Screen
 ## 트레이닝은 혼자서도 할 수 있게 "내 캐릭터 → 더미 캐릭터" 순서로 한 사람이 고른다
 ## 둘 다 결정하면 잠깐 뒤 스테이지 선택으로
 
-const CARD_SIZE := Vector2(170, 210)
+const CARD_SIZE := Vector2(110, 140)
+const COLUMNS := 3         # 카드 격자 가로 칸 수 (6명 = 3 x 2)
+const CARD_GAP := 14.0
+const GRID_TOP := 290.0
 
 var cursor := { 1: 0, 2: 1 }
 var locked := { 1: false, 2: false }
@@ -50,6 +53,10 @@ func _update_slot(slot: int, player: int) -> bool:
 		cursor[slot] = (cursor[slot] - 1 + count) % count
 	elif Game.menu_pressed("right", player):
 		cursor[slot] = (cursor[slot] + 1) % count
+	elif Game.menu_pressed("up", player) and count > COLUMNS:
+		cursor[slot] = (cursor[slot] - COLUMNS + count) % count
+	elif Game.menu_pressed("down", player) and count > COLUMNS:
+		cursor[slot] = (cursor[slot] + COLUMNS) % count
 	elif Game.menu_confirm(player):
 		locked[slot] = true
 	elif Game.menu_back(player):
@@ -71,12 +78,13 @@ func _update_training_select() -> void:
 		locked[2] = false
 
 
+## 가운데 카드 격자에서 index번 카드 위치
 func _card_rect(index: int) -> Rect2:
-	var count := Game.CHARACTERS.size()
-	var gap := 30.0
-	var total := count * CARD_SIZE.x + (count - 1) * gap
-	var x := W / 2 - total / 2 + index * (CARD_SIZE.x + gap)
-	return Rect2(Vector2(x, 400), CARD_SIZE)
+	var total := COLUMNS * CARD_SIZE.x + (COLUMNS - 1) * CARD_GAP
+	var col := index % COLUMNS
+	var row := int(float(index) / COLUMNS)
+	var x := W / 2 - total / 2 + col * (CARD_SIZE.x + CARD_GAP)
+	return Rect2(Vector2(x, GRID_TOP + row * (CARD_SIZE.y + CARD_GAP)), CARD_SIZE)
 
 
 func _draw() -> void:
@@ -96,14 +104,14 @@ func _draw() -> void:
 		Style.fill(self, Style.slant(rect.position.x, rect.position.y, rect.size.x, rect.size.y, 12), Style.PANEL)
 		var art := Game.character_art(c)
 		if art != null:
-			_draw_art(art, Rect2(rect.position + Vector2(10, 8), rect.size - Vector2(20, 50)), false)
+			_draw_art(art, Rect2(rect.position + Vector2(8, 6), rect.size - Vector2(16, 38)), false)
 		else:
-			draw_rect(Rect2(rect.position + Vector2(45, 40), Vector2(80, 120)), c["color"])
-		Style.fill(self, Style.slant(rect.position.x, rect.end.y - 42, rect.size.x, 42, 6), Style.BLACK)
-		text(c["name"], rect.end.y - 13, 22, Style.WHITE, rect.get_center().x, 0)
+			draw_rect(Rect2(rect.position + Vector2(35, 22), Vector2(40, 80)), c["color"])
+		Style.fill(self, Style.slant(rect.position.x, rect.end.y - 30, rect.size.x, 30, 6), Style.BLACK)
+		text(c["name"], rect.end.y - 9, 16, Style.WHITE, rect.get_center().x, 0)
 	# 커서 (1P 빨강 / 2P 파랑, 같은 칸이면 겹쳐서 보이게 크기 다르게)
 	for p in [1, 2]:
-		var rect := _card_rect(cursor[p]).grow(6 if p == 1 else 12)
+		var rect := _card_rect(cursor[p]).grow(4 if p == 1 else 9)
 		var col := _player_color(p)
 		Style.outline(self, Style.slant(rect.position.x, rect.position.y, rect.size.x, rect.size.y, 12), col, 4.0)
 		var label_x := rect.position.x + 24 if p == 1 else rect.end.x - 10

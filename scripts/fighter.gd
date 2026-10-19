@@ -82,6 +82,8 @@ var tension := 0.0
 var hit_shake := 0              # 히트스톱 동안 맞은 쪽이 부르르 떠는 남은 프레임
 var rc_flash := 0               # 로만 캔슬 이펙트 남은 프레임
 var history: Array[Vector2] = []  # 최근 위치 기록 (맨 앞이 가장 오래된 것)
+var _armor_used := 0            # 이번 공격에서 아머로 버틴 횟수
+var armor_flash := 0            # 아머로 버텼을 때 번쩍임 남은 프레임
 
 
 func _ready() -> void:
@@ -104,6 +106,8 @@ func tick() -> void:
 		history.pop_front()
 	if rc_flash > 0:
 		rc_flash -= 1
+	if armor_flash > 0:
+		armor_flash -= 1
 	queue_redraw()
 
 
@@ -413,6 +417,10 @@ func _prejump() -> void:
 func _air() -> void:
 	velocity.y += gravity
 
+	# 공중 필살기 (D)
+	if _pressed("d") and attacks.has("jD") and _can_use_special("jD"):
+		_start_attack("jD")
+		return
 	var attack := _pressed_attack("j")
 	if attack != "":
 		_start_attack(attack)
@@ -509,6 +517,7 @@ func _start_attack(attack_name: String) -> void:
 	_consume("d")
 	current_attack = attacks[attack_name]
 	attack_connected = false
+	_armor_used = 0
 	if is_on_ground():
 		velocity.x = 0
 	_change_state(State.ATTACK)
@@ -622,6 +631,18 @@ func is_invulnerable() -> bool:
 func receive_attack(attack: AttackData, from_dir: int) -> bool:
 	if _try_counter(attack):
 		return true  # 반격 성공: 막은 것처럼 처리 (데미지 없음)
+	# 아머: 돌진기 등의 발생~지속 동안은 맞아도 멈추지 않는다 (데미지는 받음)
+	if state == State.ATTACK and current_attack != null and _armor_used < current_attack.armor_hits \
+			and state_frame <= current_attack.startup + current_attack.active:
+		_armor_used += 1
+		armor_flash = 12
+		hp = maxi(hp - attack.damage, 0 if can_die else 1)
+		hit_shake = attack.hitstop
+		if hp == 0:
+			current_attack = null
+			velocity = Vector2(6.0 * from_dir, -10.0)
+			_change_state(State.KO)
+		return false
 	if can_block(attack.level):
 		add_tension(tension_guard_gain)
 		stun_frames = attack.blockstun
@@ -659,6 +680,8 @@ func _draw() -> void:
 			body_color = color.lightened(0.5)
 		State.GUARD, State.BLOCKSTUN:
 			body_color = color.darkened(0.4)
+	if armor_flash > 0:
+		body_color = body_color.lerp(Color(1, 0.85, 0.4), armor_flash / 12.0)  # 아머로 버팀: 금색 번쩍
 	draw_rect(rect, body_color)
 	draw_rect(rect, Color.WHITE, false, 3.0)
 	# 로만 캔슬: 퍼져 나가는 원

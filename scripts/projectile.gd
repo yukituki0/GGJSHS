@@ -17,6 +17,7 @@ var hits_airborne := true       # 공중에 뜬 상대도 맞히나 (바닥 함�
 var rehit_interval := 0         # 0이면 한 번 맞히고 사라짐, 아니면 이 간격마다 다시 맞힘 (웅덩이)
 var ground_y := INF             # 이 높이에 닿으면 landed 신호를 내고 사라짐
 var kind := ""                  # 그리기용 종류 이름
+var extra := {}                 # 종류별 추가 정보 (별자리 선의 양 끝점 등)
 var color := Color.WHITE
 
 var age := 0
@@ -103,5 +104,59 @@ func _draw() -> void:
 			var t := float(age) / lifetime
 			draw_circle(Vector2.ZERO, size.x * 0.3 + size.x * 0.4 * t, Color(1.0, 0.6, 0.15, 0.8 * (1.0 - t)))
 			draw_circle(Vector2.ZERO, size.x * 0.2 + size.x * 0.25 * t, Color(color, 0.9 * (1.0 - t)))
+		"meteor":
+			# 별똥별: 빛나는 머리 + 날아온 방향으로 긴 꼬리
+			var back := -velocity.normalized() * 70
+			draw_line(Vector2.ZERO, back, Color(color, 0.35), 14.0)
+			draw_line(Vector2.ZERO, back * 0.6, Color(color, 0.7), 8.0)
+			_draw_star(Vector2.ZERO, size.x * 0.6, Color.WHITE, age * 0.2)
+		"wave":
+			# 파도: 진행 방향으로 말려 올라가는 물결
+			var dir := hit_direction()
+			var fade := minf(1.0, (lifetime - age) / 12.0)
+			for i in 3:
+				var off := Vector2(-dir * i * 22, i * 6)
+				draw_arc(off + Vector2(0, size.y * 0.25), size.y * (0.55 - i * 0.1), PI if dir > 0 else 0.0,
+						PI * 1.5 if dir > 0 else -PI * 0.5, 12, Color(color.lightened(i * 0.2), 0.85 * fade), 10.0 - i * 2)
+			draw_rect(Rect2(r.position.x, r.end.y - 10, r.size.x, 10), Color(color, 0.6 * fade))
+		"star":
+			# 별자리용 별: 반짝임
+			var tw := 0.75 + 0.25 * sin(age * 0.25)
+			draw_circle(Vector2.ZERO, size.x * 0.9, Color(color, 0.15))
+			_draw_star(Vector2.ZERO, size.x * 0.55 * tw, Color(color, 0.95), 0.0)
+		"beam":
+			# 별자리 선: 두 별을 잇는 빛줄기 (extra.a, extra.b는 position 기준 상대 좌표)
+			var t := float(age) / lifetime
+			var a: Vector2 = extra.get("a", Vector2.ZERO)
+			var b: Vector2 = extra.get("b", Vector2.ZERO)
+			draw_line(a, b, Color(color, 0.4 * (1.0 - t)), 18.0)
+			draw_line(a, b, Color(Color.WHITE, 1.0 - t), 5.0)
+		"bolt":
+			# 번개: 위에서 아래로 지그재그
+			var flick := 1.0 if age % 4 < 2 else 0.6
+			var pts := PackedVector2Array()
+			var steps := 8
+			for i in steps + 1:
+				var y := r.position.y + r.size.y * i / steps
+				var x := 0.0 if i == 0 or i == steps else (14.0 if (i + int(age / 3.0)) % 2 == 0 else -14.0)
+				pts.append(Vector2(x, y))
+			draw_polyline(pts, Color(color, 0.5 * flick), 14.0)
+			draw_polyline(pts, Color(Color.WHITE, flick), 4.0)
+		"typhoon":
+			# 태풍: 빙글빙글 도는 나선
+			var fade := minf(1.0, (lifetime - age) / 15.0)
+			for i in 5:
+				var rad := size.x * (0.15 + i * 0.09)
+				var start := age * 0.25 + i * 1.3
+				draw_arc(Vector2(0, -i * 8), rad, start, start + PI * 1.3, 16, Color(color, (0.8 - i * 0.12) * fade), 6.0)
 		_:
 			draw_rect(r, color)
+
+
+## 다섯 꼭짓점 별 모양
+func _draw_star(center: Vector2, radius: float, col: Color, rot: float) -> void:
+	var pts := PackedVector2Array()
+	for i in 10:
+		var rad := radius if i % 2 == 0 else radius * 0.45
+		pts.append(center + Vector2(0, -rad).rotated(rot + i * TAU / 10))
+	draw_colored_polygon(pts, col)

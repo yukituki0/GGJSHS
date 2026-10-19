@@ -27,6 +27,7 @@ var cost := 0.0          # 텐션 소모량 (오버드라이브 50)
 var event_frame := -1    # 이 프레임에 캐릭터의 _on_attack_event()가 불린다 (투사체 생성 등)
 var invuln_frames := 0   # 시작부터 이 프레임까지 무적 (공격을 안 맞음)
 var move_speed := 0.0    # 공격 중 앞으로 움직이는 속도 (돌진기)
+var armor_hits := 0      # 발생~지속 동안 이 횟수만큼 맞아도 안 멈춤 (데미지는 받음)
 
 
 func _init(p_name: String, p_startup: int, p_active: int, p_recovery: int,

@@ -27,6 +27,10 @@ const CHARACTERS: Array[Dictionary] = [
 		"id": "common", "name": "COMMON", "club": ["COMPUTER CLUB  COMMON", "정보 동아리  COMMON"],
 		"color": Color(0.30, 0.65, 1.00), "script": "res://scripts/characters/common.gd",
 	},
+	{
+		"id": "globe", "name": "GLOBE", "club": ["EARTH SCIENCE CLUB  Globe", "지구과학 동아리  Globe"],
+		"color": Color("e08a3c"), "script": "res://scripts/characters/globe.gd",
+	},
 ]
 
 ## 스테이지 목록. 배경 그림: assets/stages/<id>.png (1920x1080 권장, 없으면 코드로 그린 임시 배경)
