@@ -10,6 +10,9 @@
 | 옥상(제주 바다) 배경 | `assets/stages/rooftop.png` | 1920×1080 (16:9), PNG |
 | CHEMIKID 전신 일러스트 | `assets/characters/chemikid.png` | 세로로 긴 그림, **투명 배경** PNG |
 | COMMON 전신 일러스트 | `assets/characters/common.png` | 세로로 긴 그림, **투명 배경** PNG |
+| 타이틀 로고 | `assets/ui/logo.png` | 가로로 긴 그림, **투명 배경** PNG |
+| 타이틀/메뉴 배경 | `assets/ui/key_art.png` | 1920×1080 (16:9), PNG |
+| HUD/메뉴 부품 | `assets/ui/` | 목업에서 잘라낸 PNG (이름은 넣을 때 같이 정하기) |
 
 ## 공통 스타일 문장 (모든 프롬프트 끝에 붙이기)
 
@@ -19,6 +22,47 @@
 
 - 게임 이름을 넣어서 "~ 스타일"이라고 쓰는 대신 **특징을 풀어서** 쓰는 게 결과가 안정적이고, 저작권 문제도 피할 수 있다.
 - 그림 안에 **글자/로고가 들어가지 않게** `no text, no logo, no watermark`를 붙인다.
+
+---
+
+## 0단계: 화풍 확정용 "게임 화면 목업" (제일 먼저!)
+
+배경/캐릭터/HUD가 다 들어간 **가짜 게임 스크린샷**을 먼저 한 장 만들어서 화풍을 정한다.
+마음에 드는 목업이 나오면 → 체력바, 타이머 같은 부품을 Photopea로 잘라서 쓰고,
+나머지 그림을 만들 때도 이 목업을 **첨부해서 "같은 화풍으로"** 요청한다.
+
+```
+A screenshot mockup of a 2D anime fighting game, 16:9, 1920x1080.
+Two fighters face each other on a stage: on the left, a chemistry-club student in a white lab coat
+with a glowing green flask; on the right, a computer-club hacker in a black hoodie with cyan
+circuit patterns carrying a mechanical keyboard like a guitar.
+Stage: a Korean high school chemistry lab at night.
+HUD: at the top, two long slanted health bars with ornate metallic frames and yellow-to-orange
+gradient fill, a small character portrait at each outer end, a gear-shaped round timer in the
+center showing "60"; at the bottom, two slanted metallic "tension" gauges with orange fill.
+[공통 스타일 문장]
+```
+(HUD 글자는 AI가 틀리게 쓰기 쉬우니, 글자는 나중에 게임이 직접 그린다. 모양만 참고)
+
+## 타이틀 로고 + 메뉴 배경
+
+**타이틀 로고** → `assets/ui/logo.png` (투명 배경, 가로로 긴 그림)
+```
+A game title logo that reads exactly "Guilty JSHS", aggressive heavy-metal style lettering,
+sharp edges, metallic silver letters with crimson red outlines and sparks, slightly slanted,
+transparent background, centered, no other text.
+```
+(글자가 틀리게 나오면 여러 번 다시 뽑거나, 글자 없는 장식만 만들고 글자는 게임이 쓴다)
+
+**메뉴/타이틀 배경 일러스트** → `assets/ui/key_art.png` (1920×1080)
+```
+Key art for a 2D anime fighting game, 16:9. A chemistry-club student (white lab coat, glowing
+green flask) and a computer-club hacker (black hoodie with cyan circuits, mechanical keyboard
+like a guitar) clash in the center, green chemical energy colliding with cyan digital code,
+sparks and smoke, Jeju island sea at sunset in the background. Leave the upper center area
+fairly simple for a title logo. No text, no logo, no watermark.
+[공통 스타일 문장]
+```
 
 ---
 
