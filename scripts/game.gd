@@ -300,8 +300,14 @@ func stage_info() -> Dictionary:
 
 
 ## 그림 파일이 있으면 불러오고, 없으면 null (그림이 아직 없어도 게임이 돌아가게)
+## 그림 불러오기 (없으면 null). 한 번 불러온 그림은 계속 들고 있는다
+## (안 들고 있으면 매 프레임 그릴 때마다 새로 불러오게 되고, 막 불러온 그림은 하얀 네모로 그려진다)
+var _textures := {}
+
 func load_texture(path: String) -> Texture2D:
-	return load(path) if ResourceLoader.exists(path) else null
+	if not _textures.has(path):
+		_textures[path] = load(path) if ResourceLoader.exists(path) else null
+	return _textures[path]
 
 
 func character_art(info: Dictionary) -> Texture2D:

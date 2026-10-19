@@ -146,10 +146,7 @@ func _draw_art(art: Texture2D, rect: Rect2, flip: bool) -> void:
 	var s := minf(rect.size.x / art.get_width(), rect.size.y / art.get_height())
 	var size := Vector2(art.get_width(), art.get_height()) * s
 	var pos := Vector2(rect.get_center().x - size.x / 2, rect.end.y - size.y)
-	if flip:
-		draw_texture_rect(art, Rect2(pos + Vector2(size.x, 0), Vector2(-size.x, size.y)), false)
-	else:
-		draw_texture_rect(art, Rect2(pos, size), false)
+	Style.texture(self, art, Rect2(pos, size), flip)
 
 
 func _draw_preview(p: int, rect: Rect2) -> void:

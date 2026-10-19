@@ -239,10 +239,7 @@ func _draw_portrait(f: Fighter, info: Dictionary, pos: Vector2, right: bool) -> 
 	var art := Game.character_art(info)
 	if art != null:
 		var src := Game.face_rect(info, art)
-		if right:  # 2P는 좌우 반전
-			draw_texture_rect_region(art, Rect2(inner.position + Vector2(inner.size.x, 0), Vector2(-inner.size.x, inner.size.y)), src)
-		else:
-			draw_texture_rect_region(art, inner, src)
+		Style.texture(self, art, inner, right, src)  # 2P는 좌우 반전
 	else:
 		Style.gradient(self, Style.slant(pos.x, pos.y, PORTRAIT, PORTRAIT, slope),
 				[f.color.lightened(0.2), f.color.lightened(0.2), f.color.darkened(0.5), f.color.darkened(0.5)])
@@ -388,9 +385,7 @@ func _draw_superflash() -> void:
 	if art != null:
 		var src := Game.face_rect(Game.character(f.player), art, 420.0 / 190.0, 1.3)
 		var dest := Rect2(Vector2((60.0 if from_left else 800.0) + x_off, band_y), Vector2(420, 190))
-		if not from_left:
-			dest = Rect2(dest.position + Vector2(dest.size.x, 0), Vector2(-dest.size.x, dest.size.y))
-		draw_texture_rect_region(art, dest, src)
+		Style.texture(self, art, dest, not from_left, src)
 	var title := m.superflash_attack.title
 	Style.text(self, title, Vector2(x_off, band_y + 120), 72, Style.WHITE,
 			HORIZONTAL_ALIGNMENT_RIGHT if from_left else HORIZONTAL_ALIGNMENT_LEFT, 1280, 12, Style.RED)
@@ -432,8 +427,7 @@ func _draw_vs_side(f: Fighter, info: Dictionary, offset: float, right: bool) -> 
 		var art_scale := 680.0 / art.get_height()
 		var size := Vector2(art.get_width(), art.get_height()) * art_scale
 		var pos := Vector2(x0 + 320 - size.x / 2 + offset, 720 - size.y)
-		draw_texture_rect(art, Rect2(pos + (Vector2(size.x, 0) if right else Vector2.ZERO),
-				Vector2(-size.x if right else size.x, size.y)), false)
+		Style.texture(self, art, Rect2(pos, size), right)
 	else:
 		draw_rect(Rect2(x0 + 250 + offset, 220, 140, 300), f.color)
 	Style.text(self, f.display_name, Vector2(x0 + offset, 640), 72, Style.WHITE,

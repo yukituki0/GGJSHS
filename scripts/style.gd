@@ -25,6 +25,19 @@ static func fill(c: CanvasItem, points: PackedVector2Array, color: Color) -> voi
 	c.draw_colored_polygon(points, color)
 
 
+## 그림 그리기 (flip이면 좌우 반전). src를 주면 그림의 그 부분만
+## Godot은 폭이 음수인 사각형으로는 반전이 제대로 안 돼서, 그리는 좌표계를 뒤집어서 그린다
+static func texture(c: CanvasItem, tex: Texture2D, dest: Rect2, flip := false, src := Rect2()) -> void:
+	if flip:
+		c.draw_set_transform(Vector2(dest.position.x * 2 + dest.size.x, 0), 0.0, Vector2(-1, 1))
+	if src.has_area():
+		c.draw_texture_rect_region(tex, dest, src)
+	else:
+		c.draw_texture_rect(tex, dest, false)
+	if flip:
+		c.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+
+
 ## 꼭짓점마다 색을 줘서 그라데이션으로 칠하기 (slant()와 같이 쓰면 [왼위, 오위, 오아래, 왼아래])
 static func gradient(c: CanvasItem, points: PackedVector2Array, colors: Array) -> void:
 	c.draw_polygon(points, PackedColorArray(colors))
