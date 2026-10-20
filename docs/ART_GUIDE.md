@@ -391,6 +391,57 @@ no ground shadow, no text, no labels, no numbers, no borders, no panels.
 - 이펙트 없는 기본 그림부터 먼저 만들고, 그 그림을 첨부해서 시트를 뽑는다:
   `Same image, but remove all effects (glow, particles, holograms, energy, floating objects). Keep the character exactly the same, transparent background.`
 
+### 선택창 / 얼굴 그림 (다른 격투게임처럼 화면마다 전용 그림)
+지금은 전신 그림을 잘라서 쓰고 있는데, 전용 그림이 있으면 훨씬 깔끔하다. 셋 다 **기본 전신 그림(이펙트 없는 것)을 첨부**해서 뽑는다.
+
+| 그림 | 파일 | 어디에 | 비율 |
+|---|---|---|---|
+| 선택창 상반신 | `<id>_select.png` | 캐릭터 선택 양쪽 큰 칸, VS 화면, 결과 화면 | 세로 2:3 |
+| 얼굴 아이콘 | `<id>_face.png` | 체력바 옆 육각 초상화, 캐릭터 선택 작은 카드 | 정사각형 1:1 |
+| 필살기 컷인 | `<id>_cutin.png` | 오버드라이브 쓸 때 화면을 가로지르는 띠 | 가로 3:2 |
+
+**선택창 상반신**
+```
+Character select screen portrait for a 2D fighting game.
+Same character as the attached image: same face, hair, outfit and colors.
+Upper body from the waist up, three-quarter view facing right, confident signature pose
+[이 캐릭터의 포즈: 아래 표], strong dramatic rim lighting, slight low angle,
+transparent background, no effects, no particles, no text, no logo.
+[안전 조건]
+[공통 스타일 문장]
+```
+
+**얼굴 아이콘**
+```
+Close-up face icon for a fighting game health bar.
+Same character as the attached image: same face, hair and colors.
+Head and top of the shoulders only, three-quarter view facing right, determined fighting expression,
+face centered and filling most of the square, transparent background, no effects, no text.
+[공통 스타일 문장]
+```
+(체력이 적을 때 바꿔 끼울 **아픈 표정**도 원하면 `<id>_face_hurt.png`: `determined` → `hurt, gritting teeth, a small bruise`)
+
+**필살기 컷인**
+```
+Special move cut-in for a 2D fighting game, wide cinematic close-up.
+Same character as the attached image: same face, hair and colors.
+Extreme close-up of the face and eyes, facing right, intense battle expression,
+dramatic lighting from below, speed-line style dark background, no effects on the face, no text.
+[공통 스타일 문장]
+```
+
+| 캐릭터 | 선택창 포즈 |
+|---|---|
+| CHEMIKID | `holding up the flask beside his face with a grin` |
+| COMMON | `keyboard resting on his shoulder, pointing forward with the other hand` |
+| CHAOS | `one hand raised with fingers spread, calm cold stare` |
+| GLOBE | `cracking her knuckles, big confident grin` |
+| ROOT2 | `pushing up his glasses with one finger, compass held behind his back` |
+| SEED | `gentle smile, one hand held out palm up` |
+
+- 그림이 오면 게임에 연결한다 (없으면 지금처럼 전신 그림을 잘라서 씀).
+- 우선순위: 얼굴 아이콘(화면에 계속 보임) → 선택창 상반신 → 컷인
+
 ### 캐릭터별 자세 프롬프트 (그대로 복사해서 쓰기)
 위 "자세 그림 프롬프트"의 `Pose:` 자리에 아래 문장을 넣는다. **그 캐릭터의 기본 전신 그림을 꼭 첨부.**
 한 대화창에서 한 캐릭터씩 punch → guard → hit → kick → crouch → jump 순서로 뽑으면 얼굴이 잘 유지된다.
