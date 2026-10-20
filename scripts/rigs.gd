@@ -6,7 +6,6 @@ class_name Rigs
 ## ba_*: 뒤쪽 팔 (어깨 sh, 팔꿈치 el, 손 ha)    fa_*: 앞쪽 팔
 ## bl_*: 뒤쪽 다리 (엉덩이 hip, 무릎 kn, 발 ft)  fl_*: 앞쪽 다리
 ## anchor(선택): 두 발 사이 바닥. 안 적으면 그림에서 자동으로 찾는다
-## (SEED는 아직 이펙트 있는 옛 그림 기준)
 
 const RIGS := {
 	"chemikid": {
@@ -55,13 +54,12 @@ const RIGS := {
 		},
 	},
 	"seed": {
-		"anchor": Vector2(530, 1500),
 		"joints": {
-			"hip": Vector2(540, 700), "neck": Vector2(540, 300), "head": Vector2(560, 180),
-			"ba_sh": Vector2(380, 340), "ba_el": Vector2(250, 540), "ba_ha": Vector2(120, 650),
-			"fa_sh": Vector2(690, 330), "fa_el": Vector2(790, 450), "fa_ha": Vector2(850, 410),
-			"bl_hip": Vector2(480, 760), "bl_kn": Vector2(330, 1100), "bl_ft": Vector2(180, 1430),
-			"fl_hip": Vector2(620, 760), "fl_kn": Vector2(730, 1100), "fl_ft": Vector2(880, 1430),
+			"hip": Vector2(570, 600), "neck": Vector2(590, 260), "head": Vector2(620, 160),
+			"ba_sh": Vector2(430, 320), "ba_el": Vector2(330, 480), "ba_ha": Vector2(290, 620),
+			"fa_sh": Vector2(720, 310), "fa_el": Vector2(800, 470), "fa_ha": Vector2(920, 450),
+			"bl_hip": Vector2(490, 850), "bl_kn": Vector2(330, 1100), "bl_ft": Vector2(180, 1360),
+			"fl_hip": Vector2(680, 850), "fl_kn": Vector2(800, 1100), "fl_ft": Vector2(930, 1320),
 		},
 	},
 }

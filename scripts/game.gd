@@ -43,7 +43,7 @@ const CHARACTERS: Array[Dictionary] = [
 	},
 	{
 		"id": "seed", "name": "SEED", "club": ["BIOLOGY CLUB  Seed", "생명 동아리  Seed"],
-		"color": Color("ff7ab8"), "script": "res://scripts/characters/seed.gd", "face": Vector3(0.585, 0.195, 0.24),
+		"color": Color("ff7ab8"), "script": "res://scripts/characters/seed.gd", "face": Vector3(0.62, 0.15, 0.22),
 	},
 ]
 
