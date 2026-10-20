@@ -387,7 +387,7 @@ Three full-body poses in one horizontal row, left to right:
 All three poses facing right (three-quarter side view), drawn at exactly the same scale,
 feet of poses 1 and 2 on the same invisible ground line, whole body visible from head to feet,
 wide empty space between poses so they never touch or overlap.
-Plain solid pure white background, no effects, no glowing particles, no energy, no motion lines,
+Transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines,
 no ground shadow, no text, no labels, no numbers, no borders, no panels.
 [안전 조건]
 [공통 스타일 문장]
@@ -529,7 +529,7 @@ knees slightly bent) and only the legs change, taking short shuffling steps forw
 1) front foot lifted slightly and moving forward, 2) front foot planted, feet wide apart,
 3) back foot lifted slightly and sliding forward, 4) back foot planted, feet close together.
 All frames facing right, same scale, feet on the same ground line, wide space between frames, no overlap.
-Plain solid pure white background, no effects, no motion lines, no text, no numbers.
+Transparent background (real alpha channel, not a checkerboard pattern), no effects, no motion lines, no text, no numbers.
 [안전 조건]
 [공통 스타일 문장]
 ```

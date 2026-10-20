@@ -8,7 +8,7 @@ SAFE = ("Age-appropriate high school student, fully clothed in a modest school u
         "non-sexualized, natural body proportions, wholesome.")
 SINGLE = ("Same character as the attached image: same face, hair, outfit, colors and body proportions. "
           "Full body, facing right (three-quarter side view), whole body visible from head to feet, "
-          "plain solid pure white background, no effects, no glowing particles, no energy, no motion lines, "
+          "transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, "
           "no ground shadow, no text.")
 
 CHARS = [
@@ -139,7 +139,7 @@ for cid, title, item in CHARS:
             "1) front foot lifted slightly and moving forward, 2) front foot planted, feet wide apart, "
             "3) back foot lifted slightly and sliding forward, 4) back foot planted, feet close together. "
             "All frames facing right, same scale, feet on the same ground line, wide space between frames, no overlap. "
-            "Plain solid pure white background, no effects, no motion lines, no text, no numbers." + extra + " " + SAFE + " " + STYLE,
+            "Transparent background (real alpha channel, not a checkerboard pattern), no effects, no motion lines, no text, no numbers." + extra + " " + SAFE + " " + STYLE,
             '```', '']
 
 out += ['## 2. 연결 자세 (한 장씩)', '']
@@ -157,7 +157,7 @@ for cid, title, item in CHARS:
 out += ['## 4. 기술 이펙트 (첨부 없이, 1:1 정사각형)', '']
 for f, ko, desc in EFFECTS:
     out += [f'**{ko}** → `{f}`', '```',
-            f"A single 2D fighting game special effect sprite: {desc}. No character, centered, plain solid pure white background, "
+            f"A single 2D fighting game special effect sprite: {desc}. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), "
             "bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.",
             '```', '']
 
