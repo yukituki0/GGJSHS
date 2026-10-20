@@ -873,17 +873,24 @@ func _draw_puppet(shake_x: float) -> void:
 	_draw_swing()
 
 
-## 자세 그림 크기: 포즈 시트는 기본 그림보다 작게 그려져 있어서, 거의 똑바로 선 "hit" 자세의 키를
-## 기본 그림의 키와 같다고 보고 비율을 맞춘다 (rigs.gd에 "pose_ratio"를 적으면 그 값을 쓴다)
+## 자세 그림 크기: 포즈 시트는 기본 그림보다 작게 그려져 있어서, punch/guard/hit 자세 키의 중간값을
+## 기본 그림의 키와 같다고 보고 비율을 맞춘다 (날아간 소품 등 한 자세만 튀어도 괜찮게).
+## rigs.gd에 "pose_ratio"를 적으면 그 값을 쓴다
 var _pose_scale_cache := 0.0
 
 
 func _pose_scale() -> float:
 	if _pose_scale_cache == 0.0:
 		var ratio: float = Rigs.get_rig(char_id).get("pose_ratio", 0.0)
-		var hit := Game.load_texture("res://assets/characters/%s_hit.png" % char_id)
-		if ratio == 0.0 and hit != null:
-			ratio = Puppet.height_of(hit) / puppet.art_height
+		if ratio == 0.0:
+			var heights: Array[float] = []
+			for pose in ["punch", "guard", "hit"]:
+				var tex := Game.load_texture("res://assets/characters/%s_%s.png" % [char_id, pose])
+				if tex != null:
+					heights.append(Puppet.height_of(tex))
+			if not heights.is_empty():
+				heights.sort()
+				ratio = heights[heights.size() / 2] / puppet.art_height
 		_pose_scale_cache = puppet.scale / ratio if ratio > 0.0 else puppet.scale
 	return _pose_scale_cache
 

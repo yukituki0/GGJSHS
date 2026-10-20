@@ -28,7 +28,22 @@ for y in range(0, h, 3):
     for x in (0, w - 1):
         if m.getpixel((x, y)) == 255:
             ImageDraw.floodfill(m, (x, y), 128)
-alpha = np.where(np.asarray(m) == 128, 0, 255).astype(np.uint8)
+# 선(케이블 고리 등)에 둘러싸여 테두리와 안 이어진 배경 구멍: 거의 순백이고 균일한 덩어리만 지운다
+# (흰 셔츠/신발 밑창은 음영이 있어서 평균 밝기가 낮아 남는다)
+arr = np.asarray(m).copy()
+holes = Image.fromarray(np.where(arr == 255, 255, 0).astype(np.uint8)).copy()
+for y in range(0, h, 3):
+    for x in range(0, w, 3):
+        if holes.getpixel((x, y)) != 255:
+            continue
+        ImageDraw.floodfill(holes, (x, y), 100)
+        harr = np.asarray(holes)
+        comp = harr == 100
+        n = comp.sum()
+        if n > 150 and a[..., :3][comp].mean() > 249:
+            arr[comp] = 128
+        holes = Image.fromarray(np.where(comp, 50, harr).astype(np.uint8)).copy()
+alpha = np.where(arr == 128, 0, 255).astype(np.uint8)
 alpha_img = Image.fromarray(alpha).filter(ImageFilter.MinFilter(3)).filter(ImageFilter.GaussianBlur(0.6))
 
 # 2) 덩어리 나누기 (살짝 부풀려서 가까운 조각끼리는 한 덩어리로). 픽셀마다 덩어리 번호를 기억한다
