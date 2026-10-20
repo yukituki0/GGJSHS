@@ -65,8 +65,55 @@ for y in range(0, h, step):
         lab = Image.fromarray(np.where(comp, 50, arr).astype(np.uint8)).copy()
 
 blobs.sort(key=lambda b: -b[0])
-if len(blobs) < len(poses) or blobs[len(poses) - 1][0] < blobs[0][0] * 0.15:
-    sys.exit('자세 %d개를 못 찾음 (찾은 큰 덩어리: %s). 자세끼리 붙어 있는지 확인' % (len(poses), [b[0] for b in blobs[:8]]))
+# 자세끼리 머리카락/옷자락이 닿아 한 덩어리가 된 경우: 큰 덩어리가 모자라면
+# 가장 넓은 덩어리를 가운데쯤에서 "가장 얇은 세로줄"을 따라 둘로 나눈다
+def n_big():
+    return sum(1 for b in blobs if b[0] >= blobs[0][0] * 0.2)
+while n_big() < len(poses):
+    cands = [b for b in blobs if b[0] >= blobs[0][0] * 0.2]
+    b = max(cands, key=lambda b: b[1][2] - b[1][0])
+    x0, y0, x1, y1 = b[1]
+    mask = labels[y0:y1, x0:x1] == b[2]
+    cols = mask.sum(0)
+    lo, hi = int((x1 - x0) * 0.25), int((x1 - x0) * 0.75)
+    if hi - lo < 4:
+        sys.exit('자세 %d개를 못 찾음 (자세끼리 붙어 있는지 확인)' % len(poses))
+    # 위에서 아래로 내려가는 구불구불한 경로 중에 몸을 가장 적게 지나는 것 (seam carving)
+    # 곧은 줄로 자르면 뻗은 발/주먹 끝이 옆 자세로 넘어가서, 몸을 피해 돌아가게 한다
+    cost = mask[:, lo:hi].astype(np.float64) * 100.0 + 1.0
+    hh, ww = cost.shape
+    acc = cost.copy()
+    back = np.zeros((hh, ww), np.int32)
+    for r in range(1, hh):
+        prev = acc[r - 1]
+        best = prev.copy()
+        arg = np.arange(ww)
+        for d in (-3, -2, -1, 1, 2, 3):
+            shifted = np.full(ww, np.inf)
+            if d > 0:
+                shifted[d:] = prev[:-d]
+            else:
+                shifted[:d] = prev[-d:]
+            better = shifted < best
+            best = np.where(better, shifted, best)
+            arg = np.where(better, np.arange(ww) - d, arg)
+        acc[r] = cost[r] + best
+        back[r] = arg
+    seam = np.zeros(hh, np.int32)
+    seam[-1] = int(np.argmin(acc[-1]))
+    for r in range(hh - 1, 0, -1):
+        seam[r - 1] = back[r][seam[r]]
+    new_id = labels.max() + 1
+    for r in range(hh):
+        row = labels[y0 + r, x0 + lo + seam[r]:x1]
+        row[row == b[2]] = new_id
+    cut = lo + int(np.median(seam))
+    blobs.remove(b)
+    for k in (b[2], new_id):
+        ys, xs = np.nonzero(labels == k)
+        blobs.append([len(xs), (xs.min(), ys.min(), xs.max() + 1, ys.max() + 1), k])
+    blobs.sort(key=lambda b: -b[0])
+    print('붙어 있는 자세를 x=%d 에서 나눔' % (x0 + cut))
 big = [{"box": list(b[1]), "ids": [b[2]]} for b in blobs[:len(poses)]]
 # 작은 조각(손에 든 물건, 머리카락 끝 등)은 가장 가까운 큰 덩어리에 합친다
 for area, (x0, y0, x1, y1), k in blobs[len(poses):]:
