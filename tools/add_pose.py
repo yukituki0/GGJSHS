@@ -14,7 +14,7 @@ import numpy as np
 from PIL import Image
 
 DEFAULT_RATIO = {
-    'walk': 1.0, 'walk2': 1.0, 'walk_back': 1.0,
+    'walk': 1.0, 'walk2': 1.0, 'walk3': 1.0, 'walk4': 1.0, 'walk_back': 1.0,
     'dash': 0.85, 'air_dash': 0.75, 'backdash': 0.95,
     'down': 0.35,             # 쓰러져 누운 자세 (키가 아주 낮음)
     'win': 1.05, 'throw': 0.95, 'crouch_guard': 0.7, 'jump_attack': 0.85,

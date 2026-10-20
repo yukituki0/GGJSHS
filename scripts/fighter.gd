@@ -991,11 +991,9 @@ func _pose_texture() -> Texture2D:
 						names.append("kick" if _is_kick(a) else "punch")
 		State.STAND:
 			if velocity.x != 0.0:
-				var back := velocity.x * facing < 0.0
-				var step := "walk2" if (_anim_t / WALK_FRAME_TIME) % 2 == 1 else "walk"
-				if back:
+				if velocity.x * facing < 0.0:
 					names.append("walk_back")
-				names.append_array([step, "walk"])
+				names.append_array([_walk_frame(), "walk"])
 			elif opponent != null and opponent.state == State.KO and is_on_ground():
 				names.append("win")
 		State.RUN:
@@ -1025,7 +1023,22 @@ func _pose_texture() -> Texture2D:
 	return null
 
 
-const WALK_FRAME_TIME := 10   # 걷기 그림 두 장(walk / walk2)을 바꾸는 간격 (프레임)
+const WALK_FRAME_TIME := 8    # 걷기 그림(walk, walk2, walk3, walk4)을 바꾸는 간격 (프레임). 4장이면 한 걸음 바퀴 = 32프레임
+var _walk_count := -1         # 이 캐릭터의 걷기 그림 장수 (처음 한 번 센다)
+
+
+## 지금 보여줄 걷기 그림 이름. 있는 장수만큼 돌아간다 (1장이면 walk만, 2장이면 walk↔walk2 ...)
+func _walk_frame() -> String:
+	if _walk_count < 0:
+		_walk_count = 0
+		for n in ["walk", "walk2", "walk3", "walk4"]:
+			if Game.load_texture("res://assets/characters/%s_%s.png" % [char_id, n]) == null:
+				break
+			_walk_count += 1
+	if _walk_count <= 1:
+		return "walk"
+	var i := int(_anim_t / WALK_FRAME_TIME) % _walk_count
+	return "walk" if i == 0 else "walk%d" % (i + 1)
 
 
 func _is_kick(a: AttackData) -> bool:

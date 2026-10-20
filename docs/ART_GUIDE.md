@@ -510,13 +510,29 @@ dramatic lighting from below, speed-line style dark background, no effects on th
 **① 꼭 있으면 좋은 것 (자주 보임)**
 | 파일 | 언제 | 키비율 | Pose 문장 |
 |---|---|---|---|
-| `walk` | 앞으로 걸을 때 (walk2와 번갈아) | 1.0 | `walking forward in a guarded fighting stance, left foot stepping forward` |
-| `walk2` | 〃 | 1.0 | `walking forward in a guarded fighting stance, right foot stepping forward` |
+| `walk` ~ `walk4` | 앞으로 걸을 때 (4장이 차례로 돌아감, 2장만 있어도 됨) | 1.0 | 아래 "걷기 시트" |
 | `walk_back` | 뒤로 걸을 때 | 1.0 | `stepping backward cautiously, weight on the back foot, guard up` |
 | `dash` | 달리기 / 공중 대시 | 0.85 | `sprinting forward low, body leaning far forward, coat/hair streaming behind` |
 | `backdash` | 백대시 | 0.95 | `hopping backward, both feet off the ground, arms pulled in` |
 | `down` | KO되어 쓰러짐 | 0.35 | `knocked down, lying on the back on the ground, eyes closed, side view` |
 | `win` | 라운드 이겼을 때 | 1.05 | 캐릭터 승리 포즈 (아래 표) |
+
+**걷기 시트 (격투게임식 걷기)**: 격투게임의 걷기는 일반 걷기와 다르다. **가드 올린 싸움 자세를 그대로 유지**하고,
+상체는 거의 안 움직이고, 발만 짧게 미끄러지듯 옮긴다. 4장을 한 시트로 받아서 `split_pose_sheet.py`로 자르면 크기가 서로 맞는다.
+```
+Character pose sheet for a 2D fighting game walk cycle, 4 frames in one horizontal row, left to right.
+Same character as the attached image: same face, hair, outfit, colors and proportions.
+The character keeps the same guarded fighting stance in every frame (fists/weapon up, upper body almost still,
+knees slightly bent) and only the legs change, taking short shuffling steps forward:
+1) front foot lifted slightly and moving forward, 2) front foot planted, feet wide apart,
+3) back foot lifted slightly and sliding forward, 4) back foot planted, feet close together.
+All frames facing right, same scale, feet on the same ground line, wide space between frames, no overlap.
+Plain solid pure white background, no effects, no motion lines, no text, no numbers.
+[안전 조건]
+[공통 스타일 문장]
+```
+→ `python tools/split_pose_sheet.py <시트> <id> walk walk2 walk3 walk4` 다음에, 서 있는 자세와 크기를 맞추려면
+`python tools/add_pose.py <id> walk=assets/characters/<id>_walk.png walk2=... walk3=... walk4=...`
 
 **② 연결이 자연스러워지는 것 (있으면 더 좋음)**
 | 파일 | 언제 | 키비율 | Pose 문장 |
