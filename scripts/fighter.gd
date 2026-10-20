@@ -131,6 +131,14 @@ func tick() -> void:
 			and state_frame <= current_attack.startup + current_attack.active:
 		velocity.x = current_attack.move_speed * facing  # 돌진기
 	position += velocity
+	# 바닥 밑으로 내려가지 않게. 공중 기술이 이번 프레임에 아래로 큰 속도를 주면
+	# (_attack()의 착지 검사가 끝난 뒤라) 바닥을 뚫고 계속 떨어지던 버그 방지
+	if position.y > ground_y:
+		position.y = ground_y
+		if state == State.AIR or state == State.AIRDASH or state == State.ATTACK:
+			_land()
+		else:
+			velocity.y = 0.0
 	history.append(position)
 	if history.size() > HISTORY_FRAMES:
 		history.pop_front()
