@@ -6,7 +6,7 @@ const HP_W := 470.0
 const HP_H := 30.0
 const SKEW := 14.0
 
-@onready var m: Match = get_parent()
+@onready var m: Match = owner  # HUD는 카메라 영향을 안 받게 CanvasLayer 안에 있다
 
 var _trail := { 1: 0.0, 2: 0.0 }  # 빨간 "방금 깎인 체력" 표시 (천천히 따라 줄어든다)
 var _tex := {}                     # HUD 그림 (assets/ui/hud_*.png). 하나라도 없으면 코드로 그린 HUD 사용
@@ -351,11 +351,16 @@ func _draw_tension_bar(f: Fighter, x: float, right: bool) -> void:
 			Style.GOLD if rc_ready else Style.GRAY, HORIZONTAL_ALIGNMENT_CENTER, 74, 5)
 
 
+## 게임 세계 좌표 → 화면 좌표 (카메라가 따라가며 확대하므로)
+func _to_screen(world_pos: Vector2) -> Vector2:
+	return get_viewport().get_canvas_transform() * world_pos
+
+
 # ── 타격 이펙트 ───────────────────────────────────────────
 func _draw_sparks() -> void:
 	# 맞으면 금색 별, 막히면 하늘색 원
 	for spark in m.sparks:
-		var pos: Vector2 = spark[0]
+		var pos := _to_screen(spark[0])
 		var t: float = spark[1] / 10.0
 		if spark[2]:
 			draw_arc(pos, 30 * (1.5 - t), 0, TAU, 24, Color(Style.CYAN, t), 5.0)
@@ -372,7 +377,7 @@ func _draw_superflash() -> void:
 	var t := 1.0 - float(m.superflash) / Match.SUPERFLASH_FRAMES  # 0 → 1
 	draw_rect(Rect2(-20, -20, 1320, 760), Color(0, 0, 0, 0.55))
 	# 캐릭터 주변 빛
-	var center := f.position + Vector2(0, -80)
+	var center := _to_screen(f.position + Vector2(0, -80))
 	draw_circle(center, 60 + t * 500, Color(f.color, 0.25 * (1.0 - t)))
 	# 화면을 가로지르는 띠 + 일러스트 + 기술 이름
 	var from_left := f.player == 1

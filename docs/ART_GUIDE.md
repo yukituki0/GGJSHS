@@ -20,7 +20,8 @@
 |---|---|---|---|
 | HUD | `assets/ui/hud_*.png` | 체력 틀/채움, 타이머, 텐션 1P/2P | ✅ 완료 |
 | 스테이지 (**실제 학교 사진**) | `assets/stages/` `lab` `computer` `rooftop` `playground` `hallway` `.png` | 5 | ⬜ 사진 찍기 |
-| 캐릭터 전신 (투명 배경) | `assets/characters/<id>.png` | 6 (남3 여3) | 🔄 3/6 (CHEMIKID, COMMON, CHAOS) |
+| 캐릭터 전신 (투명 배경) | `assets/characters/<id>.png` | 6 (남3 여3) | ✅ 6/6 |
+| 캐릭터 자세 그림 | `assets/characters/<id>_<자세>.png` | 6 x 6 | ⬜ 아래 "캐릭터별 자세 프롬프트" |
 | 타이틀 로고 | `assets/ui/logo.png` | 1 | ✅ 완료 |
 | 메뉴 배경 일러스트 | `assets/ui/key_art.png` | 1 | ✅ v2 완료 |
 | 메뉴/씬 배경 | `assets/ui/bg_*.png` | 7 | 🔄 6/7 (대기 화면 남음) |
@@ -284,9 +285,9 @@ no text, no logo, no watermark.
 | CHEMIKID | 검정 (부스스) | ✅ 완료 |
 | COMMON | 검정 (후드) | ✅ 완료 |
 | CHAOS | 검보라 긴 머리 | ✅ 완료 |
-| ROOT2 | **금발** | ⬜ |
-| SEED | **연두** | ⬜ |
-| GLOBE | **주황** | ⬜ |
+| ROOT2 | **금발** | ✅ 완료 |
+| SEED | **연두** | ✅ 완료 |
+| GLOBE | **주황** | ✅ 완료 |
 
 - 완성된 그림을 첨부해서 화풍을 맞추면 **머리색까지 따라 검정으로 나오기 쉽다** → 프롬프트에 `(NOT black hair)`를 넣었다. 그래도 검정이면 "Change only the hair color to ..."로 다시 요청.
 - 흰 실험 가운은 이미 2명(CHEMIKID, CHAOS)이 입고 있으니 남은 3명에게는 **가운을 입히지 않는다**.
@@ -357,6 +358,61 @@ Pose: [위 표의 자세 설명]
 - 손에 드는 물건(플라스크, 키보드 등)은 있어도 된다.
 - 크기: 기본 그림과 비슷한 크기(세로로 긴 그림, 캐릭터가 화면을 꽉 채우게)로 받으면 게임에서 같은 크기로 나온다.
 - 추천 순서: punch → guard → hit (제일 자주 보이는 것부터)
+
+### 캐릭터별 자세 프롬프트 (그대로 복사해서 쓰기)
+위 "자세 그림 프롬프트"의 `Pose:` 자리에 아래 문장을 넣는다. **그 캐릭터의 기본 전신 그림을 꼭 첨부.**
+한 대화창에서 한 캐릭터씩 punch → guard → hit → kick → crouch → jump 순서로 뽑으면 얼굴이 잘 유지된다.
+
+**🧪 CHEMIKID** (손에 플라스크는 들고 있어도 됨, 연기/빛은 없이)
+- punch: `Pose: lunging forward and splashing the flask forward with the front arm fully extended, coat flaring behind.`
+- kick: `Pose: front snap kick at waist height, front leg extended forward, holding the flask back for balance.`
+- guard: `Pose: defensive stance, both gloved forearms crossed in front of the face, knees bent, flask tucked to the chest.`
+- hit: `Pose: knocked back by a hit, upper body and head thrown backward, goggles askew, pained expression, arms flung out.`
+- crouch: `Pose: low crouch with one knee deeply bent, the other leg stretched back, flask held low, ready to spring.`
+- jump: `Pose: mid-air jump, knees tucked up, coat billowing, flask raised overhead.`
+
+**💻 COMMON** (키보드는 들고 있어도 됨, 홀로그램/코드 빛은 없이)
+- punch: `Pose: swinging the mechanical keyboard forward horizontally with both hands like a guitar smash, full extension.`
+- kick: `Pose: sneaker kick at waist height, front leg extended forward, keyboard held over the shoulder.`
+- guard: `Pose: holding the mechanical keyboard vertically in front of the body as a shield, knees bent.`
+- hit: `Pose: knocked back by a hit, headphones flying off the neck, hood flapping, upper body thrown backward.`
+- crouch: `Pose: low crouch with the keyboard held flat across the knees, hood up, ready to spring.`
+- jump: `Pose: mid-air jump, knees tucked up, keyboard raised overhead with both hands.`
+
+**🌀 CHAOS** (블랙홀/번개 없이, 빈손)
+- punch: `Pose: palm strike thrust forward with the front arm fully extended, long hair streaming back, coat flaring.`
+- kick: `Pose: spinning back kick at waist height, front leg extended, long hair whipping around.`
+- guard: `Pose: defensive stance, one open palm raised forward and the other arm across the chest, knees bent.`
+- hit: `Pose: knocked back by a hit, long hair flying forward, upper body thrown backward, eyes squeezed shut.`
+- crouch: `Pose: low crouch with one hand touching the ground, coat spread on the floor, looking forward.`
+- jump: `Pose: mid-air jump, knees tucked up, coat and long hair floating upward.`
+
+**🌍 GLOBE** (지구본/돌/바람 없이, 빈손. 지질 망치는 허리에 그대로)
+- punch: `Pose: heavy hook punch with the front fist fully extended, whole body leaning into the blow, ponytail swinging.`
+- kick: `Pose: powerful stomp kick at waist height with a hiking boot, front leg extended forward.`
+- guard: `Pose: sturdy defensive stance, both fists raised in front of the face like a boxer, wide stance, knees bent.`
+- hit: `Pose: knocked back by a hit, ponytail flying, upper body thrown backward, gritting teeth.`
+- crouch: `Pose: low wide crouch with one fist planted on the ground like a sprinter, ready to charge.`
+- jump: `Pose: mid-air jump, knees tucked up, both fists raised overhead ready to smash down.`
+
+**📐 ROOT2** (큰 컴퍼스는 들고 있어도 됨, 금색 수식/√2 빛은 없이)
+- punch: `Pose: thrusting the giant drafting compass forward like a spear, front arm fully extended, scarf streaming back.`
+- kick: `Pose: precise side kick at waist height, front leg extended, compass held behind.`
+- guard: `Pose: holding the giant compass diagonally in front of the body with both hands to block, knees bent.`
+- hit: `Pose: knocked back by a hit, glasses slipping, scarf flying, upper body thrown backward.`
+- crouch: `Pose: low crouch with the compass planted on the ground like a staff, one knee down.`
+- jump: `Pose: mid-air jump, knees tucked up, compass raised overhead with both hands.`
+
+**🌱 SEED** (DNA/덩굴/꽃잎 빛은 없이, 빈손. 돋보기 목걸이는 그대로)
+- punch: `Pose: open palm push thrust forward with the front arm fully extended, braid swinging, cardigan flaring.`
+- kick: `Pose: light front kick at waist height with a loafer, front leg extended, skirt kept modest.`
+- guard: `Pose: defensive stance, both forearms raised in front of the face, knees bent, braid over the shoulder.`
+- hit: `Pose: knocked back by a hit, braid flying, upper body thrown backward, eyes squeezed shut.`
+- crouch: `Pose: low crouch with knees together and one hand touching the ground, skirt kept modest.`
+- jump: `Pose: mid-air jump, knees tucked up, cardigan sleeves floating, skirt kept modest.`
+
+- 여자 캐릭터 킥/점프/앉기는 위 문장에 `skirt kept modest`/안전 조건이 들어가 있다. 이상한 각도로 나오면 버리고 다시 뽑기.
+- 처음 3명(CHEMIKID, COMMON, CHAOS)도 나중에 **이펙트 없는 기본 그림**으로 다시 뽑으면 좋다: 기본 그림을 첨부하고 `Same image, but remove all effects (glow, particles, holograms, energy). Keep the character exactly the same.`
 
 ### 같은 캐릭터를 계속 똑같이 나오게 하는 팁
 1. 전신 일러스트를 **먼저 1장** 마음에 들 때까지 뽑는다.

@@ -31,7 +31,7 @@ const CHARACTERS: Array[Dictionary] = [
 	},
 	{
 		"id": "globe", "name": "GLOBE", "club": ["EARTH SCIENCE CLUB  Globe", "지구과학 동아리  Globe"],
-		"color": Color("e08a3c"), "script": "res://scripts/characters/globe.gd",
+		"color": Color("e08a3c"), "script": "res://scripts/characters/globe.gd", "face": Vector3(0.56, 0.17, 0.24),
 	},
 	{
 		"id": "chaos", "name": "CHAOS", "club": ["PHYSICS CLUB  Chaos", "물리 동아리  Chaos"],
@@ -39,11 +39,11 @@ const CHARACTERS: Array[Dictionary] = [
 	},
 	{
 		"id": "root2", "name": "ROOT2", "club": ["MATH CLUB  Root2", "수학 동아리  Root2"],
-		"color": Color("e8d84a"), "script": "res://scripts/characters/root2.gd",
+		"color": Color("e8d84a"), "script": "res://scripts/characters/root2.gd", "face": Vector3(0.575, 0.255, 0.24),
 	},
 	{
 		"id": "seed", "name": "SEED", "club": ["BIOLOGY CLUB  Seed", "생명 동아리  Seed"],
-		"color": Color("ff7ab8"), "script": "res://scripts/characters/seed.gd",
+		"color": Color("ff7ab8"), "script": "res://scripts/characters/seed.gd", "face": Vector3(0.585, 0.195, 0.24),
 	},
 ]
 

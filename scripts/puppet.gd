@@ -24,7 +24,7 @@ const WEIGHTS := 3        # 점 하나가 따라가는 뼈 개수
 
 var texture: Texture2D
 var rig: Dictionary
-var scale := 0.145        # 그림 픽셀 → 게임 화면 크기
+var scale := 0.16         # 그림 픽셀 → 게임 화면 크기 (피격 판정보다 조금 크게: 머리가 판정 위로 나옴)
 
 var _points := PackedVector2Array()   # 그물 점 (그림 픽셀 좌표, 쉬는 자세)
 var _uvs := PackedVector2Array()

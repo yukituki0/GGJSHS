@@ -43,7 +43,7 @@ var _camera: Camera2D
 var _training_idle := { 1: 0, 2: 0 }  # 트레이닝: 안 맞고 지난 프레임 (체력 회복용)
 var _stage_texture: Texture2D
 
-@onready var _input_debug: Node2D = $InputDebug
+@onready var _input_debug: Node2D = $HudLayer/InputDebug
 
 
 func _ready() -> void:
@@ -453,6 +453,30 @@ func _update_effects() -> void:
 		_camera.offset = Vector2(randf_range(-6, 6), randf_range(-6, 6))
 	else:
 		_camera.offset = Vector2.ZERO
+	_update_camera()
+
+
+## 카메라: 두 캐릭터를 따라가며 확대 (길티기어처럼 캐릭터가 크게 보이게)
+## 가까우면 최대 CAMERA_MAX_ZOOM배, 멀어지거나 높이 뛰면 둘 다 보이도록 줄인다 (최소 1배 = 스테이지 전체)
+## 게임 판정/거리는 그대로이고 보이는 크기만 바뀐다
+const CAMERA_MAX_ZOOM := 1.5
+const CAMERA_MARGIN := 260.0     # 캐릭터 바깥으로 보여줄 여유 (가로)
+const CAMERA_GROUND_SCREEN_Y := 650.0  # 바닥이 화면에서 이 높이에 오게
+
+
+func _update_camera() -> void:
+	if p1 == null or p2 == null:
+		return
+	var dist := absf(p1.position.x - p2.position.x)
+	var zoom := clampf(1280.0 / (dist + CAMERA_MARGIN * 2.0), 1.0, CAMERA_MAX_ZOOM)
+	var top := minf(p1.position.y, p2.position.y) - 280.0  # 머리 위 여유
+	zoom = clampf(minf(zoom, CAMERA_GROUND_SCREEN_Y / maxf(1.0, GROUND_Y - top)), 1.0, CAMERA_MAX_ZOOM)
+	var z := lerpf(_camera.zoom.x, zoom, 0.08)
+	_camera.zoom = Vector2(z, z)
+	var half := Vector2(640.0, 360.0) / z
+	var x := clampf((p1.position.x + p2.position.x) / 2.0, half.x, 1280.0 - half.x)
+	var y := clampf(GROUND_Y - (CAMERA_GROUND_SCREEN_Y - 360.0) / z, half.y, 720.0 - half.y)
+	_camera.position = Vector2(x, y)
 
 
 # ── 그리기 ───────────────────────────────────────────────
