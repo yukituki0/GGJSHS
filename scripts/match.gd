@@ -85,9 +85,11 @@ func _spawn(player: int) -> Fighter:
 		f.brain = CpuBrain.new(Game.cpu_level)
 		f.display_name = "CPU " + f.display_name
 	f.color = info["color"]
+	f.char_id = info["id"]
 	# 같은 캐릭터끼리 붙으면 2P를 어둡게
 	if player == 2 and Game.selected[1] == Game.selected[2]:
 		f.color = f.color.darkened(0.35)
+		f.art_modulate = Color(0.7, 0.75, 0.9)
 	f.ground_y = GROUND_Y
 	f.position = Vector2(START_X[player], GROUND_Y)
 	add_child(f)

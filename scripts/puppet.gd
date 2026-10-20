@@ -167,6 +167,11 @@ func pose(bend: Dictionary, root := Vector2.ZERO, root_angle := 0.0, aim := {}, 
 		_skin[i] = world[i] * _rest[i].affine_inverse()
 
 
+## 게임 좌표(발 기준, 오른쪽을 볼 때) → 그림 픽셀 좌표
+func to_art(game_pos: Vector2) -> Vector2:
+	return rig["anchor"] + game_pos / scale
+
+
 ## 쉬는 자세의 관절 위치 (aim 목표를 정할 때 기준으로)
 func joint(name: String) -> Vector2:
 	return _joint(name)

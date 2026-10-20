@@ -41,13 +41,12 @@ func _pose(i: int, p: Puppet) -> void:
 		"IDLE":  # 숨쉬기: 엉덩이가 살짝 오르내리고 발은 고정
 			p.pose({"torso": s * 0.03, "head": -s * 0.03, "arm_f1": s * 0.08, "arm_b1": -s * 0.06},
 					Vector2(0, 14 + s * 14), 0.0, {}, feet)
-		"WALK":
-			var w := sin(t * 0.18)
-			var lift := maxf(0.0, w) * 90.0
-			var lift2 := maxf(0.0, -w) * 90.0
-			p.pose({"torso": 0.05, "arm_f1": -w * 0.25, "arm_b1": w * 0.25},
-					Vector2(w * 20, 20 - absf(w) * 16), 0.0, {},
-					{"leg_f1": p.joint("fl_ft") + Vector2(w * 140, -lift), "leg_b1": p.joint("bl_ft") + Vector2(-w * 140, -lift2)})
+		"WALK":  # 대전과 같은 값 (fighter.gd _pose_walk): 느리고 보폭 작게
+			var w := sin(t * 0.09)
+			p.pose({"torso": 0.04, "head": -0.02, "arm_f1": -w * 0.08, "arm_b1": w * 0.08},
+					Vector2(0, 10 + absf(w) * 6 + 5), 0.0, {},
+					{"leg_f1": p.joint("fl_ft") + Vector2(w * 60, -maxf(0.0, w) * 30),
+					"leg_b1": p.joint("bl_ft") + Vector2(-w * 60, -maxf(0.0, -w) * 30)})
 		"PUNCH":  # 0~10 준비(팔 뒤로) → 10~20 쭉 뻗기 → 20~40 돌아오기
 			var f := t % 40
 			var reach := 0.0

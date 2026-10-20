@@ -18,6 +18,26 @@ const RIGS := {
 			"fl_hip": Vector2(690, 700), "fl_kn": Vector2(795, 1050), "fl_ft": Vector2(885, 1410),
 		},
 	},
+	"common": {
+		"anchor": Vector2(530, 1495),
+		"joints": {
+			"hip": Vector2(560, 760), "neck": Vector2(560, 270), "head": Vector2(595, 150),
+			"ba_sh": Vector2(360, 330), "ba_el": Vector2(190, 420), "ba_ha": Vector2(270, 260),
+			"fa_sh": Vector2(670, 330), "fa_el": Vector2(745, 575), "fa_ha": Vector2(870, 440),
+			"bl_hip": Vector2(480, 770), "bl_kn": Vector2(380, 1060), "bl_ft": Vector2(180, 1430),
+			"fl_hip": Vector2(640, 770), "fl_kn": Vector2(720, 1050), "fl_ft": Vector2(880, 1430),
+		},
+	},
+	"chaos": {
+		"anchor": Vector2(515, 1490),
+		"joints": {
+			"hip": Vector2(510, 700), "neck": Vector2(500, 260), "head": Vector2(530, 150),
+			"ba_sh": Vector2(340, 290), "ba_el": Vector2(260, 470), "ba_ha": Vector2(210, 640),
+			"fa_sh": Vector2(620, 320), "fa_el": Vector2(720, 480), "fa_ha": Vector2(830, 450),
+			"bl_hip": Vector2(440, 720), "bl_kn": Vector2(330, 1050), "bl_ft": Vector2(160, 1420),
+			"fl_hip": Vector2(600, 720), "fl_kn": Vector2(720, 1050), "fl_ft": Vector2(870, 1410),
+		},
+	},
 }
 
 

@@ -54,6 +54,10 @@ const BUFFERED_ACTIONS: Array[String] = ["hs", "s", "k", "p", "d", "dash", "up",
 const HISTORY_FRAMES := 60      # 위치 기록 길이 (커몬 Ctrl+Z 등에서 사용)
 
 var player := 1                 # 1P / 2P
+var char_id := ""               # Game.CHARACTERS의 id (그림/뼈대를 찾을 때)
+var art_modulate := Color.WHITE # 그림 색 (같은 캐릭터끼리 붙을 때 2P를 어둡게)
+var puppet: Puppet              # 전신 그림 + 뼈대가 있으면 네모 대신 그림으로 그린다
+var _anim_t := 0                # 그림 움직임용 시계 (히트스톱 중엔 멈춤)
 var color := Color.RED
 var display_name := ""
 var input_enabled := true       # 라운드 시작 전/끝난 뒤에는 Match가 입력을 막는다
@@ -108,11 +112,16 @@ func _ready() -> void:
 	hp = max_hp
 	_build_attacks()
 	_build_specials()
+	var art := Game.load_texture("res://assets/characters/%s.png" % char_id)
+	var rig := Rigs.get_rig(char_id)
+	if art != null and not rig.is_empty():
+		puppet = Puppet.new(art, rig)
 
 
 ## 1프레임 진행. Match가 매 프레임 1P → 2P 순서로 직접 호출한다 (처리 순서를 고정하려고)
 func tick() -> void:
 	state_frame += 1
+	_anim_t += 1
 	if brain != null and input_enabled:
 		brain.think(self)
 	_update_buffer()
@@ -784,7 +793,10 @@ func _draw() -> void:
 			body_color = color.darkened(0.4)
 	if armor_flash > 0:
 		body_color = body_color.lerp(Color(1, 0.85, 0.4), armor_flash / 12.0)  # 아머로 버팀: 금색 번쩍
-	draw_rect(rect, body_color)
+	if puppet != null:
+		_draw_puppet(shake_x)
+	else:
+		_draw_box(rect, body_color, size)
 	if shock_frames > 0:
 		# 감전: 몸 둘레에 지직거리는 노란 번개
 		for i in 4:
@@ -792,24 +804,15 @@ func _draw() -> void:
 			var jitter := 10.0 if (shock_frames + i) % 4 < 2 else -10.0
 			draw_polyline(PackedVector2Array([Vector2(-size.x / 2 - 14, y0), Vector2(-size.x / 4, y0 + jitter),
 					Vector2(size.x / 4, y0 - jitter), Vector2(size.x / 2 + 14, y0)]), Color(1, 0.95, 0.3), 3.0)
-	draw_rect(rect, Color.WHITE, false, 3.0)
 	# 로만 캔슬: 퍼져 나가는 원
 	if rc_flash > 0:
 		var t := 1.0 - rc_flash / 20.0
 		draw_arc(Vector2(0, -size.y / 2), 40 + t * 160, 0, TAU, 48,
 				Color(1, 0.2, 0.3, 1.0 - t), 6.0)
-	# 바라보는 방향 표시 (눈)
-	draw_circle(Vector2(facing * size.x * 0.25, -size.y + 25), 7, Color.WHITE)
-	# 공격 중이면 히트박스 위치에 팔 모양을 그린다 (발생 중엔 흐리게, 지속 중엔 진하게)
-	if state == State.ATTACK and current_attack != null:
-		var box := current_attack.hitbox
-		if facing < 0:
-			box.position.x = -box.position.x - box.size.x
-		var alpha := 1.0 if current_attack.is_active(state_frame) else 0.3
-		draw_rect(box, Color(1, 1, 1, alpha))
 	# 머리 위 1P / 2P 표시
 	var tag_color := Color(1, 0.35, 0.35) if player == 1 else Color(0.35, 0.6, 1)
-	draw_string(Game.FONT, Vector2(-40, -size.y - 12), "%dP" % player,
+	var tag_y := -size.y - 12 if puppet == null else -235.0
+	draw_string(Game.FONT, Vector2(-40, tag_y), "%dP" % player,
 			HORIZONTAL_ALIGNMENT_CENTER, 80, 22, tag_color)
 	if crush_text > 0:
 		Style.text(self, "GUARD CRUSH!", Vector2(-150, -size.y - 50), 30, Color(1, 0.4, 0.3, minf(1.0, crush_text / 15.0)),
@@ -826,3 +829,185 @@ func _draw() -> void:
 		if hit.has_area():
 			hit.position -= position
 			draw_rect(hit, Color.RED, false, 2.0)
+
+
+## 그림이 없을 때: 색 네모 + 눈 + 공격 판정 위치에 흰 네모
+func _draw_box(rect: Rect2, body_color: Color, size: Vector2) -> void:
+	draw_rect(rect, body_color)
+	draw_rect(rect, Color.WHITE, false, 3.0)
+	draw_circle(Vector2(facing * size.x * 0.25, -size.y + 25), 7, Color.WHITE)
+	if state == State.ATTACK and current_attack != null:
+		var box := current_attack.hitbox
+		if facing < 0:
+			box.position.x = -box.position.x - box.size.x
+		var alpha := 1.0 if current_attack.is_active(state_frame) else 0.3
+		draw_rect(box, Color(1, 1, 1, alpha))
+
+
+# ── 그림 인형 (Puppet) 자세 ───────────────────────────────
+## 상태마다 뼈를 얼마나 굽힐지 정한다. 좌표는 그림 픽셀 (scripts/puppet.gd 참고)
+## 기술마다 따로 만들지 않고, 공격 판정 위치를 향해 팔(P/S/H/D) 또는 다리(K)를 뻗는다
+func _draw_puppet(shake_x: float) -> void:
+	_pose_puppet()
+	var tint := art_modulate
+	match state:
+		State.HITSTUN, State.KO:
+			tint = tint * Color(1.0, 0.8, 0.8)
+		State.GUARD, State.BLOCKSTUN:
+			tint = tint * Color(0.85, 0.85, 0.95)
+	if armor_flash > 0:
+		tint = tint.lerp(Color(1, 0.85, 0.4), armor_flash / 24.0)
+	puppet.draw(self, facing, Vector2(shake_x, 0), tint)
+	_draw_swing()
+
+
+func _pose_puppet() -> void:
+	var p := puppet
+	var feet := {"leg_f1": p.joint("fl_ft"), "leg_b1": p.joint("bl_ft")}
+	var breathe := sin(_anim_t * 0.05)
+	match state:
+		State.STAND:
+			if velocity.x != 0.0:
+				_pose_walk(0.09, 60.0, 30.0, 0.04)
+			else:
+				p.pose({"torso": breathe * 0.02, "head": -breathe * 0.02, "arm_f1": breathe * 0.05,
+						"arm_b1": -breathe * 0.04}, Vector2(0, 10 + breathe * 8), 0.0, {}, feet)
+		State.RUN:
+			_pose_walk(0.22, 150.0, 80.0, 0.35)
+		State.CROUCH:
+			_pose_crouch(feet, 1.0)
+		State.PREJUMP:
+			p.pose({"torso": 0.1}, Vector2(0, 140), 0.0, {}, feet)
+		State.AIR:
+			var rising := velocity.y < 0.0
+			_pose_air(0.0 if rising else 0.08)
+		State.AIRDASH:
+			p.pose({"torso": 0.35, "head": -0.15, "arm_f1": 0.5, "arm_b1": 0.6}, Vector2(0, -40), 0.0, {},
+					{"leg_f1": p.joint("fl_hip") + Vector2(-300, 650), "leg_b1": p.joint("bl_hip") + Vector2(-450, 550)})
+		State.BACKDASH:
+			p.pose({"torso": -0.2, "head": 0.1, "arm_f1": -0.3}, Vector2(-40, 40), 0.0, {},
+					{"leg_f1": p.joint("fl_ft") + Vector2(-60, -80), "leg_b1": p.joint("bl_ft")})
+		State.GUARD, State.BLOCKSTUN:
+			var push := 1.0 if state == State.BLOCKSTUN and state_frame < 6 else 0.0
+			p.pose({"torso": -0.1 - push * 0.08, "head": 0.05}, Vector2(-30 * push, 60), 0.0,
+					{"arm_f1": [p.joint("fa_sh") + Vector2(200, -300), 0.85],
+					"arm_b1": [p.joint("ba_sh") + Vector2(350, -150), 0.7]}, feet)
+		State.HITSTUN:
+			var k := clampf(1.0 - (state_frame - 4) / 20.0, 0.35, 1.0)
+			if is_on_ground():
+				p.pose({"torso": -0.35 * k, "head": -0.35 * k, "arm_f1": -0.7 * k, "arm_b1": 0.6 * k},
+						Vector2(-70 * k, 30 * k), 0.0, {}, feet)
+			else:
+				p.pose({"torso": -0.3, "head": -0.3, "arm_f1": -0.9, "arm_b1": 0.8, "leg_f1": -0.4, "leg_b1": 0.3},
+						Vector2.ZERO, -0.5)
+		State.KO:
+			if is_on_ground():
+				# 쓰러짐: 엉덩이를 바닥 가까이 내리고 뒤로 눕힌다
+				var lie := minf(state_frame / 12.0, 1.0)
+				var hip_h: float = p.joint("hip").y - p.rig["anchor"].y
+				p.pose({"head": -0.2, "arm_f1": -1.2, "arm_b1": 1.0, "leg_f1": -0.3},
+						Vector2(-200 * lie, (-hip_h - 120) * lie), -1.45 * lie)
+			else:
+				p.pose({"torso": -0.3, "head": -0.3, "arm_f1": -0.9, "arm_b1": 0.8}, Vector2.ZERO, -0.7)
+		State.ATTACK:
+			_pose_attack(feet)
+
+
+## 걷기/달리기: speed = 한 걸음 빠르기, stride = 보폭, lift = 발 드는 높이, lean = 앞으로 숙이기
+func _pose_walk(speed: float, stride: float, lift: float, lean: float) -> void:
+	var p := puppet
+	var back := 1.0 if velocity.x * facing >= 0.0 else -1.0  # 뒤로 걸으면 발 순서 반대
+	var w := sin(_anim_t * speed) * back
+	p.pose({"torso": lean, "head": -lean * 0.5, "arm_f1": -w * 0.08, "arm_b1": w * 0.08},
+			Vector2(0, 10 + absf(w) * 6 + lean * 120), 0.0, {},
+			{"leg_f1": p.joint("fl_ft") + Vector2(w * stride, -maxf(0.0, w) * lift),
+			"leg_b1": p.joint("bl_ft") + Vector2(-w * stride, -maxf(0.0, -w) * lift)})
+
+
+func _pose_crouch(feet: Dictionary, amount: float, extra := {}, aim := {}) -> void:
+	var bend := {"torso": 0.3 * amount, "head": -0.18 * amount, "arm_f1": -0.3 * amount, "arm_b1": 0.2 * amount}
+	bend.merge(extra, true)
+	puppet.pose(bend, Vector2(60, 420) * amount, 0.0, aim, feet)
+
+
+func _pose_air(fall: float, extra := {}, aim := {}, legs := {}) -> void:
+	var p := puppet
+	var bend := {"torso": 0.05 + fall, "head": -0.05}
+	bend.merge(extra, true)
+	var tuck := {"leg_f1": p.joint("fl_hip") + Vector2(250, 520), "leg_b1": p.joint("bl_hip") + Vector2(-200, 560)}
+	tuck.merge(legs, true)
+	p.pose(bend, Vector2(0, -60), 0.0, aim, tuck)
+
+
+## 공격: 발생 동안 뒤로 당겼다가(wind) 지속 동안 판정 쪽으로 쭉 뻗고(reach) 후딜 동안 돌아온다
+func _pose_attack(feet: Dictionary) -> void:
+	var p := puppet
+	var a := current_attack
+	var f := state_frame
+	var wind := 0.0
+	var reach := 0.0
+	if f <= a.startup:
+		wind = float(f) / maxf(1.0, a.startup)
+		reach = wind * 0.3
+	elif f <= a.startup + a.active:
+		reach = 1.0
+	else:
+		reach = 1.0 - float(f - a.startup - a.active) / maxf(1.0, a.recovery)
+		reach = clampf(reach, 0.0, 1.0)
+	var target := p.to_art(a.hitbox.get_center())
+	var kick := "K" in a.name.substr(1) and not a.is_throw
+	var crouching := a.name.begins_with("2")
+	var airborne := not is_on_ground()
+	if kick:
+		var leg := {"leg_f1": p.joint("fl_ft").lerp(target, reach)}
+		var lean := {"torso": -0.25 * reach}
+		if airborne:
+			_pose_air(0.0, lean, {}, leg)
+		elif crouching:
+			# 앉아서 발 뻗기: 낮게
+			leg["leg_f1"] = p.joint("fl_ft").lerp(Vector2(target.x, p.joint("fl_ft").y), reach)
+			leg["leg_b1"] = feet["leg_b1"]
+			_pose_crouch(leg, 0.8, {})
+		else:
+			leg["leg_b1"] = feet["leg_b1"]
+			p.pose(lean, Vector2(-40 * reach, 0), 0.0, {}, leg)
+		return
+	var arms := {"arm_f1": [target, reach]}
+	if a.is_throw:
+		arms["arm_b1"] = [target + Vector2(0, 60), reach]
+	var bend := {"torso": 0.15 * reach - 0.1 * wind, "arm_f1": -0.8 * wind, "arm_f2": -0.8 * wind}
+	if airborne:
+		_pose_air(0.0, bend, arms)
+	elif crouching:
+		_pose_crouch(feet, 1.0, bend, arms)
+	else:
+		p.pose(bend, Vector2(70 * reach, 20), 0.0, arms, feet)
+
+
+## 휘두르기 잔상: 공격 판정이 살아 있는 동안 판정을 쓸고 지나가는 초승달 모양
+func _draw_swing() -> void:
+	if state != State.ATTACK or current_attack == null or current_attack.is_throw:
+		return
+	var a := current_attack
+	if not a.is_active(state_frame) or not a.hitbox.has_area():
+		return
+	var t := float(state_frame - a.startup) / maxf(1.0, a.active)  # 0 → 1
+	var box := a.hitbox
+	var pivot := Vector2(0, box.get_center().y + 10)
+	var r_out := box.end.x - pivot.x
+	var r_in := maxf(10.0, box.position.x - pivot.x)
+	var a0 := (Vector2(box.end.x, box.position.y) - pivot).angle()
+	var a1 := (Vector2(box.end.x, box.end.y) - pivot).angle()
+	var pts := PackedVector2Array()
+	var n := 10
+	for i in n + 1:
+		var ang := lerpf(a0, a1, float(i) / n)
+		pts.append(pivot + Vector2(r_out, 0).rotated(ang))
+	for i in range(n, -1, -1):
+		var ang := lerpf(a0, a1, float(i) / n)
+		var r := lerpf(r_in, r_out, 0.55 + 0.45 * absf(float(i) / n - 0.5) * 2.0)
+		pts.append(pivot + Vector2(r, 0).rotated(ang))
+	for i in pts.size():
+		pts[i].x *= facing
+	draw_colored_polygon(pts, Color(color.lightened(0.6), 0.55 * (1.0 - t * 0.6)))
+	draw_polyline(pts.slice(0, n + 1), Color(1, 1, 1, 0.9 * (1.0 - t * 0.5)), 4.0)
