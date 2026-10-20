@@ -359,6 +359,38 @@ Pose: [위 표의 자세 설명]
 - 크기: 기본 그림과 비슷한 크기(세로로 긴 그림, 캐릭터가 화면을 꽉 채우게)로 받으면 게임에서 같은 크기로 나온다.
 - 추천 순서: punch → guard → hit (제일 자주 보이는 것부터)
 
+### 포즈 시트: 자세 여러 개를 한 장으로 (추천)
+게임 회사에서 캐릭터를 여러 사람이 그릴 때 쓰는 **모델 시트(포즈 시트)** 방식이다. 한 장에 같이 그리면 얼굴/옷/크기가 서로 맞게 나온다.
+6자세를 한 장에 넣으면 자세 하나가 너무 작아져서(흐려짐) **3자세씩 2장**으로 나눈다. 받아서 넣어 주면 자세별로 잘라서 넣는 건 내가 한다.
+
+| 시트 | 자세 (왼쪽부터) | 저장 이름 (아무거나 OK) |
+|---|---|---|
+| 공격 시트 | punch, kick, jump | `<id>_sheet_attack.png` |
+| 방어 시트 | guard, hit, crouch | `<id>_sheet_defense.png` |
+
+**공격 시트 프롬프트** (기본 전신 그림 **첨부**, 가로 3:2 비율로)
+```
+Character pose sheet (model sheet) for a 2D fighting game.
+Same character as the attached image: same face, hair, outfit, colors and body proportions.
+Three full-body poses in one horizontal row, left to right:
+1) [이 캐릭터의 punch 문장]
+2) [이 캐릭터의 kick 문장]
+3) [이 캐릭터의 jump 문장]
+All three poses facing right (three-quarter side view), drawn at exactly the same scale,
+feet of poses 1 and 2 on the same invisible ground line, whole body visible from head to feet,
+wide empty space between poses so they never touch or overlap.
+Plain solid pure white background, no effects, no glowing particles, no energy, no motion lines,
+no ground shadow, no text, no labels, no numbers, no borders, no panels.
+[안전 조건]
+[공통 스타일 문장]
+```
+**방어 시트 프롬프트**: 위와 같고 1) 2) 3)만 `guard` / `hit` / `crouch` 문장으로 바꾼다.
+
+- `[이 캐릭터의 ... 문장]`은 아래 "캐릭터별 자세 프롬프트"에서 `Pose:` 뒤의 문장을 그대로 넣는다.
+- 자세끼리 붙어 나오거나 글자/번호가 들어가면 버리고 다시 뽑는다 (자동으로 자를 때 문제가 됨).
+- 이펙트 없는 기본 그림부터 먼저 만들고, 그 그림을 첨부해서 시트를 뽑는다:
+  `Same image, but remove all effects (glow, particles, holograms, energy, floating objects). Keep the character exactly the same, transparent background.`
+
 ### 캐릭터별 자세 프롬프트 (그대로 복사해서 쓰기)
 위 "자세 그림 프롬프트"의 `Pose:` 자리에 아래 문장을 넣는다. **그 캐릭터의 기본 전신 그림을 꼭 첨부.**
 한 대화창에서 한 캐릭터씩 punch → guard → hit → kick → crouch → jump 순서로 뽑으면 얼굴이 잘 유지된다.
