@@ -1,0 +1,165 @@
+# docs/PROMPTS.md 만들기: 바로 복사해서 붙여넣는 완성 프롬프트 모음
+# 문장을 고치려면 이 파일을 고치고 다시 실행: python tools/make_prompts.py
+STYLE = ("Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, "
+         "high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, "
+         "color accents of crimson red, black and white.")
+SAFE = ("Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, "
+        "long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, "
+        "non-sexualized, natural body proportions, wholesome.")
+SINGLE = ("Same character as the attached image: same face, hair, outfit, colors and body proportions. "
+          "Full body, facing right (three-quarter side view), whole body visible from head to feet, "
+          "plain solid pure white background, no effects, no glowing particles, no energy, no motion lines, "
+          "no ground shadow, no text.")
+
+CHARS = [
+    ('chemikid', '🧪 CHEMIKID', 'holding his glowing green flask'),
+    ('common', '💻 COMMON', 'holding his mechanical keyboard'),
+    ('chaos', '🌀 CHAOS', 'empty-handed'),
+    ('globe', '🌍 GLOBE', 'empty-handed, geologist hammer on the belt'),
+    ('root2', '📐 ROOT2', 'holding his giant drafting compass'),
+    ('seed', '🌱 SEED', 'empty-handed, magnifying glass pendant'),
+]
+SKIRT = {'seed'}  # 치마 캐릭터: 다리 드는 자세에 조건 추가
+
+# 공통 자세: 파일 이름, 설명(한글), Pose 문장
+COMMON_POSES = [
+    ('walk_back', '뒤로 걷기', 'stepping backward cautiously in a guarded fighting stance, weight on the back foot, guard up'),
+    ('dash', '달리기 / 대시', 'sprinting forward low, body leaning far forward, clothes and hair streaming behind'),
+    ('backdash', '백대시', 'hopping backward, both feet off the ground, arms pulled in, guard up'),
+    ('down', '쓰러짐 (KO)', 'knocked down, lying flat on the back on the ground, eyes closed, side view, whole body horizontal'),
+    ('throw', '잡기', "grabbing the opponent's collar with both hands and throwing forward"),
+    ('crouch_guard', '앉아서 가드', 'crouching low with arms crossed in front of the face, blocking'),
+    ('jump_attack', '점프 공격', 'mid-air downward strike, knees tucked, attacking diagonally downward'),
+    ('air_dash', '공중 대시', 'dashing horizontally through the air, body almost horizontal, one arm forward'),
+]
+
+# 캐릭터별 필살기/승리 자세: (파일, 기술 이름, Pose 문장)
+SPECIALS = {
+    'chemikid': [
+        ('5d', 'D 플라스크 투척', 'throwing the flask upward and forward with one arm, other hand on the belt'),
+        ('6d', '→D 촉매 돌진', 'charging forward low like a sprinter, flask held back, coat flying'),
+        ('2d', '↓D 발열 반응', 'leaping straight up with one fist raised high, flask held down by the side'),
+        ('4d', '←D 중화 반응', 'counter stance, gloved palm held forward to block, flask hidden behind the back'),
+        ('jd', '공중D 앙금 생성', 'in mid-air, throwing the flask straight down with both hands'),
+        ('od', 'D+HS 테르밋 반응', 'holding two flasks raised high above the head, wild grin'),
+        ('win', '승리', 'victory pose, goggles pushed up, holding the flask up beside the face with a confident grin'),
+    ],
+    'common': [
+        ('5d', 'D 패킷 전송', 'aiming the keyboard forward like a gun and slamming the enter key'),
+        ('6d', '→D 버그 설치', 'crouching and placing something small on the ground with one hand'),
+        ('2d', '↓D 방화벽', 'holding the keyboard upright in front of the body like a shield'),
+        ('4d', '←D Ctrl+Z', 'leaning backward with two fingers pressing an invisible key, smirking'),
+        ('jd', '공중D 이진 탐색', 'in mid-air, diving down with the keyboard raised over the head'),
+        ('od', 'D+HS 블루스크린', 'raising the keyboard high above the head with both hands, about to smash it down'),
+        ('win', '승리', 'victory pose, headphones on, keyboard resting on the shoulder, cool expression'),
+    ],
+    'chaos': [
+        ('5d', 'D 만유인력', 'one arm stretched forward with fingers curled, pulling something toward her'),
+        ('6d', '→D 운동량 던지기', "lunging forward and grabbing the opponent's collar with both hands"),
+        ('2d', '↓D 전자기 펄스', 'arms spread wide, hair floating up, body crackling (no actual effect drawn)'),
+        ('4d', '←D 양자 터널링', 'gliding forward low, body bent, coat trailing behind'),
+        ('jd', '공중D 열팽창 폭발', 'in mid-air, thrusting one palm diagonally downward'),
+        ('od', 'D+HS 블랙홀', 'both hands cupped together in front of the chest, compressing something, intense stare'),
+        ('win', '승리', 'victory pose, arms crossed, looking down coldly with a slight smile'),
+    ],
+    'globe': [
+        ('5d', 'D 유성우', 'one arm raised to the sky, calling something down'),
+        ('6d', '→D 지각 돌진', 'charging forward shoulder-first like a rugby tackle'),
+        ('2d', '↓D 지진해일', 'punching the ground hard with one fist, one knee down'),
+        ('4d', '←D 별자리 잇기', 'pointing at the air with one finger, drawing dots'),
+        ('jd', '공중D 낙뢰', 'in mid-air, swinging one fist straight down'),
+        ('od', 'D+HS 태풍', 'spinning with both arms spread wide, ponytail whipping around'),
+        ('win', '승리', 'victory pose, raising one fist high, big laughing grin'),
+    ],
+    'root2': [
+        ('5d', 'D √2 부메랑', 'throwing something sideways like a boomerang, compass held in the other hand'),
+        ('6d', '→D 컴퍼스 찌르기', 'lunging far forward and thrusting the giant compass like a spear'),
+        ('2d', '↓D 적분 기둥', 'stabbing the giant compass point into the ground in front of him'),
+        ('4d', '←D 확률 주사위', 'tossing a small die forward with a flick of the wrist'),
+        ('jd', '공중D 피보나치 낙하', 'in mid-air, swinging the compass straight down'),
+        ('od', 'D+HS Q.E.D.', 'swinging the giant compass in a wide circle around himself'),
+        ('win', '승리', 'victory pose, pushing up his glasses with one finger, compass planted beside him'),
+    ],
+    'seed': [
+        ('5d', 'D 씨앗 심기', 'kneeling and pressing a seed into the ground with one hand'),
+        ('6d', '→D 덩굴 채찍', 'swinging one arm wide like cracking a whip'),
+        ('2d', '↓D 세포분열', 'one hand held out forward, summoning, calm expression'),
+        ('4d', '←D 광합성', 'eyes closed, both hands together at the chest, face turned up to the sunlight'),
+        ('jd', '공중D DNA 이중나선', 'in mid-air, spinning downward with arms tucked'),
+        ('od', 'D+HS 진화', 'arms spread wide, looking upward, braid and cardigan blowing'),
+        ('win', '승리', 'victory pose, holding a small flower and smiling gently'),
+    ],
+}
+
+EFFECTS = [
+    ('chemikid_flask', '플라스크 (투사체)', 'a glass Erlenmeyer flask filled with glowing toxic-green liquid, tilted as if thrown'),
+    ('chemikid_puddle', '산성 웅덩이', 'a flat bubbling puddle of glowing green acid seen from the side, very wide and thin'),
+    ('chemikid_explosion', '발열 폭발', 'a tall chemical explosion bursting upward, orange fire mixed with green smoke'),
+    ('chemikid_wall', '앙금 벽', 'a short wall of white crystal precipitate rising from the ground, side view'),
+    ('common_packet', '패킷 (투사체)', 'a glowing cyan data packet, a rounded rectangle with binary 0101 patterns inside'),
+    ('common_bug', '버그 함정', 'a small mechanical bug robot sitting flat on the ground, cyan glowing eyes'),
+    ('common_firewall', '방화벽', 'a tall vertical cyan hexagon-grid energy shield, side view, thin and tall'),
+    ('common_bluescreen', '블루스크린', 'broken fragments of a blue error window flying apart, no letters'),
+    ('globe_meteor', '유성', 'a blazing orange meteor with a long fiery tail, flying diagonally downward'),
+    ('globe_wave', '지진해일', 'a big blue ocean wave rolling forward along the ground, side view'),
+    ('globe_star', '별자리 별', 'a single bright glowing star with sparkles'),
+    ('globe_lightning', '낙뢰', 'a jagged white-yellow lightning bolt striking straight down, tall and thin'),
+    ('globe_typhoon', '태풍', 'a swirling grey-blue tornado vortex with debris'),
+    ('chaos_blackhole', '블랙홀', 'a small black hole with a glowing violet accretion ring, slightly tilted'),
+    ('chaos_spark', '전자기 방전', 'a ball of crackling yellow electric sparks'),
+    ('chaos_steam', '증기 폭발', 'a burst of white hot steam spreading outward'),
+    ('root2_boomerang', '√2 부메랑', 'a golden square-root symbol shaped like a spinning boomerang'),
+    ('root2_pillar', '적분 기둥', 'a tall golden pillar of light rising from the ground with integral symbol patterns'),
+    ('root2_dice', '주사위', 'a single golden six-sided die with black dots'),
+    ('root2_number', '숫자 블록', 'a heavy golden block engraved with a big number, falling'),
+    ('seed_vine', '덩굴', 'a thick green thorny vine bursting up from the ground'),
+    ('seed_whip', '덩굴 채찍', 'a long green thorny vine whip swinging horizontally'),
+    ('seed_dna', 'DNA 나선', 'a glowing lime-green and pink DNA double helix, diagonal'),
+    ('seed_leaf', '꽃잎', 'a cluster of pink petals and green leaves scattering'),
+]
+
+
+def pose_prompt(char, name, pose):
+    extra = ' Skirt kept modest, opaque tights.' if char in SKIRT else ''
+    return f"{SINGLE} {name}. Pose: {pose}.{extra} {SAFE} {STYLE}"
+
+
+out = ['# 완성 프롬프트 모음 (복사해서 바로 붙여넣기)', '',
+       '> 이 파일은 `python tools/make_prompts.py`로 자동 생성됨. 문장을 고치려면 그 스크립트를 고친다.',
+       '> **모든 프롬프트에 그 캐릭터의 이펙트 없는 전신 그림을 첨부**한다. 받은 그림은 파일 이름을 알려주며 보내면 된다.', '']
+
+out += ['## 1. 걷기 시트 (4프레임, 한 장)', '']
+for cid, title, item in CHARS:
+    extra = ' Skirt kept modest, opaque tights.' if cid in SKIRT else ''
+    out += [f'### {title} → `{cid}_walk` ~ `{cid}_walk4`', '```',
+            "Character pose sheet for a 2D fighting game walk cycle, 4 frames in one horizontal row, left to right. "
+            "Same character as the attached image: same face, hair, outfit, colors and body proportions, " + item + ". "
+            "The character keeps the same guarded fighting stance in every frame (upper body almost still, knees slightly bent) "
+            "and only the legs change, taking short shuffling steps forward: "
+            "1) front foot lifted slightly and moving forward, 2) front foot planted, feet wide apart, "
+            "3) back foot lifted slightly and sliding forward, 4) back foot planted, feet close together. "
+            "All frames facing right, same scale, feet on the same ground line, wide space between frames, no overlap. "
+            "Plain solid pure white background, no effects, no motion lines, no text, no numbers." + extra + " " + SAFE + " " + STYLE,
+            '```', '']
+
+out += ['## 2. 연결 자세 (한 장씩)', '']
+for cid, title, item in CHARS:
+    out += [f'### {title}', '']
+    for f, ko, pose in COMMON_POSES:
+        out += [f'**{ko}** → `{cid}_{f}`', '```', pose_prompt(cid, item[0].upper() + item[1:], pose), '```', '']
+
+out += ['## 3. 필살기 / 승리 자세 (한 장씩)', '']
+for cid, title, item in CHARS:
+    out += [f'### {title}', '']
+    for f, ko, pose in SPECIALS[cid]:
+        out += [f'**{ko}** → `{cid}_{f}`', '```', pose_prompt(cid, item[0].upper() + item[1:], pose), '```', '']
+
+out += ['## 4. 기술 이펙트 (첨부 없이, 1:1 정사각형)', '']
+for f, ko, desc in EFFECTS:
+    out += [f'**{ko}** → `{f}`', '```',
+            f"A single 2D fighting game special effect sprite: {desc}. No character, centered, plain solid pure white background, "
+            "bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.",
+            '```', '']
+
+open('docs/PROMPTS.md', 'w', encoding='utf-8').write('\n'.join(out))
+print('docs/PROMPTS.md', len(out), 'lines')
