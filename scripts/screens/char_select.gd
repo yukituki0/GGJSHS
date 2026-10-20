@@ -171,7 +171,7 @@ func _draw_preview(p: int, rect: Rect2) -> void:
 		draw_rect(body, Style.WHITE, false, 3.0)
 	text("%dP" % p, rect.position.y + 40, 30, col, rect.get_center().x, 6)
 	Style.fill(self, Style.slant(rect.position.x, rect.end.y - 100, rect.size.x, 100, slope * 0.2), Color(Style.BLACK, 0.8))
-	text(c["name"], rect.end.y - 46, 44, Style.WHITE, rect.get_center().x, 8)
+	Style.title(self, c["name"], Vector2(rect.get_center().x - W, rect.end.y - 44), 50, Style.WHITE, HORIZONTAL_ALIGNMENT_CENTER, W * 2, 8)
 	text(Game.club_name(c), rect.end.y - 16, 18, Style.GOLD, rect.get_center().x, 0)
 	Style.outline(self, panel, col if locked[p] else Color(1, 1, 1, 0.2), 5.0 if locked[p] else 2.0)
 	if locked[p]:

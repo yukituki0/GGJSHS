@@ -12,6 +12,15 @@ const ROUND_SECONDS := 60
 
 ## 영어/한국어 둘 다 되는 폰트 (Pretendard, SIL OFL 1.1 - assets/fonts/Pretendard-LICENSE.txt)
 const FONT: Font = preload("res://assets/fonts/Pretendard-Bold.otf")
+## 제목/연출용 굵은 폰트: 영문 Anton(세로로 긴 광고체) + 한글 Black Han Sans (둘 다 SIL OFL 1.1, assets/fonts/*-OFL.txt)
+## Anton에 없는 글자(한글, √ 등)는 다음 폰트에서 찾아 쓴다
+var TITLE_FONT: FontFile = _make_title_font()
+
+
+static func _make_title_font() -> FontFile:
+	var f: FontFile = load("res://assets/fonts/Anton-Regular.ttf").duplicate()
+	f.fallbacks = [load("res://assets/fonts/BlackHanSans-Regular.ttf"), FONT]
+	return f
 
 const SETTINGS_PATH := "user://settings.cfg"
 

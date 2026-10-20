@@ -50,7 +50,7 @@ func background() -> void:
 func header(s: String, y := 70.0) -> void:
 	Style.fill(self, Style.slant(-20, y - 52, 620, 70, 24), Style.RED)
 	Style.fill(self, Style.slant(-20, y + 22, 600, 6, 24), Style.WHITE)
-	Style.text(self, s, Vector2(50, y), 46, Style.WHITE, HORIZONTAL_ALIGNMENT_LEFT, -1, 8)
+	Style.title(self, s, Vector2(50, y + 2), 48, Style.WHITE, HORIZONTAL_ALIGNMENT_LEFT, -1, 8)
 
 
 ## 세로 메뉴: 비스듬한 판. 고른 항목은 빨간 판 + 흰 테두리 + 살짝 오른쪽으로

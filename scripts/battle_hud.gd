@@ -372,6 +372,35 @@ func _draw_sparks() -> void:
 
 
 # ── 오버드라이브 컷인 ─────────────────────────────────────
+var _accent_cache := {}
+
+
+## 컷인 그림의 강조색 (배경 속도선 쪽에서 채도 높은 픽셀들의 평균). 컷인이 없으면 캐릭터 색
+func _cutin_color(f: Fighter) -> Color:
+	var info := Game.character(f.player)
+	var id: String = info["id"]
+	if _accent_cache.has(id):
+		return _accent_cache[id]
+	var col: Color = f.color
+	var tex := Game.character_image(info, "cutin")
+	if tex != null:
+		var img := tex.get_image()
+		var sum := Color(0, 0, 0)
+		var weight := 0.0
+		for y in range(0, img.get_height(), 12):
+			for x in range(int(img.get_width() * 0.6), img.get_width(), 12):  # 오른쪽 = 배경 쪽
+				var c := img.get_pixel(x, y)
+				if c.s > 0.45 and c.v > 0.3:
+					sum += c * c.s
+					weight += c.s
+		if weight > 0.0:
+			col = Color(sum.r / weight, sum.g / weight, sum.b / weight)
+			col.s = maxf(col.s, 0.7)
+			col.v = maxf(col.v, 0.8)
+	_accent_cache[id] = col
+	return col
+
+
 func _draw_superflash() -> void:
 	var f := m.superflash_fighter
 	var t := 1.0 - float(m.superflash) / Match.SUPERFLASH_FRAMES  # 0 → 1
@@ -384,14 +413,15 @@ func _draw_superflash() -> void:
 	var slide := minf(t * 4.0, 1.0)
 	var band_y := 250.0
 	var x_off := (1.0 - slide) * (-1400.0 if from_left else 1400.0)
-	Style.fill(self, Style.slant(-100 + x_off, band_y, 1480, 190, 40 if from_left else -40), Color(f.color.darkened(0.6), 0.92))
-	Style.fill(self, Style.slant(-100 + x_off, band_y + 184, 1480, 8, 40 if from_left else -40), Style.RED)
+	var accent := _cutin_color(f)
+	Style.fill(self, Style.slant(-100 + x_off, band_y, 1480, 190, 40 if from_left else -40), Color(accent.darkened(0.65), 0.94))
+	Style.fill(self, Style.slant(-100 + x_off, band_y + 184, 1480, 8, 40 if from_left else -40), accent)
 	var fi := Game.face_image(Game.character(f.player), 420.0 / 190.0, "cutin", 1.3)
 	if not fi.is_empty():
 		var dest := Rect2(Vector2((60.0 if from_left else 800.0) + x_off, band_y), Vector2(420, 190))
 		Style.texture(self, fi[0], dest, not from_left, fi[1])
 	var title := m.superflash_attack.title
-	Style.text(self, title, Vector2(x_off, band_y + 120), 72, Style.WHITE,
+	Style.title(self, title, Vector2(x_off, band_y + 120), 72, Style.WHITE,
 			HORIZONTAL_ALIGNMENT_RIGHT if from_left else HORIZONTAL_ALIGNMENT_LEFT, 1280, 12, Style.RED)
 	Style.text(self, f.display_name, Vector2(x_off + (0.0 if from_left else 60.0), band_y + 168), 28, Style.GOLD,
 			HORIZONTAL_ALIGNMENT_RIGHT if from_left else HORIZONTAL_ALIGNMENT_LEFT, 1220, 5)
@@ -411,7 +441,7 @@ func _draw_vs() -> void:
 	Style.fill(self, PackedVector2Array([Vector2(680, 0), Vector2(700, 0), Vector2(600, 720), Vector2(580, 720)]), Style.RED)
 	if t >= 1.0:
 		var pop := minf((m.phase_frame - 18) / 8.0, 1.0)
-		Style.text(self, "VS", Vector2(0, 410), int(lerpf(220, 150, pop)), Style.WHITE,
+		Style.title(self, "VS", Vector2(0, 410), int(lerpf(220, 150, pop)), Style.WHITE,
 				HORIZONTAL_ALIGNMENT_CENTER, 1280, 18, Style.RED)
 		var stage_name: String = Game.stage_info()["name"][Game.language]
 		Style.text(self, "STAGE : " + stage_name, Vector2(0, 690), 22, Style.GRAY, HORIZONTAL_ALIGNMENT_CENTER, 1280)
@@ -437,7 +467,7 @@ func _draw_vs_side(f: Fighter, info: Dictionary, offset: float, right: bool) -> 
 		Style.texture(self, art, Rect2(pos, size), right)
 	else:
 		draw_rect(Rect2(x0 + 250 + offset, 220, 140, 300), f.color)
-	Style.text(self, f.display_name, Vector2(x0 + offset, 640), 72, Style.WHITE,
+	Style.title(self, f.display_name, Vector2(x0 + offset, 640), 72, Style.WHITE,
 			HORIZONTAL_ALIGNMENT_CENTER, 640, 12)
 	Style.text(self, Game.club_name(info), Vector2(x0 + offset, 676), 22, Style.GOLD,
 			HORIZONTAL_ALIGNMENT_CENTER, 640, 4)
@@ -500,7 +530,7 @@ func _draw_move_row(mv: Array, x: float, y: float) -> void:
 func _draw_menu(title: String, items: Array, dim := 0.65) -> void:
 	draw_rect(Rect2(0, 0, 1280, 720), Color(0, 0, 0, dim))
 	Style.fill(self, Style.slant(-20, 190, 1320, 90, 20), Style.RED)
-	Style.text(self, title, Vector2(0, 258), 64, Style.WHITE, HORIZONTAL_ALIGNMENT_CENTER, 1280, 12)
+	Style.title(self, title, Vector2(0, 258), 64, Style.WHITE, HORIZONTAL_ALIGNMENT_CENTER, 1280, 12)
 	for i in items.size():
 		var y := 330.0 + i * 70
 		var selected := i == m.menu_cursor

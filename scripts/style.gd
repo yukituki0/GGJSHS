@@ -52,10 +52,19 @@ static func outline(c: CanvasItem, points: PackedVector2Array, color: Color, wid
 ## 외곽선 있는 글자. width를 주면 그 폭 안에서 정렬
 static func text(c: CanvasItem, s: String, pos: Vector2, size: int, color := WHITE,
 		align := HORIZONTAL_ALIGNMENT_LEFT, width := -1.0, outline_size := 0,
-		outline_color := BLACK) -> void:
+		outline_color := BLACK, font: Font = null) -> void:
+	if font == null:
+		font = Game.FONT
 	if outline_size > 0:
-		c.draw_string_outline(Game.FONT, pos, s, align, width, size, outline_size, outline_color)
-	c.draw_string(Game.FONT, pos, s, align, width, size, color)
+		c.draw_string_outline(font, pos, s, align, width, size, outline_size, outline_color)
+	c.draw_string(font, pos, s, align, width, size, color)
+
+
+## 제목/연출용 굵은 글자 (Game.TITLE_FONT). 사용법은 text()와 같다
+static func title(c: CanvasItem, s: String, pos: Vector2, size: int, color := WHITE,
+		align := HORIZONTAL_ALIGNMENT_LEFT, width := -1.0, outline_size := 0,
+		outline_color := BLACK) -> void:
+	text(c, s, pos, size, color, align, width, outline_size, outline_color, Game.TITLE_FONT)
 
 
 ## 화면을 가로지르는 기울어진 띠 + 큰 글자 (ROUND 1, FIGHT!, K.O. 같은 연출)
@@ -70,4 +79,4 @@ static func banner(c: CanvasItem, s: String, color: Color, t := 1.0) -> void:
 	c.draw_line(Vector2(640 - band_w / 2, 292), Vector2(640 + band_w / 2, 268), BLACK, 6.0)
 	c.draw_line(Vector2(640 - band_w / 2, 452), Vector2(640 + band_w / 2, 428), BLACK, 6.0)
 	var size := int(lerpf(180.0, 104.0, e))
-	text(c, s, Vector2(0, 360 + size * 0.36), size, color, HORIZONTAL_ALIGNMENT_CENTER, 1280, 16)
+	title(c, s, Vector2(0, 360 + size * 0.36), size, color, HORIZONTAL_ALIGNMENT_CENTER, 1280, 16)
