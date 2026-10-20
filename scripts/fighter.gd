@@ -864,7 +864,7 @@ func _draw_puppet(shake_x: float) -> void:
 	var body := _body_motion()
 	var pose_tex := _pose_texture()
 	if pose_tex != null:
-		Puppet.draw_image(self, pose_tex, _pose_scale(), facing, Vector2(shake_x, 0), tint, body)
+		Puppet.draw_image(self, pose_tex, _pose_scale() * _pose_size(pose_tex), facing, Vector2(shake_x, 0), tint, body)
 	else:
 		_breathe()
 		puppet.draw(self, facing, Vector2(shake_x, 0), tint, body)
@@ -877,6 +877,16 @@ func _draw_puppet(shake_x: float) -> void:
 ## 기본 그림의 키와 같다고 보고 비율을 맞춘다 (날아간 소품 등 한 자세만 튀어도 괜찮게).
 ## rigs.gd에 "pose_ratio"를 적으면 그 값을 쓴다
 var _pose_scale_cache := 0.0
+
+## 자세별 크기 보정: AI가 포즈 시트에서 웅크린 자세를 다른 자세보다 작게 그리는 경향이 있어서
+## (같은 시트 안에서도 얼굴이 약 80% 크기) 웅크린 그림만 키운다. rigs.gd의 "pose_size"로 캐릭터마다 바꿀 수 있음
+const POSE_SIZE := {"crouch": 1.2}
+
+
+func _pose_size(tex: Texture2D) -> float:
+	var pose := tex.resource_path.get_file().get_basename().trim_prefix(char_id + "_")
+	var sizes: Dictionary = Rigs.get_rig(char_id).get("pose_size", POSE_SIZE)
+	return sizes.get(pose, 1.0)
 
 
 func _pose_scale() -> float:
