@@ -24,7 +24,9 @@ const WEIGHTS := 3        # 점 하나가 따라가는 뼈 개수
 
 var texture: Texture2D
 var rig: Dictionary
-var scale := 0.16         # 그림 픽셀 → 게임 화면 크기 (피격 판정보다 조금 크게: 머리가 판정 위로 나옴)
+var scale := 0.16         # 그림 픽셀 → 게임 화면 크기 (그림마다 키가 HEIGHT가 되게 자동으로 정함)
+const HEIGHT := 235.0     # 게임 화면에서 캐릭터 키 (피격 판정 160보다 조금 크게: 머리가 판정 위로 나옴)
+var anchor := Vector2.ZERO  # 두 발 사이 바닥 (그림 픽셀). 그림에서 자동으로 찾는다
 
 var _points := PackedVector2Array()   # 그물 점 (그림 픽셀 좌표, 쉬는 자세)
 var _uvs := PackedVector2Array()
@@ -42,9 +44,14 @@ var _skin: Array[Transform2D] = []    # 이번 프레임: 쉬는 자세 → 지�
 func _init(tex: Texture2D, rig_data: Dictionary) -> void:
 	texture = tex
 	rig = rig_data
-	scale = rig.get("scale", scale)
+	var img := tex.get_image()
+	anchor = rig.get("anchor", find_anchor(tex))
+	var top := 0
+	while top < img.get_height() - 1 and not _row_has_pixels(img, top):
+		top += 1
+	scale = rig.get("scale", HEIGHT / maxf(1.0, anchor.y - top))
 	_build_bones()
-	_build_mesh(tex.get_image())
+	_build_mesh(img)
 
 
 func _joint(name: String) -> Vector2:
@@ -169,7 +176,7 @@ func pose(bend: Dictionary, root := Vector2.ZERO, root_angle := 0.0, aim := {}, 
 
 ## 게임 좌표(발 기준, 오른쪽을 볼 때) → 그림 픽셀 좌표
 func to_art(game_pos: Vector2) -> Vector2:
-	return rig["anchor"] + game_pos / scale
+	return anchor + game_pos / scale
 
 
 ## 쉬는 자세의 관절 위치 (aim 목표를 정할 때 기준으로)
@@ -181,7 +188,6 @@ func joint(name: String) -> Vector2:
 ## body: 몸 전체 변형 (발 기준, 오른쪽을 볼 때 기준. 기울이기/찌그러뜨리기/밀기)
 func draw(canvas: CanvasItem, facing: int, offset := Vector2.ZERO, modulate := Color.WHITE,
 		body := Transform2D.IDENTITY) -> void:
-	var anchor: Vector2 = rig["anchor"]
 	var pts := PackedVector2Array()
 	pts.resize(_points.size())
 	for i in _points.size():
@@ -234,9 +240,9 @@ static func _row_has_pixels(img: Image, y: int) -> bool:
 
 static func draw_image(canvas: CanvasItem, tex: Texture2D, art_scale: float, facing: int, offset: Vector2,
 		modulate: Color, body: Transform2D) -> void:
-	var anchor := find_anchor(tex)
+	var foot := find_anchor(tex)
 	var xf := Transform2D(0.0, offset) * Transform2D(0.0, Vector2(facing, 1), 0.0, Vector2.ZERO) * body \
-			* Transform2D(0.0, Vector2(art_scale, art_scale), 0.0, -anchor * art_scale)
+			* Transform2D(0.0, Vector2(art_scale, art_scale), 0.0, -foot * art_scale)
 	canvas.draw_set_transform_matrix(xf)
 	canvas.draw_texture(tex, Vector2.ZERO, modulate)
 	canvas.draw_set_transform_matrix(Transform2D.IDENTITY)

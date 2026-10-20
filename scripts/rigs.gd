@@ -5,57 +5,53 @@ class_name Rigs
 ## hip: 엉덩이(몸 전체가 돌고 움직이는 중심)   neck / head: 목, 머리 가운데
 ## ba_*: 뒤쪽 팔 (어깨 sh, 팔꿈치 el, 손 ha)    fa_*: 앞쪽 팔
 ## bl_*: 뒤쪽 다리 (엉덩이 hip, 무릎 kn, 발 ft)  fl_*: 앞쪽 다리
-## anchor: 두 발 사이 바닥 (게임에서 캐릭터 위치)
+## anchor(선택): 두 발 사이 바닥. 안 적으면 그림에서 자동으로 찾는다
+## (SEED는 아직 이펙트 있는 옛 그림 기준)
 
 const RIGS := {
 	"chemikid": {
-		"anchor": Vector2(540, 1495),
 		"joints": {
-			"hip": Vector2(620, 640), "neck": Vector2(570, 290), "head": Vector2(580, 150),
-			"ba_sh": Vector2(450, 290), "ba_el": Vector2(262, 450), "ba_ha": Vector2(405, 495),
-			"fa_sh": Vector2(705, 322), "fa_el": Vector2(800, 495), "fa_ha": Vector2(878, 345),
-			"bl_hip": Vector2(560, 710), "bl_kn": Vector2(375, 1125), "bl_ft": Vector2(195, 1410),
-			"fl_hip": Vector2(690, 700), "fl_kn": Vector2(795, 1050), "fl_ft": Vector2(885, 1410),
+			"hip": Vector2(560, 620), "neck": Vector2(570, 240), "head": Vector2(600, 150),
+			"ba_sh": Vector2(430, 260), "ba_el": Vector2(300, 380), "ba_ha": Vector2(430, 450),
+			"fa_sh": Vector2(680, 280), "fa_el": Vector2(840, 430), "fa_ha": Vector2(930, 360),
+			"bl_hip": Vector2(500, 680), "bl_kn": Vector2(330, 1000), "bl_ft": Vector2(220, 1340),
+			"fl_hip": Vector2(640, 680), "fl_kn": Vector2(800, 1000), "fl_ft": Vector2(950, 1330),
 		},
 	},
 	"common": {
-		"anchor": Vector2(530, 1495),
 		"joints": {
-			"hip": Vector2(560, 760), "neck": Vector2(560, 270), "head": Vector2(595, 150),
-			"ba_sh": Vector2(360, 330), "ba_el": Vector2(190, 420), "ba_ha": Vector2(270, 260),
-			"fa_sh": Vector2(670, 330), "fa_el": Vector2(745, 575), "fa_ha": Vector2(870, 440),
-			"bl_hip": Vector2(480, 770), "bl_kn": Vector2(380, 1060), "bl_ft": Vector2(180, 1430),
-			"fl_hip": Vector2(640, 770), "fl_kn": Vector2(720, 1050), "fl_ft": Vector2(880, 1430),
+			"hip": Vector2(560, 640), "neck": Vector2(560, 250), "head": Vector2(590, 130),
+			"ba_sh": Vector2(440, 300), "ba_el": Vector2(320, 380), "ba_ha": Vector2(330, 190),
+			"fa_sh": Vector2(680, 320), "fa_el": Vector2(820, 480), "fa_ha": Vector2(900, 670),
+			"bl_hip": Vector2(480, 700), "bl_kn": Vector2(350, 1000), "bl_ft": Vector2(180, 1330),
+			"fl_hip": Vector2(650, 700), "fl_kn": Vector2(800, 1000), "fl_ft": Vector2(950, 1320),
 		},
 	},
 	"chaos": {
-		"anchor": Vector2(515, 1490),
 		"joints": {
-			"hip": Vector2(510, 700), "neck": Vector2(500, 260), "head": Vector2(530, 150),
-			"ba_sh": Vector2(340, 290), "ba_el": Vector2(260, 470), "ba_ha": Vector2(210, 640),
-			"fa_sh": Vector2(620, 320), "fa_el": Vector2(720, 480), "fa_ha": Vector2(830, 450),
-			"bl_hip": Vector2(440, 720), "bl_kn": Vector2(330, 1050), "bl_ft": Vector2(160, 1420),
-			"fl_hip": Vector2(600, 720), "fl_kn": Vector2(720, 1050), "fl_ft": Vector2(870, 1410),
+			"hip": Vector2(530, 620), "neck": Vector2(530, 250), "head": Vector2(560, 140),
+			"ba_sh": Vector2(380, 300), "ba_el": Vector2(330, 450), "ba_ha": Vector2(260, 620),
+			"fa_sh": Vector2(680, 300), "fa_el": Vector2(800, 420), "fa_ha": Vector2(800, 260),
+			"bl_hip": Vector2(450, 700), "bl_kn": Vector2(320, 1050), "bl_ft": Vector2(200, 1370),
+			"fl_hip": Vector2(640, 700), "fl_kn": Vector2(800, 1050), "fl_ft": Vector2(950, 1360),
 		},
 	},
 	"globe": {
-		"anchor": Vector2(520, 1500),
 		"joints": {
-			"hip": Vector2(500, 640), "neck": Vector2(530, 300), "head": Vector2(560, 170),
-			"ba_sh": Vector2(380, 320), "ba_el": Vector2(260, 480), "ba_ha": Vector2(220, 640),
-			"fa_sh": Vector2(650, 330), "fa_el": Vector2(760, 480), "fa_ha": Vector2(870, 410),
-			"bl_hip": Vector2(430, 700), "bl_kn": Vector2(330, 1050), "bl_ft": Vector2(150, 1430),
-			"fl_hip": Vector2(580, 700), "fl_kn": Vector2(700, 1050), "fl_ft": Vector2(870, 1430),
+			"hip": Vector2(520, 620), "neck": Vector2(540, 290), "head": Vector2(580, 170),
+			"ba_sh": Vector2(380, 330), "ba_el": Vector2(250, 450), "ba_ha": Vector2(230, 580),
+			"fa_sh": Vector2(650, 330), "fa_el": Vector2(720, 480), "fa_ha": Vector2(880, 410),
+			"bl_hip": Vector2(420, 720), "bl_kn": Vector2(300, 1050), "bl_ft": Vector2(180, 1340),
+			"fl_hip": Vector2(620, 720), "fl_kn": Vector2(800, 1050), "fl_ft": Vector2(950, 1340),
 		},
 	},
 	"root2": {
-		"anchor": Vector2(570, 1420),
 		"joints": {
-			"hip": Vector2(560, 690), "neck": Vector2(560, 330), "head": Vector2(580, 250),
-			"ba_sh": Vector2(450, 380), "ba_el": Vector2(380, 500), "ba_ha": Vector2(300, 520),
-			"fa_sh": Vector2(680, 380), "fa_el": Vector2(800, 460), "fa_ha": Vector2(930, 500),
-			"bl_hip": Vector2(500, 740), "bl_kn": Vector2(380, 1000), "bl_ft": Vector2(230, 1350),
-			"fl_hip": Vector2(640, 740), "fl_kn": Vector2(790, 1000), "fl_ft": Vector2(900, 1360),
+			"hip": Vector2(560, 560), "neck": Vector2(560, 270), "head": Vector2(600, 150),
+			"ba_sh": Vector2(420, 300), "ba_el": Vector2(300, 420), "ba_ha": Vector2(330, 430),
+			"fa_sh": Vector2(680, 310), "fa_el": Vector2(850, 420), "fa_ha": Vector2(1000, 480),
+			"bl_hip": Vector2(480, 650), "bl_kn": Vector2(330, 1000), "bl_ft": Vector2(200, 1340),
+			"fl_hip": Vector2(640, 650), "fl_kn": Vector2(850, 1000), "fl_ft": Vector2(950, 1340),
 		},
 	},
 	"seed": {

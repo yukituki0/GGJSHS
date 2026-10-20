@@ -23,23 +23,23 @@ const SETTINGS_PATH := "user://settings.cfg"
 const CHARACTERS: Array[Dictionary] = [
 	{
 		"id": "chemikid", "name": "CHEMIKID", "club": ["CHEMISTRY CLUB  Chemikid", "화학 동아리  Chemikid"],
-		"color": Color(0.30, 0.85, 0.45), "script": "res://scripts/characters/chemikid.gd", "face": Vector3(0.52, 0.125, 0.24),
+		"color": Color(0.30, 0.85, 0.45), "script": "res://scripts/characters/chemikid.gd", "face": Vector3(0.61, 0.145, 0.22),
 	},
 	{
 		"id": "common", "name": "COMMON", "club": ["COMPUTER CLUB  COMMON", "정보 동아리  COMMON"],
-		"color": Color(0.30, 0.65, 1.00), "script": "res://scripts/characters/common.gd", "face": Vector3(0.61, 0.115, 0.24),
+		"color": Color(0.30, 0.65, 1.00), "script": "res://scripts/characters/common.gd", "face": Vector3(0.595, 0.14, 0.22),
 	},
 	{
 		"id": "globe", "name": "GLOBE", "club": ["EARTH SCIENCE CLUB  Globe", "지구과학 동아리  Globe"],
-		"color": Color("e08a3c"), "script": "res://scripts/characters/globe.gd", "face": Vector3(0.56, 0.17, 0.24),
+		"color": Color("e08a3c"), "script": "res://scripts/characters/globe.gd", "face": Vector3(0.58, 0.18, 0.22),
 	},
 	{
 		"id": "chaos", "name": "CHAOS", "club": ["PHYSICS CLUB  Chaos", "물리 동아리  Chaos"],
-		"color": Color("a05cff"), "script": "res://scripts/characters/chaos.gd", "face": Vector3(0.57, 0.12, 0.24),
+		"color": Color("a05cff"), "script": "res://scripts/characters/chaos.gd", "face": Vector3(0.57, 0.14, 0.22),
 	},
 	{
 		"id": "root2", "name": "ROOT2", "club": ["MATH CLUB  Root2", "수학 동아리  Root2"],
-		"color": Color("e8d84a"), "script": "res://scripts/characters/root2.gd", "face": Vector3(0.575, 0.255, 0.24),
+		"color": Color("e8d84a"), "script": "res://scripts/characters/root2.gd", "face": Vector3(0.59, 0.165, 0.22),
 	},
 	{
 		"id": "seed", "name": "SEED", "club": ["BIOLOGY CLUB  Seed", "생명 동아리  Seed"],
