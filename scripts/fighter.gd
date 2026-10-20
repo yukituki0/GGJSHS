@@ -116,6 +116,7 @@ func _ready() -> void:
 	var rig := Rigs.get_rig(char_id)
 	if art != null and not rig.is_empty():
 		puppet = Puppet.new(art, rig)
+		_fit_hitboxes_to_art()
 
 
 ## 1프레임 진행. Match가 매 프레임 1P → 2P 순서로 직접 호출한다 (처리 순서를 고정하려고)
@@ -674,10 +675,64 @@ func body_size() -> Vector2:
 	return CROUCH_SIZE if low else BODY_SIZE
 
 
-## 몸통 사각형 (밀어내기 + 맞는 판정 = 허트박스)
+## 몸통 사각형 (밀어내기 = 서로 겹치지 않게. 그림이 없으면 맞는 판정도 이것)
 func body_rect() -> Rect2:
 	var size := body_size()
 	return Rect2(position.x - size.x / 2, position.y - size.y, size.x, size.y)
+
+
+## 맞는 판정(허트박스): 그림이 있으면 지금 그려지는 그림 모양을 따라 여러 개 (월드 좌표)
+## 뻗은 팔·다리도 맞는다 (길티기어처럼 공격하는 손발을 노려서 끊을 수 있음)
+func hurt_rects() -> Array[Rect2]:
+	if puppet == null:
+		return [body_rect()]
+	var tex := _pose_texture()
+	var anchor := puppet.anchor
+	var s := puppet.scale
+	if tex != null:
+		anchor = Puppet.find_anchor(tex)
+		s = _pose_scale() * _pose_size(tex)
+	else:
+		tex = puppet.texture
+	var out: Array[Rect2] = []
+	for b: Rect2 in ArtBoxes.hurt_boxes(tex, anchor):
+		var r := Rect2(b.position * s, b.size * s)
+		if facing < 0:
+			r.position.x = -r.position.x - r.size.x
+		r.position += position
+		out.append(r)
+	return out
+
+
+## 공격 판정(히트박스)을 그림에 맞추기: 서서/앉아서 쓰는 기본기만.
+## 기준 기술(5P / 5K / 2P)의 판정 끝이 그 자세 그림의 주먹·발 끝에 오게(높이도) 옮기고,
+## 같은 자세를 쓰는 다른 기술도 같은 만큼 옮긴다 (5S·5H가 5P보다 긴 건 그대로 = 밸런스 유지)
+const REACH_LIMIT := 50.0   # 그림 때문에 사거리가 너무 크게 바뀌지 않게
+const HEIGHT_LIMIT := 40.0  # 판정 높이도 너무 크게 바뀌지 않게 (앉은 상대에게 맞고 안 맞고가 바뀜)
+
+
+func _fit_hitboxes_to_art() -> void:
+	if puppet == null:
+		return
+	# [자세 그림, 기준 기술, 같이 옮길 기술, 손발 끝을 찾을 높이(키 비율)]
+	for group in [["punch", "5P", ["5P", "5S", "5H"], 0.45, 1.0], ["kick", "5K", ["5K"], 0.2, 0.9],
+			["crouch", "2P", ["2P", "2S", "2H"], 0.3, 1.0]]:
+		var tex := Game.load_texture("res://assets/characters/%s_%s.png" % [char_id, group[0]])
+		if tex == null or not attacks.has(group[1]):
+			continue
+		var s := _pose_scale() * _pose_size(tex)
+		var tip := ArtBoxes.front_tip(tex, Puppet.find_anchor(tex), group[3], group[4])
+		if tip == Vector2.INF:
+			continue
+		tip *= s
+		var ref: AttackData = attacks[group[1]]
+		var dx := clampf(tip.x - ref.hitbox.end.x, -REACH_LIMIT, REACH_LIMIT)
+		var dy := clampf(tip.y - ref.hitbox.get_center().y, -HEIGHT_LIMIT, HEIGHT_LIMIT)
+		for move_name: String in group[2]:
+			if attacks.has(move_name):
+				var a: AttackData = attacks[move_name]
+				a.hitbox.position.x = maxf(5.0, a.hitbox.position.x + dx)
+				a.hitbox.position.y = minf(a.hitbox.position.y + dy, -a.hitbox.size.y)  # 땅 밑으로 안 내려가게
 
 
 ## 지금 살아있는 공격 판정(히트박스). 없으면 크기 0
@@ -824,7 +879,10 @@ func _draw() -> void:
 			label += " " + current_attack.name
 		draw_string(Game.FONT, Vector2(-size.x / 2, -size.y - 38),
 				label, HORIZONTAL_ALIGNMENT_LEFT, -1, 16)
-		draw_rect(rect, Color.GREEN, false, 2.0)
+		draw_rect(rect, Color(0.3, 0.6, 1.0, 0.8), false, 1.0)  # 밀어내기 (파랑)
+		for r: Rect2 in hurt_rects():  # 맞는 판정 (초록)
+			r.position -= position
+			draw_rect(r, Color.GREEN, false, 2.0)
 		var hit := hitbox_rect()
 		if hit.has_area():
 			hit.position -= position

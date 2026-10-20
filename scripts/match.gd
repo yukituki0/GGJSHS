@@ -342,8 +342,9 @@ func _resolve_hits() -> void:
 		if atk != null and atk.is_throw and (not defender.is_on_ground() \
 				or defender.state == Fighter.State.HITSTUN or defender.state == Fighter.State.BLOCKSTUN):
 			continue
-		if attacker.hitbox_rect().intersects(defender.body_rect()):
-			var contact := attacker.hitbox_rect().intersection(defender.body_rect()).get_center()
+		var hurt := _touching(attacker.hitbox_rect(), defender)
+		if hurt.has_area():
+			var contact := attacker.hitbox_rect().intersection(hurt).get_center()
 			hits.append([attacker, defender, attacker.current_attack, contact])
 	for hit in hits:
 		var attacker: Fighter = hit[0]
@@ -387,8 +388,9 @@ func _resolve_projectiles() -> void:
 			continue
 		if not proj.hits_airborne and not target.is_on_ground():
 			continue
-		if proj.rect().intersects(target.body_rect()):
-			var contact := proj.rect().intersection(target.body_rect()).get_center()
+		var hurt := _touching(proj.rect(), target)
+		if hurt.has_area():
+			var contact := proj.rect().intersection(hurt).get_center()
 			_apply_hit(proj.shooter, target, proj.attack, contact, proj.hit_direction())
 			if proj.rehit_interval > 0:
 				proj.rehit_cd = proj.rehit_interval  # 웅덩이처럼 남아서 또 맞힘
@@ -435,6 +437,16 @@ func _resolve_push() -> void:
 				left.position.x -= overlap
 	_clamp_to_walls(p1)
 	_clamp_to_walls(p2)
+
+
+## box와 겹치는 f의 맞는 판정 (없으면 크기 0)
+func _touching(box: Rect2, f: Fighter) -> Rect2:
+	if not box.has_area():
+		return Rect2()
+	for r: Rect2 in f.hurt_rects():
+		if box.intersects(r):
+			return r
+	return Rect2()
 
 
 func _clamp_to_walls(f: Fighter) -> void:
