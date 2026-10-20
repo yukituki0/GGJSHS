@@ -369,6 +369,10 @@ Pose: [위 표의 자세 설명]
 | 공격 시트 | punch, kick, jump | `<id>_sheet_attack.png` |
 | 방어 시트 | guard, hit, crouch | `<id>_sheet_defense.png` |
 
+> **자세를 한 장씩 따로 받을 때 주의:** AI가 매번 그림에 꽉 차게 그려서 **웅크린 자세도 서 있는 자세만큼 크게** 나온다.
+> 그대로 넣으면 크기가 제각각이라, 같은 캐릭터의 포즈 시트(자세끼리 크기가 맞는 것)를 기준으로 크기를 다시 맞춰야 한다 (CHAOS가 이렇게 들어감).
+> 화질은 한 장씩이 더 좋고, 크기 맞추기는 시트가 더 정확하다.
+
 **공격 시트 프롬프트** (기본 전신 그림 **첨부**, 가로 3:2 비율로)
 ```
 Character pose sheet (model sheet) for a 2D fighting game.
