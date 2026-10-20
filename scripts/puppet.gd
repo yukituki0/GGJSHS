@@ -178,7 +178,9 @@ func joint(name: String) -> Vector2:
 
 
 ## canvas에 그리기. 발 사이(anchor)가 (0,0)에 오고, facing이 -1이면 좌우 반전
-func draw(canvas: CanvasItem, facing: int, offset := Vector2.ZERO, modulate := Color.WHITE) -> void:
+## body: 몸 전체 변형 (발 기준, 오른쪽을 볼 때 기준. 기울이기/찌그러뜨리기/밀기)
+func draw(canvas: CanvasItem, facing: int, offset := Vector2.ZERO, modulate := Color.WHITE,
+		body := Transform2D.IDENTITY) -> void:
 	var anchor: Vector2 = rig["anchor"]
 	var pts := PackedVector2Array()
 	pts.resize(_points.size())
@@ -187,10 +189,54 @@ func draw(canvas: CanvasItem, facing: int, offset := Vector2.ZERO, modulate := C
 		var q := Vector2.ZERO
 		for k in WEIGHTS:
 			q += (_skin[_w_bone[i * WEIGHTS + k]] * p) * _w_amount[i * WEIGHTS + k]
-		q = (q - anchor) * scale
+		q = body * ((q - anchor) * scale)
 		pts[i] = Vector2(q.x * facing, q.y) + offset
 	var colors := PackedColorArray()
 	colors.resize(_points.size())
 	colors.fill(modulate)
 	RenderingServer.canvas_item_add_triangle_array(canvas.get_canvas_item(), _indices, pts, colors, _uvs,
 			PackedInt32Array(), PackedFloat32Array(), texture.get_rid())
+
+
+# ── 자세별 그림 (assets/characters/<id>_<자세>.png) ─────────
+## 그물 없이 그림 한 장을 통째로 그린다 (몸 전체 변형만). 발 위치는 그림에서 자동으로 찾는다
+static var _anchors := {}
+
+
+static func find_anchor(tex: Texture2D) -> Vector2:
+	var key := tex.resource_path
+	if _anchors.has(key):
+		return _anchors[key]
+	var img := tex.get_image()
+	var w := img.get_width()
+	var bottom := img.get_height() - 1
+	while bottom > 0 and not _row_has_pixels(img, bottom):
+		bottom -= 1
+	# 맨 아래 60픽셀 안에 있는 발들의 가운데
+	var lo := w
+	var hi := 0
+	for y in range(maxi(0, bottom - 60), bottom + 1, 2):
+		for x in range(0, w, 2):
+			if img.get_pixel(x, y).a > 0.3:
+				lo = mini(lo, x)
+				hi = maxi(hi, x)
+	var anchor := Vector2((lo + hi) / 2.0, bottom)
+	_anchors[key] = anchor
+	return anchor
+
+
+static func _row_has_pixels(img: Image, y: int) -> bool:
+	for x in range(0, img.get_width(), 2):
+		if img.get_pixel(x, y).a > 0.3:
+			return true
+	return false
+
+
+static func draw_image(canvas: CanvasItem, tex: Texture2D, art_scale: float, facing: int, offset: Vector2,
+		modulate: Color, body: Transform2D) -> void:
+	var anchor := find_anchor(tex)
+	var xf := Transform2D(0.0, offset) * Transform2D(0.0, Vector2(facing, 1), 0.0, Vector2.ZERO) * body \
+			* Transform2D(0.0, Vector2(art_scale, art_scale), 0.0, -anchor * art_scale)
+	canvas.draw_set_transform_matrix(xf)
+	canvas.draw_texture(tex, Vector2.ZERO, modulate)
+	canvas.draw_set_transform_matrix(Transform2D.IDENTITY)

@@ -329,6 +329,35 @@ no text, no logo, no watermark.
 > green vines wrapping softly around her arms, a glowing pink DNA double helix floating beside her.
 > Color palette: blossom pink, leaf green, white, crimson accent.
 
+### 자세별 그림 (있으면 게임이 그 상태에서 바꿔 끼운다)
+그림 1장을 크게 구부리면 옷과 이펙트가 늘어나서 깨진다. 그래서 대전 중 움직임은 "작게"(숨쉬기, 기울이기)만 하고,
+아래 자세 그림이 있으면 그 상태에서 그림을 통째로 바꾼다. **없는 자세는 기본 그림으로 나오니까 하나씩 늘려가면 된다.**
+
+| 파일 | 언제 | 자세 설명 (프롬프트에 넣을 것) |
+|---|---|---|
+| `<id>_punch.png` | P/S/HS/필살기 공격 | `throwing a strong straight punch / striking forward with the front arm fully extended` |
+| `<id>_kick.png` | K 공격 | `high kick with the front leg extended forward at waist height` |
+| `<id>_guard.png` | 가드 | `defensive guard stance, both forearms raised in front of the face, knees bent` |
+| `<id>_hit.png` | 맞았을 때, KO | `getting hit, recoiling backward, head and upper body thrown back, pained expression` |
+| `<id>_crouch.png` | 앉기 | `low crouching stance, one knee bent deeply, ready to spring` |
+| `<id>_jump.png` | 점프 | `mid-air jump, knees tucked up, arms out for balance` |
+
+(`<id>` = chemikid, common, chaos, root2, seed, globe)
+
+**자세 그림 프롬프트** (기본 전신 그림을 꼭 **첨부**)
+```
+Same character, same outfit, same art style and same proportions as the attached image.
+Full body, facing right (three-quarter side view), whole body visible from head to feet,
+plain transparent background, no effects, no glowing particles, no holograms, no energy orbs,
+no motion lines, no text.
+Pose: [위 표의 자세 설명]
+[안전 조건]
+```
+- **이펙트(블랙홀, 홀로그램, 연기 등)는 빼고** 받는다. 이펙트는 게임 코드가 그린다. (그림에 이펙트가 박혀 있으면 움직일 때 같이 늘어나서 깨짐)
+- 손에 드는 물건(플라스크, 키보드 등)은 있어도 된다.
+- 크기: 기본 그림과 비슷한 크기(세로로 긴 그림, 캐릭터가 화면을 꽉 채우게)로 받으면 게임에서 같은 크기로 나온다.
+- 추천 순서: punch → guard → hit (제일 자주 보이는 것부터)
+
 ### 같은 캐릭터를 계속 똑같이 나오게 하는 팁
 1. 전신 일러스트를 **먼저 1장** 마음에 들 때까지 뽑는다.
 2. 다른 그림(컷인용 얼굴 등)은 그 그림을 **첨부**하고 `Same character as the attached image, ...`로 시작한다.

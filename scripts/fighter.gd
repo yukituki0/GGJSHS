@@ -845,143 +845,145 @@ func _draw_box(rect: Rect2, body_color: Color, size: Vector2) -> void:
 
 
 # ── 그림 인형 (Puppet) 자세 ───────────────────────────────
-## 상태마다 뼈를 얼마나 굽힐지 정한다. 좌표는 그림 픽셀 (scripts/puppet.gd 참고)
-## 기술마다 따로 만들지 않고, 공격 판정 위치를 향해 팔(P/S/H/D) 또는 다리(K)를 뻗는다
+## 그림 한 장을 크게 구부리면 옷과 이펙트가 늘어나서 깨진다. 그래서 움직임은 "작게":
+##   숨쉬기(몸통만 살짝), 몸 전체 기울이기/밀기/찌그러뜨리기 + 잔상·번쩍임 이펙트
+## 자세별 그림(assets/characters/<id>_<자세>.png)이 있으면 그 상태에서는 그 그림으로 바꿔 끼운다
+##   자세: punch(P/S/HS/D 공격) kick(K 공격) guard hit crouch jump
+const POSES: Array[String] = ["punch", "kick", "guard", "hit", "crouch", "jump"]
+
+
 func _draw_puppet(shake_x: float) -> void:
-	_pose_puppet()
 	var tint := art_modulate
 	match state:
 		State.HITSTUN, State.KO:
 			tint = tint * Color(1.0, 0.8, 0.8)
 		State.GUARD, State.BLOCKSTUN:
-			tint = tint * Color(0.85, 0.85, 0.95)
+			tint = tint * Color(0.85, 0.88, 1.0)
 	if armor_flash > 0:
 		tint = tint.lerp(Color(1, 0.85, 0.4), armor_flash / 24.0)
-	puppet.draw(self, facing, Vector2(shake_x, 0), tint)
+	var body := _body_motion()
+	var pose_tex := _pose_texture()
+	if pose_tex != null:
+		Puppet.draw_image(self, pose_tex, puppet.scale, facing, Vector2(shake_x, 0), tint, body)
+	else:
+		_breathe()
+		puppet.draw(self, facing, Vector2(shake_x, 0), tint, body)
+	if state == State.GUARD or state == State.BLOCKSTUN:
+		_draw_guard_shield()
 	_draw_swing()
 
 
-func _pose_puppet() -> void:
+## 지금 상태에 맞는 자세 그림 (없으면 null → 기본 그림)
+func _pose_texture() -> Texture2D:
+	var pose := ""
+	match state:
+		State.ATTACK:
+			if current_attack != null and current_attack.startup < state_frame:
+				pose = "kick" if _is_kick(current_attack) else "punch"
+		State.GUARD, State.BLOCKSTUN:
+			pose = "guard"
+		State.HITSTUN, State.KO:
+			pose = "hit"
+		State.CROUCH:
+			pose = "crouch"
+		State.AIR, State.AIRDASH:
+			pose = "jump"
+	if pose == "":
+		return null
+	return Game.load_texture("res://assets/characters/%s_%s.png" % [char_id, pose])
+
+
+func _is_kick(a: AttackData) -> bool:
+	return "K" in a.name.substr(1) and not a.is_throw
+
+
+## 숨쉬기: 발은 바닥에 두고 몸통과 머리만 아주 살짝
+func _breathe() -> void:
 	var p := puppet
-	var feet := {"leg_f1": p.joint("fl_ft"), "leg_b1": p.joint("bl_ft")}
-	var breathe := sin(_anim_t * 0.05)
+	var b := sin(_anim_t * 0.05) if state == State.STAND and velocity.x == 0.0 else 0.0
+	p.pose({"torso": b * 0.015, "head": -b * 0.015}, Vector2(0, 6 + b * 6), 0.0, {},
+			{"leg_f1": p.joint("fl_ft"), "leg_b1": p.joint("bl_ft")})
+
+
+## 몸 전체 움직임 (발 기준). 오른쪽을 볼 때 기준이고, 왼쪽을 보면 알아서 뒤집힌다
+## tilt: + = 앞으로 숙임, squash: 세로 비율(1보다 작으면 납작), shift: 밀기(px)
+func _body_motion() -> Transform2D:
+	var tilt := 0.0
+	var squash := 1.0
+	var shift := Vector2.ZERO
 	match state:
 		State.STAND:
-			if velocity.x != 0.0:
-				_pose_walk(0.09, 60.0, 30.0, 0.04)
-			else:
-				p.pose({"torso": breathe * 0.02, "head": -breathe * 0.02, "arm_f1": breathe * 0.05,
-						"arm_b1": -breathe * 0.04}, Vector2(0, 10 + breathe * 8), 0.0, {}, feet)
+			if velocity.x != 0.0:  # 걷기: 통통 튀지 않게 아주 살짝 오르내림
+				var w := absf(sin(_anim_t * 0.09))
+				shift.y = -w * 3.0
+				tilt = 0.03 if velocity.x * facing > 0.0 else -0.03
 		State.RUN:
-			_pose_walk(0.22, 150.0, 80.0, 0.35)
-		State.CROUCH:
-			_pose_crouch(feet, 1.0)
-		State.PREJUMP:
-			p.pose({"torso": 0.1}, Vector2(0, 140), 0.0, {}, feet)
-		State.AIR:
-			var rising := velocity.y < 0.0
-			_pose_air(0.0 if rising else 0.08)
-		State.AIRDASH:
-			p.pose({"torso": 0.35, "head": -0.15, "arm_f1": 0.5, "arm_b1": 0.6}, Vector2(0, -40), 0.0, {},
-					{"leg_f1": p.joint("fl_hip") + Vector2(-300, 650), "leg_b1": p.joint("bl_hip") + Vector2(-450, 550)})
+			tilt = 0.12
+			shift.y = -absf(sin(_anim_t * 0.25)) * 4.0
 		State.BACKDASH:
-			p.pose({"torso": -0.2, "head": 0.1, "arm_f1": -0.3}, Vector2(-40, 40), 0.0, {},
-					{"leg_f1": p.joint("fl_ft") + Vector2(-60, -80), "leg_b1": p.joint("bl_ft")})
-		State.GUARD, State.BLOCKSTUN:
-			var push := 1.0 if state == State.BLOCKSTUN and state_frame < 6 else 0.0
-			p.pose({"torso": -0.1 - push * 0.08, "head": 0.05}, Vector2(-30 * push, 60), 0.0,
-					{"arm_f1": [p.joint("fa_sh") + Vector2(200, -300), 0.85],
-					"arm_b1": [p.joint("ba_sh") + Vector2(350, -150), 0.7]}, feet)
+			tilt = -0.1
+		State.CROUCH:
+			if _pose_texture() == null:
+				squash = 0.72
+				tilt = 0.08
+		State.PREJUMP:
+			squash = 0.88
+		State.AIR:
+			squash = 1.04 if velocity.y < 0.0 else 1.0
+			tilt = 0.05 if velocity.y > 0.0 else 0.0
+		State.AIRDASH:
+			tilt = 0.2
+		State.GUARD:
+			tilt = -0.05
+			squash = 0.97
+		State.BLOCKSTUN:
+			tilt = -0.07
+			shift.x = -6.0 if state_frame < 6 else 0.0
 		State.HITSTUN:
-			var k := clampf(1.0 - (state_frame - 4) / 20.0, 0.35, 1.0)
-			if is_on_ground():
-				p.pose({"torso": -0.35 * k, "head": -0.35 * k, "arm_f1": -0.7 * k, "arm_b1": 0.6 * k},
-						Vector2(-70 * k, 30 * k), 0.0, {}, feet)
-			else:
-				p.pose({"torso": -0.3, "head": -0.3, "arm_f1": -0.9, "arm_b1": 0.8, "leg_f1": -0.4, "leg_b1": 0.3},
-						Vector2.ZERO, -0.5)
+			var k := clampf(1.0 - (state_frame - 3) / 18.0, 0.3, 1.0)
+			tilt = -0.18 * k
+			shift.x = -10.0 * k
 		State.KO:
 			if is_on_ground():
-				# 쓰러짐: 엉덩이를 바닥 가까이 내리고 뒤로 눕힌다
-				var lie := minf(state_frame / 12.0, 1.0)
-				var hip_h: float = p.joint("hip").y - p.rig["anchor"].y
-				p.pose({"head": -0.2, "arm_f1": -1.2, "arm_b1": 1.0, "leg_f1": -0.3},
-						Vector2(-200 * lie, (-hip_h - 120) * lie), -1.45 * lie)
+				tilt = -1.45 * minf(state_frame / 12.0, 1.0)  # 뒤로 쓰러짐
 			else:
-				p.pose({"torso": -0.3, "head": -0.3, "arm_f1": -0.9, "arm_b1": 0.8}, Vector2.ZERO, -0.7)
+				tilt = -0.5
 		State.ATTACK:
-			_pose_attack(feet)
+			var reach := _attack_reach()
+			var wind := 1.0 - reach if state_frame <= current_attack.startup else 0.0
+			if _is_kick(current_attack):
+				tilt = -0.06 * reach
+			else:
+				tilt = 0.08 * reach - 0.04 * wind
+			shift.x = 12.0 * reach - 4.0 * wind
+			squash = 1.0 - 0.03 * reach
+			if current_attack.name.begins_with("2") and _pose_texture() == null:
+				squash *= 0.75
+	# 발을 기준으로 기울이고(tilt), 세로로 찌그러뜨리고(squash), 가로는 그만큼 살짝 넓힌다
+	return Transform2D(0.0, shift) * Transform2D(tilt, Vector2.ZERO) \
+			* Transform2D(0.0, Vector2(1.0 + (1.0 - squash) * 0.4, squash), 0.0, Vector2.ZERO)
 
 
-## 걷기/달리기: speed = 한 걸음 빠르기, stride = 보폭, lift = 발 드는 높이, lean = 앞으로 숙이기
-func _pose_walk(speed: float, stride: float, lift: float, lean: float) -> void:
-	var p := puppet
-	var back := 1.0 if velocity.x * facing >= 0.0 else -1.0  # 뒤로 걸으면 발 순서 반대
-	var w := sin(_anim_t * speed) * back
-	p.pose({"torso": lean, "head": -lean * 0.5, "arm_f1": -w * 0.08, "arm_b1": w * 0.08},
-			Vector2(0, 10 + absf(w) * 6 + lean * 120), 0.0, {},
-			{"leg_f1": p.joint("fl_ft") + Vector2(w * stride, -maxf(0.0, w) * lift),
-			"leg_b1": p.joint("bl_ft") + Vector2(-w * stride, -maxf(0.0, -w) * lift)})
-
-
-func _pose_crouch(feet: Dictionary, amount: float, extra := {}, aim := {}) -> void:
-	var bend := {"torso": 0.3 * amount, "head": -0.18 * amount, "arm_f1": -0.3 * amount, "arm_b1": 0.2 * amount}
-	bend.merge(extra, true)
-	puppet.pose(bend, Vector2(60, 420) * amount, 0.0, aim, feet)
-
-
-func _pose_air(fall: float, extra := {}, aim := {}, legs := {}) -> void:
-	var p := puppet
-	var bend := {"torso": 0.05 + fall, "head": -0.05}
-	bend.merge(extra, true)
-	var tuck := {"leg_f1": p.joint("fl_hip") + Vector2(250, 520), "leg_b1": p.joint("bl_hip") + Vector2(-200, 560)}
-	tuck.merge(legs, true)
-	p.pose(bend, Vector2(0, -60), 0.0, aim, tuck)
-
-
-## 공격: 발생 동안 뒤로 당겼다가(wind) 지속 동안 판정 쪽으로 쭉 뻗고(reach) 후딜 동안 돌아온다
-func _pose_attack(feet: Dictionary) -> void:
-	var p := puppet
+## 공격 진행도: 발생 동안 0 → 1, 지속 동안 1, 후딜 동안 1 → 0
+func _attack_reach() -> float:
 	var a := current_attack
 	var f := state_frame
-	var wind := 0.0
-	var reach := 0.0
 	if f <= a.startup:
-		wind = float(f) / maxf(1.0, a.startup)
-		reach = wind * 0.3
-	elif f <= a.startup + a.active:
-		reach = 1.0
-	else:
-		reach = 1.0 - float(f - a.startup - a.active) / maxf(1.0, a.recovery)
-		reach = clampf(reach, 0.0, 1.0)
-	var target := p.to_art(a.hitbox.get_center())
-	var kick := "K" in a.name.substr(1) and not a.is_throw
-	var crouching := a.name.begins_with("2")
-	var airborne := not is_on_ground()
-	if kick:
-		var leg := {"leg_f1": p.joint("fl_ft").lerp(target, reach)}
-		var lean := {"torso": -0.25 * reach}
-		if airborne:
-			_pose_air(0.0, lean, {}, leg)
-		elif crouching:
-			# 앉아서 발 뻗기: 낮게
-			leg["leg_f1"] = p.joint("fl_ft").lerp(Vector2(target.x, p.joint("fl_ft").y), reach)
-			leg["leg_b1"] = feet["leg_b1"]
-			_pose_crouch(leg, 0.8, {})
-		else:
-			leg["leg_b1"] = feet["leg_b1"]
-			p.pose(lean, Vector2(-40 * reach, 0), 0.0, {}, leg)
-		return
-	var arms := {"arm_f1": [target, reach]}
-	if a.is_throw:
-		arms["arm_b1"] = [target + Vector2(0, 60), reach]
-	var bend := {"torso": 0.15 * reach - 0.1 * wind, "arm_f1": -0.8 * wind, "arm_f2": -0.8 * wind}
-	if airborne:
-		_pose_air(0.0, bend, arms)
-	elif crouching:
-		_pose_crouch(feet, 1.0, bend, arms)
-	else:
-		p.pose(bend, Vector2(70 * reach, 20), 0.0, arms, feet)
+		return float(f) / maxf(1.0, a.startup)
+	if f <= a.startup + a.active:
+		return 1.0
+	return clampf(1.0 - float(f - a.startup - a.active) / maxf(1.0, a.recovery), 0.0, 1.0)
+
+
+## 가드: 몸 앞에 반투명 방패 (그림을 구부리는 대신)
+func _draw_guard_shield() -> void:
+	var low := _held("down")
+	var center := Vector2(facing * 45, -60 if low else -95)
+	var start := -PI * 0.4 if facing > 0 else PI * 0.6
+	var flash := 1.0 if state == State.BLOCKSTUN and state_frame < 6 else 0.0
+	var col := Color(0.55, 0.8, 1.0, 0.55 + 0.4 * flash)
+	draw_arc(center, 70 if not low else 55, start, start + PI * 0.8, 20, col, 6.0 + 4.0 * flash)
+	draw_arc(center, 58 if not low else 45, start + 0.15, start + PI * 0.8 - 0.15, 16, Color(col, col.a * 0.5), 3.0)
 
 
 ## 휘두르기 잔상: 공격 판정이 살아 있는 동안 판정을 쓸고 지나가는 초승달 모양
