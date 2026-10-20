@@ -8,43 +8,43 @@
 
 | 캐릭터 | 기본 전신·자세 6·상반신·얼굴·컷인 | 걷기 시트 | 뒤로 걷기 | 달리기 / 대시 | 백대시 | 쓰러짐 (KO) | 잡기 | 앉아서 가드 | 점프 공격 | 공중 대시 | 필살기·승리 |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| 🧪 CHEMIKID | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | 0/7 |
-| 💻 COMMON | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | 0/7 |
-| 🌀 CHAOS | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | 0/7 |
-| 🌍 GLOBE | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | 0/7 |
-| 📐 ROOT2 | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | 0/7 |
-| 🌱 SEED | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | 0/7 |
+| 🧪 CHEMIKID | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | 0/7 |
+| 💻 COMMON | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | 0/7 |
+| 🌀 CHAOS | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | 0/7 |
+| 🌍 GLOBE | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | 0/7 |
+| 📐 ROOT2 | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | 0/7 |
+| 🌱 SEED | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | 0/7 |
 
 이펙트: 0/24
 
 ## 1. 걷기 시트 (4프레임, 한 장)
 
-### ⬜ 🧪 CHEMIKID → `chemikid_walk` ~ `chemikid_walk4`
+### ✅ 🧪 CHEMIKID → `chemikid_walk` ~ `chemikid_walk4`
 ```
 Character pose sheet for a 2D fighting game walk cycle, 4 frames in one horizontal row, left to right. Same character as the attached image: same face, hair, outfit, colors and body proportions, holding his glowing green flask. The character keeps the same guarded fighting stance in every frame (upper body almost still, knees slightly bent) and only the legs change, taking short shuffling steps forward: 1) front foot lifted slightly and moving forward, 2) front foot planted, feet wide apart, 3) back foot lifted slightly and sliding forward, 4) back foot planted, feet close together. All frames facing right, same scale, feet on the same ground line, wide space between frames, no overlap. Transparent background (real alpha channel, not a checkerboard pattern), no effects, no motion lines, no text, no numbers. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
 ```
 
-### ⬜ 💻 COMMON → `common_walk` ~ `common_walk4`
+### ✅ 💻 COMMON → `common_walk` ~ `common_walk4`
 ```
 Character pose sheet for a 2D fighting game walk cycle, 4 frames in one horizontal row, left to right. Same character as the attached image: same face, hair, outfit, colors and body proportions, holding his mechanical keyboard. The character keeps the same guarded fighting stance in every frame (upper body almost still, knees slightly bent) and only the legs change, taking short shuffling steps forward: 1) front foot lifted slightly and moving forward, 2) front foot planted, feet wide apart, 3) back foot lifted slightly and sliding forward, 4) back foot planted, feet close together. All frames facing right, same scale, feet on the same ground line, wide space between frames, no overlap. Transparent background (real alpha channel, not a checkerboard pattern), no effects, no motion lines, no text, no numbers. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
 ```
 
-### ⬜ 🌀 CHAOS → `chaos_walk` ~ `chaos_walk4`
+### ✅ 🌀 CHAOS → `chaos_walk` ~ `chaos_walk4`
 ```
 Character pose sheet for a 2D fighting game walk cycle, 4 frames in one horizontal row, left to right. Same character as the attached image: same face, hair, outfit, colors and body proportions, empty-handed. The character keeps the same guarded fighting stance in every frame (upper body almost still, knees slightly bent) and only the legs change, taking short shuffling steps forward: 1) front foot lifted slightly and moving forward, 2) front foot planted, feet wide apart, 3) back foot lifted slightly and sliding forward, 4) back foot planted, feet close together. All frames facing right, same scale, feet on the same ground line, wide space between frames, no overlap. Transparent background (real alpha channel, not a checkerboard pattern), no effects, no motion lines, no text, no numbers. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
 ```
 
-### ⬜ 🌍 GLOBE → `globe_walk` ~ `globe_walk4`
+### ✅ 🌍 GLOBE → `globe_walk` ~ `globe_walk4`
 ```
 Character pose sheet for a 2D fighting game walk cycle, 4 frames in one horizontal row, left to right. Same character as the attached image: same face, hair, outfit, colors and body proportions, empty-handed, geologist hammer on the belt. The character keeps the same guarded fighting stance in every frame (upper body almost still, knees slightly bent) and only the legs change, taking short shuffling steps forward: 1) front foot lifted slightly and moving forward, 2) front foot planted, feet wide apart, 3) back foot lifted slightly and sliding forward, 4) back foot planted, feet close together. All frames facing right, same scale, feet on the same ground line, wide space between frames, no overlap. Transparent background (real alpha channel, not a checkerboard pattern), no effects, no motion lines, no text, no numbers. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
 ```
 
-### ⬜ 📐 ROOT2 → `root2_walk` ~ `root2_walk4`
+### ✅ 📐 ROOT2 → `root2_walk` ~ `root2_walk4`
 ```
 Character pose sheet for a 2D fighting game walk cycle, 4 frames in one horizontal row, left to right. Same character as the attached image: same face, hair, outfit, colors and body proportions, holding his giant drafting compass. The character keeps the same guarded fighting stance in every frame (upper body almost still, knees slightly bent) and only the legs change, taking short shuffling steps forward: 1) front foot lifted slightly and moving forward, 2) front foot planted, feet wide apart, 3) back foot lifted slightly and sliding forward, 4) back foot planted, feet close together. All frames facing right, same scale, feet on the same ground line, wide space between frames, no overlap. Transparent background (real alpha channel, not a checkerboard pattern), no effects, no motion lines, no text, no numbers. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
 ```
 
-### ⬜ 🌱 SEED → `seed_walk` ~ `seed_walk4`
+### ✅ 🌱 SEED → `seed_walk` ~ `seed_walk4`
 ```
 Character pose sheet for a 2D fighting game walk cycle, 4 frames in one horizontal row, left to right. Same character as the attached image: same face, hair, outfit, colors and body proportions, empty-handed, magnifying glass pendant. The character keeps the same guarded fighting stance in every frame (upper body almost still, knees slightly bent) and only the legs change, taking short shuffling steps forward: 1) front foot lifted slightly and moving forward, 2) front foot planted, feet wide apart, 3) back foot lifted slightly and sliding forward, 4) back foot planted, feet close together. All frames facing right, same scale, feet on the same ground line, wide space between frames, no overlap. Transparent background (real alpha channel, not a checkerboard pattern), no effects, no motion lines, no text, no numbers. Skirt kept modest, opaque tights. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
 ```
