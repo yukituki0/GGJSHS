@@ -973,25 +973,59 @@ func _pose_scale() -> float:
 
 ## 지금 상태에 맞는 자세 그림 (없으면 null → 기본 그림)
 func _pose_texture() -> Texture2D:
-	var pose := ""
+	# 앞에 있는 이름부터 찾아서 그림이 있는 걸 쓴다 (없으면 다음 이름, 다 없으면 기본 그림)
+	var names: Array[String] = []
 	match state:
 		State.ATTACK:
-			if current_attack != null and current_attack.startup < state_frame:
-				if current_attack.name.begins_with("2"):
-					pose = "crouch"  # 앉아서 쓰는 기술은 앉은 그림으로
-				else:
-					pose = "kick" if _is_kick(current_attack) else "punch"
+			if current_attack != null:
+				var a := current_attack
+				var special := a.name.ends_with("D") or a.is_throw
+				if special:  # 필살기/잡기 전용 그림은 시작부터 끝까지
+					names.append("throw" if a.is_throw else a.name.to_lower())  # 예: chemikid_6d.png
+				if special or a.startup < state_frame:
+					if a.name.begins_with("2"):
+						names.append("crouch")  # 앉아서 쓰는 기술은 앉은 그림으로
+					elif a.name.begins_with("j") and not _is_kick(a):
+						names.append_array(["jump_attack", "punch"])
+					else:
+						names.append("kick" if _is_kick(a) else "punch")
+		State.STAND:
+			if velocity.x != 0.0:
+				var back := velocity.x * facing < 0.0
+				var step := "walk2" if (_anim_t / WALK_FRAME_TIME) % 2 == 1 else "walk"
+				if back:
+					names.append("walk_back")
+				names.append_array([step, "walk"])
+			elif opponent != null and opponent.state == State.KO and is_on_ground():
+				names.append("win")
+		State.RUN:
+			names.append_array(["dash", "walk"])
+		State.BACKDASH:
+			names.append_array(["backdash", "walk_back"])
 		State.GUARD, State.BLOCKSTUN:
-			pose = "guard"
-		State.HITSTUN, State.KO:
-			pose = "hit"
-		State.CROUCH:
-			pose = "crouch"
-		State.AIR, State.AIRDASH:
-			pose = "jump"
-	if pose == "":
-		return null
-	return Game.load_texture("res://assets/characters/%s_%s.png" % [char_id, pose])
+			if _held("down") and is_on_ground():
+				names.append("crouch_guard")
+			names.append("guard")
+		State.HITSTUN:
+			names.append("hit")
+		State.KO:
+			if is_on_ground() and state_frame > 6:
+				names.append("down")  # 쓰러져 누운 그림
+			names.append("hit")
+		State.CROUCH, State.PREJUMP:
+			names.append("crouch")
+		State.AIR:
+			names.append("jump")
+		State.AIRDASH:
+			names.append_array(["air_dash", "dash", "jump"])
+	for n in names:
+		var tex := Game.load_texture("res://assets/characters/%s_%s.png" % [char_id, n])
+		if tex != null:
+			return tex
+	return null
+
+
+const WALK_FRAME_TIME := 10   # 걷기 그림 두 장(walk / walk2)을 바꾸는 간격 (프레임)
 
 
 func _is_kick(a: AttackData) -> bool:
@@ -1014,10 +1048,14 @@ func _body_motion() -> Transform2D:
 	var shift := Vector2.ZERO
 	match state:
 		State.STAND:
-			if velocity.x != 0.0:  # 걷기: 통통 튀지 않게 아주 살짝 오르내림
-				var w := absf(sin(_anim_t * 0.09))
-				shift.y = -w * 3.0
-				tilt = 0.03 if velocity.x * facing > 0.0 else -0.03
+			if velocity.x != 0.0:
+				# 걷기: 걷기 그림이 있으면 발걸음에 맞춰 살짝 오르내림만,
+				# 없으면 (같은 그림으로 미끄러지면 어색해서) 걸음마다 무게를 싣는 느낌으로 살짝 기울였다 폄
+				var w := absf(sin(_anim_t * PI / WALK_FRAME_TIME))
+				shift.y = -w * 4.0
+				if _pose_texture() == null:
+					tilt = (0.02 + 0.03 * w) * (1.0 if velocity.x * facing > 0.0 else -1.0)
+					squash = 1.0 - 0.02 * (1.0 - w)
 		State.RUN:
 			tilt = 0.12
 			shift.y = -absf(sin(_anim_t * 0.25)) * 4.0

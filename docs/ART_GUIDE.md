@@ -503,6 +503,74 @@ dramatic lighting from below, speed-line style dark background, no effects on th
 - 여자 캐릭터 킥/점프/앉기는 위 문장에 `skirt kept modest`/안전 조건이 들어가 있다. 이상한 각도로 나오면 버리고 다시 뽑기.
 - 처음 3명(CHEMIKID, COMMON, CHAOS)도 나중에 **이펙트 없는 기본 그림**으로 다시 뽑으면 좋다: 기본 그림을 첨부하고 `Same image, but remove all effects (glow, particles, holograms, energy). Keep the character exactly the same.`
 
+### 추가 자세 그림 (있으면 게임이 자동으로 바꿔 끼움, 없으면 지금처럼)
+넣는 법: `python tools/add_pose.py <id> walk=a.webp walk2=b.webp 6d=c.webp@0.8`
+(`@숫자` = 그 자세의 키가 서 있을 때 키의 몇 배인지. 안 적으면 아래 표의 값. 넣은 뒤 머리 크기가 다르면 숫자만 바꿔 다시)
+
+**① 꼭 있으면 좋은 것 (자주 보임)**
+| 파일 | 언제 | 키비율 | Pose 문장 |
+|---|---|---|---|
+| `walk` | 앞으로 걸을 때 (walk2와 번갈아) | 1.0 | `walking forward in a guarded fighting stance, left foot stepping forward` |
+| `walk2` | 〃 | 1.0 | `walking forward in a guarded fighting stance, right foot stepping forward` |
+| `walk_back` | 뒤로 걸을 때 | 1.0 | `stepping backward cautiously, weight on the back foot, guard up` |
+| `dash` | 달리기 / 공중 대시 | 0.85 | `sprinting forward low, body leaning far forward, coat/hair streaming behind` |
+| `backdash` | 백대시 | 0.95 | `hopping backward, both feet off the ground, arms pulled in` |
+| `down` | KO되어 쓰러짐 | 0.35 | `knocked down, lying on the back on the ground, eyes closed, side view` |
+| `win` | 라운드 이겼을 때 | 1.05 | 캐릭터 승리 포즈 (아래 표) |
+
+**② 연결이 자연스러워지는 것 (있으면 더 좋음)**
+| 파일 | 언제 | 키비율 | Pose 문장 |
+|---|---|---|---|
+| `throw` | 잡기 | 0.95 | `grabbing the opponent's collar with both hands and throwing forward` |
+| `crouch_guard` | 앉아서 가드 | 0.7 | `crouching low with arms crossed in front of the face, blocking` |
+| `jump_attack` | 점프 P/S/HS | 0.85 | `mid-air downward strike, both knees tucked, attacking diagonally downward` |
+| `air_dash` | 공중 대시 | 0.75 | `dashing horizontally through the air, body almost horizontal` |
+
+**③ 필살기 전용 자세** (파일 이름 = 기술 입력, 소문자: `5d` `6d` `2d` `4d` `jd` `od`)
+필살기 이펙트(불꽃·번개 등)는 그림에 넣지 말고 손동작만. 이펙트는 아래 "기술 이펙트 그림"으로 따로.
+| 캐릭터 | 5d (D) | 6d (→D) | 2d (↓D) | 4d (←D) | jd (공중D) | od (D+HS) | win |
+|---|---|---|---|---|---|---|---|
+| CHEMIKID | 플라스크를 위로 던지는 동작 | 몸을 낮추고 앞으로 돌진 | 플라스크를 바닥에 내리꽂고 위로 뛰어오름 (@1.1) | 장갑 낀 손을 앞으로 펴서 막는 반격 자세 | 공중에서 플라스크를 아래로 던짐 | 양손에 플라스크를 들고 머리 위로 치켜듦 | 고글 올리고 플라스크 들고 씩 웃기 |
+| COMMON | 키보드를 앞으로 겨누고 엔터 키를 침 | 바닥에 손을 짚고 무언가 설치 (@0.6) | 키보드를 방패처럼 세움 | 손가락으로 Ctrl+Z 누르는 시늉, 뒤로 물러섬 | 공중에서 키보드를 아래로 내려침 | 키보드를 머리 위로 들고 내려칠 준비 | 헤드폰 쓰고 키보드 어깨에 메기 |
+| CHAOS | 한 손을 앞으로 뻗어 끌어당기는 손짓 | 두 손으로 상대 멱살 잡기 | 두 팔을 벌리고 몸에서 방전 | 몸을 숙여 앞으로 미끄러지듯 이동 | 공중에서 손바닥을 아래로 | 두 손을 모아 가운데에 무언가를 압축 | 팔짱 끼고 차갑게 내려다보기 |
+| GLOBE | 한 손을 하늘로 들어 부르는 동작 | 어깨부터 들이받는 돌진 (@0.85) | 주먹으로 바닥을 내려침 (@0.7) | 손가락으로 허공에 점을 찍음 | 공중에서 주먹을 아래로 내리꽂음 | 두 팔을 크게 돌리며 회오리 | 주먹 들고 크게 웃기 |
+| ROOT2 | 컴퍼스를 던지는 동작 | 컴퍼스로 길게 찌르기 (@1.0) | 컴퍼스를 바닥에 꽂기 | 주사위를 던지는 손 | 공중에서 컴퍼스를 아래로 | 컴퍼스를 크게 휘둘러 원 그리기 | 안경 올리며 증명 끝 포즈 |
+| SEED | 바닥에 씨앗을 심는 동작 (@0.6) | 팔을 크게 휘둘러 채찍질 | 손을 앞으로 내밀며 분신 소환 | 눈 감고 두 손 모아 햇빛 받기 | 공중에서 아래로 회전하며 낙하 | 두 팔을 벌리고 위를 올려다봄 | 꽃을 들고 부드럽게 웃기 |
+- 프롬프트: 위 "자세 그림 프롬프트"의 `Pose:` 자리에 표의 동작을 영어로 넣는다. (예: `Pose: throwing a flask upward with one hand, other hand on hip.`)
+- 우선순위: ① 걷기 2장 → down → win → ③ 필살기 → ②
+
+### 기술 이펙트 그림 (그림을 넣으면 코드 이펙트보다 훨씬 좋아지는 것)
+`assets/effects/<id>_<이름>.png` · **투명 배경**, 이펙트만 (캐릭터 없이), 정사각형 1024×1024
+공통 문장: `A single 2D fighting game special effect sprite, no character, centered, transparent background, bold cel-shaded anime effect style with thick outlines, no text.`
+| 캐릭터 | 파일 이름 | 그림 내용 |
+|---|---|---|
+| CHEMIKID | `chemikid_flask` | 초록 액체가 든 삼각 플라스크 (던지는 투사체) |
+| | `chemikid_puddle` | 바닥에 고인 부글거리는 초록 산성 웅덩이 (옆에서 본 납작한 모양) |
+| | `chemikid_explosion` | 아래에서 위로 솟는 주황·초록 화학 폭발 |
+| | `chemikid_wall` | 바닥에서 솟은 하얀 결정 벽 (앙금) |
+| COMMON | `common_packet` | 시안색으로 빛나는 데이터 패킷 (0101 무늬 사각형) |
+| | `common_bug` | 바닥에 붙은 작은 기계 벌레 함정 |
+| | `common_firewall` | 세로로 선 시안색 육각형 방어막 |
+| | `common_bluescreen` | 화면 크기 파란 오류 창 조각들 (글자 없이) |
+| GLOBE | `globe_meteor` | 꼬리가 달린 주황 별똥별 |
+| | `globe_wave` | 옆으로 밀려오는 파란 파도 |
+| | `globe_star` | 빛나는 별 하나 (별자리 점) |
+| | `globe_lightning` | 위에서 내리꽂는 번개 줄기 |
+| | `globe_typhoon` | 소용돌이 치는 회오리 |
+| CHAOS | `chaos_blackhole` | 보라색 고리가 감싼 작은 블랙홀 |
+| | `chaos_spark` | 노란 전기 방전 덩어리 |
+| | `chaos_steam` | 아래로 퍼지는 하얀 증기 폭발 |
+| ROOT2 | `root2_boomerang` | 금색 √2 기호 모양 부메랑 (√2 글자 자체가 무기) |
+| | `root2_pillar` | 위로 솟는 금색 빛 기둥 (적분 기호 무늬) |
+| | `root2_dice` | 금색 주사위 |
+| | `root2_number` | 금색 숫자 블록 (1, 2, 3, 5 피보나치) |
+| SEED | `seed_vine` | 바닥에서 솟는 초록 덩굴 |
+| | `seed_whip` | 옆으로 휘두르는 가시 덩굴 채찍 |
+| | `seed_dna` | 연두·분홍 DNA 이중나선 |
+| | `seed_leaf` | 흩날리는 꽃잎과 잎사귀 묶음 |
+- 이펙트 그림은 아직 게임에 연결 안 됨 → 그림이 오면 그 기술의 코드 그리기를 그림으로 바꾼다
+- 우선순위: 자주 나오는 투사체부터 (`common_packet`, `root2_boomerang`, `chemikid_flask`, `globe_meteor`)
+
 ### 같은 캐릭터를 계속 똑같이 나오게 하는 팁
 1. 전신 일러스트를 **먼저 1장** 마음에 들 때까지 뽑는다.
 2. 다른 그림(컷인용 얼굴 등)은 그 그림을 **첨부**하고 `Same character as the attached image, ...`로 시작한다.
