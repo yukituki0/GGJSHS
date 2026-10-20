@@ -119,6 +119,18 @@ EFFECTS = [
 ]
 
 
+import os
+
+
+def has(name):
+    """그림이 이미 게임 폴더에 있으면 True (캐릭터 그림 또는 이펙트 그림)"""
+    return os.path.exists('assets/characters/%s.png' % name) or os.path.exists('assets/effects/%s.png' % name)
+
+
+def mark(*names):
+    return '✅' if all(has(n) for n in names) else '⬜'
+
+
 def pose_prompt(char, name, pose):
     extra = ' Skirt kept modest, opaque tights.' if char in SKIRT else ''
     return f"{SINGLE} {name}. Pose: {pose}.{extra} {SAFE} {STYLE}"
@@ -126,12 +138,25 @@ def pose_prompt(char, name, pose):
 
 out = ['# 완성 프롬프트 모음 (복사해서 바로 붙여넣기)', '',
        '> 이 파일은 `python tools/make_prompts.py`로 자동 생성됨. 문장을 고치려면 그 스크립트를 고친다.',
-       '> **모든 프롬프트에 그 캐릭터의 이펙트 없는 전신 그림을 첨부**한다. 받은 그림은 파일 이름을 알려주며 보내면 된다.', '']
+       '> **모든 프롬프트에 그 캐릭터의 이펙트 없는 전신 그림을 첨부**한다. 받은 그림은 파일 이름을 알려주며 보내면 된다.',
+       '> ✅ = 이미 게임에 들어간 그림, ⬜ = 아직 없음 (그림을 넣고 스크립트를 다시 돌리면 갱신됨)', '']
+
+# 현황표
+DONE_BASIC = ['', '_punch', '_kick', '_guard', '_hit', '_crouch', '_jump', '_select', '_face', '_cutin']
+cols = ['기본 전신·자세 6·상반신·얼굴·컷인', '걷기 시트'] + [ko for _, ko, _ in COMMON_POSES] + ['필살기·승리']
+out += ['## 현황', '', '| 캐릭터 | ' + ' | '.join(cols) + ' |', '|' + '---|' * (len(cols) + 1)]
+for cid, title, _ in CHARS:
+    row = [mark(*[cid + x for x in DONE_BASIC]), mark(*[f'{cid}_walk', f'{cid}_walk2', f'{cid}_walk3', f'{cid}_walk4'])]
+    row += [mark(f'{cid}_{f}') for f, _, _ in COMMON_POSES]
+    sp = SPECIALS[cid]
+    row += ['%d/%d' % (sum(has(f'{cid}_{f}') for f, _, _ in sp), len(sp))]
+    out.append(f'| {title} | ' + ' | '.join(row) + ' |')
+out += ['', '이펙트: %d/%d' % (sum(has(f) for f, _, _ in EFFECTS), len(EFFECTS)), '']
 
 out += ['## 1. 걷기 시트 (4프레임, 한 장)', '']
 for cid, title, item in CHARS:
     extra = ' Skirt kept modest, opaque tights.' if cid in SKIRT else ''
-    out += [f'### {title} → `{cid}_walk` ~ `{cid}_walk4`', '```',
+    out += [f'### {mark(f"{cid}_walk", f"{cid}_walk2", f"{cid}_walk3", f"{cid}_walk4")} {title} → `{cid}_walk` ~ `{cid}_walk4`', '```',
             "Character pose sheet for a 2D fighting game walk cycle, 4 frames in one horizontal row, left to right. "
             "Same character as the attached image: same face, hair, outfit, colors and body proportions, " + item + ". "
             "The character keeps the same guarded fighting stance in every frame (upper body almost still, knees slightly bent) "
@@ -146,17 +171,17 @@ out += ['## 2. 연결 자세 (한 장씩)', '']
 for cid, title, item in CHARS:
     out += [f'### {title}', '']
     for f, ko, pose in COMMON_POSES:
-        out += [f'**{ko}** → `{cid}_{f}`', '```', pose_prompt(cid, item[0].upper() + item[1:], pose), '```', '']
+        out += [f'{mark(cid + "_" + f)} **{ko}** → `{cid}_{f}`', '```', pose_prompt(cid, item[0].upper() + item[1:], pose), '```', '']
 
 out += ['## 3. 필살기 / 승리 자세 (한 장씩)', '']
 for cid, title, item in CHARS:
     out += [f'### {title}', '']
     for f, ko, pose in SPECIALS[cid]:
-        out += [f'**{ko}** → `{cid}_{f}`', '```', pose_prompt(cid, item[0].upper() + item[1:], pose), '```', '']
+        out += [f'{mark(cid + "_" + f)} **{ko}** → `{cid}_{f}`', '```', pose_prompt(cid, item[0].upper() + item[1:], pose), '```', '']
 
 out += ['## 4. 기술 이펙트 (첨부 없이, 1:1 정사각형)', '']
 for f, ko, desc in EFFECTS:
-    out += [f'**{ko}** → `{f}`', '```',
+    out += [f'{mark(f)} **{ko}** → `{f}`', '```',
             f"A single 2D fighting game special effect sprite: {desc}. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), "
             "bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.",
             '```', '']
