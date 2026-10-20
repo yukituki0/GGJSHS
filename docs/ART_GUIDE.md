@@ -21,7 +21,7 @@
 | HUD | `assets/ui/hud_*.png` | 체력 틀/채움, 타이머, 텐션 1P/2P | ✅ 완료 |
 | 스테이지 (**실제 학교 사진**) | `assets/stages/` `lab` `computer` `rooftop` `playground` `hallway` `.png` | 5 | ⬜ 사진 찍기 |
 | 캐릭터 전신 (투명 배경) | `assets/characters/<id>.png` | 6 (남3 여3) | ✅ 6/6 |
-| 캐릭터 자세 그림 | `assets/characters/<id>_<자세>.png` | 6 x 6 | ⬜ 아래 "캐릭터별 자세 프롬프트" |
+| 캐릭터 자세 그림 | `assets/characters/<id>_<자세>.png` | 6 x 6 | 🔄 CHEMIKID ✅ |
 | 타이틀 로고 | `assets/ui/logo.png` | 1 | ✅ 완료 |
 | 메뉴 배경 일러스트 | `assets/ui/key_art.png` | 1 | ✅ v2 완료 |
 | 메뉴/씬 배경 | `assets/ui/bg_*.png` | 7 | 🔄 6/7 (대기 화면 남음) |
@@ -361,7 +361,8 @@ Pose: [위 표의 자세 설명]
 
 ### 포즈 시트: 자세 여러 개를 한 장으로 (추천)
 게임 회사에서 캐릭터를 여러 사람이 그릴 때 쓰는 **모델 시트(포즈 시트)** 방식이다. 한 장에 같이 그리면 얼굴/옷/크기가 서로 맞게 나온다.
-6자세를 한 장에 넣으면 자세 하나가 너무 작아져서(흐려짐) **3자세씩 2장**으로 나눈다. 받아서 넣어 주면 자세별로 잘라서 넣는 건 내가 한다.
+**6자세 한 장**(왼쪽부터 punch, kick, guard, hit, crouch, jump)도 된다 (CHEMIKID로 확인 ✅). 자세가 작게 그려져서 조금 흐릴 수 있으니, 흐리면 3자세씩 2장으로.
+받은 시트는 `python tools/split_pose_sheet.py <시트> <id> punch kick guard hit crouch jump` 로 자세별로 잘린다 (자세 크기는 게임이 hit 자세 키를 기준으로 자동으로 맞춤).
 
 | 시트 | 자세 (왼쪽부터) | 저장 이름 (아무거나 OK) |
 |---|---|---|

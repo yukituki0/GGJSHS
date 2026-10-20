@@ -27,6 +27,7 @@ var rig: Dictionary
 var scale := 0.16         # 그림 픽셀 → 게임 화면 크기 (그림마다 키가 HEIGHT가 되게 자동으로 정함)
 const HEIGHT := 235.0     # 게임 화면에서 캐릭터 키 (피격 판정 160보다 조금 크게: 머리가 판정 위로 나옴)
 var anchor := Vector2.ZERO  # 두 발 사이 바닥 (그림 픽셀). 그림에서 자동으로 찾는다
+var art_height := 1.0       # 그림 속 캐릭터 키 (픽셀)
 
 var _points := PackedVector2Array()   # 그물 점 (그림 픽셀 좌표, 쉬는 자세)
 var _uvs := PackedVector2Array()
@@ -49,7 +50,8 @@ func _init(tex: Texture2D, rig_data: Dictionary) -> void:
 	var top := 0
 	while top < img.get_height() - 1 and not _row_has_pixels(img, top):
 		top += 1
-	scale = rig.get("scale", HEIGHT / maxf(1.0, anchor.y - top))
+	art_height = maxf(1.0, anchor.y - top)
+	scale = rig.get("scale", HEIGHT / art_height)
 	_build_bones()
 	_build_mesh(img)
 
@@ -246,3 +248,12 @@ static func draw_image(canvas: CanvasItem, tex: Texture2D, art_scale: float, fac
 	canvas.draw_set_transform_matrix(xf)
 	canvas.draw_texture(tex, Vector2.ZERO, modulate)
 	canvas.draw_set_transform_matrix(Transform2D.IDENTITY)
+
+
+## 그림 속 캐릭터 키 (맨 위 픽셀 ~ 발). 자세 그림 크기를 기본 그림에 맞출 때 쓴다
+static func height_of(tex: Texture2D) -> float:
+	var img := tex.get_image()
+	var top := 0
+	while top < img.get_height() - 1 and not _row_has_pixels(img, top):
+		top += 1
+	return maxf(1.0, find_anchor(tex).y - top)
