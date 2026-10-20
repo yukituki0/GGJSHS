@@ -111,8 +111,13 @@ func _draw() -> void:
 		var c: Dictionary = Game.CHARACTERS[i]
 		var rect := _card_rect(i)
 		Style.fill(self, Style.slant(rect.position.x, rect.position.y, rect.size.x, rect.size.y, 12), Style.PANEL)
+		var face := Game.character_image(c, "face")
 		var art := Game.character_art(c)
-		if art != null:
+		if face != null:  # 얼굴 아이콘이 있으면 카드에 얼굴을 크게
+			var r := Rect2(rect.position + Vector2(6, 4), rect.size - Vector2(12, 34))
+			var fi := Game.face_image(c, r.size.x / r.size.y)
+			draw_texture_rect_region(fi[0], r, fi[1])
+		elif art != null:
 			_draw_art(art, Rect2(rect.position + Vector2(8, 6), rect.size - Vector2(16, 38)), false)
 		else:
 			draw_rect(Rect2(rect.position + Vector2(35, 22), Vector2(40, 80)), c["color"])
@@ -155,7 +160,9 @@ func _draw_preview(p: int, rect: Rect2) -> void:
 	var slope := 20.0 if p == 1 else -20.0
 	var panel := Style.slant(rect.position.x, rect.position.y, rect.size.x, rect.size.y, slope)
 	Style.fill(self, panel, Color(c["color"].darkened(0.7), 0.9))
-	var art := Game.character_art(c)
+	var art := Game.character_image(c, "select")  # 선택창 상반신 → 없으면 전신
+	if art == null:
+		art = Game.character_art(c)
 	if art != null:
 		_draw_art(art, rect.grow(-10), p == 2)  # 2P는 좌우 반전 (서로 마주 보게)
 	else:

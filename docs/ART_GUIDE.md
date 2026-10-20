@@ -444,7 +444,7 @@ dramatic lighting from below, speed-line style dark background, no effects on th
 | ROOT2 | `pushing up his glasses with one finger, compass held behind his back` |
 | SEED | `gentle smile, one hand held out palm up` |
 
-- 그림이 오면 게임에 연결한다 (없으면 지금처럼 전신 그림을 잘라서 씀).
+- 게임에 연결됨 ✅ (CHAOS로 확인). 없는 캐릭터는 전신 그림을 잘라서 씀. 컷인은 가운데를 가로 2.2:1로 잘라 씀
 - 우선순위: 얼굴 아이콘(화면에 계속 보임) → 선택창 상반신 → 컷인
 
 ### 캐릭터별 자세 프롬프트 (그대로 복사해서 쓰기)

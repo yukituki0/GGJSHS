@@ -314,6 +314,25 @@ func character_art(info: Dictionary) -> Texture2D:
 	return load_texture("res://assets/characters/%s.png" % info["id"])
 
 
+## 화면 전용 그림: kind = "select"(선택창 상반신) / "face"(얼굴 아이콘) / "cutin"(필살기 컷인). 없으면 null
+func character_image(info: Dictionary, kind: String) -> Texture2D:
+	return load_texture("res://assets/characters/%s_%s.png" % [info["id"], kind])
+
+
+## 얼굴 그림과 잘라 쓸 영역: 전용 그림(face/cutin)이 있으면 그 가운데를, 없으면 전신 그림의 얼굴 부분을
+## aspect = 가로/세로 비율. 그림이 하나도 없으면 빈 배열
+func face_image(info: Dictionary, aspect := 1.0, kind := "face", zoom := 1.0) -> Array:
+	var tex := character_image(info, kind)
+	if tex != null:
+		var size := Vector2(tex.get_width(), tex.get_height())
+		var crop := Vector2(minf(size.x, size.y * aspect), minf(size.y, size.x / aspect))
+		return [tex, Rect2((size - crop) / 2, crop)]
+	var art := character_art(info)
+	if art == null:
+		return []
+	return [art, face_rect(info, art, aspect, zoom)]
+
+
 ## 일러스트에서 얼굴 부분 (픽셀 단위). aspect = 가로/세로 비율, zoom > 1이면 얼굴 주변까지 넓게
 func face_rect(info: Dictionary, art: Texture2D, aspect := 1.0, zoom := 1.0) -> Rect2:
 	var f: Vector3 = info.get("face", Vector3(0.5, 0.15, 0.3))

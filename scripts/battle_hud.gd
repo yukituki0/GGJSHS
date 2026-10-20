@@ -193,12 +193,13 @@ func _draw_portrait_hex(f: Fighter, r: Rect2) -> void:
 		Vector2(r.end.x - r.size.x * 0.27, r.position.y), Vector2(r.end.x, c.y),
 		Vector2(r.end.x - r.size.x * 0.27, r.end.y), Vector2(r.position.x + r.size.x * 0.27, r.end.y),
 	])
-	var art := Game.character_art(Game.character(f.player))
-	if art == null:
+	var fi := Game.face_image(Game.character(f.player), r.size.x / r.size.y)
+	if fi.is_empty():
 		Style.fill(self, hex, f.color.darkened(0.3))  # 이니셜 글자는 뒤집히면 안 돼서 _draw_hud_images()에서 따로
 		return
 	# 얼굴 부분을 육각형 모양으로 (텍스처 좌표 uv로 잘라서 붙이기)
-	var px := Game.face_rect(Game.character(f.player), art, r.size.x / r.size.y)
+	var art: Texture2D = fi[0]
+	var px: Rect2 = fi[1]
 	var face := Rect2(px.position / Vector2(art.get_size()), px.size / Vector2(art.get_size()))  # uv는 0~1
 	var uvs := PackedVector2Array()
 	for p in hex:
@@ -236,10 +237,9 @@ func _draw_portrait(f: Fighter, info: Dictionary, pos: Vector2, right: bool) -> 
 	var frame := Style.slant(pos.x - 4, pos.y - 4, PORTRAIT + 8, PORTRAIT + 8, slope)
 	Style.fill(self, frame, Style.BLACK)
 	var inner := Rect2(pos, Vector2(PORTRAIT, PORTRAIT))
-	var art := Game.character_art(info)
-	if art != null:
-		var src := Game.face_rect(info, art)
-		Style.texture(self, art, inner, right, src)  # 2P는 좌우 반전
+	var fi := Game.face_image(info)
+	if not fi.is_empty():
+		Style.texture(self, fi[0], inner, right, fi[1])  # 2P는 좌우 반전
 	else:
 		Style.gradient(self, Style.slant(pos.x, pos.y, PORTRAIT, PORTRAIT, slope),
 				[f.color.lightened(0.2), f.color.lightened(0.2), f.color.darkened(0.5), f.color.darkened(0.5)])
@@ -386,11 +386,10 @@ func _draw_superflash() -> void:
 	var x_off := (1.0 - slide) * (-1400.0 if from_left else 1400.0)
 	Style.fill(self, Style.slant(-100 + x_off, band_y, 1480, 190, 40 if from_left else -40), Color(f.color.darkened(0.6), 0.92))
 	Style.fill(self, Style.slant(-100 + x_off, band_y + 184, 1480, 8, 40 if from_left else -40), Style.RED)
-	var art := Game.character_art(Game.character(f.player))
-	if art != null:
-		var src := Game.face_rect(Game.character(f.player), art, 420.0 / 190.0, 1.3)
+	var fi := Game.face_image(Game.character(f.player), 420.0 / 190.0, "cutin", 1.3)
+	if not fi.is_empty():
 		var dest := Rect2(Vector2((60.0 if from_left else 800.0) + x_off, band_y), Vector2(420, 190))
-		Style.texture(self, art, dest, not from_left, src)
+		Style.texture(self, fi[0], dest, not from_left, fi[1])
 	var title := m.superflash_attack.title
 	Style.text(self, title, Vector2(x_off, band_y + 120), 72, Style.WHITE,
 			HORIZONTAL_ALIGNMENT_RIGHT if from_left else HORIZONTAL_ALIGNMENT_LEFT, 1280, 12, Style.RED)
@@ -426,10 +425,13 @@ func _draw_vs_side(f: Fighter, info: Dictionary, offset: float, right: bool) -> 
 		poly[i] = poly[i] + Vector2(offset, 0)
 	# 배경 그림이 있으면 반투명 (빨강/파랑 배경이 비치게)
 	Style.fill(self, poly, Color(f.color.darkened(0.55), 0.45 if _bg_vs != null else 1.0))
-	var art := Game.character_art(info)
+	var art := Game.character_image(info, "select")  # 선택창 상반신 → 없으면 전신
+	var full := art == null
+	if full:
+		art = Game.character_art(info)
 	if art != null:
-		# 일러스트: 화면 높이에 맞춰서 (2P는 좌우 반전)
-		var art_scale := 680.0 / art.get_height()
+		# 일러스트: 화면 높이에 맞춰서 (2P는 좌우 반전). 상반신 그림은 화면을 꽉 채우게
+		var art_scale := (680.0 if full else 720.0) / art.get_height()
 		var size := Vector2(art.get_width(), art.get_height()) * art_scale
 		var pos := Vector2(x0 + 320 - size.x / 2 + offset, 720 - size.y)
 		Style.texture(self, art, Rect2(pos, size), right)
@@ -455,7 +457,9 @@ func _draw_result() -> void:
 		var fade := minf(m.phase_frame / 20.0, 1.0)
 		draw_texture_rect(_bg_result, Rect2(0, 0, 1280, 720), false, Color(1, 1, 1, fade))
 		var winner: int = 1 if m.wins[1] >= Game.ROUNDS_TO_WIN else 2
-		var art := Game.character_art(Game.character(winner))
+		var art := Game.character_image(Game.character(winner), "select")
+		if art == null:
+			art = Game.character_art(Game.character(winner))
 		if art != null and m.wins[3 - winner] < Game.ROUNDS_TO_WIN:
 			var size := Vector2(art.get_width(), art.get_height()) * (660.0 / art.get_height())
 			draw_texture_rect(art, Rect2(Vector2(220 - size.x / 2, 720 - size.y), size), false, Color(1, 1, 1, fade))
