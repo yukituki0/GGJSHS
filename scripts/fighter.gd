@@ -929,14 +929,19 @@ func _draw_puppet(shake_x: float) -> void:
 		tint = tint.lerp(Color(1, 0.85, 0.4), armor_flash / 24.0)
 	var body := _body_motion()
 	var pose_tex := _pose_texture()
-	if pose_tex != null:
-		Puppet.draw_image(self, pose_tex, _pose_scale() * _pose_size(pose_tex), facing, Vector2(shake_x, 0), tint, body)
-	else:
-		_breathe()
-		puppet.draw(self, facing, Vector2(shake_x, 0), tint, body)
+	_draw_tex(pose_tex, shake_x, tint, body)
 	if state == State.GUARD or state == State.BLOCKSTUN:
 		_draw_guard_shield()
 	_draw_swing()
+
+
+## 자세 그림 하나 그리기 (null이면 숨쉬는 기본 그림)
+func _draw_tex(tex: Texture2D, shake_x: float, tint: Color, body: Transform2D) -> void:
+	if tex != null:
+		Puppet.draw_image(self, tex, _pose_scale() * _pose_size(tex), facing, Vector2(shake_x, 0), tint, body)
+	else:
+		_breathe()
+		puppet.draw(self, facing, Vector2(shake_x, 0), tint, body)
 
 
 ## 자세 그림 크기: 포즈 시트는 기본 그림보다 작게 그려져 있어서, punch/guard/hit 자세 키의 중간값을

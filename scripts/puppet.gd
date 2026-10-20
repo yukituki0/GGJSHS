@@ -215,12 +215,60 @@ static func find_anchor(tex: Texture2D) -> Vector2:
 	var key := tex.resource_path
 	if _anchors.has(key):
 		return _anchors[key]
+	if key.get_file().contains("_walk"):
+		_anchors[key] = _walk_anchor(tex)
+		return _anchors[key]
+	_anchors[key] = _feet_anchor(tex)
+	return _anchors[key]
+
+
+## 걷기 그림: 발 사이를 기준으로 하면 한 발이 앞으로 나갈 때마다 몸이 앞뒤로 튄다.
+## 그래서 머리를 기준으로 세운다 (머리 x + 그 캐릭터 걷기 그림들의 평균 "발 가운데 - 머리" 거리)
+static func _walk_anchor(tex: Texture2D) -> Vector2:
+	var path := tex.resource_path
+	var base := path.substr(0, path.rfind("_walk"))
+	var offsets: Array[float] = []
+	for n in ["_walk", "_walk2", "_walk3", "_walk4"]:
+		var t: Texture2D = Game.load_texture(base + n + ".png")
+		if t != null:
+			offsets.append(_feet_anchor(t).x - _head_x(t))
+	var avg := 0.0
+	for o in offsets:
+		avg += o
+	avg /= maxf(1.0, offsets.size())
+	return Vector2(_head_x(tex) + avg, _feet_anchor(tex).y)
+
+
+## 머리 가운데 x: 그림 맨 위 16% 안의 불투명한 픽셀들의 평균
+static func _head_x(tex: Texture2D) -> float:
+	var img := tex.get_image()
+	var top := 0
+	while top < img.get_height() - 1 and not _row_has_pixels(img, top):
+		top += 1
+	var bottom := _feet_anchor(tex).y
+	var sum := 0.0
+	var n := 0
+	for y in range(top, int(top + (bottom - top) * 0.16), 3):
+		for x in range(0, img.get_width(), 3):
+			if img.get_pixel(x, y).a > 0.5:
+				sum += x
+				n += 1
+	return sum / maxi(1, n)
+
+
+static var _feet := {}
+
+
+## 맨 아래 60픽셀 안에 있는 발들의 가운데
+static func _feet_anchor(tex: Texture2D) -> Vector2:
+	var key := tex.resource_path
+	if _feet.has(key):
+		return _feet[key]
 	var img := tex.get_image()
 	var w := img.get_width()
 	var bottom := img.get_height() - 1
 	while bottom > 0 and not _row_has_pixels(img, bottom):
 		bottom -= 1
-	# 맨 아래 60픽셀 안에 있는 발들의 가운데
 	var lo := w
 	var hi := 0
 	for y in range(maxi(0, bottom - 60), bottom + 1, 2):
@@ -229,7 +277,7 @@ static func find_anchor(tex: Texture2D) -> Vector2:
 				lo = mini(lo, x)
 				hi = maxi(hi, x)
 	var anchor := Vector2((lo + hi) / 2.0, bottom)
-	_anchors[key] = anchor
+	_feet[key] = anchor
 	return anchor
 
 
