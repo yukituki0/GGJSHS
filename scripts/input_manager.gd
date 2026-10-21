@@ -10,10 +10,11 @@ enum Mode { KEYBOARD, JOYSTICK }
 signal mode_changed(new_mode: Mode)
 
 ## 플레이어마다 공통으로 쓰는 액션 이름 (앞에 "p1_" / "p2_"가 붙는다)
+## 길티기어처럼 버튼은 6개(P K S HS D RC). 대시(→→ / ←←)와 가드(← 누르기)는 스틱으로 한다
 const ACTIONS: Array[String] = [
 	"up", "down", "left", "right",
 	"p", "k", "s", "hs", "d",
-	"rc", "dash", "guard", "start", "select",
+	"rc", "start", "select",
 ]
 
 ## 키보드 배치 (physical_keycode 기준 = 키보드 언어 설정과 상관없이 "자리"로 인식)
@@ -22,14 +23,12 @@ const KEYBOARD_MAP := {
 		"up": KEY_W, "down": KEY_S, "left": KEY_A, "right": KEY_D,
 		"p": KEY_Y, "k": KEY_U, "s": KEY_I, "hs": KEY_O,
 		"d": KEY_H, "rc": KEY_J,
-		"dash": KEY_K, "guard": KEY_L,
 		"start": KEY_1, "select": KEY_2,
 	},
 	2: {
 		"up": KEY_UP, "down": KEY_DOWN, "left": KEY_LEFT, "right": KEY_RIGHT,
 		"p": KEY_KP_4, "k": KEY_KP_5, "s": KEY_KP_6, "hs": KEY_KP_ADD,
 		"d": KEY_KP_1, "rc": KEY_KP_2,
-		"dash": KEY_KP_3, "guard": KEY_KP_ENTER,
 		"start": KEY_0, "select": KEY_9,
 	},
 }
@@ -38,7 +37,7 @@ const KEYBOARD_MAP := {
 ## 실물 키트가 오면 Gamepad Tester로 버튼 번호를 확인해서 여기만 고치면 된다.
 const JOY_BUTTON_MAP := {
 	"p": 0, "k": 1, "s": 2, "hs": 3,
-	"d": 4, "rc": 5, "dash": 6, "guard": 7,
+	"d": 4, "rc": 5,
 	"start": 9, "select": 8,
 }
 

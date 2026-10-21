@@ -49,8 +49,9 @@ const CROUCH_SIZE := Vector2(80, 100)
 
 ## 버튼 우선순위: 동시에 눌렀으면 강한 버튼이 이긴다
 const ATTACK_BUTTONS: Array[String] = ["hs", "s", "k", "p"]
-## 입력 버퍼에 기억해 둘 버튼 (누르는 "순간"이 중요한 것들)
+## 입력 버퍼에 기억해 둘 버튼 (누르는 "순간"이 중요한 것들). "dash"는 버튼이 아니라 같은 방향 두 번 (66 / 44)
 const BUFFERED_ACTIONS: Array[String] = ["hs", "s", "k", "p", "d", "dash", "up", "rc"]
+const DASH_TAP_WINDOW := 14     # 첫 번째를 누르고 이 프레임 안에 같은 방향을 또 누르면 대시
 const HISTORY_FRAMES := 60      # 위치 기록 길이 (커몬 Ctrl+Z 등에서 사용)
 
 var player := 1                 # 1P / 2P
@@ -77,6 +78,11 @@ var facing := 1                 # 1 = 오른쪽을 봄, -1 = 왼쪽을 봄
 var state_frame := 0            # 현재 상태에 들어온 뒤 지난 프레임 수
 var air_actions_left := 0
 var _jump_dir := 0              # 점프 직전에 정한 방향 (-1 뒤, 0 제자리, 1 앞)
+var _jump_from_run := false     # 달리다가 뛰었나 (더 멀리 뛴다)
+var _tap_dir := 0               # 마지막으로 새로 누른 좌우 방향 (1 앞, -1 뒤, 0 없음)
+var _tap_age := 99              # 그 뒤로 지난 프레임
+var _dash_tapped := false       # 이번 프레임에 66 / 44가 완성됐나
+var _dash_dir := 1              # 버퍼에 있는 대시 방향 (1 = 앞 대시, -1 = 백스텝)
 
 var attacks := {}               # "5P" -> AttackData
 var current_attack: AttackData
@@ -159,6 +165,8 @@ func tick() -> void:
 ## 히트스톱 중에 Match가 tick() 대신 호출한다.
 ## 캐릭터는 멈춰 있지만, 이때 누른 버튼은 버퍼에 기억해 둔다 (히트스톱 중 개틀링 입력 가능)
 func tick_frozen() -> void:
+	if brain == null:
+		_update_dash_taps()
 	for action in BUFFERED_ACTIONS:
 		if brain == null and _just_pressed(action):
 			_buffer[action] = input_buffer_frames
@@ -283,6 +291,8 @@ func _held(action: String) -> bool:
 		return brain.held(action)
 	if dummy != Dummy.HUMAN:
 		return _dummy_held(action)
+	if not action in InputManager.ACTIONS:
+		return false  # "guard"는 더미/CPU 전용 (사람은 ← 누르기로 가드)
 	return Input.is_action_pressed(InputManager.action_name(player, action))
 
 
@@ -341,6 +351,7 @@ func _consume(action: String) -> void:
 ## 입력 버퍼: 누른 순간부터 input_buffer_frames 동안 "눌렀음"을 기억한다.
 ## 후딜 중에 조금 일찍 눌러도, 움직일 수 있게 되는 순간 바로 나간다.
 func _update_buffer() -> void:
+	_update_dash_taps()
 	for action in BUFFERED_ACTIONS:
 		if _just_pressed(action):
 			_buffer[action] = input_buffer_frames
@@ -348,8 +359,30 @@ func _update_buffer() -> void:
 			_buffer[action] -= 1
 
 
+## 대시 입력 (길티기어처럼 같은 방향 두 번): → → = 앞 대시(달리기), ← ← = 백스텝. 공중에서도 같다
+func _update_dash_taps() -> void:
+	_dash_tapped = false
+	_tap_age += 1
+	var dir := 0
+	if _just_pressed("right"):
+		dir = facing
+	elif _just_pressed("left"):
+		dir = -facing
+	if dir == 0:
+		return
+	if dir == _tap_dir and _tap_age <= DASH_TAP_WINDOW:
+		_dash_tapped = true
+		_dash_dir = dir
+		_tap_dir = 0  # 세 번째 누름이 또 대시가 되지 않게
+	else:
+		_tap_dir = dir
+	_tap_age = 0
+
+
 ## 이번 프레임에 새로 눌렀나 (사람 / CPU / 더미에 따라)
 func _just_pressed(action: String) -> bool:
+	if action == "dash":
+		return _dash_tapped
 	if not input_enabled:
 		return false
 	if brain != null:
@@ -452,7 +485,7 @@ func _ground_neutral() -> void:
 		return
 	if _pressed("dash"):
 		_consume("dash")
-		if fwd < 0:
+		if _dash_dir < 0:
 			_change_state(State.BACKDASH)
 			Sfx.play("dash", -4.0, 0.05)
 		else:
@@ -482,7 +515,7 @@ func _ground_neutral() -> void:
 		velocity.x = 0
 
 
-## 달리기: 대시 버튼이나 앞 방향을 누르고 있는 동안 계속 달린다
+## 달리기: →→ 뒤에 앞 방향을 누르고 있는 동안 계속 달린다
 func _run() -> void:
 	var attack := _pressed_attack("5")
 	if attack != "":
@@ -494,7 +527,7 @@ func _run() -> void:
 		_start_prejump(1)
 		return
 	var fwd := _input_forward()
-	if fwd >= 0 and (_held("dash") or fwd > 0):
+	if fwd > 0:
 		velocity.x = run_speed * facing
 		add_tension(tension_run_gain)
 	else:
@@ -513,6 +546,7 @@ func _backdash() -> void:
 func _start_prejump(dir: int) -> void:
 	_consume("up")  # 안 지우면 점프하자마자 버퍼에 남은 ↑ 때문에 2단 점프가 나가버린다
 	_jump_dir = dir
+	_jump_from_run = state == State.RUN
 	velocity.x = 0
 	_change_state(State.PREJUMP)
 
@@ -524,7 +558,7 @@ func _prejump() -> void:
 		var fwd := _input_forward()
 		if fwd != 0:
 			_jump_dir = fwd
-		var speed := run_speed if _jump_dir > 0 and _held("dash") else jump_forward_speed
+		var speed := run_speed if _jump_dir > 0 and _jump_from_run else jump_forward_speed
 		velocity = Vector2(_jump_dir * speed * facing, jump_velocity)
 		Sfx.play("jump", -6.0, 0.05)
 		air_actions_left = air_actions
@@ -553,8 +587,7 @@ func _air() -> void:
 		elif _pressed("dash"):
 			_consume("dash")
 			air_actions_left -= 1
-			var dir := -1 if _input_forward() < 0 else 1
-			velocity = Vector2(dir * airdash_speed * facing, 0)
+			velocity = Vector2(_dash_dir * airdash_speed * facing, 0)
 			_change_state(State.AIRDASH)
 			Sfx.play("dash", -4.0, 0.05)
 			return

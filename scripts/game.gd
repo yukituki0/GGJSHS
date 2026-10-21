@@ -120,8 +120,8 @@ const STRINGS := {
 	"dust": ["D  (Special: D / 6D / 4D / 2D)", "D  (필살기: D / 앞D / 뒤D / 아래D)"],
 	"overdrive": ["OVERDRIVE (D + HS, 50%)", "오버드라이브 (D + HS, 50%)"],
 	"rc": ["RC (Roman Cancel)", "RC (로만 캔슬)"],
-	"dash": ["DASH", "대시"],
-	"guard": ["GUARD", "가드"],
+	"dash": ["DASH  (→→ / ←← backdash)", "대시  (→→ / ←← 백스텝)"],
+	"guard": ["GUARD  (hold ←, ↙ = low)", "가드  (← 누르고 있기, ↙ = 하단)"],
 	"start_pause": ["START / PAUSE", "시작 / 일시정지"],
 	"select_back": ["SELECT (BACK / PAUSE)", "SELECT (뒤로 / 일시정지)"],
 	"combo_hint": ["COMBO: hit or block, then press a stronger button (P > K > S > HS)",
@@ -223,7 +223,7 @@ const COMMON_MOVES := [
 	["→/← + HS", "Throw", "잡기", "붙어서. 가드 불가 (경직·공중 상대는 X)"],
 	["P → K → S → HS", "Gatling", "개틀링", "맞히거나 막히면 더 강한 버튼으로"],
 	["RC", "Roman Cancel", "로만 캔슬", "공격 취소 (텐션 50%)"],
-	["DASH", "Dash / Air Dash", "대시 / 공중 대시", "← + DASH = 백스텝"],
+	["→→ / ←←", "Dash / Backdash", "대시 / 백스텝", "→ 계속 누르면 달리기. 공중에서도 가능"],
 ]
 
 const SCENES := {

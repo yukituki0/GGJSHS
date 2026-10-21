@@ -16,8 +16,8 @@ const ROWS := [
 	["dust", ["d"]],
 	["overdrive", ["d", "hs"]],
 	["rc", ["rc"]],
-	["dash", ["dash"]],
-	["guard", ["guard"]],
+	["dash", ["right", "right"]],  # 1P(오른쪽을 볼 때) 기준으로 표시
+	["guard", ["left"]],
 	["start_pause", ["start"]],
 	["select_back", ["select"]],
 ]

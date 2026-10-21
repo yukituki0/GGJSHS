@@ -91,6 +91,13 @@ SPECIALS = {
     ],
 }
 
+# 다시 뽑을 그림: (파일, 설명, Pose 문장). 새 그림을 넣으면 여기서 지운다
+REDO = [
+    ('root2_punch', 'P (짧은 잽) — 지금 그림은 너무 길게 찔러서 6D(컴퍼스 찌르기)로 옮김',
+     'quick short jab, the free front hand punching straight forward at chest height with the arm only half extended, '
+     'the giant compass held upright close to the body in the back hand, compact stance, feet shoulder-width apart'),
+]
+
 EFFECTS = [
     ('chemikid_flask', '플라스크 (투사체)', 'a glass Erlenmeyer flask filled with glowing toxic-green liquid, tilted as if thrown'),
     ('chemikid_puddle', '산성 웅덩이', 'a flat bubbling puddle of glowing green acid seen from the side, very wide and thin'),
@@ -152,6 +159,13 @@ for cid, title, _ in CHARS:
     row += ['%d/%d' % (sum(has(f'{cid}_{f}') for f, _, _ in sp), len(sp))]
     out.append(f'| {title} | ' + ' | '.join(row) + ' |')
 out += ['', '이펙트: %d/%d' % (sum(has(f) for f, _, _ in EFFECTS), len(EFFECTS)), '']
+
+if REDO:
+    out += ['## 0. 다시 뽑을 그림', '']
+    for f, ko, pose in REDO:
+        cid = f.split('_')[0]
+        item = next(i for c, _, i in CHARS if c == cid)
+        out += [f'⬜ **{ko}** → `{f}`', '```', pose_prompt(cid, item[0].upper() + item[1:], pose), '```', '']
 
 out += ['## 1. 걷기 시트 (4프레임, 한 장)', '']
 for cid, title, item in CHARS:

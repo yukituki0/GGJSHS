@@ -173,9 +173,11 @@ func _do_plan(me: Fighter, _opp: Fighter, dist: float, fwd: String, back: String
 		"crouch":
 			_held["down"] = true
 		"dash":
-			_held[fwd] = true
-			if first:
-				_press("dash")
+			# 사람처럼 66: 앞을 톡 → 한 프레임 뗐다가 → 다시 눌러서 그대로 달린다
+			if _plan_age == 0 or _plan_age == 2:
+				_press(fwd)
+			elif _plan_age > 2:
+				_held[fwd] = true
 		"jump":
 			if first:
 				_held["up"] = true
