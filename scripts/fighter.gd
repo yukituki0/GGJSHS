@@ -952,13 +952,17 @@ func _draw_puppet(shake_x: float) -> void:
 var _anchor_cache := {}
 
 
-## 자세 그림을 세울 기준점. 앉는 그림은 발을 넓게 벌려서 발 가운데를 기준으로 하면 몸이 앞으로 쏠려 보인다.
-## 그래서 머리가 서 있을 때(기본 그림)와 같은 x에 오도록 맞춘다 = 제자리에서 앉는 것처럼
+## 자세 그림을 세울 기준점. 앉기/가드 그림은 발을 넓게 벌려서 발 가운데를 기준으로 하면 몸이 앞으로 쏠려 보인다.
+## 그래서 머리가 서 있을 때(기본 그림)와 같은 x에 오도록 맞춘다 = 제자리에서 앉거나 막는 것처럼
+const HEAD_ALIGNED_POSES: Array[String] = ["_crouch", "_guard"]  # _crouch_guard도 포함됨
+
+
 func _anchor_for(tex: Texture2D) -> Vector2:
 	if _anchor_cache.has(tex):
 		return _anchor_cache[tex]
 	var a := Puppet.find_anchor(tex)
-	if tex.resource_path.get_file().contains("_crouch"):
+	var file := tex.resource_path.get_file()
+	if HEAD_ALIGNED_POSES.any(func(p: String) -> bool: return file.contains(p)):
 		var stand_head := (Puppet.head_x(puppet.texture) - puppet.anchor.x) * puppet.scale  # 게임 좌표
 		var s := _pose_scale() * _pose_size(tex)
 		a.x = Puppet.head_x(tex) - stand_head / s
