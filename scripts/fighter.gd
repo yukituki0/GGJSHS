@@ -801,7 +801,7 @@ func hurt_rects() -> Array[Rect2]:
 	return out
 
 
-## 공격 판정(히트박스)을 그림에 맞추기: 서서/앉아서 쓰는 기본기만.
+## 공격 판정(히트박스)을 그림에 맞추기: 서서/앉아서/공중 기본기 + 전용 그림이 있는 몸 공격 필살기.
 ## 기준 기술(5P / 5K / 2P)의 판정 끝이 그 자세 그림의 주먹·발 끝에 오게(높이도) 옮기고,
 ## 같은 자세를 쓰는 다른 기술도 같은 만큼 옮긴다 (5S·5H가 5P보다 긴 건 그대로 = 밸런스 유지)
 const REACH_LIMIT := 50.0   # 그림 때문에 사거리가 너무 크게 바뀌지 않게
@@ -828,6 +828,24 @@ func _fit_hitboxes_to_art() -> void:
 			groups.append([pose, move, [move], moves[move][0], moves[move][1]])
 		else:
 			same[0][2].append(move)
+	# 공중 기본기: 전용 그림(jp 등) → 없으면 점프 공격 그림(K는 킥 그림)
+	for move in ["jP", "jK", "jS", "jH"]:
+		var pose := _first_pose([move.to_lower(), "kick"] if move == "jK" else [move.to_lower(), "jump_attack", "punch"])
+		if pose == "":
+			continue
+		var same := groups.filter(func(g: Array) -> bool: return g[0] == pose)
+		if same.is_empty():
+			groups.append([pose, move, [move], 0.0, 1.0])
+		else:
+			same[0][2].append(move)
+	# 필살기: 판정이 있는 몸 공격이고 전용 그림(<id>_6d 등)이 있으면 그 그림 끝에 맞춘다
+	# (rigs의 no_fit에 적은 기술은 일부러 정한 사거리라 안 건드림)
+	var no_fit: Array = Rigs.get_rig(char_id).get("no_fit", [])
+	for move: String in attacks:
+		var a: AttackData = attacks[move]
+		if (move.ends_with("D") or move == "OD") and a.hitbox.has_area() and not a.is_throw and not move in no_fit \
+				and Game.load_texture("res://assets/characters/%s_%s.png" % [char_id, move.to_lower()]) != null:
+			groups.append([move.to_lower(), move, [move], 0.1, 1.0])
 	for group in groups:
 		var tex := Game.load_texture("res://assets/characters/%s_%s.png" % [char_id, group[0]])
 		if tex == null or not attacks.has(group[1]):
@@ -852,6 +870,14 @@ func _fit_hitboxes_to_art() -> void:
 				a.hitbox.position.x = maxf(5.0, a.hitbox.position.x + dx - stretch)
 				a.hitbox.size.x += stretch
 				a.hitbox.position.y = minf(a.hitbox.position.y + dy, -a.hitbox.size.y)  # 땅 밑으로 안 내려가게
+
+
+## 이름 목록 중 그림이 있는 첫 자세 이름 (없으면 "")
+func _first_pose(names: Array) -> String:
+	for n: String in names:
+		if Game.load_texture("res://assets/characters/%s_%s.png" % [char_id, n]) != null:
+			return n
+	return ""
 
 
 ## 지금 살아있는 공격 판정(히트박스). 없으면 크기 0

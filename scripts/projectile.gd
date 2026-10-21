@@ -57,8 +57,19 @@ func hit_direction() -> int:
 	return shooter.facing
 
 
-# ── 임시 그래픽 (나중에 그림으로 교체) ─────────────────────
+# ── 그리기 ────────────────────────────────────────────────
 func _draw() -> void:
+	_draw_body()
+	# 트레이닝 판정 보기: 쏜 캐릭터가 판정 보기 중이면 투사체 판정도 (공격 빨강, 막는 벽 노랑, 작동 전엔 점선 느낌으로 흐리게)
+	if shooter != null and is_instance_valid(shooter) and shooter.debug_draw_boxes and (attack != null or blocks_projectiles):
+		draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
+		var col := Color.RED if attack != null else Color(1.0, 0.9, 0.2)
+		if not is_armed():
+			col.a = 0.4
+		draw_rect(Rect2(-size / 2, size), col, false, 2.0)
+
+
+func _draw_body() -> void:
 	var r := Rect2(-size / 2, size)
 	match kind:
 		"packet":

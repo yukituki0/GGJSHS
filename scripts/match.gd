@@ -55,6 +55,12 @@ func _ready() -> void:
 	p2 = _spawn(2)
 	p1.opponent = p2
 	p2.opponent = p1
+	if is_training():
+		# 스파·길티 트레이닝처럼 입력 기록 표시 (사람이 조작하는 쪽만)
+		var history := Node2D.new()
+		history.set_script(load("res://scripts/input_history.gd"))
+		history.match_node = self
+		$HudLayer.add_child(history)
 	# 화면 흔들림용 카메라 (화면 가운데에 고정)
 	_camera = Camera2D.new()
 	_camera.position = Vector2(640, 360)
@@ -501,6 +507,9 @@ func _update_camera() -> void:
 ## 배경 (Match가 먼저 그리고, 캐릭터와 HUD는 그 위에 그려진다)
 ## HUD와 연출 글자는 battle_hud.gd가 그린다
 func _draw() -> void:
+	if is_training():
+		_draw_training_stage()
+		return
 	if _stage_texture != null:
 		draw_texture_rect(_stage_texture, Rect2(0, 0, 1280, 720), false)
 		return
@@ -515,3 +524,38 @@ func _draw() -> void:
 	var name_text: String = info["name"][Game.language]
 	Style.text(self, name_text, Vector2(0, GROUND_Y - 200), 64, Color(1, 1, 1, 0.06),
 			HORIZONTAL_ALIGNMENT_CENTER, 1280)
+
+
+## 트레이닝 스테이지: 스파 트레이닝처럼 밝은 격자 방 (거리 감 잡기용)
+const GRID := 80.0
+func _draw_training_stage() -> void:
+	# 벽: 위가 조금 밝은 회색 + 정사각 격자 (4칸마다 굵게)
+	draw_polygon(PackedVector2Array([Vector2(-400, -400), Vector2(1680, -400), Vector2(1680, GROUND_Y), Vector2(-400, GROUND_Y)]),
+			PackedColorArray([Color("e9ecf1"), Color("e9ecf1"), Color("c3c9d2"), Color("c3c9d2")]))
+	var gx := -400.0
+	var i := 0
+	while gx <= 1680.0:
+		var bold := i % 4 == 0
+		draw_line(Vector2(gx, -400), Vector2(gx, GROUND_Y), Color(0.45, 0.5, 0.58, 0.55 if bold else 0.25), 2.0 if bold else 1.0)
+		gx += GRID
+		i += 1
+	var gy := GROUND_Y
+	i = 0
+	while gy >= -400.0:
+		var bold := i % 4 == 0
+		draw_line(Vector2(-400, gy), Vector2(1680, gy), Color(0.45, 0.5, 0.58, 0.55 if bold else 0.25), 2.0 if bold else 1.0)
+		gy -= GRID
+		i += 1
+	# 바닥: 어두운 회색 + 가운데로 모이는 원근 격자
+	draw_rect(Rect2(-400, GROUND_Y, 2080, 720 - GROUND_Y + 400), Color("8f97a3"))
+	var vanish := Vector2(640, GROUND_Y - 900)
+	for k in range(-12, 13):
+		var foot := Vector2(640 + k * GRID * 2, 720 + 200)
+		var top := foot.lerp(vanish, (foot.y - GROUND_Y) / (foot.y - vanish.y))
+		draw_line(top, foot, Color(0.3, 0.34, 0.4, 0.5), 1.5)
+	for k in 5:
+		var y := GROUND_Y + pow(k / 4.0, 1.6) * (720 - GROUND_Y + 60)
+		draw_line(Vector2(-400, y), Vector2(1680, y), Color(0.3, 0.34, 0.4, 0.45), 1.5)
+	draw_line(Vector2(-400, GROUND_Y), Vector2(1680, GROUND_Y), Color(1, 1, 1, 0.8), 3.0)
+	# 가운데 표시
+	draw_line(Vector2(640, GROUND_Y), Vector2(640, GROUND_Y + 40), Color(1, 0.3, 0.3, 0.7), 3.0)
