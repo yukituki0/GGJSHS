@@ -55,7 +55,8 @@ const RIGS := {
 	"root2": {
 		"pose_size": {"crouch": 0.88, "2p": 0.88, "2k": 0.88, "2h": 1.15, "heavy": 0.75, "air_dash": 0.77, "5d": 0.8},
 		# jd: 컴퍼스 끝이 발보다 한참 아래라 부츠 바닥을 발 위치로 / win: 땅에 세운 컴퍼스 끝 말고 두 부츠 가운데
-		"pose_anchor": {"jd": Vector2(440, 1169), "win": Vector2(610, 1423)},
+		"pose_anchor": {"jd": Vector2(440, 1169), "win": Vector2(610, 1423),
+				"jp": Vector2(714, 923), "jk": Vector2(560, 850)},
 		"reach_limit": {"5H": 120},  # 5H 판정을 컴퍼스 끝까지 (원거리형). 6D는 그보다 더 길게 root2.gd에서
 		"joints": {
 			"hip": Vector2(560, 560), "neck": Vector2(560, 270), "head": Vector2(600, 150),
