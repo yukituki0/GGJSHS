@@ -82,8 +82,8 @@ func _on_attack_event(attack: AttackData) -> void:
 			p.attack = _steam_hit
 			p.size = Vector2(120, 120)
 			p.color = HEAT
-			p.position = position + Vector2(110 * facing, 40)
-			p.velocity = Vector2(4.0 * facing, 6.0)
+			p.position = position + Vector2(100 * facing, -90)  # 손 높이에서 앞으로
+			p.velocity = Vector2(7.0 * facing, 4.0)
 			p.lifetime = 18
 			p.extra = {"fx": "chaos_steam"}  # 증기 폭발 그림 (없으면 원래 원 모양)
 			spawn(p)

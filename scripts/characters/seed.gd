@@ -95,8 +95,8 @@ func _on_attack_event(attack: AttackData) -> void:
 			p.attack = _helix_hit
 			p.size = Vector2(60, 70)
 			p.color = DNA_PINK
-			p.position = position + Vector2(40 * facing, 20)
-			p.velocity = Vector2(6.0 * facing, 7.0)
+			p.position = position + Vector2(80 * facing, -110)  # 손 높이에서 앞으로 (발밑 말고)
+			p.velocity = Vector2(9.0 * facing, 4.5)
 			p.lifetime = 30
 			p.rehit_interval = 8
 			spawn(p)

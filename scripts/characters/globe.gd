@@ -105,7 +105,7 @@ func _on_attack_event(attack: AttackData) -> void:
 				_place_stars()
 		"jD":
 			var p := _make("bolt", _bolt_hit, Vector2(44, ground_y), STORM)
-			p.position = Vector2(position.x + 120 * facing, ground_y / 2)
+			p.position = Vector2(position.x + 170 * facing, ground_y / 2)
 			p.lifetime = 14
 			spawn(p)
 		"OD":

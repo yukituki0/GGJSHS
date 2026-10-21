@@ -206,6 +206,9 @@ func _draw() -> void:
 				var start := age * 0.25 + i * 1.3
 				draw_arc(Vector2(0, -i * 8), rad, start, start + PI * 1.3, 16, Color(color, (0.8 - i * 0.12) * fade), 6.0)
 		"precipitate":
+			# 앙금 덩어리: 결정 벽 그림을 작게 빙글빙글 돌리며 떨어뜨림
+			if _draw_effect("chemikid_wall", Vector2.ZERO, size.x * 2.4, age * 0.2):
+				return
 			# 앙금 덩어리: 하얀 결정
 			draw_rect(r, color)
 			draw_line(r.position, r.end, Color(0.7, 0.8, 0.85), 2.0)

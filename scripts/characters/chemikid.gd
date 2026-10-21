@@ -83,8 +83,8 @@ func _on_attack_event(attack: AttackData) -> void:
 		s.attack = _salt_hit
 		s.size = Vector2(34, 30)
 		s.color = SALT_WHITE
-		s.position = position + Vector2(50 * facing, -60)
-		s.velocity = Vector2(3.0 * facing, 2.0)
+		s.position = position + Vector2(70 * facing, -120)  # 손 높이에서 앞으로
+		s.velocity = Vector2(5.0 * facing, 2.0)
 		s.gravity = 0.7
 		s.ground_y = ground_y - 10
 		s.landed.connect(_on_salt_landed)

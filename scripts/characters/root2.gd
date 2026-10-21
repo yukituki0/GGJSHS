@@ -123,7 +123,7 @@ func _on_attack_event(attack: AttackData) -> void:
 				var p := _text(str(numbers[i]), _fib_hit, 34)
 				p.extra.merge({"bg": "root2_number", "bg_size": 62.0, "bg_offset": Vector2(0, -7)})  # 금색 블록 위에 숫자
 				var jitter := Vector2(randf_range(-FIB_JITTER_X, FIB_JITTER_X), -randf_range(0.0, FIB_JITTER_Y))
-				p.position = position + Vector2((30 + dist) * facing, -20 - i * 30) + jitter
+				p.position = position + Vector2((60 + dist) * facing, -120 - i * 30) + jitter  # 손 높이부터 앞쪽에
 				p.velocity = Vector2(0, 11)
 				p.ground_y = ground_y - 10
 				spawn(p)
