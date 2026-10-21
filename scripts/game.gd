@@ -195,7 +195,7 @@ const MOVE_LISTS := {
 	],
 	"chaos": [
 		["D", "Gravitation", "만유인력", "상대를 끌어당김"],
-		["→ + D", "Momentum Throw", "운동량 던지기", "가드 불가 잡기"],
+		["→ + D", "Momentum Throw", "운동량 던지기", "먼 거리 잡기 (데미지 2배)"],
 		["↓ + D", "EM Pulse", "전자기 펄스", "주변 방전, 감전"],
 		["← + D", "Quantum Tunnel", "양자 터널링", "상대 뒤로 순간이동"],
 		["AIR D", "Thermal Burst", "열팽창 폭발", "아래 대각선 증기 폭발"],
