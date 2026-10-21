@@ -15,7 +15,7 @@
 | 📐 ROOT2 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 7/7 |
 | 🌱 SEED | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | 0/7 |
 
-이펙트: 5/26
+이펙트: 9/26
 
 ## 0-0. 글자 그림 (한 장씩, 첨부 없이)
 
@@ -908,22 +908,22 @@ Same character as the attached image: same face, hair, outfit, colors and body p
 
 ## 4. 기술 이펙트 (첨부 없이, 1:1 정사각형)
 
-⬜ **플라스크 (투사체)** → `chemikid_flask`
+✅ **플라스크 (투사체)** → `chemikid_flask`
 ```
 A single 2D fighting game special effect sprite: a glass Erlenmeyer flask filled with glowing toxic-green liquid, tilted as if thrown. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **산성 웅덩이** → `chemikid_puddle`
+✅ **산성 웅덩이** → `chemikid_puddle`
 ```
 A single 2D fighting game special effect sprite: a flat bubbling puddle of glowing green acid seen from the side, very wide and thin. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **발열 폭발** → `chemikid_explosion`
+✅ **발열 폭발** → `chemikid_explosion`
 ```
 A single 2D fighting game special effect sprite: a tall chemical explosion bursting upward, orange fire mixed with green smoke. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **앙금 벽** → `chemikid_wall`
+✅ **앙금 벽** → `chemikid_wall`
 ```
 A single 2D fighting game special effect sprite: a short wall of white crystal precipitate rising from the ground, side view. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```

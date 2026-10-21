@@ -164,6 +164,7 @@ func tick() -> void:
 				p.color = THERMITE
 				p.position = Vector2(position.x + blast[1] * facing, ground_y - 85)
 				p.lifetime = 12
+				p.rehit_interval = 999  # 맞혀도 바로 사라지지 않고 폭발이 끝까지 보이게
 				spawn(p)
 		if state_frame == PILLAR[0]:
 			var pillar := Projectile.new()
@@ -173,6 +174,7 @@ func tick() -> void:
 			pillar.color = THERMITE
 			pillar.position = Vector2(position.x + PILLAR[1] * facing, ground_y - 230)
 			pillar.lifetime = 22
+			pillar.rehit_interval = 999
 			spawn(pillar)
 
 

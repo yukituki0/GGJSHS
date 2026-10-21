@@ -88,6 +88,8 @@ func _draw() -> void:
 			draw_rect(r, Color(Color.WHITE, fade), false, 2.0)
 		"flask":
 			# 플라스크: 빙글빙글 도는 병 + 초록 액체
+			if _draw_effect("chemikid_flask", Vector2.ZERO, 64.0, age * 0.35):
+				return
 			draw_set_transform(Vector2.ZERO, age * 0.35)
 			draw_circle(Vector2(0, 4), size.x / 2, Color(color, 0.85))
 			draw_rect(Rect2(-5, -size.y / 2 - 4, 10, 12), Color(0.9, 0.95, 1.0, 0.9))
@@ -96,6 +98,8 @@ func _draw() -> void:
 		"acid":
 			# 산성 웅덩이: 납작한 초록 + 올라오는 거품
 			var fade := minf(1.0, (lifetime - age) / 30.0)
+			if _draw_ground_effect("chemikid_puddle", 10.0, r.size.x * 1.3, fade, minf(1.0, age / 6.0)):
+				return
 			draw_rect(Rect2(r.position.x, -4, r.size.x, 10), Color(color, 0.55 * fade))
 			for i in 4:
 				var bx := r.position.x + fmod(i * 37.0 + age * 0.7, r.size.x)
@@ -104,6 +108,8 @@ func _draw() -> void:
 		"explosion":
 			# 폭발: 커지면서 사라지는 원
 			var t := float(age) / lifetime
+			if _draw_ground_effect("chemikid_explosion", r.end.y + 6, r.size.x * 1.5 * (0.7 + 0.3 * t), 1.0 - t * t, 1.0):
+				return
 			draw_circle(Vector2.ZERO, size.x * 0.3 + size.x * 0.4 * t, Color(1.0, 0.6, 0.15, 0.8 * (1.0 - t)))
 			draw_circle(Vector2.ZERO, size.x * 0.2 + size.x * 0.25 * t, Color(color, 0.9 * (1.0 - t)))
 		"meteor":
@@ -159,6 +165,8 @@ func _draw() -> void:
 		"saltwall":
 			# 굳은 앙금 벽: 하얀 결정 기둥 (사라질 때 흐려짐)
 			var fade := minf(1.0, (lifetime - age) / 20.0)
+			if _draw_ground_effect("chemikid_wall", r.end.y + 4, r.size.x * 2.6, fade, minf(1.0, age / 6.0)):
+				return
 			draw_rect(r, Color(color, 0.9 * fade))
 			for i in 4:
 				var y := r.position.y + 12 + i * 26
@@ -168,6 +176,8 @@ func _draw() -> void:
 			# 불꽃 기둥: 아래에서 위로 치솟는 초고온 불꽃
 			var t := float(age) / lifetime
 			var grow := minf(1.0, age / 5.0)
+			if _draw_ground_effect("chemikid_explosion", r.end.y + 6, r.size.x * 2.0, 1.0 - t * t, grow):
+				return
 			var col_rect := Rect2(r.position.x, r.end.y - r.size.y * grow, r.size.x, r.size.y * grow)
 			draw_rect(col_rect, Color(color, 0.75 * (1.0 - t)))
 			draw_rect(col_rect.grow_individual(-r.size.x * 0.3, 0, -r.size.x * 0.3, 0), Color(1, 0.95, 0.7, 1.0 - t))
@@ -278,6 +288,21 @@ func _draw_effect(eff: String, center: Vector2, size_px: float, rot := 0.0) -> b
 	var flip := -1.0 if hit_direction() < 0 else 1.0
 	draw_set_transform(center, rot * flip, Vector2(flip, 1))
 	draw_texture_rect(tex, Rect2(-s / 2, s), false)
+	draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
+	return true
+
+
+## 바닥에 붙는 이펙트 그림: 아래 가운데가 (0, bottom), 폭 = width (높이는 그림 비율대로).
+## grow: 0 → 1 아래부터 솟아오르는 정도 (위쪽을 잘라서 보여줌). 그림이 없으면 false
+func _draw_ground_effect(eff: String, bottom: float, width: float, alpha := 1.0, grow := 1.0) -> bool:
+	var tex := Game.load_texture("res://assets/effects/%s.png" % eff)
+	if tex == null:
+		return false
+	var h := width * tex.get_height() / tex.get_width()
+	var flip := -1.0 if hit_direction() < 0 else 1.0
+	var src := Rect2(0, tex.get_height() * (1.0 - grow), tex.get_width(), tex.get_height() * grow)
+	draw_set_transform(Vector2.ZERO, 0, Vector2(flip, 1))
+	draw_texture_rect_region(tex, Rect2(-width / 2, bottom - h * grow, width, h * grow), src, Color(1, 1, 1, alpha))
 	draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
 	return true
 
