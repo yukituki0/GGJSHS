@@ -94,6 +94,24 @@ SPECIALS = {
 # 다시 뽑을 그림: (파일, 설명, Pose 문장). 새 그림을 넣으면 여기서 지운다
 REDO = []
 
+# 무기 공격 (길티기어처럼 S = 가벼운 무기 공격, HS = 크고 느린 무기 공격). 5S → <id>_slash, 5H → <id>_heavy
+WEAPON_POSES = [
+    ('root2_slash', 'S 컴퍼스 찌르기', 'thrusting the giant compass forward with both hands at chest height, front foot forward'),
+    ('root2_heavy', 'HS 컴퍼스 크게 휘두르기',
+     'heavy swing, the giant compass held in both hands swung down in a wide arc from above to the front, '
+     'compass points ending low in front, deep lunge with legs spread wide, body twisted, coat flaring'),
+    ('chemikid_slash', 'S 플라스크 휘두르기',
+     'quick horizontal swipe with the flask hand at chest height, flask swung forward, other hand on the belt, front foot forward'),
+    ('chemikid_heavy', 'HS 플라스크 내려치기',
+     'heavy overhead smash, the flask arm swung down in a big arc and fully extended forward and down, '
+     'deep lunge, lab coat flaring behind'),
+    ('common_slash', 'S 키보드 휘두르기',
+     'quick horizontal swing of the mechanical keyboard held in both hands like a bat at chest height, front foot forward'),
+    ('common_heavy', 'HS 키보드 내려찍기',
+     'heavy slam, the mechanical keyboard brought down hard in front of the body with both hands at waist height, '
+     'deep lunge, body leaning forward, jacket flaring'),
+]
+
 EFFECTS = [
     ('chemikid_flask', '플라스크 (투사체)', 'a glass Erlenmeyer flask filled with glowing toxic-green liquid, tilted as if thrown'),
     ('chemikid_puddle', '산성 웅덩이', 'a flat bubbling puddle of glowing green acid seen from the side, very wide and thin'),
@@ -162,6 +180,13 @@ if REDO:
         cid = f.split('_')[0]
         item = next(i for c, _, i in CHARS if c == cid)
         out += [f'⬜ **{ko}** → `{f}`', '```', pose_prompt(cid, item[0].upper() + item[1:], pose), '```', '']
+
+out += ['## 0-1. 무기 공격 S / HS (한 장씩)', '',
+        '> 길티기어처럼 S·HS는 무기 공격. 없으면 HS → S → 펀치 그림을 대신 쓴다', '']
+for f, ko, pose in WEAPON_POSES:
+    cid = f.split('_')[0]
+    item = next(i for c, _, i in CHARS if c == cid)
+    out += [f'{mark(f)} **{ko}** → `{f}`', '```', pose_prompt(cid, item[0].upper() + item[1:], pose), '```', '']
 
 out += ['## 1. 걷기 시트 (4프레임, 한 장)', '']
 for cid, title, item in CHARS:
