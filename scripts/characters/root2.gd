@@ -13,6 +13,8 @@ const GOLD_MATH := Color("ffe14a")
 const BOOMERANG_SPEED := 14.0
 const BOOMERANG_ACCEL := 0.32    # 되돌아오게 만드는 가속도
 const FIBONACCI := [1, 1, 2, 3, 5]
+const FIB_JITTER_X := 14.0      # 피보나치 숫자가 떨어지는 자리 흔들림 (좌우)
+const FIB_JITTER_Y := 60.0      # 시작 높이 흔들림 (높을수록 늦게 떨어짐)
 const QED_SYMBOLS := ["∑", "∫", "π", "√2", "∞", "Δ"]
 
 var _boomerang_hit := AttackData.new("sqrt2", 0, 0, 0, 24, Rect2(), AttackData.Level.MID, 16, 12)
@@ -126,12 +128,16 @@ func _on_attack_event(attack: AttackData) -> void:
 			p.ground_y = ground_y - 18
 			spawn(p)
 		"jD":
-			# 피보나치: 1, 1, 2, 3, 5가 점점 멀리, 위에서 아래로
+			# 피보나치: 떨어지는 자리는 점점 멀리 (1, 1, 2, 3, 5 간격) 그대로, 어느 자리에 어떤 숫자가 올지는 섞고
+			# 위치·높이를 조금씩 흔들어서 쓸 때마다 모양이 달라진다 (높이가 다르면 떨어지는 순서도 바뀜)
+			var numbers := FIBONACCI.duplicate()
+			numbers.shuffle()
 			var dist := 0.0
 			for i in FIBONACCI.size():
 				dist += FIBONACCI[i] * 26.0
-				var p := _text(str(FIBONACCI[i]), _fib_hit, 34)
-				p.position = position + Vector2((30 + dist) * facing, -20 - i * 30)
+				var p := _text(str(numbers[i]), _fib_hit, 34)
+				var jitter := Vector2(randf_range(-FIB_JITTER_X, FIB_JITTER_X), -randf_range(0.0, FIB_JITTER_Y))
+				p.position = position + Vector2((30 + dist) * facing, -20 - i * 30) + jitter
 				p.velocity = Vector2(0, 11)
 				p.ground_y = ground_y - 10
 				spawn(p)
