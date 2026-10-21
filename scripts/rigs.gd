@@ -6,9 +6,12 @@ class_name Rigs
 ## ba_*: 뒤쪽 팔 (어깨 sh, 팔꿈치 el, 손 ha)    fa_*: 앞쪽 팔
 ## bl_*: 뒤쪽 다리 (엉덩이 hip, 무릎 kn, 발 ft)  fl_*: 앞쪽 다리
 ## anchor(선택): 두 발 사이 바닥. 안 적으면 그림에서 자동으로 찾는다
+## pose_size(선택): 자세 그림 크기 보정 (머리 크기가 서 있는 그림과 같아 보이게). 안 적은 자세는 1.0
+##   AI가 앉은/점프 그림을 작게 또는 크게 그리는 경우가 있어서 캐릭터마다 눈으로 보고 맞춘 값
 
 const RIGS := {
 	"chemikid": {
+		"pose_size": {"crouch": 1.35, "crouch_guard": 1.1, "jump": 1.12},
 		"joints": {
 			"hip": Vector2(560, 620), "neck": Vector2(570, 240), "head": Vector2(600, 150),
 			"ba_sh": Vector2(430, 260), "ba_el": Vector2(300, 380), "ba_ha": Vector2(430, 450),
@@ -18,6 +21,7 @@ const RIGS := {
 		},
 	},
 	"common": {
+		"pose_size": {"crouch": 1.05},
 		"joints": {
 			"hip": Vector2(560, 640), "neck": Vector2(560, 250), "head": Vector2(590, 130),
 			"ba_sh": Vector2(440, 300), "ba_el": Vector2(320, 380), "ba_ha": Vector2(330, 190),
@@ -27,6 +31,7 @@ const RIGS := {
 		},
 	},
 	"chaos": {
+		"pose_size": {"crouch": 1.25, "crouch_guard": 1.1, "jump_attack": 1.1, "air_dash": 1.1},
 		"joints": {
 			"hip": Vector2(530, 620), "neck": Vector2(530, 250), "head": Vector2(560, 140),
 			"ba_sh": Vector2(380, 300), "ba_el": Vector2(330, 450), "ba_ha": Vector2(260, 620),
@@ -36,6 +41,7 @@ const RIGS := {
 		},
 	},
 	"globe": {
+		"pose_size": {"crouch": 1.35},
 		"joints": {
 			"hip": Vector2(520, 620), "neck": Vector2(540, 290), "head": Vector2(580, 170),
 			"ba_sh": Vector2(380, 330), "ba_el": Vector2(250, 450), "ba_ha": Vector2(230, 580),
@@ -45,6 +51,7 @@ const RIGS := {
 		},
 	},
 	"root2": {
+		"pose_size": {"crouch": 1.0},
 		"joints": {
 			"hip": Vector2(560, 560), "neck": Vector2(560, 270), "head": Vector2(600, 150),
 			"ba_sh": Vector2(420, 300), "ba_el": Vector2(300, 420), "ba_ha": Vector2(330, 430),
@@ -54,6 +61,7 @@ const RIGS := {
 		},
 	},
 	"seed": {
+		"pose_size": {"crouch": 1.2, "jump": 1.12},
 		"joints": {
 			"hip": Vector2(570, 600), "neck": Vector2(590, 260), "head": Vector2(620, 160),
 			"ba_sh": Vector2(430, 320), "ba_el": Vector2(330, 480), "ba_ha": Vector2(290, 620),

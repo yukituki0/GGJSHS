@@ -1100,16 +1100,14 @@ func _body_motion() -> Transform2D:
 	match state:
 		State.STAND:
 			if velocity.x != 0.0:
-				# 걷기: 걷기 그림이 있으면 발걸음에 맞춰 살짝 오르내림만,
+				# 걷기 그림이 있으면 그림이 발걸음을 보여주니까 몸은 그대로 (위아래로 흔들면 발이 바닥에서 뜸).
 				# 없으면 (같은 그림으로 미끄러지면 어색해서) 걸음마다 무게를 싣는 느낌으로 살짝 기울였다 폄
-				var w := absf(sin(_anim_t * PI / WALK_FRAME_TIME))
-				shift.y = -w * 4.0
 				if _pose_texture() == null:
+					var w := absf(sin(_anim_t * PI / WALK_FRAME_TIME))
 					tilt = (0.02 + 0.03 * w) * (1.0 if velocity.x * facing > 0.0 else -1.0)
 					squash = 1.0 - 0.02 * (1.0 - w)
 		State.RUN:
-			tilt = 0.12
-			shift.y = -absf(sin(_anim_t * 0.25)) * 4.0
+			tilt = 0.12  # 앞으로 숙임 (발 기준으로 기울여서 발은 바닥에 그대로)
 		State.BACKDASH:
 			tilt = -0.1
 		State.CROUCH:
