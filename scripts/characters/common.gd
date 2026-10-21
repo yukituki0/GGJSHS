@@ -112,6 +112,12 @@ func _on_attack_event(attack: AttackData) -> void:
 func _on_attack_result(attack: AttackData, blocked: bool) -> void:
 	if attack.name == "OD" and not blocked:
 		screen_tint.emit(BLUE_SCREEN, 90)
+		if opponent != null:
+			var p := Projectile.new()  # 깨진 오류 창 연출 (attack이 없어서 판정 없음)
+			p.kind = "bluescreen"
+			p.position = opponent.position + Vector2(0, -opponent.body_size().y * 0.6)
+			p.lifetime = 36
+			spawn(p)
 
 
 ## 이진 탐색: 내려오는 속도는 일정, 가로는 매 프레임 남은 거리의 절반만큼 상대 쪽으로

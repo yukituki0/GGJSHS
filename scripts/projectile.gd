@@ -62,6 +62,14 @@ func _draw() -> void:
 	var r := Rect2(-size / 2, size)
 	match kind:
 		"packet":
+			# 데이터 패킷 그림 + 뒤로 흐려지는 잔상
+			var ptex := Game.load_texture("res://assets/effects/common_packet.png")
+			if ptex != null:
+				for i in range(3, -1, -1):
+					modulate.a = 1.0 if i == 0 else 0.25 - i * 0.05
+					_draw_effect("common_packet", Vector2(-hit_direction() * i * 16, 0), size.x * 1.8)
+				modulate.a = 1.0
+				return
 			# 데이터 패킷: 빛나는 사각형 + 꼬리
 			for i in 4:
 				var tail := Rect2(r.position - Vector2(hit_direction() * (i + 1) * 14, 0), r.size)
@@ -72,6 +80,10 @@ func _draw() -> void:
 		"bug":
 			# 버그 함정: 깜빡이는 벌레 (작동 전엔 흐리게)
 			var a := 1.0 if is_armed() else 0.35
+			modulate.a = a
+			if _draw_ground_effect("common_bug", r.end.y + 4, size.x * 1.7):
+				return
+			modulate.a = 1.0
 			var blink := 0.6 + 0.4 * sin(age * 0.3)
 			draw_circle(Vector2.ZERO, size.x / 2, Color(color, a * blink))
 			for i in 3:
@@ -81,6 +93,10 @@ func _draw() -> void:
 		"wall":
 			# 방화벽: 반투명 벽 + 가로줄
 			var fade := minf(1.0, (lifetime - age) / 20.0)
+			modulate.a = fade
+			if _draw_effect("common_firewall", Vector2.ZERO, size.y * 1.15 * minf(1.0, age / 5.0)):
+				return
+			modulate.a = 1.0
 			draw_rect(r, Color(color, 0.35 * fade))
 			for i in int(size.y / 20):
 				var y := r.position.y + i * 20 + fmod(age * 1.5, 20.0)
@@ -181,6 +197,11 @@ func _draw() -> void:
 			var col_rect := Rect2(r.position.x, r.end.y - r.size.y * grow, r.size.x, r.size.y * grow)
 			draw_rect(col_rect, Color(color, 0.75 * (1.0 - t)))
 			draw_rect(col_rect.grow_individual(-r.size.x * 0.3, 0, -r.size.x * 0.3, 0), Color(1, 0.95, 0.7, 1.0 - t))
+		"bluescreen":
+			# 블루스크린: 깨진 오류 창 조각이 퍼지면서 사라진다 (판정 없는 연출)
+			var t := float(age) / lifetime
+			modulate.a = 1.0 - t * t
+			_draw_effect("common_bluescreen", Vector2.ZERO, lerpf(200.0, 340.0, t), t * 0.3)
 		"text":
 			# 글자 투사체 (숫자, 수식): extra.text, extra.size
 			var s: String = extra.get("text", "?")

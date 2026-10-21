@@ -15,7 +15,7 @@
 | 📐 ROOT2 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 7/7 |
 | 🌱 SEED | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | 0/7 |
 
-이펙트: 9/26
+이펙트: 13/26
 
 ## 0-0. 글자 그림 (한 장씩, 첨부 없이)
 
@@ -928,22 +928,22 @@ A single 2D fighting game special effect sprite: a tall chemical explosion burst
 A single 2D fighting game special effect sprite: a short wall of white crystal precipitate rising from the ground, side view. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **패킷 (투사체)** → `common_packet`
+✅ **패킷 (투사체)** → `common_packet`
 ```
 A single 2D fighting game special effect sprite: a glowing cyan data packet, a rounded rectangle with binary 0101 patterns inside. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **버그 함정** → `common_bug`
+✅ **버그 함정** → `common_bug`
 ```
 A single 2D fighting game special effect sprite: a small mechanical bug robot sitting flat on the ground, cyan glowing eyes. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **방화벽** → `common_firewall`
+✅ **방화벽** → `common_firewall`
 ```
 A single 2D fighting game special effect sprite: a tall vertical cyan hexagon-grid energy shield, side view, thin and tall. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **블루스크린** → `common_bluescreen`
+✅ **블루스크린** → `common_bluescreen`
 ```
 A single 2D fighting game special effect sprite: broken fragments of a blue error window flying apart, no letters. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
