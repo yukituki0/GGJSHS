@@ -21,17 +21,17 @@
 
 > AI가 글자를 틀리게 쓰는 일이 많으니 받으면 철자를 꼭 확인. 틀리면 다시 뽑기
 
-⬜ **라운드 1** "ROUND 1" → `text_round1`
+✅ **라운드 1** "ROUND 1" → `text_round1`
 ```
 Fighting game announcer text logo that reads exactly "ROUND 1" (spelled R-O-U-N-D-1), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic white silver chrome gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
 ```
 
-⬜ **라운드 2** "ROUND 2" → `text_round2`
+✅ **라운드 2** "ROUND 2" → `text_round2`
 ```
 Fighting game announcer text logo that reads exactly "ROUND 2" (spelled R-O-U-N-D-2), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic white silver chrome gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
 ```
 
-⬜ **마지막 라운드** "FINAL ROUND" → `text_final_round`
+✅ **마지막 라운드** "FINAL ROUND" → `text_final_round`
 ```
 Fighting game announcer text logo that reads exactly "FINAL ROUND" (spelled F-I-N-A-L-R-O-U-N-D), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic blood red and silver chrome gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
 ```

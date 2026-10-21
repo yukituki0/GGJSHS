@@ -1003,10 +1003,12 @@ func _draw() -> void:
 		tag_pos = Vector2(head.x * facing, head.y - 10)
 	draw_string(Game.FONT, tag_pos + Vector2(-40, 0), "%dP" % player,
 			HORIZONTAL_ALIGNMENT_CENTER, 80, 22, tag_color)
-	if crush_text > 0:
+	if crush_text > 0 and not Style.text_image(self, "GUARD CRUSH!", Vector2(0, -size.y - 70), 1.0,
+			minf(1.0, crush_text / 15.0), Vector2(320, 90)):
 		Style.text(self, "GUARD CRUSH!", Vector2(-150, -size.y - 50), 30, Color(1, 0.4, 0.3, minf(1.0, crush_text / 15.0)),
 				HORIZONTAL_ALIGNMENT_CENTER, 300, 6)
-	if counter_text > 0:
+	if counter_text > 0 and not Style.text_image(self, "COUNTER", Vector2(0, -size.y - 70), 1.0,
+			minf(1.0, counter_text / 15.0), Vector2(300, 90)):
 		Style.text(self, "COUNTER", Vector2(-150, -size.y - 50), 32, Color(1, 0.55, 0.15, minf(1.0, counter_text / 15.0)),
 				HORIZONTAL_ALIGNMENT_CENTER, 300, 6)
 	if debug_draw_boxes:

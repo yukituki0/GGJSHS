@@ -184,6 +184,9 @@ func _draw() -> void:
 				modulate.a = fade
 				if _draw_effect(extra.bg, bg_off, bg_size):
 					text_col = Color(extra.get("text_color", Color("4a2c00")), 1.0)
+			# 글자 그림이 있는 글자(ALGEBRA! 등)는 그림으로
+			if not extra.has("bg") and Style.text_image(self, s, Vector2.ZERO, 1.0, fade, Vector2(fs * s.length() * 0.75, fs * 1.6)):
+				return
 			var w := maxf(200.0, fs * s.length() * 0.8)  # 긴 글자(ALGEBRA! 등)가 잘리지 않게
 			Style.text(self, s, Vector2(-w / 2, fs * 0.35), fs, text_col, HORIZONTAL_ALIGNMENT_CENTER, w, 6)
 		"boomerang":

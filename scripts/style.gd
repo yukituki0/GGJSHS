@@ -79,4 +79,31 @@ static func banner(c: CanvasItem, s: String, color: Color, t := 1.0) -> void:
 	c.draw_line(Vector2(640 - band_w / 2, 292), Vector2(640 + band_w / 2, 268), BLACK, 6.0)
 	c.draw_line(Vector2(640 - band_w / 2, 452), Vector2(640 + band_w / 2, 428), BLACK, 6.0)
 	var size := int(lerpf(180.0, 104.0, e))
+	if text_image(c, s, Vector2(640, 360), lerpf(1.6, 1.0, e)):
+		return
 	title(c, s, Vector2(0, 360 + size * 0.36), size, color, HORIZONTAL_ALIGNMENT_CENTER, 1280, 16)
+
+
+## 글자 그림 (assets/ui/text_<이름>.png). 글자 → 파일 이름. 그림이 없는 글자는 폰트로 쓴다
+const TEXT_IMAGES := {
+	"ROUND 1": "round1", "ROUND 2": "round2", "FINAL ROUND": "final_round", "FIGHT!": "fight",
+	"K.O.": "ko", "DOUBLE K.O.": "double_ko", "TIME UP": "time_up", "DRAW GAME": "draw_game",
+	"COUNTER": "counter", "GUARD CRUSH!": "guard_crush", "VS": "vs", "READY!": "ready",
+	"ALGEBRA!": "root2_algebra", "CALCULUS!": "root2_calculus", "PROBABILITY!": "root2_probability",
+}
+const TEXT_IMAGE_MAX := Vector2(820, 200)  # 띠 글자 기본 크기 한도 (scale 1일 때)
+
+
+## 글자 그림을 center에 그린다. 없으면 false (폰트로 대신 쓰라는 뜻)
+## scale: 기본 크기(TEXT_IMAGE_MAX 안에 맞춘 크기)의 배율, alpha: 투명도
+static func text_image(c: CanvasItem, s: String, center: Vector2, scale := 1.0, alpha := 1.0,
+		max_size := TEXT_IMAGE_MAX) -> bool:
+	if not TEXT_IMAGES.has(s):
+		return false
+	var tex := Game.load_texture("res://assets/ui/text_%s.png" % TEXT_IMAGES[s])
+	if tex == null:
+		return false
+	var k := minf(max_size.x / tex.get_width(), max_size.y / tex.get_height()) * scale
+	var sz := Vector2(tex.get_width(), tex.get_height()) * k
+	c.draw_texture_rect(tex, Rect2(center - sz / 2, sz), false, Color(1, 1, 1, alpha))
+	return true

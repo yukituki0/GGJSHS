@@ -441,8 +441,9 @@ func _draw_vs() -> void:
 	Style.fill(self, PackedVector2Array([Vector2(680, 0), Vector2(700, 0), Vector2(600, 720), Vector2(580, 720)]), Style.RED)
 	if t >= 1.0:
 		var pop := minf((m.phase_frame - 18) / 8.0, 1.0)
-		Style.title(self, "VS", Vector2(0, 410), int(lerpf(220, 150, pop)), Style.WHITE,
-				HORIZONTAL_ALIGNMENT_CENTER, 1280, 18, Style.RED)
+		if not Style.text_image(self, "VS", Vector2(640, 360), lerpf(1.5, 1.0, pop), 1.0, Vector2(420, 260)):
+			Style.title(self, "VS", Vector2(0, 410), int(lerpf(220, 150, pop)), Style.WHITE,
+					HORIZONTAL_ALIGNMENT_CENTER, 1280, 18, Style.RED)
 		var stage_name: String = Game.stage_info()["name"][Game.language]
 		Style.text(self, "STAGE : " + stage_name, Vector2(0, 690), 22, Style.GRAY, HORIZONTAL_ALIGNMENT_CENTER, 1280)
 
