@@ -21,13 +21,13 @@ const ACTIONS: Array[String] = [
 const KEYBOARD_MAP := {
 	1: {
 		"up": KEY_W, "down": KEY_S, "left": KEY_A, "right": KEY_D,
-		"p": KEY_Y, "k": KEY_U, "s": KEY_I, "hs": KEY_O,
+		"p": KEY_Y, "k": KEY_U, "s": KEY_I, "hs": KEY_K,
 		"d": KEY_H, "rc": KEY_J,
 		"start": KEY_1, "select": KEY_2,
 	},
 	2: {
 		"up": KEY_UP, "down": KEY_DOWN, "left": KEY_LEFT, "right": KEY_RIGHT,
-		"p": KEY_KP_4, "k": KEY_KP_5, "s": KEY_KP_6, "hs": KEY_KP_ADD,
+		"p": KEY_KP_4, "k": KEY_KP_5, "s": KEY_KP_6, "hs": KEY_KP_3,
 		"d": KEY_KP_1, "rc": KEY_KP_2,
 		"start": KEY_0, "select": KEY_9,
 	},
