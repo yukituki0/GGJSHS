@@ -176,10 +176,11 @@ func _draw() -> void:
 			var s: String = extra.get("text", "?")
 			var fs: int = extra.get("size", 32)
 			var fade := minf(1.0, (lifetime - age) / 10.0)
-			Style.text(self, s, Vector2(-100, fs * 0.35), fs, Color(color, fade), HORIZONTAL_ALIGNMENT_CENTER, 200, 6)
+			var w := maxf(200.0, fs * s.length() * 0.8)  # 긴 글자(ALGEBRA! 등)가 잘리지 않게
+			Style.text(self, s, Vector2(-w / 2, fs * 0.35), fs, Color(color, fade), HORIZONTAL_ALIGNMENT_CENTER, w, 6)
 		"boomerang":
 			# √2 부메랑: 빙글빙글 도는 루트 기호
-			if not _draw_effect("root2_boomerang", Vector2.ZERO, 90.0, age * 0.4):
+			if not _draw_effect("root2_boomerang", Vector2.ZERO, size.x * 1.8, age * 0.4):
 				draw_set_transform(Vector2.ZERO, age * 0.4)
 				Style.text(self, "√2", Vector2(-50, 12), 36, color, HORIZONTAL_ALIGNMENT_CENTER, 100, 6)
 				draw_set_transform(Vector2.ZERO, 0)
