@@ -179,9 +179,10 @@ func _draw() -> void:
 			Style.text(self, s, Vector2(-100, fs * 0.35), fs, Color(color, fade), HORIZONTAL_ALIGNMENT_CENTER, 200, 6)
 		"boomerang":
 			# √2 부메랑: 빙글빙글 도는 루트 기호
-			draw_set_transform(Vector2.ZERO, age * 0.4)
-			Style.text(self, "√2", Vector2(-50, 12), 36, color, HORIZONTAL_ALIGNMENT_CENTER, 100, 6)
-			draw_set_transform(Vector2.ZERO, 0)
+			if not _draw_effect("root2_boomerang", Vector2.ZERO, 90.0, age * 0.4):
+				draw_set_transform(Vector2.ZERO, age * 0.4)
+				Style.text(self, "√2", Vector2(-50, 12), 36, color, HORIZONTAL_ALIGNMENT_CENTER, 100, 6)
+				draw_set_transform(Vector2.ZERO, 0)
 		"integral":
 			# 적분 기둥: 작동 전엔 좌표축 표시, 작동하면 기둥이 솟음
 			if not is_armed():
@@ -192,15 +193,25 @@ func _draw() -> void:
 			else:
 				var grow := minf(1.0, (age - arm_frames) / 5.0)
 				var col_rect := Rect2(r.position.x, r.end.y - r.size.y * grow, r.size.x, r.size.y * grow)
-				draw_rect(col_rect, Color(color, 0.55))
-				Style.text(self, "∫", Vector2(-60, col_rect.position.y + 90), 110, Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER, 120, 8)
+				var tex := Game.load_texture("res://assets/effects/root2_pillar.png")
+				if tex != null:
+					# 그림은 바닥에 붙여서 아래부터 솟아오르게 (판정보다 조금 넓게)
+					var fade := minf(1.0, (lifetime - age) / 8.0)
+					var h := (r.size.y + 30) * grow
+					var w := h * tex.get_width() / tex.get_height()
+					var src := Rect2(0, tex.get_height() * (1.0 - grow), tex.get_width(), tex.get_height() * grow)
+					draw_texture_rect_region(tex, Rect2(-w / 2, r.end.y + 10 - h, w, h), src, Color(1, 1, 1, fade))
+				else:
+					draw_rect(col_rect, Color(color, 0.55))
+					Style.text(self, "∫", Vector2(-60, col_rect.position.y + 90), 110, Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER, 120, 8)
 		"dice":
-			# 주사위: 하얀 정육면체 + 나온 눈 숫자
-			draw_set_transform(Vector2.ZERO, age * 0.3)
-			draw_rect(r, Color.WHITE)
-			draw_rect(r, Style.BLACK, false, 3.0)
-			draw_set_transform(Vector2.ZERO, 0)
-			Style.text(self, str(extra.get("n", 1)), Vector2(-30, 10), 28, Style.RED, HORIZONTAL_ALIGNMENT_CENTER, 60, 4)
+			# 주사위: 구르는 정육면체 + 나온 눈 숫자 (데미지 = 눈 x 9라서 숫자는 항상 보여준다)
+			if not _draw_effect("root2_dice", Vector2.ZERO, 50.0, age * 0.3):
+				draw_set_transform(Vector2.ZERO, age * 0.3)
+				draw_rect(r, Color.WHITE)
+				draw_rect(r, Style.BLACK, false, 3.0)
+				draw_set_transform(Vector2.ZERO, 0)
+			Style.text(self, str(extra.get("n", 1)), Vector2(-30, -32), 28, Style.RED, HORIZONTAL_ALIGNMENT_CENTER, 60, 4)
 		"seed":
 			# 씨앗: 땅에 박힌 작은 씨 + 자라나는 싹
 			draw_circle(Vector2.ZERO, 7, Color("8a5a2a"))
@@ -242,6 +253,21 @@ func _draw() -> void:
 			draw_arc(Vector2.ZERO, size.x * 0.22 * grow, 0, TAU, 32, Color(color.lightened(0.4), 0.9), 3.0)
 		_:
 			draw_rect(r, color)
+
+
+## 이펙트 그림(assets/effects/<name>.png)을 center에 큰 변 길이 = size로 돌려서 그린다. 그림이 없으면 false
+## 왼쪽으로 날아가면 좌우를 뒤집는다
+func _draw_effect(eff: String, center: Vector2, size_px: float, rot := 0.0) -> bool:
+	var tex := Game.load_texture("res://assets/effects/%s.png" % eff)
+	if tex == null:
+		return false
+	var k := size_px / maxf(tex.get_width(), tex.get_height())
+	var s := Vector2(tex.get_width(), tex.get_height()) * k
+	var flip := -1.0 if hit_direction() < 0 else 1.0
+	draw_set_transform(center, rot * flip, Vector2(flip, 1))
+	draw_texture_rect(tex, Rect2(-s / 2, s), false)
+	draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
+	return true
 
 
 ## 다섯 꼭짓점 별 모양

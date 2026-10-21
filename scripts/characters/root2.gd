@@ -108,6 +108,7 @@ func _on_attack_event(attack: AttackData) -> void:
 			p.position = Vector2(tx, ground_y - 130)
 			p.arm_frames = 30
 			p.lifetime = 52
+			p.rehit_interval = 999  # 맞혀도 바로 사라지지 않고 끝까지 솟아 있게 (다시 맞히지는 않음)
 			_integral = p
 			spawn(p)
 		"4D":

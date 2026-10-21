@@ -151,7 +151,15 @@ EFFECTS = [
     ('root2_boomerang', '√2 부메랑', 'a golden square-root symbol shaped like a spinning boomerang'),
     ('root2_pillar', '적분 기둥', 'a tall golden pillar of light rising from the ground with integral symbol patterns'),
     ('root2_dice', '주사위', 'a single golden six-sided die with black dots'),
-    ('root2_number', '숫자 블록', 'a heavy golden block engraved with a big number, falling'),
+    ('root2_number', '숫자 블록 (숫자 없이 — 게임이 1·1·2·3·5를 위에 씀)',
+     'a heavy golden stone block falling, seen from the front, a large smooth empty flat face in the center with a raised beveled border, '
+     'completely blank face with NO number, NO letters, NO symbols, short golden speed lines above it'),
+    ('root2_qed_seal', '궁극기 Q.E.D. 도장 (글자 없이 — 게임이 Q.E.D.를 위에 씀)',
+     'a huge round golden official seal stamp impression, ornate double ring border with tiny geometric compass and ruler motifs, '
+     'empty smooth center with NO letters and NO text, slightly tilted, glowing edges, a burst of golden light behind it'),
+    ('root2_qed_circle', '궁극기 수식 마법진 (상대 머리 위 배경)',
+     'a large flat glowing golden magic circle made of geometry: concentric circles, a triangle and square inscribed, '
+     'compass arcs and ruler tick marks, seen from the front, abstract math symbol shapes but NO readable letters or numbers'),
     ('seed_vine', '덩굴', 'a thick green thorny vine bursting up from the ground'),
     ('seed_whip', '덩굴 채찍', 'a long green thorny vine whip swinging horizontally'),
     ('seed_dna', 'DNA 나선', 'a glowing lime-green and pink DNA double helix, diagonal'),
