@@ -207,7 +207,7 @@ const MOVE_LISTS := {
 		["↓ + D", "Integral Pillar", "적분 기둥", "상대 발밑에 기둥"],
 		["← + D", "Probability Dice", "확률 주사위", "데미지 = 눈 x 9"],
 		["AIR D", "Fibonacci Drop", "피보나치 낙하", "1, 1, 2, 3, 5 낙하"],
-		["D + HS", "Random Proof", "랜덤 증명", "부메랑/기둥 3개/주사위 6개 중 랜덤 + 도장 (50%)"],
+		["D + HS", "Random Proof", "랜덤 증명", "랜덤 증명, 충분히 맞히면 도장 (50%)"],
 	],
 	"seed": [
 		["D", "Plant Seed", "씨앗 심기", "잠시 뒤 덩굴이 솟음"],
