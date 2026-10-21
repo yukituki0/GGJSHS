@@ -831,12 +831,17 @@ func _fit_hitboxes_to_art() -> void:
 			continue
 		tip *= s
 		var ref: AttackData = attacks[group[1]]
-		var dx := clampf(tip.x - ref.hitbox.end.x, -REACH_LIMIT, REACH_LIMIT)
+		# 캐릭터마다 일부러 그림 끝까지 늘리고 싶은 기술은 rigs의 reach_limit으로 한도를 바꾼다
+		var limit: float = Rigs.get_rig(char_id).get("reach_limit", {}).get(group[1], REACH_LIMIT)
+		var dx := clampf(tip.x - ref.hitbox.end.x, -REACH_LIMIT, limit)
 		var dy := clampf(tip.y - ref.hitbox.get_center().y, -HEIGHT_LIMIT, HEIGHT_LIMIT)
 		for move_name: String in group[2]:
 			if attacks.has(move_name):
 				var a: AttackData = attacks[move_name]
-				a.hitbox.position.x = maxf(5.0, a.hitbox.position.x + dx)
+				# 기본 한도(50)까지는 판정을 통째로 옮기고, 그 이상 늘린 만큼은 앞으로 길게 늘린다 (가까운 상대도 맞게)
+				var stretch := maxf(0.0, dx - REACH_LIMIT)
+				a.hitbox.position.x = maxf(5.0, a.hitbox.position.x + dx - stretch)
+				a.hitbox.size.x += stretch
 				a.hitbox.position.y = minf(a.hitbox.position.y + dy, -a.hitbox.size.y)  # 땅 밑으로 안 내려가게
 
 

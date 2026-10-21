@@ -43,7 +43,7 @@ func _build_specials() -> void:
 	#                                 이름  발생 지속 후딜 데미지 판정 범위                  단계 히트 가드
 	var a := _add(AttackData.new("5D", 12, 0, 22, 0, Rect2(), M, 0, 0))
 	a.event_frame = 12
-	a = _add(AttackData.new("6D", 11, 4, 20, 40, Rect2(20, -130, 210, 30), M, 18, 14))
+	a = _add(AttackData.new("6D", 11, 4, 20, 40, Rect2(20, -130, 290, 30), M, 18, 14))  # 5H(컴퍼스 끝)보다 길게
 	a = _add(AttackData.new("2D", 14, 0, 22, 0, Rect2(), M, 0, 0))
 	a.event_frame = 14
 	a = _add(AttackData.new("4D", 12, 0, 22, 0, Rect2(), M, 0, 0))
@@ -164,6 +164,6 @@ func _draw() -> void:
 	# 컴퍼스 찌르기: 몸에서 뻗어 나가는 컴퍼스 다리
 	if state == State.ATTACK and current_attack != null and current_attack.name == "6D" \
 			and current_attack.is_active(state_frame):
-		draw_line(Vector2(20 * facing, -115), Vector2(230 * facing, -115), Color(0.85, 0.85, 0.9), 6.0)
-		draw_line(Vector2(20 * facing, -115), Vector2(200 * facing, -80), Color(0.85, 0.85, 0.9), 4.0)
+		draw_line(Vector2(20 * facing, -115), Vector2(310 * facing, -115), Color(0.85, 0.85, 0.9), 6.0)
+		draw_line(Vector2(20 * facing, -115), Vector2(275 * facing, -80), Color(0.85, 0.85, 0.9), 4.0)
 	super()

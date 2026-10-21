@@ -6,6 +6,7 @@ class_name Rigs
 ## ba_*: 뒤쪽 팔 (어깨 sh, 팔꿈치 el, 손 ha)    fa_*: 앞쪽 팔
 ## bl_*: 뒤쪽 다리 (엉덩이 hip, 무릎 kn, 발 ft)  fl_*: 앞쪽 다리
 ## anchor(선택): 두 발 사이 바닥. 안 적으면 그림에서 자동으로 찾는다
+## reach_limit(선택): 그림에 판정을 맞출 때 사거리를 늘려도 되는 최대치 (기본 50). 예: {"5H": 120}
 ## pose_size(선택): 자세 그림 크기 보정 (머리 크기가 서 있는 그림과 같아 보이게). 안 적은 자세는 1.0
 ##   AI가 앉은/점프 그림을 작게 또는 크게 그리는 경우가 있어서 캐릭터마다 눈으로 보고 맞춘 값
 
@@ -52,6 +53,7 @@ const RIGS := {
 	},
 	"root2": {
 		"pose_size": {"crouch": 0.88, "heavy": 0.75},
+		"reach_limit": {"5H": 120},  # 5H 판정을 컴퍼스 끝까지 (원거리형). 6D는 그보다 더 길게 root2.gd에서
 		"joints": {
 			"hip": Vector2(560, 560), "neck": Vector2(560, 270), "head": Vector2(600, 150),
 			"ba_sh": Vector2(420, 300), "ba_el": Vector2(300, 420), "ba_ha": Vector2(330, 430),
