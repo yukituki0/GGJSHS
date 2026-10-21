@@ -870,7 +870,7 @@ func _draw() -> void:
 	if puppet != null:
 		_draw_puppet(shake_x)
 	else:
-		_draw_box(rect, body_color, size)
+		_draw_body(rect, body_color, size)
 	if shock_frames > 0:
 		# 감전: 몸 둘레에 지직거리는 노란 번개
 		for i in 4:
@@ -909,6 +909,11 @@ func _draw() -> void:
 		if hit.has_area():
 			hit.position -= position
 			draw_rect(hit, Color.RED, false, 2.0)
+
+
+## 그림이 없을 때 몸 그리기 (연습용 인형처럼 직접 그리는 캐릭터는 이걸 바꾼다)
+func _draw_body(rect: Rect2, body_color: Color, size: Vector2) -> void:
+	_draw_box(rect, body_color, size)
 
 
 ## 그림이 없을 때: 색 네모 + 눈 + 공격 판정 위치에 흰 네모

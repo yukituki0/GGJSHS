@@ -300,7 +300,17 @@ func goto(scene: String) -> void:
 
 
 func character(player: int) -> Dictionary:
+	if selected[player] == TRAINING_DUMMY_INDEX:
+		return TRAINING_DUMMY
 	return CHARACTERS[selected[player]]
+
+
+## 트레이닝 전용 연습용 인형 (캐릭터 선택에서 트레이닝일 때 2P 자리에만 나옴)
+const TRAINING_DUMMY_INDEX := 100
+const TRAINING_DUMMY := {
+	"id": "dummy", "name": "DUMMY", "club": ["TRAINING DUMMY", "연습용 인형"],
+	"color": Color(0.62, 0.55, 0.45), "script": "res://scripts/characters/training_dummy.gd",
+}
 
 
 func club_name(info: Dictionary) -> String:

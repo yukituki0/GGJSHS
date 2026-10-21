@@ -24,10 +24,22 @@ func random_slot() -> int:
 	return Game.CHARACTERS.size()
 
 
+## 트레이닝일 때 2P만 고를 수 있는 연습용 인형 칸 (RANDOM 칸 오른쪽 절반)
+func dummy_slot() -> int:
+	return random_slot() + 1
+
+
+func _has_dummy(slot: int) -> bool:
+	return slot == 2 and Game.mode == Game.Mode.TRAINING
+
+
 func _ready() -> void:
 	cursor = Game.selected.duplicate()
 	for p in [1, 2]:
-		cursor[p] = clampi(cursor[p], 0, random_slot() - 1)
+		if cursor[p] == Game.TRAINING_DUMMY_INDEX and _has_dummy(p):
+			cursor[p] = dummy_slot()
+		else:
+			cursor[p] = clampi(cursor[p], 0, random_slot() - 1)
 
 
 ## 트레이닝 / CPU 대전: 한 사람이 내 캐릭터 → 상대 캐릭터 순서로 고른다
@@ -56,6 +68,9 @@ func _process(delta: float) -> void:
 		_done_frames += 1
 		if _done_frames >= 40:
 			Game.selected = cursor.duplicate()
+			for p in [1, 2]:
+				if cursor[p] == dummy_slot():
+					Game.selected[p] = Game.TRAINING_DUMMY_INDEX
 			Game.goto("stage_select")
 	else:
 		_done_frames = 0
@@ -63,7 +78,7 @@ func _process(delta: float) -> void:
 
 ## slot(1P/2P 자리)을 player의 입력으로 조작. 화면을 나가면 false
 func _update_slot(slot: int, player: int) -> bool:
-	var count := random_slot() + 1  # 캐릭터 + RANDOM 칸
+	var count := random_slot() + (2 if _has_dummy(slot) else 1)  # 캐릭터 + RANDOM (+ 연습용 인형)
 	if locked[slot]:
 		if Game.menu_back(player) and _roll[slot] == 0:
 			locked[slot] = false
@@ -108,7 +123,7 @@ func _update_solo_select() -> void:
 func _move_vertical(cur: int, dir: int) -> int:
 	var rows := ceili(float(random_slot()) / COLUMNS)
 	var mid := mini(int(COLUMNS / 2.0), random_slot() - 1)
-	if cur == random_slot():
+	if cur >= random_slot():  # 맨 아래 줄 (RANDOM / 인형)
 		return mid if dir > 0 else (rows - 1) * COLUMNS + mid
 	var next := cur + dir * COLUMNS
 	if next < 0 or next >= random_slot():
@@ -118,6 +133,8 @@ func _move_vertical(cur: int, dir: int) -> int:
 
 ## 화면에 보여줄 캐릭터 번호 (RANDOM 칸이면 계속 바뀌고, 룰렛 중이면 빠르게 돌다가 결정된 캐릭터)
 func _shown(p: int) -> int:
+	if cursor[p] == dummy_slot():
+		return -1
 	if _roll[p] > 0:
 		return (cursor[p] + int(_roll[p] / 3.0)) % random_slot()
 	if cursor[p] == random_slot():
@@ -128,9 +145,14 @@ func _shown(p: int) -> int:
 ## 가운데 카드 격자에서 index번 카드 위치 (마지막 = RANDOM: 카드 아래 가로로 긴 칸)
 func _card_rect(index: int) -> Rect2:
 	var total := COLUMNS * CARD_SIZE.x + (COLUMNS - 1) * CARD_GAP
-	if index == random_slot():
+	if index >= random_slot():
 		var rows := ceili(float(random_slot()) / COLUMNS)
-		return Rect2(Vector2(W / 2 - total / 2, GRID_TOP + rows * (CARD_SIZE.y + CARD_GAP)), Vector2(total, 44))
+		var r := Rect2(Vector2(W / 2 - total / 2, GRID_TOP + rows * (CARD_SIZE.y + CARD_GAP)), Vector2(total, 44))
+		if Game.mode == Game.Mode.TRAINING:  # 트레이닝: 왼쪽 반 RANDOM, 오른쪽 반 인형
+			r.size.x = total / 2 - CARD_GAP / 2
+			if index == dummy_slot():
+				r.position.x += total / 2 + CARD_GAP / 2
+		return r
 	var col := index % COLUMNS
 	var row := int(float(index) / COLUMNS)
 	var x := W / 2 - total / 2 + col * (CARD_SIZE.x + CARD_GAP)
@@ -169,12 +191,17 @@ func _draw() -> void:
 	Style.fill(self, Style.slant(rr.position.x, rr.position.y, rr.size.x, rr.size.y, 12), Style.PANEL)
 	Style.title(self, "?  " + Game.t("random") + "  ?", Vector2(rr.position.x, rr.end.y - 9), 30, Style.GOLD,
 			HORIZONTAL_ALIGNMENT_CENTER, rr.size.x, 5)
+	if Game.mode == Game.Mode.TRAINING:
+		var dr := _card_rect(dummy_slot())
+		Style.fill(self, Style.slant(dr.position.x, dr.position.y, dr.size.x, dr.size.y, 12), Style.PANEL)
+		Style.title(self, "DUMMY", Vector2(dr.position.x, dr.end.y - 9), 30, Color(0.85, 0.75, 0.55),
+				HORIZONTAL_ALIGNMENT_CENTER, dr.size.x, 5)
 	# 커서 (1P 빨강 / 2P 파랑, 같은 칸이면 겹쳐서 보이게 크기 다르게)
 	for p in [1, 2]:
 		var rect := _card_rect(cursor[p]).grow(4 if p == 1 else 9)
 		var col := _player_color(p)
 		Style.outline(self, Style.slant(rect.position.x, rect.position.y, rect.size.x, rect.size.y, 12), col, 4.0)
-		if cursor[p] == random_slot():
+		if cursor[p] >= random_slot():
 			continue  # RANDOM 칸은 가로로 길어서 1P/2P 글자 없이 테두리만
 		var label_x := rect.position.x + 24 if p == 1 else rect.end.x - 10
 		text("%dP" % p, rect.position.y - 8, 22, col, label_x, 4)
@@ -207,7 +234,7 @@ func _fit(art: Texture2D, rect: Rect2) -> Rect2:
 
 
 func _draw_preview(p: int, rect: Rect2) -> void:
-	var c: Dictionary = Game.CHARACTERS[_shown(p)]
+	var c: Dictionary = Game.TRAINING_DUMMY if _shown(p) < 0 else Game.CHARACTERS[_shown(p)]
 	var col := _player_color(p)
 	var is_random: bool = cursor[p] == random_slot() or _roll[p] > 0
 	var slope := 20.0 if p == 1 else -20.0
@@ -223,6 +250,19 @@ func _draw_preview(p: int, rect: Rect2) -> void:
 			draw_colored_polygon(panel, Color(0, 0, 0, 0.55))
 			Style.title(self, "?", Vector2(rect.position.x, rect.get_center().y + 60), 200, Style.GOLD,
 					HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 10)
+	elif c["id"] == "dummy":  # 연습용 인형: 받침대 + 기둥 + 과녁 몸통 + 머리
+		var base := Vector2(rect.get_center().x, rect.end.y - 110)
+		draw_rect(Rect2(base + Vector2(-60, -20), Vector2(120, 20)), Color(0.4, 0.3, 0.2))
+		draw_rect(Rect2(base + Vector2(-9, -130), Vector2(18, 110)), Color(0.62, 0.5, 0.36))
+		var torso := Rect2(base + Vector2(-48, -250), Vector2(96, 130))
+		draw_rect(torso, Color(0.85, 0.8, 0.68))
+		draw_rect(torso, Color.BLACK, false, 3.0)
+		draw_rect(Rect2(base + Vector2(-80, -235), Vector2(160, 14)), Color(0.62, 0.5, 0.36))
+		draw_circle(torso.get_center(), 26, Color(0.85, 0.15, 0.15))
+		draw_circle(torso.get_center(), 15, Color(0.85, 0.8, 0.68))
+		draw_circle(torso.get_center(), 7, Color(0.85, 0.15, 0.15))
+		draw_circle(base + Vector2(0, -284), 32, Color(0.85, 0.8, 0.68))
+		draw_arc(base + Vector2(0, -284), 32, 0, TAU, 24, Color.BLACK, 3.0)
 	else:
 		var body := Rect2(rect.get_center() - Vector2(70, 150), Vector2(140, 260))
 		draw_rect(body, c["color"])
