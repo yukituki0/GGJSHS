@@ -532,7 +532,7 @@ func _draw_menu(title: String, items: Array, dim := 0.65) -> void:
 	Style.fill(self, Style.slant(-20, 190, 1320, 90, 20), Style.RED)
 	Style.title(self, title, Vector2(0, 258), 64, Style.WHITE, HORIZONTAL_ALIGNMENT_CENTER, 1280, 12)
 	for i in items.size():
-		var y := 330.0 + i * 70
+		var y := 320.0 + i * minf(70.0, 380.0 / maxf(1.0, items.size()))  # 항목이 많으면 간격을 좁힘
 		var selected := i == m.menu_cursor
 		Style.fill(self, Style.slant(440, y, 400, 52, 14), Style.RED if selected else Style.PANEL)
 		if selected:

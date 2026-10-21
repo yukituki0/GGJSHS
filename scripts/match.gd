@@ -271,7 +271,7 @@ const RESULT_ITEMS := ["rematch", "to_char_select", "to_title"]  # Game.STRINGS 
 ## 일시정지 메뉴 항목 (트레이닝이면 더미 설정이 추가된다)
 func pause_items() -> Array:
 	if is_training():
-		return ["resume", "command_list", "dummy", "to_char_select", "to_title"]
+		return ["resume", "command_list", "dummy", "hitbox", "to_char_select", "to_title"]
 	return ["resume", "command_list", "to_char_select", "to_title"]
 
 
@@ -279,6 +279,8 @@ func pause_items() -> Array:
 func menu_label(key: String) -> String:
 	if key == "dummy":
 		return "%s: %s" % [Game.t("dummy"), Game.t(Game.DUMMY_KEYS[Game.dummy_mode])]
+	if key == "hitbox":
+		return "%s: %s" % [Game.t("hitbox"), Game.t("on" if p1.debug_draw_boxes else "off")]
 	return Game.t(key)
 
 
@@ -301,6 +303,10 @@ func _update_pause_menu() -> void:
 			# 누를 때마다 다음 동작으로
 			Game.dummy_mode = (Game.dummy_mode + 1) % Game.DUMMY_KEYS.size()
 			p2.dummy = Game.dummy_mode as Fighter.Dummy
+		"hitbox":  # 판정 박스 보기 (F2와 같음)
+			var show := not p1.debug_draw_boxes
+			for f: Fighter in [p1, p2]:
+				f.debug_draw_boxes = show
 		"command_list":
 			show_moves = true
 		"to_char_select":

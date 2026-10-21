@@ -946,7 +946,7 @@ func _draw_puppet(shake_x: float) -> void:
 	_draw_tex(pose_tex, shake_x, tint, body)
 	if state == State.GUARD or state == State.BLOCKSTUN:
 		_draw_guard_shield()
-	_draw_swing()
+	# 휘두르기 잔상(_draw_swing)은 자세 그림이 생긴 뒤로 오히려 어색해서 끔. 판정은 트레이닝의 "판정 보기"로
 
 
 var _anchor_cache := {}
