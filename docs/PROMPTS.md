@@ -51,6 +51,262 @@ Same character as the attached image: same face, hair, outfit, colors and body p
 Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his mechanical keyboard. Pose: heavy slam, the mechanical keyboard brought down hard in front of the body with both hands at waist height, deep lunge, body leaning forward, jacket flaring. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
 ```
 
+## 0-2. 앉은 / 공중 기본기 (한 장씩)
+
+> 없으면 앉은 기술은 앉은 그림, 공중 기술은 점프 공격 그림을 같이 쓴다. 자주 쓰는 2K(하단)·2H(대공)·jK·jH부터 추천
+
+### 🧪 CHEMIKID
+
+⬜ **앉아 P** → `chemikid_2p`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his glowing green flask. Pose: crouching low, quick short jab forward with one fist at waist height. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **앉아 K** → `chemikid_2k`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his glowing green flask. Pose: crouching low, poking forward along the ground with the front foot, leg extended low, foot near the floor. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **앉아 S** → `chemikid_2s`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his glowing green flask. Pose: crouching low, swinging the flask forward at knee height. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **앉아 HS (대공)** → `chemikid_2h`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his glowing green flask. Pose: anti-air: rising up from a crouch and swinging the flask straight upward above the head, looking up. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **공중 P** → `chemikid_jp`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his glowing green flask. Pose: in mid-air, knees tucked, quick jab forward with one fist. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **공중 K** → `chemikid_jk`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his glowing green flask. Pose: in mid-air, kicking forward with one leg fully extended. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **공중 S** → `chemikid_js`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his glowing green flask. Pose: in mid-air, swinging the flask horizontally forward at chest height. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **공중 HS** → `chemikid_jh`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his glowing green flask. Pose: in mid-air, big downward swing of the flask in front of the body, body arched forward. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+### 💻 COMMON
+
+⬜ **앉아 P** → `common_2p`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his mechanical keyboard. Pose: crouching low, quick short jab forward with one fist at waist height. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **앉아 K** → `common_2k`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his mechanical keyboard. Pose: crouching low, poking forward along the ground with the front foot, leg extended low, foot near the floor. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **앉아 S** → `common_2s`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his mechanical keyboard. Pose: crouching low, swinging the mechanical keyboard forward at knee height. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **앉아 HS (대공)** → `common_2h`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his mechanical keyboard. Pose: anti-air: rising up from a crouch and swinging the mechanical keyboard straight upward above the head, looking up. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **공중 P** → `common_jp`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his mechanical keyboard. Pose: in mid-air, knees tucked, quick jab forward with one fist. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **공중 K** → `common_jk`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his mechanical keyboard. Pose: in mid-air, kicking forward with one leg fully extended. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **공중 S** → `common_js`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his mechanical keyboard. Pose: in mid-air, swinging the mechanical keyboard horizontally forward at chest height. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **공중 HS** → `common_jh`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his mechanical keyboard. Pose: in mid-air, big downward swing of the mechanical keyboard in front of the body, body arched forward. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+### 🌀 CHAOS
+
+⬜ **앉아 P** → `chaos_2p`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed. Pose: crouching low, quick short jab forward with one fist at waist height. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **앉아 K** → `chaos_2k`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed. Pose: crouching low, poking forward along the ground with the front foot, leg extended low, foot near the floor. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **앉아 S** → `chaos_2s`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed. Pose: crouching low, swinging one hand in a karate chop forward at knee height. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **앉아 HS (대공)** → `chaos_2h`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed. Pose: anti-air: rising up from a crouch and swinging one hand in a karate chop straight upward above the head, looking up. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **공중 P** → `chaos_jp`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed. Pose: in mid-air, knees tucked, quick jab forward with one fist. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **공중 K** → `chaos_jk`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed. Pose: in mid-air, kicking forward with one leg fully extended. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **공중 S** → `chaos_js`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed. Pose: in mid-air, swinging one hand in a karate chop horizontally forward at chest height. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **공중 HS** → `chaos_jh`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed. Pose: in mid-air, big downward swing of one hand in a karate chop in front of the body, body arched forward. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+### 🌍 GLOBE
+
+⬜ **앉아 P** → `globe_2p`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed, geologist hammer on the belt. Pose: crouching low, quick short jab forward with one fist at waist height. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **앉아 K** → `globe_2k`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed, geologist hammer on the belt. Pose: crouching low, poking forward along the ground with the front foot, leg extended low, foot near the floor. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **앉아 S** → `globe_2s`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed, geologist hammer on the belt. Pose: crouching low, swinging one hand in a karate chop forward at knee height. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **앉아 HS (대공)** → `globe_2h`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed, geologist hammer on the belt. Pose: anti-air: rising up from a crouch and swinging one hand in a karate chop straight upward above the head, looking up. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **공중 P** → `globe_jp`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed, geologist hammer on the belt. Pose: in mid-air, knees tucked, quick jab forward with one fist. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **공중 K** → `globe_jk`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed, geologist hammer on the belt. Pose: in mid-air, kicking forward with one leg fully extended. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **공중 S** → `globe_js`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed, geologist hammer on the belt. Pose: in mid-air, swinging one hand in a karate chop horizontally forward at chest height. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **공중 HS** → `globe_jh`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed, geologist hammer on the belt. Pose: in mid-air, big downward swing of one hand in a karate chop in front of the body, body arched forward. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+### 📐 ROOT2
+
+⬜ **앉아 P** → `root2_2p`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his giant drafting compass. Pose: crouching low, quick short jab forward with one fist at waist height. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **앉아 K** → `root2_2k`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his giant drafting compass. Pose: crouching low, poking forward along the ground with the front foot, leg extended low, foot near the floor. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **앉아 S** → `root2_2s`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his giant drafting compass. Pose: crouching low, swinging the giant compass forward at knee height. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **앉아 HS (대공)** → `root2_2h`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his giant drafting compass. Pose: anti-air: rising up from a crouch and swinging the giant compass straight upward above the head, looking up. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **공중 P** → `root2_jp`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his giant drafting compass. Pose: in mid-air, knees tucked, quick jab forward with one fist. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **공중 K** → `root2_jk`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his giant drafting compass. Pose: in mid-air, kicking forward with one leg fully extended. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **공중 S** → `root2_js`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his giant drafting compass. Pose: in mid-air, swinging the giant compass horizontally forward at chest height. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **공중 HS** → `root2_jh`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his giant drafting compass. Pose: in mid-air, big downward swing of the giant compass in front of the body, body arched forward. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+### 🌱 SEED
+
+⬜ **앉아 P** → `seed_2p`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed, magnifying glass pendant. Pose: crouching low, quick short jab forward with one fist at waist height. Skirt kept modest, opaque tights. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **앉아 K** → `seed_2k`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed, magnifying glass pendant. Pose: crouching low, poking forward along the ground with the front foot, leg extended low, foot near the floor. Skirt kept modest, opaque tights. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **앉아 S** → `seed_2s`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed, magnifying glass pendant. Pose: crouching low, swinging one hand in a karate chop forward at knee height. Skirt kept modest, opaque tights. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **앉아 HS (대공)** → `seed_2h`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed, magnifying glass pendant. Pose: anti-air: rising up from a crouch and swinging one hand in a karate chop straight upward above the head, looking up. Skirt kept modest, opaque tights. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **공중 P** → `seed_jp`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed, magnifying glass pendant. Pose: in mid-air, knees tucked, quick jab forward with one fist. Skirt kept modest, opaque tights. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **공중 K** → `seed_jk`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed, magnifying glass pendant. Pose: in mid-air, kicking forward with one leg fully extended. Skirt kept modest, opaque tights. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **공중 S** → `seed_js`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed, magnifying glass pendant. Pose: in mid-air, swinging one hand in a karate chop horizontally forward at chest height. Skirt kept modest, opaque tights. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
+⬜ **공중 HS** → `seed_jh`
+```
+Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed, magnifying glass pendant. Pose: in mid-air, big downward swing of one hand in a karate chop in front of the body, body arched forward. Skirt kept modest, opaque tights. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+```
+
 ## 1. 걷기 시트 (4프레임, 한 장)
 
 ### ✅ 🧪 CHEMIKID → `chemikid_walk` ~ `chemikid_walk4`

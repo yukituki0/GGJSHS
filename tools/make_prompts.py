@@ -114,6 +114,23 @@ WEAPON_POSES = [
      'deep lunge, body leaning forward, jacket flaring'),
 ]
 
+# 앉은 / 공중 기본기 (파일 이름 = 기술 이름: <id>_2k.png, <id>_jh.png). 없으면 앉은 그림 / 점프 공격 그림을 같이 쓴다
+# {W}: S·HS 때 휘두르는 것 (무기 캐릭터는 무기, 맨손 캐릭터는 손날)
+WEAPON = {
+    'chemikid': 'the flask', 'common': 'the mechanical keyboard', 'root2': 'the giant compass',
+    'chaos': 'one hand in a karate chop', 'globe': 'one hand in a karate chop', 'seed': 'one hand in a karate chop',
+}
+NORMALS = [
+    ('2p', '앉아 P', 'crouching low, quick short jab forward with one fist at waist height'),
+    ('2k', '앉아 K', 'crouching low, poking forward along the ground with the front foot, leg extended low, foot near the floor'),
+    ('2s', '앉아 S', 'crouching low, swinging {W} forward at knee height'),
+    ('2h', '앉아 HS (대공)', 'anti-air: rising up from a crouch and swinging {W} straight upward above the head, looking up'),
+    ('jp', '공중 P', 'in mid-air, knees tucked, quick jab forward with one fist'),
+    ('jk', '공중 K', 'in mid-air, kicking forward with one leg fully extended'),
+    ('js', '공중 S', 'in mid-air, swinging {W} horizontally forward at chest height'),
+    ('jh', '공중 HS', 'in mid-air, big downward swing of {W} in front of the body, body arched forward'),
+]
+
 EFFECTS = [
     ('chemikid_flask', '플라스크 (투사체)', 'a glass Erlenmeyer flask filled with glowing toxic-green liquid, tilted as if thrown'),
     ('chemikid_puddle', '산성 웅덩이', 'a flat bubbling puddle of glowing green acid seen from the side, very wide and thin'),
@@ -189,6 +206,14 @@ for f, ko, pose in WEAPON_POSES:
     cid = f.split('_')[0]
     item = next(i for c, _, i in CHARS if c == cid)
     out += [f'{mark(f)} **{ko}** → `{f}`', '```', pose_prompt(cid, item[0].upper() + item[1:], pose), '```', '']
+
+out += ['## 0-2. 앉은 / 공중 기본기 (한 장씩)', '',
+        '> 없으면 앉은 기술은 앉은 그림, 공중 기술은 점프 공격 그림을 같이 쓴다. 자주 쓰는 2K(하단)·2H(대공)·jK·jH부터 추천', '']
+for cid, title, item in CHARS:
+    out += [f'### {title}', '']
+    for f, ko, pose in NORMALS:
+        out += [f'{mark(cid + "_" + f)} **{ko}** → `{cid}_{f}`', '```',
+                pose_prompt(cid, item[0].upper() + item[1:], pose.replace('{W}', WEAPON[cid])), '```', '']
 
 out += ['## 1. 걷기 시트 (4프레임, 한 장)', '']
 for cid, title, item in CHARS:

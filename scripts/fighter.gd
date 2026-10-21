@@ -812,13 +812,20 @@ func _fit_hitboxes_to_art() -> void:
 	if puppet == null:
 		return
 	# [자세 그림, 기준 기술, 같이 옮길 기술, 손발 끝을 찾을 높이(키 비율)]
-	var groups := [["kick", "5K", ["5K"], 0.2, 0.9], ["crouch", "2P", ["2P", "2S", "2H"], 0.3, 1.0]]
-	# 5P / 5S / 5H는 쓰는 그림별로 묶는다 (S 그림이 있으면 5S는 그 그림의 무기 끝에 맞춤)
-	for move in ["5P", "5S", "5H"]:
-		var pose := _stand_pose(move)
+	var groups := [["kick", "5K", ["5K"], 0.2, 0.9]]
+	# 기술을 쓰는 그림별로 묶는다 (S 그림이 있으면 5S는 그 그림의 무기 끝에, 2K 그림이 있으면 2K는 그 발끝에)
+	# 앉은 기술은 전용 그림(2p 등)이 없으면 앉은 그림 하나를 같이 쓴다. 2K는 전용 그림이 있을 때만 (발끝 = 바닥 근처)
+	var moves := {"5P": [0.45, 1.0], "5S": [0.45, 1.0], "5H": [0.45, 1.0],
+			"2P": [0.3, 1.0], "2S": [0.3, 1.0], "2H": [0.3, 1.0], "2K": [0.0, 0.5]}
+	for move: String in moves:
+		var pose := _stand_pose(move) if move.begins_with("5") else move.to_lower()
+		if move.begins_with("2") and Game.load_texture("res://assets/characters/%s_%s.png" % [char_id, pose]) == null:
+			if move == "2K":
+				continue
+			pose = "crouch"
 		var same := groups.filter(func(g: Array) -> bool: return g[0] == pose)
 		if same.is_empty():
-			groups.append([pose, move, [move], 0.45, 1.0])
+			groups.append([pose, move, [move], moves[move][0], moves[move][1]])
 		else:
 			same[0][2].append(move)
 	for group in groups:
@@ -1172,8 +1179,11 @@ func _pose_texture() -> Texture2D:
 				if special:  # 필살기/잡기 전용 그림은 시작부터 끝까지
 					names.append("throw" if a.is_throw else a.name.to_lower())  # 예: chemikid_6d.png
 				if special or a.startup < state_frame:
+					# 앉은/공중 기본기는 기술마다 그림을 따로 둘 수 있다 (예: root2_2k.png, root2_jh.png)
+					if a.name.begins_with("2") or a.name.begins_with("j"):
+						names.append(a.name.to_lower())
 					if a.name.begins_with("2"):
-						names.append("crouch")  # 앉아서 쓰는 기술은 앉은 그림으로
+						names.append("crouch")  # 없으면 앉은 그림으로
 					elif a.name.begins_with("j") and not _is_kick(a):
 						names.append_array(["jump_attack", "punch"])
 					else:
