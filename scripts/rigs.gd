@@ -52,7 +52,7 @@ const RIGS := {
 		},
 	},
 	"root2": {
-		"pose_size": {"crouch": 0.88, "heavy": 0.75, "air_dash": 0.77},
+		"pose_size": {"crouch": 0.88, "heavy": 0.75, "air_dash": 0.77, "5d": 0.8},
 		"reach_limit": {"5H": 120},  # 5H 판정을 컴퍼스 끝까지 (원거리형). 6D는 그보다 더 길게 root2.gd에서
 		"joints": {
 			"hip": Vector2(560, 560), "neck": Vector2(560, 270), "head": Vector2(600, 150),
