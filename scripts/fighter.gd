@@ -812,8 +812,16 @@ func _fit_hitboxes_to_art() -> void:
 	if puppet == null:
 		return
 	# [자세 그림, 기준 기술, 같이 옮길 기술, 손발 끝을 찾을 높이(키 비율)]
-	for group in [["punch", "5P", ["5P", "5S", "5H"], 0.45, 1.0], ["kick", "5K", ["5K"], 0.2, 0.9],
-			["crouch", "2P", ["2P", "2S", "2H"], 0.3, 1.0]]:
+	var groups := [["kick", "5K", ["5K"], 0.2, 0.9], ["crouch", "2P", ["2P", "2S", "2H"], 0.3, 1.0]]
+	# 5P / 5S / 5H는 쓰는 그림별로 묶는다 (S 그림이 있으면 5S는 그 그림의 무기 끝에 맞춤)
+	for move in ["5P", "5S", "5H"]:
+		var pose := _stand_pose(move)
+		var same := groups.filter(func(g: Array) -> bool: return g[0] == pose)
+		if same.is_empty():
+			groups.append([pose, move, [move], 0.45, 1.0])
+		else:
+			same[0][2].append(move)
+	for group in groups:
 		var tex := Game.load_texture("res://assets/characters/%s_%s.png" % [char_id, group[0]])
 		if tex == null or not attacks.has(group[1]):
 			continue
@@ -1133,6 +1141,18 @@ func _pose_scale() -> float:
 	return _pose_scale_cache
 
 
+## 서서 쓰는 손 기본기 그림. 길티기어처럼 S·HS는 무기 공격이라 "slash"(S), "heavy"(HS) 그림을 따로 쓸 수 있다.
+## 그림이 없으면 한 단계 가벼운 그림으로 (HS → S → 펀치)
+const STAND_POSES := {"5S": ["slash", "punch"], "5H": ["heavy", "slash", "punch"]}
+
+
+func _stand_pose(move: String) -> String:
+	for n: String in STAND_POSES.get(move, ["punch"]):
+		if Game.load_texture("res://assets/characters/%s_%s.png" % [char_id, n]) != null:
+			return n
+	return "punch"
+
+
 ## 지금 상태에 맞는 자세 그림 (없으면 null → 기본 그림)
 func _pose_texture() -> Texture2D:
 	# 앞에 있는 이름부터 찾아서 그림이 있는 걸 쓴다 (없으면 다음 이름, 다 없으면 기본 그림)
@@ -1150,7 +1170,7 @@ func _pose_texture() -> Texture2D:
 					elif a.name.begins_with("j") and not _is_kick(a):
 						names.append_array(["jump_attack", "punch"])
 					else:
-						names.append("kick" if _is_kick(a) else "punch")
+						names.append("kick" if _is_kick(a) else _stand_pose(a.name))
 		State.STAND:
 			if velocity.x != 0.0:
 				if velocity.x * facing < 0.0:
