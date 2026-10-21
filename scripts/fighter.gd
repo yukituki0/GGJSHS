@@ -109,6 +109,15 @@ var guard_gauge := 0.0
 var _since_block := 999
 var crush_text := 0                # "GUARD CRUSH!" 글자 남은 프레임
 
+# ── 카운터 히트 ───────────────────────────────────────────
+## 상대가 공격을 내는 중(발생~지속)에 때리면 카운터: 데미지와 경직이 늘고 멈춤도 길어진다
+## (길티기어처럼 "COUNTER" 글자. 늘어난 경직 덕분에 평소엔 안 이어지는 콤보가 들어간다)
+const COUNTER_DAMAGE := 1.1        # 데미지 +10%
+const COUNTER_HITSTUN := 8         # 경직 +8프레임
+const COUNTER_HITSTOP := 6         # 히트스톱 +6프레임 (Match가 더한다)
+var counter_text := 0              # "COUNTER" 글자 남은 프레임
+var last_hit_counter := false      # 방금 맞은 게 카운터였나 (Match가 읽는다)
+
 # ── 일반 잡기 ─────────────────────────────────────────────
 ## 상대에게 붙어서 → 또는 ← + HS. 가드 불가. 상대가 땅에 있고 경직 중이 아닐 때만
 const THROW_RANGE := 40.0          # 몸끼리 이 거리 안이면 잡을 수 있다
@@ -156,6 +165,8 @@ func tick() -> void:
 		shock_frames -= 1
 	if crush_text > 0:
 		crush_text -= 1
+	if counter_text > 0:
+		counter_text -= 1
 	_since_block += 1
 	if _since_block > 60:
 		guard_gauge = maxf(0.0, guard_gauge - GUARD_DECAY)
@@ -186,6 +197,7 @@ func reset_for_round(x: float) -> void:
 	rc_flash = 0
 	guard_gauge = 0.0
 	crush_text = 0
+	counter_text = 0
 	history.clear()
 	_buffer.clear()
 	_change_state(State.STAND)
@@ -322,14 +334,24 @@ func _guard_held() -> bool:
 	return _held("guard") or _input_forward() < 0
 
 
-## 상대가 공격 중이거나 상대 투사체가 다가오고 있나.
-## 이때 뒤를 누르면 뒤로 걷지 않고 그 자리에서 가드 자세를 잡는다 (CPU도 이걸 보고 가드)
+## 근접 가드 (Proximity Guard): 상대 공격이 발생~지속 중이고 "그 기술이 닿을 만한 거리"에 있거나,
+## 상대 투사체가 가까이 오면 true. 이때 뒤를 누르면 뒤로 걷지 않고 그 자리에서 가드 자세를 잡는다.
+## 멀리서 헛친 기술에는 반응하지 않고, 잡기는 반응하지 않는다 (CPU도 이걸 보고 가드)
+const PROXIMITY_MARGIN := 60.0  # 판정 끝보다 이만큼 더 멀어도 가드 자세 (스파·길티처럼 판정보다 조금 넓게)
+
+
 func is_threatened() -> bool:
 	if opponent == null:
 		return false
-	if opponent.state == State.ATTACK and opponent.current_attack != null \
-			and absf(opponent.position.x - position.x) < 430:
-		return true
+	var a := opponent.current_attack
+	if opponent.state == State.ATTACK and a != null and not a.is_throw \
+			and opponent.state_frame <= a.startup + a.active:
+		var left := maxi(0, a.startup + a.active - opponent.state_frame)
+		var reach := a.hitbox.end.x if a.hitbox.has_area() else 0.0
+		reach += absf(a.move_speed) * left  # 돌진기는 앞으로 나가는 거리까지
+		var gap := absf(opponent.position.x - position.x) - body_size().x / 2
+		if a.hitbox.has_area() and gap <= reach + PROXIMITY_MARGIN:
+			return true
 	var match_node := get_parent()
 	if match_node is Match:
 		for proj in match_node.projectiles:
@@ -846,6 +868,12 @@ func on_attack_connected(attack: AttackData, blocked: bool) -> void:
 	_on_attack_result(attack, blocked)
 
 
+## 지금 맞으면 카운터가 되는 상태인가 (공격 발생~지속 중). 판정 보기에서 맞는 판정이 하늘색이 된다
+func in_counter_state() -> bool:
+	return state == State.ATTACK and current_attack != null \
+			and state_frame <= current_attack.startup + current_attack.active
+
+
 ## 공격 시작부터 invuln_frames 동안은 무적
 func is_invulnerable() -> bool:
 	return state == State.ATTACK and current_attack != null and state_frame <= current_attack.invuln_frames
@@ -854,6 +882,8 @@ func is_invulnerable() -> bool:
 ## Match가 호출: 공격을 받았다. 막았으면 true를 돌려준다
 func receive_attack(attack: AttackData, from_dir: int, damage_scale := 1.0) -> bool:
 	var damage := int(round(attack.damage * damage_scale))
+	var counter := in_counter_state() and not attack.is_throw  # 상태가 바뀌기 전에 미리 확인
+	last_hit_counter = false
 	if _try_counter(attack):
 		return true  # 반격 성공: 막은 것처럼 처리 (데미지 없음)
 	# 아머: 돌진기 등의 발생~지속 동안은 맞아도 멈추지 않는다 (데미지는 받음)
@@ -887,6 +917,10 @@ func receive_attack(attack: AttackData, from_dir: int, damage_scale := 1.0) -> b
 		return true
 
 	guard_gauge = 0.0  # 맞으면 가드 게이지 초기화
+	if counter:
+		damage = int(round(damage * COUNTER_DAMAGE))
+		last_hit_counter = true
+		counter_text = 50
 
 	hp = maxi(hp - damage, 0 if can_die else 1)
 	hit_shake = attack.hitstop
@@ -895,7 +929,7 @@ func receive_attack(attack: AttackData, from_dir: int, damage_scale := 1.0) -> b
 		velocity = Vector2(6.0 * from_dir, -10.0)
 		_change_state(State.KO)
 		return false
-	stun_frames = attack.hitstun
+	stun_frames = attack.hitstun + (COUNTER_HITSTUN if counter else 0)
 	if attack.launch != Vector2.ZERO:
 		velocity = Vector2(attack.launch.x * from_dir, attack.launch.y)  # 던지기 등: 크게 날아감
 		position.y -= 1  # 땅에서 떨어뜨려야 공중 경직으로 처리된다
@@ -950,6 +984,9 @@ func _draw() -> void:
 	if crush_text > 0:
 		Style.text(self, "GUARD CRUSH!", Vector2(-150, -size.y - 50), 30, Color(1, 0.4, 0.3, minf(1.0, crush_text / 15.0)),
 				HORIZONTAL_ALIGNMENT_CENTER, 300, 6)
+	if counter_text > 0:
+		Style.text(self, "COUNTER", Vector2(-150, -size.y - 50), 32, Color(1, 0.55, 0.15, minf(1.0, counter_text / 15.0)),
+				HORIZONTAL_ALIGNMENT_CENTER, 300, 6)
 	if debug_draw_boxes:
 		# 디버그: 현재 상태 이름
 		var label: String = State.keys()[state]
@@ -957,10 +994,15 @@ func _draw() -> void:
 			label += " " + current_attack.name
 		draw_string(Game.FONT, Vector2(-size.x / 2, -size.y - 38),
 				label, HORIZONTAL_ALIGNMENT_LEFT, -1, 16)
-		draw_rect(rect, Color(0.3, 0.6, 1.0, 0.8), false, 1.0)  # 밀어내기 (파랑)
-		for r: Rect2 in hurt_rects():  # 맞는 판정 (초록)
+		# 색은 길티기어 판정 보기 모드와 같게: 밀어내기 노랑, 맞는 판정 초록(카운터 상태면 하늘색), 공격 빨강, 잡기 보라
+		draw_rect(rect, Color(1.0, 0.9, 0.2, 0.8), false, 1.0)
+		var hurt_color := Color.CYAN if in_counter_state() else Color.GREEN
+		for r: Rect2 in hurt_rects():
 			r.position -= position
-			draw_rect(r, Color.GREEN, false, 2.0)
+			draw_rect(r, hurt_color, false, 2.0)
+		if is_on_ground():  # 잡기 범위: 내 몸 앞쪽 THROW_RANGE (상대 몸이 여기 닿으면 잡힘)
+			var tx := size.x / 2 if facing > 0 else -size.x / 2 - THROW_RANGE
+			draw_rect(Rect2(tx, -size.y * 0.8, THROW_RANGE, size.y * 0.6), Color(0.75, 0.35, 1.0, 0.9), false, 2.0)
 		var hit := hitbox_rect()
 		if hit.has_area():
 			hit.position -= position

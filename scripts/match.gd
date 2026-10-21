@@ -370,14 +370,14 @@ func _apply_hit(attacker: Fighter, defender: Fighter, attack: AttackData, contac
 	var blocked := defender.receive_attack(attack, dir, attacker.damage_mult)
 	if blocked:
 		Sfx.play("guard", -2.0, 0.08)
-	elif attack.damage >= 45:
+	elif attack.damage >= 45 or defender.last_hit_counter:  # 카운터는 무거운 타격음 + 더 긴 멈춤
 		Sfx.play("hit_heavy", 0.0, 0.05)
 	elif attack.damage >= 25:
 		Sfx.play("hit_medium", -1.0, 0.08)
 	else:
 		Sfx.play("hit_light", -2.0, 0.1)
 	attacker.on_attack_connected(attack, blocked)
-	_hitstop = maxi(_hitstop, attack.hitstop)
+	_hitstop = maxi(_hitstop, attack.hitstop + (Fighter.COUNTER_HITSTOP if defender.last_hit_counter else 0))
 	sparks.append([contact, 10, blocked])
 	if not blocked:
 		_shake = maxi(_shake, attack.hitstop)
