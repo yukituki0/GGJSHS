@@ -831,6 +831,8 @@ func _fit_hitboxes_to_art() -> void:
 			continue
 		tip *= s
 		var ref: AttackData = attacks[group[1]]
+		# 공격할 때 몸이 앞으로 밀리고 기울어지니까(_body_motion), 실제로 그려지는 손발 끝 위치로
+		tip = _attack_lean(ref, 1.0) * tip
 		# 캐릭터마다 일부러 그림 끝까지 늘리고 싶은 기술은 rigs의 reach_limit으로 한도를 바꾼다
 		var limit: float = Rigs.get_rig(char_id).get("reach_limit", {}).get(group[1], REACH_LIMIT)
 		var dx := clampf(tip.x - ref.hitbox.end.x, -REACH_LIMIT, limit)
@@ -1288,17 +1290,22 @@ func _body_motion() -> Transform2D:
 		State.ATTACK:
 			var reach := _attack_reach()
 			var wind := 1.0 - reach if state_frame <= current_attack.startup else 0.0
-			if _is_kick(current_attack):
-				tilt = -0.06 * reach
-			else:
-				tilt = 0.08 * reach - 0.04 * wind
-			shift.x = 12.0 * reach - 4.0 * wind
+			var lean := _attack_lean(current_attack, reach, wind)
+			tilt = lean.get_rotation()
+			shift.x = lean.origin.x
 			squash = 1.0 - 0.03 * reach
 			if current_attack.name.begins_with("2") and _pose_texture() == null:
 				squash *= 0.75
 	# 발을 기준으로 기울이고(tilt), 세로로 찌그러뜨리고(squash), 가로는 그만큼 살짝 넓힌다
 	return Transform2D(0.0, shift) * Transform2D(tilt, Vector2.ZERO) \
 			* Transform2D(0.0, Vector2(1.0 + (1.0 - squash) * 0.4, squash), 0.0, Vector2.ZERO)
+
+
+## 공격할 때 몸 기울기 + 앞으로 밀기 (발 기준). reach = 공격 진행도, wind = 발생 중 뒤로 젖히는 정도.
+## 판정 맞추기(_fit_hitboxes_to_art)도 같은 값을 써서, 그려지는 주먹 끝과 판정 끝이 맞는다
+func _attack_lean(a: AttackData, reach: float, wind := 0.0) -> Transform2D:
+	var tilt := -0.06 * reach if _is_kick(a) else 0.08 * reach - 0.04 * wind
+	return Transform2D(tilt, Vector2(12.0 * reach - 4.0 * wind, 0.0))
 
 
 ## 공격 진행도: 발생 동안 0 → 1, 지속 동안 1, 후딜 동안 1 → 0
