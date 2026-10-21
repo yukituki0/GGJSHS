@@ -15,6 +15,8 @@ const FONT: Font = preload("res://assets/fonts/Pretendard-Bold.otf")
 ## 제목/연출용 굵은 폰트: 영문 Anton(세로로 긴 광고체) + 한글 Black Han Sans (둘 다 SIL OFL 1.1, assets/fonts/*-OFL.txt)
 ## Anton에 없는 글자(한글, √ 등)는 다음 폰트에서 찾아 쓴다
 var TITLE_FONT: FontFile = _make_title_font()
+## 타이머 숫자: Chakra Petch Bold Italic (기울어진 각진 숫자, SIL OFL 1.1 - assets/fonts/ChakraPetch-OFL.txt)
+const TIMER_FONT: Font = preload("res://assets/fonts/ChakraPetch-BoldItalic.ttf")
 
 
 static func _make_title_font() -> FontFile:

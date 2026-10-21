@@ -73,7 +73,9 @@ const IMG_HP_BAR_SLOT := Rect2(0.2645, 0.3859, 0.6682, 0.212)      # 틀 안의 
 const IMG_HP_PORTRAIT_SLOT := Rect2(0.0909, 0.2554, 0.16, 0.4402)   # 틀 안의 육각형 초상화 자리
 const IMG_HP_FILL_SRC := Rect2(0.0809, 0.2343, 0.8664, 0.5486)      # 채움 그림에서 실제 색 부분
 const IMG_TIMER_W := 150.0
-const IMG_TIMER_CENTER := Vector2(640, 52 + IMG_TOP_OFFSET)
+const IMG_TIMER_DROP := 26.0       # 타이머를 체력바보다 이만큼 아래로 (화면 가운데 쪽으로)
+const IMG_TIMER_CENTER := Vector2(640, 52 + IMG_TOP_OFFSET + IMG_TIMER_DROP)
+const TIMER_SIZE := 50
 const IMG_TEN_FRAME_W := 360.0
 const IMG_TEN_BOTTOM := 712.0
 ## 텐션바는 1P/2P 그림이 따로 있다 (빈 것 + 꽉 찬 것). 꽉 찬 그림의 채움 자리를 비율만큼 잘라 빈 그림 위에 덮는다
@@ -124,7 +126,9 @@ func _draw_hud_images() -> void:
 	var secs := ceili(maxi(m.timer_frames, 0) / 60.0)
 	var time_text := "--" if m.is_training() else str(secs)
 	var col := Style.RED if not m.is_training() and secs <= 10 else Style.WHITE
-	Style.text(self, time_text, IMG_TIMER_CENTER + Vector2(-50, 17), 46, col, HORIZONTAL_ALIGNMENT_CENTER, 100, 7)
+	# 숫자 높이 = 글자 크기 x 0.7 → 기준선을 그 절반만큼 내리면 숫자가 다이얼 정중앙에 온다
+	Style.text(self, time_text, IMG_TIMER_CENTER + Vector2(-60, TIMER_SIZE * 0.35), TIMER_SIZE, col,
+			HORIZONTAL_ALIGNMENT_CENTER, 120, 7, Style.BLACK, Game.TIMER_FONT)
 
 	# 텐션: 1P는 왼쪽(TENSION 글자 쪽)부터, 2P는 오른쪽(글자 쪽)부터 채움
 	for f: Fighter in [m.p1, m.p2]:
@@ -212,7 +216,7 @@ func _draw_portrait_hex(f: Fighter, r: Rect2) -> void:
 func _draw_hud() -> void:
 	if _use_images:
 		_draw_hud_images()
-		_draw_round_info(128.0 + IMG_TOP_OFFSET)
+		_draw_round_info(128.0 + IMG_TOP_OFFSET + IMG_TIMER_DROP)
 		return
 	# 위쪽 어두운 띠 (밝은 배경에서도 HUD가 잘 보이게)
 	draw_polygon(PackedVector2Array([Vector2(0, 0), Vector2(1280, 0), Vector2(1280, 130), Vector2(0, 130)]),
