@@ -1283,7 +1283,10 @@ func _body_motion() -> Transform2D:
 			tilt = -0.18 * k
 			shift.x = -10.0 * k
 		State.KO:
-			if is_on_ground():
+			var tex := _pose_texture()
+			if tex != null and tex.resource_path.ends_with("_down.png"):
+				pass  # 이미 누워 있는 그림은 그대로 (돌리면 세로로 서 버림)
+			elif is_on_ground():
 				tilt = -1.45 * minf(state_frame / 12.0, 1.0)  # 뒤로 쓰러짐
 			else:
 				tilt = -0.5
