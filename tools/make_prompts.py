@@ -92,11 +92,7 @@ SPECIALS = {
 }
 
 # 다시 뽑을 그림: (파일, 설명, Pose 문장). 새 그림을 넣으면 여기서 지운다
-REDO = [
-    ('root2_punch', 'P (짧은 잽) — 지금 그림은 너무 길게 찔러서 6D(컴퍼스 찌르기)로 옮김',
-     'quick short jab, the free front hand punching straight forward at chest height with the arm only half extended, '
-     'the giant compass held upright close to the body in the back hand, compact stance, feet shoulder-width apart'),
-]
+REDO = []
 
 EFFECTS = [
     ('chemikid_flask', '플라스크 (투사체)', 'a glass Erlenmeyer flask filled with glowing toxic-green liquid, tilted as if thrown'),
