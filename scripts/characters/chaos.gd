@@ -84,6 +84,7 @@ func _on_attack_event(attack: AttackData) -> void:
 			p.position = position + Vector2(110 * facing, 40)
 			p.velocity = Vector2(4.0 * facing, 6.0)
 			p.lifetime = 18
+			p.extra = {"fx": "chaos_steam"}  # 증기 폭발 그림 (없으면 원래 원 모양)
 			spawn(p)
 		"OD":
 			var p := Projectile.new()
@@ -123,6 +124,7 @@ func tick() -> void:
 			boom.color = PURPLE
 			boom.position = _hole.position
 			boom.lifetime = 14
+			boom.extra = {"fx": "chaos_burst"}
 			spawn(boom)
 
 

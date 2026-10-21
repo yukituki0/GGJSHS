@@ -124,7 +124,9 @@ func _draw() -> void:
 		"explosion":
 			# 폭발: 커지면서 사라지는 원
 			var t := float(age) / lifetime
-			if _draw_ground_effect("chemikid_explosion", r.end.y + 6, r.size.x * 1.5 * (0.7 + 0.3 * t), 1.0 - t * t, 1.0):
+			# 폭발 그림은 쏜 캐릭터마다 다르다 (extra.fx, 기본은 케미키드 폭발)
+			var fx: String = extra.get("fx", "chemikid_explosion")
+			if _draw_ground_effect(fx, r.end.y + 6, r.size.x * 1.5 * (0.7 + 0.3 * t), 1.0 - t * t, 1.0):
 				return
 			draw_circle(Vector2.ZERO, size.x * 0.3 + size.x * 0.4 * t, Color(1.0, 0.6, 0.15, 0.8 * (1.0 - t)))
 			draw_circle(Vector2.ZERO, size.x * 0.2 + size.x * 0.25 * t, Color(color, 0.9 * (1.0 - t)))
