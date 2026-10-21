@@ -11,7 +11,7 @@ class_name Rigs
 
 const RIGS := {
 	"chemikid": {
-		"pose_size": {"crouch": 1.35, "crouch_guard": 1.1, "jump": 1.12},
+		"pose_size": {"crouch": 1.15, "crouch_guard": 0.95, "jump": 1.12},
 		"joints": {
 			"hip": Vector2(560, 620), "neck": Vector2(570, 240), "head": Vector2(600, 150),
 			"ba_sh": Vector2(430, 260), "ba_el": Vector2(300, 380), "ba_ha": Vector2(430, 450),
@@ -21,7 +21,7 @@ const RIGS := {
 		},
 	},
 	"common": {
-		"pose_size": {"crouch": 1.05},
+		"pose_size": {"crouch": 0.9},
 		"joints": {
 			"hip": Vector2(560, 640), "neck": Vector2(560, 250), "head": Vector2(590, 130),
 			"ba_sh": Vector2(440, 300), "ba_el": Vector2(320, 380), "ba_ha": Vector2(330, 190),
@@ -31,7 +31,7 @@ const RIGS := {
 		},
 	},
 	"chaos": {
-		"pose_size": {"crouch": 1.25, "crouch_guard": 1.1, "jump_attack": 1.1, "air_dash": 1.1},
+		"pose_size": {"crouch": 1.05, "crouch_guard": 0.95, "jump_attack": 1.1, "air_dash": 1.1},
 		"joints": {
 			"hip": Vector2(530, 620), "neck": Vector2(530, 250), "head": Vector2(560, 140),
 			"ba_sh": Vector2(380, 300), "ba_el": Vector2(330, 450), "ba_ha": Vector2(260, 620),
@@ -41,7 +41,7 @@ const RIGS := {
 		},
 	},
 	"globe": {
-		"pose_size": {"crouch": 1.35},
+		"pose_size": {"crouch": 1.15},
 		"joints": {
 			"hip": Vector2(520, 620), "neck": Vector2(540, 290), "head": Vector2(580, 170),
 			"ba_sh": Vector2(380, 330), "ba_el": Vector2(250, 450), "ba_ha": Vector2(230, 580),
@@ -51,7 +51,7 @@ const RIGS := {
 		},
 	},
 	"root2": {
-		"pose_size": {"crouch": 1.0},
+		"pose_size": {"crouch": 0.88},
 		"joints": {
 			"hip": Vector2(560, 560), "neck": Vector2(560, 270), "head": Vector2(600, 150),
 			"ba_sh": Vector2(420, 300), "ba_el": Vector2(300, 420), "ba_ha": Vector2(330, 430),
@@ -61,7 +61,7 @@ const RIGS := {
 		},
 	},
 	"seed": {
-		"pose_size": {"crouch": 1.2, "jump": 1.12},
+		"pose_size": {"crouch": 1.02, "jump": 1.12},
 		"joints": {
 			"hip": Vector2(570, 600), "neck": Vector2(590, 260), "head": Vector2(620, 160),
 			"ba_sh": Vector2(430, 320), "ba_el": Vector2(330, 480), "ba_ha": Vector2(290, 620),

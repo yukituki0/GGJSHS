@@ -680,7 +680,18 @@ func body_size() -> Vector2:
 	var low := state == State.CROUCH or state == State.PREJUMP \
 			or (state == State.GUARD and _held("down")) \
 			or (state == State.ATTACK and current_attack != null and current_attack.name.begins_with("2"))
-	return CROUCH_SIZE if low else BODY_SIZE
+	if not low:
+		return BODY_SIZE
+	if puppet != null and _crouch_h < 0.0:
+		# 앉은 몸 높이를 앉은 그림 키에 맞춤 (머리 꼭대기까지의 80% = 머리카락 끝은 빼고)
+		_crouch_h = CROUCH_SIZE.y
+		var tex := Game.load_texture("res://assets/characters/%s_crouch.png" % char_id)
+		if tex != null:
+			_crouch_h = clampf(Puppet.height_of(tex) * _pose_scale() * _pose_size(tex) * 0.8, 80.0, 130.0)
+	return Vector2(CROUCH_SIZE.x, _crouch_h if _crouch_h > 0.0 else CROUCH_SIZE.y)
+
+
+var _crouch_h := -1.0   # 앉은 몸 높이 (그림에서 한 번 계산)
 
 
 ## 몸통 사각형 (밀어내기 = 서로 겹치지 않게. 그림이 없으면 맞는 판정도 이것)
