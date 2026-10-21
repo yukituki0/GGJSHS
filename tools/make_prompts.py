@@ -131,6 +131,27 @@ NORMALS = [
     ('jh', '공중 HS', 'in mid-air, big downward swing of {W} in front of the body, body arched forward'),
 ]
 
+# 글자 그림 (assets/ui/text_<이름>.png): 지금 폰트로 쓰는 큰 글자를 그림으로. (이름, 설명, 정확한 글자, 색)
+TEXTS = [
+    ('round1', '라운드 1', 'ROUND 1', 'white silver chrome'),
+    ('round2', '라운드 2', 'ROUND 2', 'white silver chrome'),
+    ('final_round', '마지막 라운드', 'FINAL ROUND', 'blood red and silver chrome'),
+    ('fight', '싸움 시작', 'FIGHT!', 'blazing gold and orange fire'),
+    ('ko', 'K.O.', 'K.O.', 'deep crimson red with black cracks'),
+    ('double_ko', '동시 K.O.', 'DOUBLE K.O.', 'deep crimson red with black cracks'),
+    ('time_up', '시간 종료', 'TIME UP', 'white silver chrome with a red edge'),
+    ('draw_game', '무승부', 'DRAW GAME', 'white silver chrome'),
+    ('counter', '카운터 히트', 'COUNTER', 'hot orange red'),
+    ('guard_crush', '가드 크러시', 'GUARD CRUSH!', 'electric blue with white cracks'),
+    ('vs', 'VS 화면', 'VS', 'blazing gold and red fire'),
+    ('win', '승리 (이름 옆)', 'WINS!', 'blazing gold'),
+    ('ready', '캐릭터 결정', 'READY!', 'gold'),
+    ('root2_algebra', 'Root2 궁 결과', 'ALGEBRA!', 'shining gold'),
+    ('root2_calculus', 'Root2 궁 결과', 'CALCULUS!', 'shining gold'),
+    ('root2_probability', 'Root2 궁 결과', 'PROBABILITY!', 'shining gold'),
+    ('root2_qed', 'Root2 도장 글자', 'Q.E.D.', 'deep stamp-ink red, slightly rough like a rubber stamp'),
+]
+
 EFFECTS = [
     ('chemikid_flask', '플라스크 (투사체)', 'a glass Erlenmeyer flask filled with glowing toxic-green liquid, tilted as if thrown'),
     ('chemikid_puddle', '산성 웅덩이', 'a flat bubbling puddle of glowing green acid seen from the side, very wide and thin'),
@@ -207,6 +228,17 @@ if REDO:
         cid = f.split('_')[0]
         item = next(i for c, _, i in CHARS if c == cid)
         out += [f'⬜ **{ko}** → `{f}`', '```', pose_prompt(cid, item[0].upper() + item[1:], pose), '```', '']
+
+out += ['## 0-0. 글자 그림 (한 장씩, 첨부 없이)', '',
+        '> AI가 글자를 틀리게 쓰는 일이 많으니 받으면 철자를 꼭 확인. 틀리면 다시 뽑기', '']
+for f, ko, txt, col in TEXTS:
+    spelled = '-'.join(c for c in txt if c != ' ')
+    out += [f'{"✅" if os.path.exists(f"assets/ui/text_{f}.png") else "⬜"} **{ko}** "{txt}" → `text_{f}`', '```',
+            f'Fighting game announcer text logo that reads exactly "{txt}" (spelled {spelled}), only these characters, no other text or letters. '
+            f'Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, '
+            f'thick black outline plus a thin white outer stroke, metallic {col} gradient with bright highlights, subtle glow and a few sparks around the edges. '
+            'Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.',
+            '```', '']
 
 out += ['## 0-1. 무기 공격 S / HS (한 장씩)', '',
         '> 길티기어처럼 S·HS는 무기 공격. 없으면 HS → S → 펀치 그림을 대신 쓴다', '']

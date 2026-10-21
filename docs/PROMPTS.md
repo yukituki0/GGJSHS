@@ -17,6 +17,95 @@
 
 이펙트: 5/26
 
+## 0-0. 글자 그림 (한 장씩, 첨부 없이)
+
+> AI가 글자를 틀리게 쓰는 일이 많으니 받으면 철자를 꼭 확인. 틀리면 다시 뽑기
+
+⬜ **라운드 1** "ROUND 1" → `text_round1`
+```
+Fighting game announcer text logo that reads exactly "ROUND 1" (spelled R-O-U-N-D-1), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic white silver chrome gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
+```
+
+⬜ **라운드 2** "ROUND 2" → `text_round2`
+```
+Fighting game announcer text logo that reads exactly "ROUND 2" (spelled R-O-U-N-D-2), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic white silver chrome gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
+```
+
+⬜ **마지막 라운드** "FINAL ROUND" → `text_final_round`
+```
+Fighting game announcer text logo that reads exactly "FINAL ROUND" (spelled F-I-N-A-L-R-O-U-N-D), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic blood red and silver chrome gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
+```
+
+⬜ **싸움 시작** "FIGHT!" → `text_fight`
+```
+Fighting game announcer text logo that reads exactly "FIGHT!" (spelled F-I-G-H-T-!), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic blazing gold and orange fire gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
+```
+
+⬜ **K.O.** "K.O." → `text_ko`
+```
+Fighting game announcer text logo that reads exactly "K.O." (spelled K-.-O-.), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic deep crimson red with black cracks gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
+```
+
+⬜ **동시 K.O.** "DOUBLE K.O." → `text_double_ko`
+```
+Fighting game announcer text logo that reads exactly "DOUBLE K.O." (spelled D-O-U-B-L-E-K-.-O-.), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic deep crimson red with black cracks gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
+```
+
+⬜ **시간 종료** "TIME UP" → `text_time_up`
+```
+Fighting game announcer text logo that reads exactly "TIME UP" (spelled T-I-M-E-U-P), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic white silver chrome with a red edge gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
+```
+
+⬜ **무승부** "DRAW GAME" → `text_draw_game`
+```
+Fighting game announcer text logo that reads exactly "DRAW GAME" (spelled D-R-A-W-G-A-M-E), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic white silver chrome gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
+```
+
+⬜ **카운터 히트** "COUNTER" → `text_counter`
+```
+Fighting game announcer text logo that reads exactly "COUNTER" (spelled C-O-U-N-T-E-R), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic hot orange red gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
+```
+
+⬜ **가드 크러시** "GUARD CRUSH!" → `text_guard_crush`
+```
+Fighting game announcer text logo that reads exactly "GUARD CRUSH!" (spelled G-U-A-R-D-C-R-U-S-H-!), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic electric blue with white cracks gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
+```
+
+⬜ **VS 화면** "VS" → `text_vs`
+```
+Fighting game announcer text logo that reads exactly "VS" (spelled V-S), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic blazing gold and red fire gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
+```
+
+⬜ **승리 (이름 옆)** "WINS!" → `text_win`
+```
+Fighting game announcer text logo that reads exactly "WINS!" (spelled W-I-N-S-!), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic blazing gold gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
+```
+
+⬜ **캐릭터 결정** "READY!" → `text_ready`
+```
+Fighting game announcer text logo that reads exactly "READY!" (spelled R-E-A-D-Y-!), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic gold gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
+```
+
+⬜ **Root2 궁 결과** "ALGEBRA!" → `text_root2_algebra`
+```
+Fighting game announcer text logo that reads exactly "ALGEBRA!" (spelled A-L-G-E-B-R-A-!), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic shining gold gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
+```
+
+⬜ **Root2 궁 결과** "CALCULUS!" → `text_root2_calculus`
+```
+Fighting game announcer text logo that reads exactly "CALCULUS!" (spelled C-A-L-C-U-L-U-S-!), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic shining gold gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
+```
+
+⬜ **Root2 궁 결과** "PROBABILITY!" → `text_root2_probability`
+```
+Fighting game announcer text logo that reads exactly "PROBABILITY!" (spelled P-R-O-B-A-B-I-L-I-T-Y-!), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic shining gold gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
+```
+
+⬜ **Root2 도장 글자** "Q.E.D." → `text_root2_qed`
+```
+Fighting game announcer text logo that reads exactly "Q.E.D." (spelled Q-.-E-.-D-.), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic deep stamp-ink red, slightly rough like a rubber stamp gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
+```
+
 ## 0-1. 무기 공격 S / HS (한 장씩)
 
 > 길티기어처럼 S·HS는 무기 공격. 없으면 HS → S → 펀치 그림을 대신 쓴다
