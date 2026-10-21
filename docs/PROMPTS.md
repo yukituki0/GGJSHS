@@ -15,7 +15,7 @@
 | 📐 ROOT2 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 7/7 |
 | 🌱 SEED | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | 0/7 |
 
-이펙트: 3/26
+이펙트: 5/26
 
 ## 0-1. 무기 공격 S / HS (한 장씩)
 
@@ -914,12 +914,12 @@ A single 2D fighting game special effect sprite: a tall golden pillar of light r
 A single 2D fighting game special effect sprite: a single golden six-sided die with black dots. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **숫자 블록 (숫자 없이 — 게임이 1·1·2·3·5를 위에 씀)** → `root2_number`
+✅ **숫자 블록 (숫자 없이 — 게임이 1·1·2·3·5를 위에 씀)** → `root2_number`
 ```
 A single 2D fighting game special effect sprite: a heavy golden stone block falling, seen from the front, a large smooth empty flat face in the center with a raised beveled border, completely blank face with NO number, NO letters, NO symbols, short golden speed lines above it. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **궁극기 Q.E.D. 도장 (글자 없이 — 게임이 Q.E.D.를 위에 씀)** → `root2_qed_seal`
+✅ **궁극기 Q.E.D. 도장 (글자 없이 — 게임이 Q.E.D.를 위에 씀)** → `root2_qed_seal`
 ```
 A single 2D fighting game special effect sprite: a huge round golden official seal stamp impression, ornate double ring border with tiny geometric compass and ruler motifs, empty smooth center with NO letters and NO text, slightly tilted, glowing edges, a burst of golden light behind it. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```

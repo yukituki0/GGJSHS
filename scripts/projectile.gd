@@ -176,8 +176,16 @@ func _draw() -> void:
 			var s: String = extra.get("text", "?")
 			var fs: int = extra.get("size", 32)
 			var fade := minf(1.0, (lifetime - age) / 10.0)
+			var text_col := Color(color, fade)
+			# 받침 그림 (extra.bg = 이펙트 이름): 숫자 블록, Q.E.D. 도장 등. 글자는 그 위에 게임이 쓴다
+			if extra.has("bg"):
+				var bg_size: float = extra.get("bg_size", fs * 2.0)
+				var bg_off: Vector2 = extra.get("bg_offset", Vector2.ZERO)
+				modulate.a = fade
+				if _draw_effect(extra.bg, bg_off, bg_size):
+					text_col = Color(extra.get("text_color", Color("4a2c00")), 1.0)
 			var w := maxf(200.0, fs * s.length() * 0.8)  # 긴 글자(ALGEBRA! 등)가 잘리지 않게
-			Style.text(self, s, Vector2(-w / 2, fs * 0.35), fs, Color(color, fade), HORIZONTAL_ALIGNMENT_CENTER, w, 6)
+			Style.text(self, s, Vector2(-w / 2, fs * 0.35), fs, text_col, HORIZONTAL_ALIGNMENT_CENTER, w, 6)
 		"boomerang":
 			# √2 부메랑: 빙글빙글 도는 루트 기호
 			if not _draw_effect("root2_boomerang", Vector2.ZERO, size.x * 1.8, age * 0.4):

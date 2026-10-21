@@ -111,6 +111,7 @@ func _on_attack_event(attack: AttackData) -> void:
 			for i in FIBONACCI.size():
 				dist += FIBONACCI[i] * 26.0
 				var p := _text(str(numbers[i]), _fib_hit, 34)
+				p.extra.merge({"bg": "root2_number", "bg_size": 62.0, "bg_offset": Vector2(0, -7)})  # 금색 블록 위에 숫자
 				var jitter := Vector2(randf_range(-FIB_JITTER_X, FIB_JITTER_X), -randf_range(0.0, FIB_JITTER_Y))
 				p.position = position + Vector2((30 + dist) * facing, -20 - i * 30) + jitter
 				p.velocity = Vector2(0, 11)
@@ -201,7 +202,8 @@ func tick() -> void:
 		_boomerang.dead = true
 	# Q.E.D. 마지막 도장
 	if state == State.ATTACK and current_attack != null and current_attack.name == "OD" and state_frame == 44:
-		var p := _text("Q.E.D.", _qed_hit, 90, Style.RED)
+		var p := _text("Q.E.D.", _qed_hit, 60, Style.RED)
+		p.extra.merge({"bg": "root2_qed_seal", "bg_size": 250.0, "text_color": Style.RED})  # 금색 도장 위에 글자
 		p.size = Vector2(260, 120)
 		p.position = (opponent.position if opponent != null else position) + Vector2(0, -110)
 		p.lifetime = 24
