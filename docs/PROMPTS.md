@@ -15,7 +15,7 @@
 | 📐 ROOT2 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 7/7 |
 | 🌱 SEED | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | 0/7 |
 
-이펙트: 22/26
+이펙트: 26/26
 
 ## 0-0. 글자 그림 (한 장씩, 첨부 없이)
 
@@ -125,7 +125,7 @@ Same character as the attached image: same face, hair, outfit, colors and body p
 Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his glowing green flask. Pose: quick horizontal swipe with the flask hand at chest height, flask swung forward, other hand on the belt, front foot forward. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
 ```
 
-⬜ **HS 플라스크 내려치기** → `chemikid_heavy`
+✅ **HS 플라스크 내려치기** → `chemikid_heavy`
 ```
 Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his glowing green flask. Pose: heavy overhead smash, the flask arm swung down in a big arc and fully extended forward and down, deep lunge, lab coat flaring behind. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
 ```
@@ -1018,22 +1018,22 @@ A single 2D fighting game special effect sprite: a huge round golden official se
 A single 2D fighting game special effect sprite: a large flat glowing golden magic circle made of geometry: concentric circles, a triangle and square inscribed, compass arcs and ruler tick marks, seen from the front, abstract math symbol shapes but NO readable letters or numbers. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **덩굴 (↓ 씨앗에서 솟음, 세로로 긴 그림)** → `seed_vine`
+✅ **덩굴 (↓ 씨앗에서 솟음, 세로로 긴 그림)** → `seed_vine`
 ```
 A single 2D fighting game special effect sprite: ONE single thick green thorny plant vine shooting straight UP out of the ground like a pillar, tall and narrow (about 3 times taller than wide), cracked dirt and small rocks at its base on a flat ground line, a few leaves flying, nothing else. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **덩굴 채찍 (→D, 가로로 쭉 뻗은 그림)** → `seed_whip`
+✅ **덩굴 채찍 (→D, 가로로 쭉 뻗은 그림)** → `seed_whip`
 ```
 A single 2D fighting game special effect sprite: ONE single long green thorny vine whip stretched out STRAIGHT horizontally from the left edge to the right edge like a cracking whip, very wide and thin (about 5 times wider than tall), slight S-wave, the right tip curled with a motion blur crack, NOT a circle, NOT a ring, NOT a loop, a few leaves flying. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **DNA 나선 (공중D, 대각선)** → `seed_dna`
+✅ **DNA 나선 (공중D, 대각선)** → `seed_dna`
 ```
 A single 2D fighting game special effect sprite: ONE single glowing DNA double helix, one lime-green strand and one hot-pink strand twisted together with rungs between them, going diagonally from top-left down to bottom-right, a few pink petals around, nothing else. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **꽃잎 바람 (D+HS 진화 연출)** → `seed_leaf`
+✅ **꽃잎 바람 (D+HS 진화 연출)** → `seed_leaf`
 ```
 A single 2D fighting game special effect sprite: a swirling burst of pink cherry-blossom petals and green leaves spreading outward in a circle from the center, empty center, nothing else. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```

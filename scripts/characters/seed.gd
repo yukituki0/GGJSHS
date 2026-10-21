@@ -102,6 +102,12 @@ func _on_attack_event(attack: AttackData) -> void:
 			spawn(p)
 		"OD":
 			_start_evolution()
+			var bloom := Projectile.new()  # 진화: 몸에서 꽃잎이 터져 나옴 (판정 없음)
+			bloom.kind = "sprite"
+			bloom.extra = {"fx": "seed_leaf", "px": 340.0, "spin": 0.02}
+			bloom.position = position + Vector2(0, -body_size().y * 0.55)
+			bloom.lifetime = 40
+			spawn(bloom)
 
 
 func _start_evolution() -> void:
@@ -172,9 +178,25 @@ func _draw() -> void:
 	# 덩굴 채찍
 	if state == State.ATTACK and current_attack != null and current_attack.name == "6D" \
 			and current_attack.is_active(state_frame):
+		var whip := Game.load_texture("res://assets/effects/seed_whip.png")
+		if whip != null:
+			# 채찍 그림을 판정 길이만큼 쭉 뻗게 (나오는 동안 앞으로 늘어남)
+			var a: AttackData = current_attack
+			var reach := minf(1.0, float(state_frame - a.startup + 1) / 3.0)
+			var box := a.hitbox
+			var whip_len := (box.end.x + 20.0) * reach
+			var h := whip_len * whip.get_height() / whip.get_width() * 1.4
+			var src := Rect2(0, 0, whip.get_width() * reach, whip.get_height()) if reach < 1.0 else Rect2()
+			draw_set_transform(Vector2.ZERO, 0, Vector2(facing, 1))
+			if src.has_area():
+				draw_texture_rect_region(whip, Rect2(10, box.get_center().y - h / 2, whip_len, h), src)
+			else:
+				draw_texture_rect(whip, Rect2(10, box.get_center().y - h / 2, whip_len, h), false)
+			draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
 		var pts := PackedVector2Array()
-		for i in 7:
+		for i in (0 if whip != null else 7):
 			pts.append(Vector2((20 + i * 36) * facing, -95 + sin(i * 1.1 + state_frame) * 10))
-		draw_polyline(pts, VINE_GREEN.darkened(0.3), 10.0)
-		draw_polyline(pts, VINE_GREEN, 5.0)
+		if pts.size() > 1:
+			draw_polyline(pts, VINE_GREEN.darkened(0.3), 10.0)
+			draw_polyline(pts, VINE_GREEN, 5.0)
 	super()

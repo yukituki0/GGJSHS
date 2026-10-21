@@ -295,6 +295,8 @@ func _draw() -> void:
 		"vine":
 			# 덩굴: 아래에서 위로 솟는 굵은 줄기 + 잎
 			var grow := minf(1.0, age / 5.0)
+			if _draw_ground_effect("seed_vine", r.end.y + 8, r.size.y * 1.15, minf(1.0, (lifetime - age) / 8.0), grow):
+				return
 			var top := r.end.y - r.size.y * grow
 			var pts := PackedVector2Array()
 			for i in 9:
@@ -311,7 +313,16 @@ func _draw() -> void:
 			draw_rect(r, Color(color.lightened(0.4), 0.8 * fade), false, 3.0)
 			draw_circle(Vector2(0, -r.size.y * 0.15), 12, Color(color.darkened(0.3), 0.6 * fade))
 		"helix":
-			# DNA 이중나선: 꼬인 두 줄 + 사다리
+			# DNA 이중나선: 그림은 왼쪽 아래 → 오른쪽 위라서 위아래를 뒤집으면 앞 아래로 내려가는 모양
+			var dtex := Game.load_texture("res://assets/effects/seed_dna.png")
+			if dtex != null:
+				var flip := -1.0 if hit_direction() < 0 else 1.0
+				var w := 170.0
+				var sz := Vector2(w, w * dtex.get_height() / dtex.get_width())
+				draw_set_transform(Vector2.ZERO, 0, Vector2(flip, -1))
+				draw_texture_rect(dtex, Rect2(-sz / 2, sz), false, Color(1, 1, 1, 0.75 + 0.25 * sin(age * 0.6)))
+				draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
+				return
 			for i in 7:
 				var y := -r.size.y / 2 + i * r.size.y / 6
 				var x := sin(age * 0.5 + i * 0.9) * r.size.x * 0.4

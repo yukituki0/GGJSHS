@@ -13,7 +13,8 @@ class_name Rigs
 
 const RIGS := {
 	"chemikid": {
-		"pose_size": {"crouch": 1.15, "crouch_guard": 0.95, "jump": 1.12},
+		"pose_size": {"crouch": 1.15, "crouch_guard": 0.95, "jump": 1.12, "heavy": 0.72},
+		"pose_anchor": {"heavy": Vector2(650, 1280)},  # 깊은 런지: 뒷발 쪽을 기준으로 해서 몸이 앞으로 확 튀지 않게
 		"joints": {
 			"hip": Vector2(560, 620), "neck": Vector2(570, 240), "head": Vector2(600, 150),
 			"ba_sh": Vector2(430, 260), "ba_el": Vector2(300, 380), "ba_ha": Vector2(430, 450),
