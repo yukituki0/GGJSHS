@@ -51,7 +51,7 @@ const RIGS := {
 		},
 	},
 	"root2": {
-		"pose_size": {"crouch": 0.88},
+		"pose_size": {"crouch": 0.88, "heavy": 0.75},
 		"joints": {
 			"hip": Vector2(560, 560), "neck": Vector2(560, 270), "head": Vector2(600, 150),
 			"ba_sh": Vector2(420, 300), "ba_el": Vector2(300, 420), "ba_ha": Vector2(330, 430),
