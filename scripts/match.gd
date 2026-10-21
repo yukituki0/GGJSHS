@@ -42,6 +42,7 @@ var tint_frames := 0
 var _camera: Camera2D
 var _training_idle := { 1: 0, 2: 0 }  # 트레이닝: 안 맞고 지난 프레임 (체력 회복용)
 var _stage_texture: Texture2D
+var _history: Node2D             # 트레이닝 입력 기록 (트레이닝 아니면 null)
 
 @onready var _input_debug: Node2D = $HudLayer/InputDebug
 
@@ -57,10 +58,10 @@ func _ready() -> void:
 	p2.opponent = p1
 	if is_training():
 		# 스파·길티 트레이닝처럼 입력 기록 표시 (사람이 조작하는 쪽만)
-		var history := Node2D.new()
-		history.set_script(load("res://scripts/input_history.gd"))
-		history.match_node = self
-		$HudLayer.add_child(history)
+		_history = Node2D.new()
+		_history.set_script(load("res://scripts/input_history.gd"))
+		_history.match_node = self
+		$HudLayer.add_child(_history)
 	# 화면 흔들림용 카메라 (화면 가운데에 고정)
 	_camera = Camera2D.new()
 	_camera.position = Vector2(640, 360)
@@ -271,14 +272,14 @@ func _update_training() -> void:
 
 
 # ── 일시정지 / 결과 메뉴 ──────────────────────────────────
-const RESULT_ITEMS := ["rematch", "to_char_select", "to_title"]  # Game.STRINGS 키
+const RESULT_ITEMS := ["rematch", "to_char_select", "to_mode_select", "to_title"]  # Game.STRINGS 키
 
 
 ## 일시정지 메뉴 항목 (트레이닝이면 더미 설정이 추가된다)
 func pause_items() -> Array:
 	if is_training():
-		return ["resume", "command_list", "dummy", "hitbox", "to_char_select", "to_title"]
-	return ["resume", "command_list", "to_char_select", "to_title"]
+		return ["resume", "command_list", "dummy", "hitbox", "input_log", "to_char_select", "to_mode_select", "to_title"]
+	return ["resume", "command_list", "to_char_select", "to_mode_select", "to_title"]
 
 
 ## 메뉴 항목에 보일 글자 (더미는 현재 설정까지)
@@ -287,6 +288,8 @@ func menu_label(key: String) -> String:
 		return "%s: %s" % [Game.t("dummy"), Game.t(Game.DUMMY_KEYS[Game.dummy_mode])]
 	if key == "hitbox":
 		return "%s: %s" % [Game.t("hitbox"), Game.t("on" if p1.debug_draw_boxes else "off")]
+	if key == "input_log":
+		return "%s: %s" % [Game.t("input_log"), Game.t("on" if _history != null and _history.visible else "off")]
 	return Game.t(key)
 
 
@@ -315,8 +318,13 @@ func _update_pause_menu() -> void:
 				f.debug_draw_boxes = show
 		"command_list":
 			show_moves = true
+		"input_log":  # 입력 기록 켜기/끄기
+			if _history != null:
+				_history.visible = not _history.visible
 		"to_char_select":
 			Game.goto("char_select")
+		"to_mode_select":
+			Game.goto("mode_select")
 		"to_title":
 			Game.goto("title")
 
@@ -329,7 +337,8 @@ func _update_result_menu() -> void:
 		match menu_cursor:
 			0: Game.goto("battle")
 			1: Game.goto("char_select")
-			2: Game.goto("title")
+			2: Game.goto("mode_select")
+			3: Game.goto("title")
 
 
 func _move_menu(cursor: int, count: int) -> int:

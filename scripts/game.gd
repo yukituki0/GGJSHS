@@ -159,6 +159,8 @@ const STRINGS := {
 	"rematch": ["REMATCH", "재경기"],
 	"to_char_select": ["CHARACTER SELECT", "캐릭터 선택"],
 	"to_title": ["TITLE", "타이틀로"],
+	"to_mode_select": ["MODE SELECT", "모드 선택으로"],
+	"input_log": ["INPUT LOG", "입력 기록"],
 	"command_list": ["COMMAND LIST", "기술표"],
 	"command_hint": ["K / START: CLOSE", "K / START: 닫기"],
 	"common_moves": ["COMMON", "공통"],
