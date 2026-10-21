@@ -30,6 +30,8 @@ var move_speed := 0.0    # 공격 중 앞으로 움직이는 속도 (돌진기)
 var armor_hits := 0      # 발생~지속 동안 이 횟수만큼 맞아도 안 멈춤 (데미지는 받음)
 var unblockable := false # 가드 불가
 var is_throw := false    # 잡기: 가드 불가 + 땅에 있고 경직 중이 아닌 상대만 잡힌다
+var rise := Vector2.ZERO    # 발생이 끝나는 순간 내 몸이 이 속도로 뛰어오름 (승룡권 같은 대공기, x는 앞 기준)
+var landing_recovery := 0   # 뛰어오른 기술이 착지한 뒤 못 움직이는 프레임 (빗나가면 빈틈)
 var launch := Vector2.ZERO  # 맞으면 이 속도로 날아감 (x는 공격 방향 기준). 0이면 보통 넉백
 
 

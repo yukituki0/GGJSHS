@@ -107,6 +107,7 @@ const GUARD_DECAY := 0.25          # 안 막는 동안 프레임당 감소 (1초
 const GUARD_CRUSH_STUN := 45       # 가드 크러시 무방비 시간
 var guard_gauge := 0.0
 var _since_block := 999
+var landing_lag := 0               # 대공기 착지 빈틈 남은 프레임
 var crush_text := 0                # "GUARD CRUSH!" 글자 남은 프레임
 
 # ── 카운터 히트 ───────────────────────────────────────────
@@ -142,6 +143,10 @@ func tick() -> void:
 		brain.think(self)
 	_update_buffer()
 	_update_state()
+	if state == State.ATTACK and current_attack != null and current_attack.rise != Vector2.ZERO \
+			and state_frame == current_attack.startup and is_on_ground():
+		velocity = Vector2(current_attack.rise.x * facing, current_attack.rise.y)  # 승룡권처럼 솟구침
+		position.y -= 1
 	if state == State.ATTACK and current_attack != null and current_attack.move_speed != 0.0 \
 			and state_frame <= current_attack.startup + current_attack.active:
 		velocity.x = current_attack.move_speed * facing  # 돌진기
@@ -189,6 +194,7 @@ func tick_frozen() -> void:
 ## 새 라운드: 위치와 체력, 상태를 처음으로 (텐션은 유지)
 func reset_for_round(x: float) -> void:
 	position = Vector2(x, ground_y)
+	landing_lag = 0
 	hp = max_hp
 	velocity = Vector2.ZERO
 	current_attack = null
@@ -464,7 +470,11 @@ func _change_state(new_state: State) -> void:
 func _update_state() -> void:
 	match state:
 		State.STAND, State.CROUCH:
-			_ground_neutral()
+			if landing_lag > 0:  # 착지 빈틈: 아무것도 못 한다
+				landing_lag -= 1
+				velocity.x = 0
+			else:
+				_ground_neutral()
 		State.RUN:
 			_run()
 		State.BACKDASH:
@@ -737,6 +747,8 @@ func _check_landing() -> void:
 
 
 func _land() -> void:
+	if current_attack != null:
+		landing_lag = current_attack.landing_recovery
 	position.y = ground_y
 	velocity = Vector2.ZERO
 	current_attack = null
@@ -931,6 +943,7 @@ func is_invulnerable() -> bool:
 func receive_attack(attack: AttackData, from_dir: int, damage_scale := 1.0) -> bool:
 	var damage := int(round(attack.damage * damage_scale))
 	var counter := in_counter_state() and not attack.is_throw  # 상태가 바뀌기 전에 미리 확인
+	landing_lag = 0
 	last_hit_counter = false
 	if _try_counter(attack):
 		return true  # 반격 성공: 막은 것처럼 처리 (데미지 없음)
@@ -1223,7 +1236,9 @@ func _pose_texture() -> Texture2D:
 					else:
 						names.append("kick" if _is_kick(a) else _stand_pose(a.name))
 		State.STAND:
-			if velocity.x != 0.0:
+			if landing_lag > 0:
+				names.append("crouch")  # 착지 빈틈: 웅크린 그림
+			elif velocity.x != 0.0:
 				if velocity.x * facing < 0.0:
 					names.append("walk_back")
 				names.append_array([_walk_frame(), "walk"])
