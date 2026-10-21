@@ -307,6 +307,28 @@ func _dummy_held(action: String) -> bool:
 	return false
 
 
+## 가드 입력: 뒤(상대 반대쪽)를 누르고 있거나 가드 버튼 (길티기어처럼 뒤 = 가드)
+func _guard_held() -> bool:
+	return _held("guard") or _input_forward() < 0
+
+
+## 상대가 공격 중이거나 상대 투사체가 다가오고 있나.
+## 이때 뒤를 누르면 뒤로 걷지 않고 그 자리에서 가드 자세를 잡는다 (CPU도 이걸 보고 가드)
+func is_threatened() -> bool:
+	if opponent == null:
+		return false
+	if opponent.state == State.ATTACK and opponent.current_attack != null \
+			and absf(opponent.position.x - position.x) < 430:
+		return true
+	var match_node := get_parent()
+	if match_node is Match:
+		for proj in match_node.projectiles:
+			if proj.shooter == opponent and proj.attack != null and not proj.dead \
+					and proj.position.distance_to(position + Vector2(0, -80)) < 230:
+				return true
+	return false
+
+
 ## "최근 몇 프레임 안에 눌렀나" (입력 버퍼). 실제로 행동에 썼으면 _consume()으로 지운다
 func _pressed(action: String) -> bool:
 	return _buffer.get(action, 0) > 0
@@ -425,10 +447,6 @@ func _ground_neutral() -> void:
 	if attack != "":
 		_start_attack(attack)
 		return
-	if _held("guard"):
-		velocity.x = 0
-		_change_state(State.GUARD)
-		return
 	if _held("up"):
 		_start_prejump(fwd)
 		return
@@ -440,6 +458,11 @@ func _ground_neutral() -> void:
 		else:
 			_change_state(State.RUN)
 			Sfx.play("dash", -4.0, 0.05)
+		return
+	# 가드 버튼, 또는 상대가 공격해 올 때 뒤(↙ 포함)를 누르고 있으면 제자리 가드
+	if _held("guard") or (fwd < 0 and is_threatened()):
+		velocity.x = 0
+		_change_state(State.GUARD)
 		return
 
 	if _held("down"):
@@ -547,11 +570,11 @@ func _airdash() -> void:
 		_change_state(State.AIR)
 
 
-## 가드 버튼을 누르고 있는 동안 (↓를 같이 누르면 앉아서 가드)
+## 가드 중 (↓를 같이 누르면 앉아서 가드). 위협이 끝나거나 뒤를 놓으면 서기로 (그다음엔 다시 뒤로 걷기)
 func _guard() -> void:
 	_face_opponent()
 	velocity.x = 0
-	if not _held("guard"):
+	if not (_held("guard") or (_input_forward() < 0 and is_threatened())):
 		_change_state(State.STAND)
 
 
@@ -636,7 +659,7 @@ func _stunned() -> void:
 		velocity.x *= ground_friction
 		stun_frames -= 1
 		if stun_frames <= 0:
-			_change_state(State.GUARD if state == State.BLOCKSTUN and _held("guard") else State.STAND)
+			_change_state(State.GUARD if state == State.BLOCKSTUN and _guard_held() else State.STAND)
 	else:
 		# 공중에서 맞으면 땅에 떨어질 때까지 못 움직인다
 		velocity.y += gravity
@@ -768,7 +791,7 @@ func hitbox_rect() -> Rect2:
 ## 이 공격을 막을 수 있는 상태인가
 func can_block(level: AttackData.Level) -> bool:
 	var guarding := state == State.GUARD or state == State.BLOCKSTUN \
-			or (_held("guard") and state in [State.STAND, State.CROUCH, State.AIR])
+			or (_guard_held() and state in [State.STAND, State.CROUCH, State.AIR])
 	if not guarding:
 		return false
 	if not is_on_ground():
@@ -959,7 +982,9 @@ var _anchor_cache := {}
 
 ## 자세 그림을 세울 기준점. 앉기/가드 그림은 발을 넓게 벌려서 발 가운데를 기준으로 하면 몸이 앞으로 쏠려 보인다.
 ## 그래서 머리가 서 있을 때(기본 그림)와 같은 x에 오도록 맞춘다 = 제자리에서 앉거나 막는 것처럼
-const HEAD_ALIGNED_POSES: Array[String] = ["_crouch", "_guard"]  # _crouch_guard도 포함됨
+const HEAD_ALIGNED_POSES: Array[String] = ["_crouch"]  # _crouch_guard도 포함됨
+## 서서 가드(<id>_guard)는 팔/무기를 머리 위로 드는 그림이 있어서 머리 대신 허리(그림 높이 45~65%)를 맞춘다
+const HIP_BAND := Vector2(0.45, 0.65)
 
 
 func _anchor_for(tex: Texture2D) -> Vector2:
@@ -967,7 +992,11 @@ func _anchor_for(tex: Texture2D) -> Vector2:
 		return _anchor_cache[tex]
 	var a := Puppet.find_anchor(tex)
 	var file := tex.resource_path.get_file()
-	if HEAD_ALIGNED_POSES.any(func(p: String) -> bool: return file.contains(p)):
+	if file.begins_with(char_id + "_guard"):
+		var stand_hip := (Puppet.band_x(puppet.texture, HIP_BAND.x, HIP_BAND.y) - puppet.anchor.x) * puppet.scale
+		var s := _pose_scale() * _pose_size(tex)
+		a.x = Puppet.band_x(tex, HIP_BAND.x, HIP_BAND.y) - stand_hip / s
+	elif HEAD_ALIGNED_POSES.any(func(p: String) -> bool: return file.contains(p)):
 		var stand_head := (Puppet.head_x(puppet.texture) - puppet.anchor.x) * puppet.scale  # 게임 좌표
 		var s := _pose_scale() * _pose_size(tex)
 		a.x = Puppet.head_x(tex) - stand_head / s
@@ -1186,7 +1215,7 @@ func _attack_reach() -> float:
 ## 가드: 몸 앞에 반투명 방패 (그림을 구부리는 대신)
 func _draw_guard_shield() -> void:
 	var low := _held("down")
-	var center := Vector2(facing * 45, -60 if low else -95)
+	var center := Vector2(facing * 80, -60 if low else -95)
 	var start := -PI * 0.4 if facing > 0 else PI * 0.6
 	var flash := 1.0 if state == State.BLOCKSTUN and state_frame < 6 else 0.0
 	var col := Color(0.55, 0.8, 1.0, 0.55 + 0.4 * flash)

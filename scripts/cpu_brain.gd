@@ -64,7 +64,7 @@ func think(me: Fighter) -> void:
 	var back := "left" if dx > 0 else "right"
 
 	# 1) 막기: 위협을 보고 react 프레임 뒤에, guard 확률로 가드할지 정한다
-	if _is_threatened(me, opp, dist):
+	if _is_threatened(me):
 		_threat_frames += 1
 		if _threat_frames == p["react"]:
 			_guarding = randf() < p["guard"]
@@ -76,7 +76,7 @@ func think(me: Fighter) -> void:
 	var can_act := me.state in [Fighter.State.STAND, Fighter.State.CROUCH, Fighter.State.RUN,
 			Fighter.State.GUARD, Fighter.State.BLOCKSTUN]
 	if _guarding and can_act:
-		_held["guard"] = true
+		_held[back] = true  # 사람처럼 뒤를 누르고 있기로 가드
 		_held["down"] = _guard_low
 		return
 
@@ -109,16 +109,8 @@ func think(me: Fighter) -> void:
 
 
 ## 상대 공격(지속 판정 직전~중) 또는 다가오는 상대 투사체가 있으면 위협
-func _is_threatened(me: Fighter, opp: Fighter, dist: float) -> bool:
-	if opp.state == Fighter.State.ATTACK and opp.current_attack != null and dist < 430:
-		return true
-	var match_node := me.get_parent()
-	if match_node is Match:
-		for proj in match_node.projectiles:
-			if proj.shooter == opp and proj.attack != null and not proj.dead \
-					and proj.position.distance_to(me.position + Vector2(0, -80)) < 230:
-				return true
-	return false
+func _is_threatened(me: Fighter) -> bool:
+	return me.is_threatened()
 
 
 ## 맞혔을 때: 개틀링 목록에서 하나, 또는 필살기로 캔슬

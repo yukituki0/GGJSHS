@@ -261,6 +261,29 @@ static func head_x(tex: Texture2D) -> float:
 	return _heads[key]
 
 
+static var _bands := {}
+
+
+## 그림 높이의 from~to 비율(위=0, 발=1) 구간에 있는 불투명 픽셀들의 가운데 x.
+## 가드처럼 팔을 머리 위로 올린 그림은 head_x가 팔에 끌려가서, 허리 쪽 구간으로 맞춘다
+static func band_x(tex: Texture2D, from: float, to: float) -> float:
+	var key := "%s:%s:%s" % [tex.resource_path, from, to]
+	if _bands.has(key):
+		return _bands[key]
+	var img := tex.get_image()
+	var top := top_row(tex)
+	var h := _feet_anchor(tex).y - top
+	var sum := 0.0
+	var n := 0
+	for y in range(int(top + h * from), int(top + h * to), 3):
+		for x in range(0, img.get_width(), 3):
+			if img.get_pixel(x, y).a > 0.5:
+				sum += x
+				n += 1
+	_bands[key] = sum / maxi(1, n)
+	return _bands[key]
+
+
 static var _tops := {}
 
 
