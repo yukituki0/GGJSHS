@@ -36,27 +36,27 @@ Fighting game announcer text logo that reads exactly "ROUND 2" (spelled R-O-U-N-
 Fighting game announcer text logo that reads exactly "FINAL ROUND" (spelled F-I-N-A-L-R-O-U-N-D), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic blood red and silver chrome gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
 ```
 
-⬜ **싸움 시작** "FIGHT!" → `text_fight`
+✅ **싸움 시작** "FIGHT!" → `text_fight`
 ```
 Fighting game announcer text logo that reads exactly "FIGHT!" (spelled F-I-G-H-T-!), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic blazing gold and orange fire gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
 ```
 
-⬜ **K.O.** "K.O." → `text_ko`
+✅ **K.O.** "K.O." → `text_ko`
 ```
 Fighting game announcer text logo that reads exactly "K.O." (spelled K-.-O-.), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic deep crimson red with black cracks gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
 ```
 
-⬜ **동시 K.O.** "DOUBLE K.O." → `text_double_ko`
+✅ **동시 K.O.** "DOUBLE K.O." → `text_double_ko`
 ```
 Fighting game announcer text logo that reads exactly "DOUBLE K.O." (spelled D-O-U-B-L-E-K-.-O-.), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic deep crimson red with black cracks gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
 ```
 
-⬜ **시간 종료** "TIME UP" → `text_time_up`
+✅ **시간 종료** "TIME UP" → `text_time_up`
 ```
 Fighting game announcer text logo that reads exactly "TIME UP" (spelled T-I-M-E-U-P), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic white silver chrome with a red edge gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
 ```
 
-⬜ **무승부** "DRAW GAME" → `text_draw_game`
+✅ **무승부** "DRAW GAME" → `text_draw_game`
 ```
 Fighting game announcer text logo that reads exactly "DRAW GAME" (spelled D-R-A-W-G-A-M-E), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic white silver chrome gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
 ```

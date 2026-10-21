@@ -75,7 +75,7 @@ static func banner(c: CanvasItem, s: String, color: Color, t := 1.0) -> void:
 	fill(c, PackedVector2Array([
 		Vector2(640 - band_w / 2, 300), Vector2(640 + band_w / 2, 276),
 		Vector2(640 + band_w / 2, 420), Vector2(640 - band_w / 2, 444),
-	]), Color(RED, 0.88))
+	]), Color(BLACK, 0.85) if s in DARK_BAND and has_text_image(s) else Color(RED, 0.88))
 	c.draw_line(Vector2(640 - band_w / 2, 292), Vector2(640 + band_w / 2, 268), BLACK, 6.0)
 	c.draw_line(Vector2(640 - band_w / 2, 452), Vector2(640 + band_w / 2, 428), BLACK, 6.0)
 	var size := int(lerpf(180.0, 104.0, e))
@@ -91,7 +91,12 @@ const TEXT_IMAGES := {
 	"COUNTER": "counter", "GUARD CRUSH!": "guard_crush", "VS": "vs", "READY!": "ready",
 	"ALGEBRA!": "root2_algebra", "CALCULUS!": "root2_calculus", "PROBABILITY!": "root2_probability",
 }
-const TEXT_IMAGE_MAX := Vector2(820, 200)  # 띠 글자 기본 크기 한도 (scale 1일 때)
+const DARK_BAND := ["K.O.", "DOUBLE K.O."]  # 빨간 글자 그림이라 띠를 어둡게 (빨강 위 빨강은 안 보임)
+const TEXT_IMAGE_MAX := Vector2(820, 240)  # 띠 글자 기본 크기 한도 (scale 1일 때)
+
+
+static func has_text_image(s: String) -> bool:
+	return TEXT_IMAGES.has(s) and Game.load_texture("res://assets/ui/text_%s.png" % TEXT_IMAGES[s]) != null
 
 
 ## 글자 그림을 center에 그린다. 없으면 false (폰트로 대신 쓰라는 뜻)

@@ -477,8 +477,10 @@ func _draw_vs_side(f: Fighter, info: Dictionary, offset: float, right: bool) -> 
 # ── 결과 / 일시정지 메뉴 ──────────────────────────────────
 func _draw_result() -> void:
 	var title: String
+	var title_image := ""
 	if m.wins[1] >= Game.ROUNDS_TO_WIN and m.wins[2] >= Game.ROUNDS_TO_WIN:
 		title = Game.t("draw_game")
+		title_image = "DRAW GAME"
 	elif m.wins[1] >= Game.ROUNDS_TO_WIN:
 		title = Game.t("wins") % [1, m.p1.display_name]
 	else:
@@ -494,7 +496,7 @@ func _draw_result() -> void:
 		if art != null and m.wins[3 - winner] < Game.ROUNDS_TO_WIN:
 			var size := Vector2(art.get_width(), art.get_height()) * (660.0 / art.get_height())
 			draw_texture_rect(art, Rect2(Vector2(220 - size.x / 2, 720 - size.y), size), false, Color(1, 1, 1, fade))
-	_draw_menu(title, Match.RESULT_ITEMS if m.phase_frame >= 60 else [], 0.3 if _bg_result != null else 0.65)
+	_draw_menu(title, Match.RESULT_ITEMS if m.phase_frame >= 60 else [], 0.3 if _bg_result != null else 0.65, title_image)
 
 
 ## 기술표: 1P(왼쪽) / 2P(오른쪽) 캐릭터 기술 + 아래에 공통 조작
@@ -528,10 +530,12 @@ func _draw_move_row(mv: Array, x: float, y: float) -> void:
 		Style.text(self, mv[3], Vector2(x + 126, y + 20), 16, Style.WHITE, HORIZONTAL_ALIGNMENT_LEFT, -1, 0)
 
 
-func _draw_menu(title: String, items: Array, dim := 0.65) -> void:
+## title_image: 글자 그림 이름 (Style.TEXT_IMAGES의 키). 그림이 있으면 제목 글자 대신 그림
+func _draw_menu(title: String, items: Array, dim := 0.65, title_image := "") -> void:
 	draw_rect(Rect2(0, 0, 1280, 720), Color(0, 0, 0, dim))
 	Style.fill(self, Style.slant(-20, 190, 1320, 90, 20), Style.RED)
-	Style.title(self, title, Vector2(0, 258), 64, Style.WHITE, HORIZONTAL_ALIGNMENT_CENTER, 1280, 12)
+	if title_image == "" or not Style.text_image(self, title_image, Vector2(640, 235), 1.0, 1.0, Vector2(760, 140)):
+		Style.title(self, title, Vector2(0, 258), 64, Style.WHITE, HORIZONTAL_ALIGNMENT_CENTER, 1280, 12)
 	for i in items.size():
 		var y := 320.0 + i * minf(70.0, 380.0 / maxf(1.0, items.size()))  # 항목이 많으면 간격을 좁힘
 		var selected := i == m.menu_cursor
