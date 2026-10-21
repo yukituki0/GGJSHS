@@ -231,20 +231,24 @@ static func _walk_anchor(tex: Texture2D) -> Vector2:
 	for n in ["_walk", "_walk2", "_walk3", "_walk4"]:
 		var t: Texture2D = Game.load_texture(base + n + ".png")
 		if t != null:
-			offsets.append(_feet_anchor(t).x - _head_x(t))
+			offsets.append(_feet_anchor(t).x - head_x(t))
 	var avg := 0.0
 	for o in offsets:
 		avg += o
 	avg /= maxf(1.0, offsets.size())
-	return Vector2(_head_x(tex) + avg, _feet_anchor(tex).y)
+	return Vector2(head_x(tex) + avg, _feet_anchor(tex).y)
+
+
+static var _heads := {}
 
 
 ## 머리 가운데 x: 그림 맨 위 16% 안의 불투명한 픽셀들의 평균
-static func _head_x(tex: Texture2D) -> float:
+static func head_x(tex: Texture2D) -> float:
+	var key := tex.resource_path
+	if _heads.has(key):
+		return _heads[key]
 	var img := tex.get_image()
-	var top := 0
-	while top < img.get_height() - 1 and not _row_has_pixels(img, top):
-		top += 1
+	var top := top_row(tex)
 	var bottom := _feet_anchor(tex).y
 	var sum := 0.0
 	var n := 0
@@ -253,7 +257,23 @@ static func _head_x(tex: Texture2D) -> float:
 			if img.get_pixel(x, y).a > 0.5:
 				sum += x
 				n += 1
-	return sum / maxi(1, n)
+	_heads[key] = sum / maxi(1, n)
+	return _heads[key]
+
+
+static var _tops := {}
+
+
+## 그림 맨 위 (불투명한 픽셀이 처음 나오는 줄)
+static func top_row(tex: Texture2D) -> int:
+	var key := tex.resource_path
+	if not _tops.has(key):
+		var img := tex.get_image()
+		var top := 0
+		while top < img.get_height() - 1 and not _row_has_pixels(img, top):
+			top += 1
+		_tops[key] = top
+	return _tops[key]
 
 
 static var _feet := {}
@@ -288,9 +308,10 @@ static func _row_has_pixels(img: Image, y: int) -> bool:
 	return false
 
 
+## anchor: 그림의 어느 점을 캐릭터 발 위치에 둘지 (안 주면 find_anchor)
 static func draw_image(canvas: CanvasItem, tex: Texture2D, art_scale: float, facing: int, offset: Vector2,
-		modulate: Color, body: Transform2D) -> void:
-	var foot := find_anchor(tex)
+		modulate: Color, body: Transform2D, anchor := Vector2.INF) -> void:
+	var foot := find_anchor(tex) if anchor == Vector2.INF else anchor
 	var xf := Transform2D(0.0, offset) * Transform2D(0.0, Vector2(facing, 1), 0.0, Vector2.ZERO) * body \
 			* Transform2D(0.0, Vector2(art_scale, art_scale), 0.0, -foot * art_scale)
 	canvas.draw_set_transform_matrix(xf)

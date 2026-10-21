@@ -698,7 +698,7 @@ func hurt_rects() -> Array[Rect2]:
 	var anchor := puppet.anchor
 	var s := puppet.scale
 	if tex != null:
-		anchor = Puppet.find_anchor(tex)
+		anchor = _anchor_for(tex)
 		s = _pose_scale() * _pose_size(tex)
 	else:
 		tex = puppet.texture
@@ -729,7 +729,7 @@ func _fit_hitboxes_to_art() -> void:
 		if tex == null or not attacks.has(group[1]):
 			continue
 		var s := _pose_scale() * _pose_size(tex)
-		var tip := ArtBoxes.front_tip(tex, Puppet.find_anchor(tex), group[3], group[4])
+		var tip := ArtBoxes.front_tip(tex, _anchor_for(tex), group[3], group[4])
 		if tip == Vector2.INF:
 			continue
 		tip *= s
@@ -874,8 +874,11 @@ func _draw() -> void:
 				Color(1, 0.2, 0.3, 1.0 - t), 6.0)
 	# 머리 위 1P / 2P 표시
 	var tag_color := Color(1, 0.35, 0.35) if player == 1 else Color(0.35, 0.6, 1)
-	var tag_y := -size.y - 12 if puppet == null else -235.0
-	draw_string(Game.FONT, Vector2(-40, tag_y), "%dP" % player,
+	var tag_pos := Vector2(0, -size.y - 12)
+	if puppet != null:  # 지금 그림의 머리 위를 따라다님 (앉으면 내려가고, 점프 그림이면 그 머리 위)
+		var head := _head_top()
+		tag_pos = Vector2(head.x * facing, head.y - 10)
+	draw_string(Game.FONT, tag_pos + Vector2(-40, 0), "%dP" % player,
 			HORIZONTAL_ALIGNMENT_CENTER, 80, 22, tag_color)
 	if crush_text > 0:
 		Style.text(self, "GUARD CRUSH!", Vector2(-150, -size.y - 50), 30, Color(1, 0.4, 0.3, minf(1.0, crush_text / 15.0)),
@@ -935,10 +938,40 @@ func _draw_puppet(shake_x: float) -> void:
 	_draw_swing()
 
 
+var _anchor_cache := {}
+
+
+## 자세 그림을 세울 기준점. 앉는 그림은 발을 넓게 벌려서 발 가운데를 기준으로 하면 몸이 앞으로 쏠려 보인다.
+## 그래서 머리가 서 있을 때(기본 그림)와 같은 x에 오도록 맞춘다 = 제자리에서 앉는 것처럼
+func _anchor_for(tex: Texture2D) -> Vector2:
+	if _anchor_cache.has(tex):
+		return _anchor_cache[tex]
+	var a := Puppet.find_anchor(tex)
+	if tex.resource_path.get_file().contains("_crouch"):
+		var stand_head := (Puppet.head_x(puppet.texture) - puppet.anchor.x) * puppet.scale  # 게임 좌표
+		var s := _pose_scale() * _pose_size(tex)
+		a.x = Puppet.head_x(tex) - stand_head / s
+	_anchor_cache[tex] = a
+	return a
+
+
+## 지금 그려지는 그림의 머리 꼭대기 (캐릭터 발 기준 게임 좌표, 오른쪽을 볼 때)
+func _head_top() -> Vector2:
+	var tex := _pose_texture()
+	var a := puppet.anchor
+	var s := puppet.scale
+	if tex != null:
+		a = _anchor_for(tex)
+		s = _pose_scale() * _pose_size(tex)
+	else:
+		tex = puppet.texture
+	return Vector2((Puppet.head_x(tex) - a.x) * s, (Puppet.top_row(tex) - a.y) * s)
+
+
 ## 자세 그림 하나 그리기 (null이면 숨쉬는 기본 그림)
 func _draw_tex(tex: Texture2D, shake_x: float, tint: Color, body: Transform2D) -> void:
 	if tex != null:
-		Puppet.draw_image(self, tex, _pose_scale() * _pose_size(tex), facing, Vector2(shake_x, 0), tint, body)
+		Puppet.draw_image(self, tex, _pose_scale() * _pose_size(tex), facing, Vector2(shake_x, 0), tint, body, _anchor_for(tex))
 	else:
 		_breathe()
 		puppet.draw(self, facing, Vector2(shake_x, 0), tint, body)
