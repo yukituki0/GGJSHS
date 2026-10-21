@@ -15,7 +15,7 @@
 | 📐 ROOT2 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 7/7 |
 | 🌱 SEED | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | 0/7 |
 
-이펙트: 18/26
+이펙트: 22/26
 
 ## 0-0. 글자 그림 (한 장씩, 첨부 없이)
 
@@ -973,17 +973,17 @@ A single 2D fighting game special effect sprite: a jagged white-yellow lightning
 A single 2D fighting game special effect sprite: a swirling grey-blue tornado vortex with debris. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **블랙홀** → `chaos_blackhole`
+✅ **블랙홀** → `chaos_blackhole`
 ```
 A single 2D fighting game special effect sprite: a small black hole with a glowing violet accretion ring, slightly tilted. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **전자기 방전** → `chaos_spark`
+✅ **전자기 방전** → `chaos_spark`
 ```
 A single 2D fighting game special effect sprite: a ball of crackling yellow electric sparks. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **증기 폭발** → `chaos_steam`
+✅ **증기 폭발** → `chaos_steam`
 ```
 A single 2D fighting game special effect sprite: a burst of white hot steam spreading outward. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
@@ -1013,27 +1013,27 @@ A single 2D fighting game special effect sprite: a heavy golden stone block fall
 A single 2D fighting game special effect sprite: a huge round golden official seal stamp impression, ornate double ring border with tiny geometric compass and ruler motifs, empty smooth center with NO letters and NO text, slightly tilted, glowing edges, a burst of golden light behind it. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **궁극기 수식 마법진 (상대 머리 위 배경)** → `root2_qed_circle`
+✅ **궁극기 수식 마법진 (상대 머리 위 배경)** → `root2_qed_circle`
 ```
 A single 2D fighting game special effect sprite: a large flat glowing golden magic circle made of geometry: concentric circles, a triangle and square inscribed, compass arcs and ruler tick marks, seen from the front, abstract math symbol shapes but NO readable letters or numbers. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **덩굴** → `seed_vine`
+⬜ **덩굴 (↓ 씨앗에서 솟음, 세로로 긴 그림)** → `seed_vine`
 ```
-A single 2D fighting game special effect sprite: a thick green thorny vine bursting up from the ground. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
-```
-
-⬜ **덩굴 채찍** → `seed_whip`
-```
-A single 2D fighting game special effect sprite: a long green thorny vine whip swinging horizontally. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
+A single 2D fighting game special effect sprite: ONE single thick green thorny plant vine shooting straight UP out of the ground like a pillar, tall and narrow (about 3 times taller than wide), cracked dirt and small rocks at its base on a flat ground line, a few leaves flying, nothing else. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **DNA 나선** → `seed_dna`
+⬜ **덩굴 채찍 (→D, 가로로 쭉 뻗은 그림)** → `seed_whip`
 ```
-A single 2D fighting game special effect sprite: a glowing lime-green and pink DNA double helix, diagonal. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
+A single 2D fighting game special effect sprite: ONE single long green thorny vine whip stretched out STRAIGHT horizontally from the left edge to the right edge like a cracking whip, very wide and thin (about 5 times wider than tall), slight S-wave, the right tip curled with a motion blur crack, NOT a circle, NOT a ring, NOT a loop, a few leaves flying. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **꽃잎** → `seed_leaf`
+⬜ **DNA 나선 (공중D, 대각선)** → `seed_dna`
 ```
-A single 2D fighting game special effect sprite: a cluster of pink petals and green leaves scattering. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
+A single 2D fighting game special effect sprite: ONE single glowing DNA double helix, one lime-green strand and one hot-pink strand twisted together with rungs between them, going diagonally from top-left down to bottom-right, a few pink petals around, nothing else. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
+```
+
+⬜ **꽃잎 바람 (D+HS 진화 연출)** → `seed_leaf`
+```
+A single 2D fighting game special effect sprite: a swirling burst of pink cherry-blossom petals and green leaves spreading outward in a circle from the center, empty center, nothing else. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```

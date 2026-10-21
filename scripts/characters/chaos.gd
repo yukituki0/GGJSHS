@@ -125,7 +125,7 @@ func tick() -> void:
 			boom.color = PURPLE
 			boom.position = _hole.position
 			boom.lifetime = 14
-			boom.extra = {"fx": "chaos_burst"}
+			boom.extra = {"fx": "chaos_spark"}  # 블랙홀 붕괴: 번쩍이는 방전
 			spawn(boom)
 
 
@@ -142,6 +142,14 @@ func _draw() -> void:
 			draw_arc(center, GRAVITY_RANGE * 0.5 * (1.0 - t), 0, TAU, 40, Color(PURPLE, 0.5 * t), 4.0)
 	# 전자기 펄스: 주변에 퍼지는 번개 고리
 	if _in_attack("2D") and current_attack.is_active(state_frame):
+		var spark := Game.load_texture("res://assets/effects/chaos_spark.png")
+		if spark != null:
+			# 몸 주위 방전 구체: 지직거리게 돌리고 크기를 흔든다
+			var px := 320.0 * (0.9 + 0.1 * sin(state_frame * 1.7))
+			var sz := Vector2(spark.get_width(), spark.get_height()) * (px / spark.get_width())
+			draw_set_transform(Vector2(0, -100), state_frame * 0.5, Vector2.ONE)
+			draw_texture_rect(spark, Rect2(-sz / 2, sz), false, Color(1, 1, 1, 0.85))
+			draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
 		for i in 8:
 			var ang := i * TAU / 8 + state_frame * 0.4
 			var from := Vector2(0, -100) + Vector2(40, 0).rotated(ang)

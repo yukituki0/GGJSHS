@@ -181,10 +181,19 @@ EFFECTS = [
     ('root2_qed_circle', '궁극기 수식 마법진 (상대 머리 위 배경)',
      'a large flat glowing golden magic circle made of geometry: concentric circles, a triangle and square inscribed, '
      'compass arcs and ruler tick marks, seen from the front, abstract math symbol shapes but NO readable letters or numbers'),
-    ('seed_vine', '덩굴', 'a thick green thorny vine bursting up from the ground'),
-    ('seed_whip', '덩굴 채찍', 'a long green thorny vine whip swinging horizontally'),
-    ('seed_dna', 'DNA 나선', 'a glowing lime-green and pink DNA double helix, diagonal'),
-    ('seed_leaf', '꽃잎', 'a cluster of pink petals and green leaves scattering'),
+    ('seed_vine', '덩굴 (↓ 씨앗에서 솟음, 세로로 긴 그림)',
+     'ONE single thick green thorny plant vine shooting straight UP out of the ground like a pillar, tall and narrow (about 3 times taller than wide), '
+     'cracked dirt and small rocks at its base on a flat ground line, a few leaves flying, nothing else'),
+    ('seed_whip', '덩굴 채찍 (→D, 가로로 쭉 뻗은 그림)',
+     'ONE single long green thorny vine whip stretched out STRAIGHT horizontally from the left edge to the right edge like a cracking whip, '
+     'very wide and thin (about 5 times wider than tall), slight S-wave, the right tip curled with a motion blur crack, '
+     'NOT a circle, NOT a ring, NOT a loop, a few leaves flying'),
+    ('seed_dna', 'DNA 나선 (공중D, 대각선)',
+     'ONE single glowing DNA double helix, one lime-green strand and one hot-pink strand twisted together with rungs between them, '
+     'going diagonally from top-left down to bottom-right, a few pink petals around, nothing else'),
+    ('seed_leaf', '꽃잎 바람 (D+HS 진화 연출)',
+     'a swirling burst of pink cherry-blossom petals and green leaves spreading outward in a circle from the center, '
+     'empty center, nothing else'),
 ]
 
 

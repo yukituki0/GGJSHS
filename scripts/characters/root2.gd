@@ -124,6 +124,12 @@ func _on_attack_event(attack: AttackData) -> void:
 ## 랜덤 증명: 세 가지 중 하나를 고르고, 고른 이름을 상대 머리 위에 띄운다 (도장은 tick()에서)
 func _random_proof() -> void:
 	var proof: Array = PROOFS.pick_random()
+	var circle := Projectile.new()  # 증명 이름 뒤에 금색 수식 마법진 (판정 없음)
+	circle.kind = "sprite"
+	circle.extra = {"fx": "root2_qed_circle", "px": 300.0, "spin": 0.01}
+	circle.position = Vector2(_target_x(), ground_y - 270)
+	circle.lifetime = 40
+	spawn(circle)
 	var label := _text(proof[1], null, 40)
 	label.position = Vector2(_target_x(), ground_y - 270)
 	label.lifetime = 40

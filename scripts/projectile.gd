@@ -321,11 +321,24 @@ func _draw() -> void:
 		"blackhole":
 			# 블랙홀: 검은 중심 + 빨려 들어가는 보라색 고리
 			var grow := minf(1.0, age / 15.0)
+			# 그림이 있으면 천천히 도는 블랙홀 + 빨려 들어가는 고리는 그대로
+			if Game.load_texture("res://assets/effects/chaos_blackhole.png") != null:
+				for i in 3:
+					var rr := size.x * 0.7 * grow * (1.0 - fmod(age * 0.03 + i / 3.0, 1.0))
+					draw_arc(Vector2.ZERO, rr, 0, TAU, 32, Color(color, 0.45), 3.0)
+				_draw_effect("chaos_blackhole", Vector2.ZERO, size.x * 1.4 * grow, -age * 0.04)
+				return
 			for i in 4:
 				var rad := size.x * 0.5 * grow * (1.0 - fmod(age * 0.03 + i * 0.25, 1.0))
 				draw_arc(Vector2.ZERO, rad, 0, TAU, 32, Color(color, 0.6), 4.0)
 			draw_circle(Vector2.ZERO, size.x * 0.22 * grow, Color(0.02, 0.0, 0.05))
 			draw_arc(Vector2.ZERO, size.x * 0.22 * grow, 0, TAU, 32, Color(color.lightened(0.4), 0.9), 3.0)
+		"sprite":
+			# 판정 없는 연출용 그림 (extra.fx, extra.px = 큰 변 길이). 커지면서 나타났다가 흐려짐
+			var t := float(age) / lifetime
+			modulate.a = minf(1.0, age / 6.0) * minf(1.0, (lifetime - age) / 10.0)
+			_draw_effect(extra.get("fx", ""), Vector2.ZERO, extra.get("px", 200.0) * lerpf(0.7, 1.0, minf(1.0, t * 4.0)),
+					age * extra.get("spin", 0.0))
 		_:
 			draw_rect(r, color)
 
