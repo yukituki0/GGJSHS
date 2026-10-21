@@ -98,8 +98,10 @@ REDO = []
 WEAPON_POSES = [
     ('root2_slash', 'S 컴퍼스 찌르기', 'thrusting the giant compass forward with both hands at chest height, front foot forward'),
     ('root2_heavy', 'HS 컴퍼스 크게 휘두르기',
-     'heavy swing, the giant compass held in both hands swung down in a wide arc from above to the front, '
-     'compass points ending low in front, deep lunge with legs spread wide, body twisted, coat flaring'),
+     'big horizontal sweeping slash toward the opponent: gripping the end of the giant compass handle with both hands, '
+     'arms fully extended forward, the compass swung horizontally at chest height with its points reaching far ahead, '
+     'the compass held level (not pointing down at the ground), deep wide lunge with the front knee bent, '
+     'upper body leaning forward, head and eyes facing forward toward the right, scarf and coat flaring behind'),
     ('chemikid_slash', 'S 플라스크 휘두르기',
      'quick horizontal swipe with the flask hand at chest height, flask swung forward, other hand on the belt, front foot forward'),
     ('chemikid_heavy', 'HS 플라스크 내려치기',
