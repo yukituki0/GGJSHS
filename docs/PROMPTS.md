@@ -15,7 +15,7 @@
 | 📐 ROOT2 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 7/7 |
 | 🌱 SEED | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | 0/7 |
 
-이펙트: 13/26
+이펙트: 18/26
 
 ## 0-0. 글자 그림 (한 장씩, 첨부 없이)
 
@@ -948,27 +948,27 @@ A single 2D fighting game special effect sprite: a tall vertical cyan hexagon-gr
 A single 2D fighting game special effect sprite: broken fragments of a blue error window flying apart, no letters. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **유성** → `globe_meteor`
+✅ **유성** → `globe_meteor`
 ```
 A single 2D fighting game special effect sprite: a blazing orange meteor with a long fiery tail, flying diagonally downward. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **지진해일** → `globe_wave`
+✅ **지진해일** → `globe_wave`
 ```
 A single 2D fighting game special effect sprite: a big blue ocean wave rolling forward along the ground, side view. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **별자리 별** → `globe_star`
+✅ **별자리 별** → `globe_star`
 ```
 A single 2D fighting game special effect sprite: a single bright glowing star with sparkles. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **낙뢰** → `globe_lightning`
+✅ **낙뢰** → `globe_lightning`
 ```
 A single 2D fighting game special effect sprite: a jagged white-yellow lightning bolt striking straight down, tall and thin. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **태풍** → `globe_typhoon`
+✅ **태풍** → `globe_typhoon`
 ```
 A single 2D fighting game special effect sprite: a swirling grey-blue tornado vortex with debris. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```

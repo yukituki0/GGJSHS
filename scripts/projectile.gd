@@ -129,12 +129,26 @@ func _draw() -> void:
 			draw_circle(Vector2.ZERO, size.x * 0.3 + size.x * 0.4 * t, Color(1.0, 0.6, 0.15, 0.8 * (1.0 - t)))
 			draw_circle(Vector2.ZERO, size.x * 0.2 + size.x * 0.25 * t, Color(color, 0.9 * (1.0 - t)))
 		"meteor":
+			# 별똥별 그림: 머리(왼쪽 아래)가 날아가는 방향을 향하게 돌린다 (그림은 왼쪽 아래로 떨어지는 모양)
+			var mtex := Game.load_texture("res://assets/effects/globe_meteor.png")
+			if mtex != null:
+				var dir := velocity.normalized()
+				var flip := 1.0 if dir.x < 0 else -1.0
+				var ang := dir.angle() - Vector2(-1, 1).normalized().angle() if flip > 0 else dir.angle() - Vector2(1, 1).normalized().angle()
+				var w := 120.0
+				var sz := Vector2(w, w * mtex.get_height() / mtex.get_width())
+				draw_set_transform(Vector2.ZERO, ang, Vector2(flip, 1))
+				draw_texture_rect(mtex, Rect2(Vector2(-sz.x * 0.2, -sz.y * 0.75), sz), false)
+				draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
+				return
 			# 별똥별: 빛나는 머리 + 날아온 방향으로 긴 꼬리
 			var back := -velocity.normalized() * 70
 			draw_line(Vector2.ZERO, back, Color(color, 0.35), 14.0)
 			draw_line(Vector2.ZERO, back * 0.6, Color(color, 0.7), 8.0)
 			_draw_star(Vector2.ZERO, size.x * 0.6, Color.WHITE, age * 0.2)
 		"wave":
+			if _draw_ground_effect("globe_wave", r.end.y + 6, r.size.x * 2.4, minf(1.0, (lifetime - age) / 12.0), minf(1.0, age / 6.0)):
+				return
 			# 파도: 진행 방향으로 말려 올라가는 물결
 			var dir := hit_direction()
 			var fade := minf(1.0, (lifetime - age) / 12.0)
@@ -144,11 +158,19 @@ func _draw() -> void:
 						PI * 1.5 if dir > 0 else -PI * 0.5, 12, Color(color.lightened(i * 0.2), 0.85 * fade), 10.0 - i * 2)
 			draw_rect(Rect2(r.position.x, r.end.y - 10, r.size.x, 10), Color(color, 0.6 * fade))
 		"star":
+			var twinkle := 0.85 + 0.15 * sin(age * 0.25)
+			if _draw_effect("globe_star_gold", Vector2.ZERO, size.x * 2.6 * twinkle, age * 0.02):
+				return
 			# 별자리용 별: 반짝임
 			var tw := 0.75 + 0.25 * sin(age * 0.25)
 			draw_circle(Vector2.ZERO, size.x * 0.9, Color(color, 0.15))
 			_draw_star(Vector2.ZERO, size.x * 0.55 * tw, Color(color, 0.95), 0.0)
 		"beam":
+			# 이어지는 순간 양 끝 별이 파랗게 번쩍
+			var bt := float(age) / lifetime
+			modulate.a = 1.0
+			for end in [extra.get("a", Vector2.ZERO), extra.get("b", Vector2.ZERO)]:
+				_draw_effect("globe_star", end, 90.0 * (1.0 - bt * 0.5))
 			# 별자리 선: 두 별을 잇는 빛줄기 (extra.a, extra.b는 position 기준 상대 좌표)
 			var t := float(age) / lifetime
 			var a: Vector2 = extra.get("a", Vector2.ZERO)
@@ -156,6 +178,11 @@ func _draw() -> void:
 			draw_line(a, b, Color(color, 0.4 * (1.0 - t)), 18.0)
 			draw_line(a, b, Color(Color.WHITE, 1.0 - t), 5.0)
 		"bolt":
+			var btex := Game.load_texture("res://assets/effects/globe_lightning.png")
+			if btex != null:
+				modulate.a = 1.0 if age % 4 < 2 else 0.75
+				_draw_ground_effect("globe_lightning", r.end.y + 6, r.size.y * btex.get_width() / btex.get_height(), 1.0, minf(1.0, age / 3.0))
+				return
 			# 번개: 위에서 아래로 지그재그
 			var flick := 1.0 if age % 4 < 2 else 0.6
 			var pts := PackedVector2Array()
@@ -167,6 +194,9 @@ func _draw() -> void:
 			draw_polyline(pts, Color(color, 0.5 * flick), 14.0)
 			draw_polyline(pts, Color(Color.WHITE, flick), 4.0)
 		"typhoon":
+			var tfade := minf(1.0, (lifetime - age) / 15.0)
+			if _draw_ground_effect("globe_typhoon", r.end.y + 10, r.size.x * 1.7, tfade, minf(1.0, age / 8.0)):
+				return
 			# 태풍: 빙글빙글 도는 나선
 			var fade := minf(1.0, (lifetime - age) / 15.0)
 			for i in 5:
