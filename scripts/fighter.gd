@@ -1089,6 +1089,12 @@ func _anchor_for(tex: Texture2D) -> Vector2:
 		return _anchor_cache[tex]
 	var a := Puppet.find_anchor(tex)
 	var file := tex.resource_path.get_file()
+	# 무기가 발보다 아래로 내려간 그림 등은 rigs의 pose_anchor로 발 위치를 직접 정한다
+	var pose_key := file.trim_prefix(char_id + "_").get_basename()
+	var fixed: Variant = Rigs.get_rig(char_id).get("pose_anchor", {}).get(pose_key)
+	if fixed != null:
+		_anchor_cache[tex] = fixed
+		return fixed
 	if file.begins_with(char_id + "_guard"):
 		var stand_hip := (Puppet.band_x(puppet.texture, HIP_BAND.x, HIP_BAND.y) - puppet.anchor.x) * puppet.scale
 		var s := _pose_scale() * _pose_size(tex)
