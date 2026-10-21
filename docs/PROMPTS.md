@@ -8,7 +8,7 @@
 
 | 캐릭터 | 기본 전신·자세 6·상반신·얼굴·컷인 | 걷기 시트 | 뒤로 걷기 | 달리기 / 대시 | 백대시 | 쓰러짐 (KO) | 잡기 | 앉아서 가드 | 점프 공격 | 공중 대시 | 필살기·승리 |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| 🧪 CHEMIKID | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 0/7 |
+| 🧪 CHEMIKID | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 2/7 |
 | 💻 COMMON | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | 0/7 |
 | 🌀 CHAOS | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ✅ | ✅ | ✅ | ✅ | 0/7 |
 | 🌍 GLOBE | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | 0/7 |
@@ -686,12 +686,12 @@ Same character as the attached image: same face, hair, outfit, colors and body p
 
 ### 🧪 CHEMIKID
 
-⬜ **D 플라스크 투척** → `chemikid_5d`
+✅ **D 플라스크 투척** → `chemikid_5d`
 ```
 Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his glowing green flask. Pose: throwing the flask upward and forward with one arm, other hand on the belt. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
 ```
 
-⬜ **→D 촉매 돌진** → `chemikid_6d`
+✅ **→D 촉매 돌진** → `chemikid_6d`
 ```
 Same character as the attached image: same face, hair, outfit, colors and body proportions. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his glowing green flask. Pose: charging forward low like a sprinter, flask held back, coat flying. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
 ```
