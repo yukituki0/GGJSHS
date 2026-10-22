@@ -15,8 +15,8 @@ class_name Rigs
 
 const RIGS := {
 	"chemikid": {
-		"pose_size": {"crouch": 1.15, "crouch_guard": 0.95, "jump": 1.12, "heavy": 0.72},
-		"pose_anchor": {"heavy": Vector2(650, 1280)},  # 깊은 런지: 뒷발 쪽을 기준으로 해서 몸이 앞으로 확 튀지 않게
+		"pose_size": {"crouch": 1.15, "crouch_guard": 0.95, "jump": 1.12, "heavy": 0.72, "2d": 1.16, "2k": 0.72, "2p": 0.81, "2s": 0.72, "6d": 0.72, "dash": 0.88, "guard": 0.86, "hit": 0.83, "jd": 0.88, "jh": 0.74, "jk": 0.9, "od": 1.14, "punch": 0.78, "slash": 0.83},
+		"pose_anchor": {"heavy": Vector2(650, 1280), "2h": Vector2(273, 1343), "2p": Vector2(352, 1050), "4d": Vector2(296, 1279), "5d": Vector2(727, 1279), "6d": Vector2(998, 1025), "air_dash": Vector2(547, 961), "dash": Vector2(650, 1216), "jd": Vector2(334, 1025), "js": Vector2(322, 1164)},  # 깊은 런지: 뒷발 쪽을 기준으로 해서 몸이 앞으로 확 튀지 않게
 		"joints": {
 			"hip": Vector2(560, 620), "neck": Vector2(570, 240), "head": Vector2(600, 150),
 			"ba_sh": Vector2(430, 260), "ba_el": Vector2(300, 380), "ba_ha": Vector2(430, 450),
@@ -26,8 +26,8 @@ const RIGS := {
 		},
 	},
 	"common": {
-		"pose_size": {"crouch": 0.9, "5d": 0.85},
-		"pose_anchor": {"2k": Vector2(560, 1003), "5d": Vector2(560, 1357), "od": Vector2(420, 1058)},
+		"pose_size": {"crouch": 0.9, "5d": 0.85, "2k": 0.91, "2p": 0.9, "2s": 0.91, "6d": 0.76, "backdash": 0.9, "dash": 0.78, "guard": 0.91, "heavy": 0.77, "hit": 1.12, "jk": 0.79, "jp": 0.83, "punch": 0.81, "slash": 0.86},
+		"pose_anchor": {"2k": Vector2(560, 1003), "5d": Vector2(560, 1357), "od": Vector2(420, 1058), "2s": Vector2(288, 1086), "dash": Vector2(603, 1289), "heavy": Vector2(358, 1358), "jp": Vector2(334, 1439), "slash": Vector2(244, 1356)},
 		"no_fit": ["2H"],
 		"fit_band": {"jS": [0.45, 1.0]},  # 공중 S: 키보드 밑으로 늘어진 케이블 말고 키보드 끝에  # 대공 2H: 그림의 앞쪽 끝(옷자락)이 아니라 원래대로 머리 위를 친다  # 다리를 길게 뻗은 2K: 뒷발이 서 있을 때 뒷발 자리에 오게
 		"joints": {
@@ -39,7 +39,8 @@ const RIGS := {
 		},
 	},
 	"chaos": {
-		"pose_size": {"crouch": 1.05, "crouch_guard": 0.95, "jump_attack": 1.1, "air_dash": 1.1},
+		"pose_size": {"crouch": 0.91, "crouch_guard": 0.85, "jump_attack": 1.1, "air_dash": 1.1, "guard": 0.91, "hit": 0.88, "jump": 0.85, "punch": 0.9},
+		"pose_anchor": {"air_dash": Vector2(566, 983), "hit": Vector2(549, 1381), "jump_attack": Vector2(477, 1114), "punch": Vector2(292, 1311)},
 		"joints": {
 			"hip": Vector2(530, 620), "neck": Vector2(530, 250), "head": Vector2(560, 140),
 			"ba_sh": Vector2(380, 300), "ba_el": Vector2(330, 450), "ba_ha": Vector2(260, 620),
@@ -49,7 +50,8 @@ const RIGS := {
 		},
 	},
 	"globe": {
-		"pose_size": {"crouch": 1.15},
+		"pose_size": {"crouch": 1.15, "jump": 1.19},
+		"pose_anchor": {"hit": Vector2(157, 1430)},
 		"joints": {
 			"hip": Vector2(520, 620), "neck": Vector2(540, 290), "head": Vector2(580, 170),
 			"ba_sh": Vector2(380, 330), "ba_el": Vector2(250, 450), "ba_ha": Vector2(230, 580),
@@ -59,10 +61,9 @@ const RIGS := {
 		},
 	},
 	"root2": {
-		"pose_size": {"crouch": 0.88, "2p": 0.88, "2k": 0.88, "2h": 1.15, "heavy": 0.75, "air_dash": 0.77, "5d": 0.8},
+		"pose_size": {"crouch": 0.88, "2p": 0.88, "2k": 0.88, "2h": 1.15, "heavy": 0.75, "air_dash": 0.77, "5d": 0.8, "2d": 0.89, "guard": 0.85, "jd": 1.18},
 		# jd: 컴퍼스 끝이 발보다 한참 아래라 부츠 바닥을 발 위치로 / win: 땅에 세운 컴퍼스 끝 말고 두 부츠 가운데
-		"pose_anchor": {"jd": Vector2(440, 1169), "win": Vector2(610, 1423),
-				"jp": Vector2(714, 923), "jk": Vector2(560, 850)},
+		"pose_anchor": {"jd": Vector2(440, 1169), "win": Vector2(610, 1423), "jp": Vector2(714, 923), "jk": Vector2(560, 850), "6d": Vector2(865, 1433), "js": Vector2(455, 908), "od": Vector2(457, 1424)},
 		"reach_limit": {"5H": 120},  # 5H 판정을 컴퍼스 끝까지 (원거리형). 6D는 그보다 더 길게 root2.gd에서
 		"no_fit": ["6D"],  # 6D는 5H보다 길게 일부러 정한 사거리
 		"joints": {
@@ -74,7 +75,8 @@ const RIGS := {
 		},
 	},
 	"seed": {
-		"pose_size": {"crouch": 1.02, "jump": 1.12},
+		"pose_size": {"crouch": 1.02, "jump": 1.12, "punch": 0.9},
+		"pose_anchor": {"punch": Vector2(285, 1596)},
 		"joints": {
 			"hip": Vector2(570, 600), "neck": Vector2(590, 260), "head": Vector2(620, 160),
 			"ba_sh": Vector2(430, 320), "ba_el": Vector2(330, 480), "ba_ha": Vector2(290, 620),
