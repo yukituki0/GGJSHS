@@ -39,7 +39,7 @@ const RIGS := {
 		},
 	},
 	"chaos": {
-		"pose_size": {"crouch": 0.91, "crouch_guard": 0.85, "jump_attack": 1.1, "air_dash": 1.1, "guard": 0.91, "hit": 0.88, "jump": 0.85, "punch": 0.9, "2p": 0.85, "2k": 0.81, "2s": 0.87, "jp": 0.87, "jk": 0.78, "jh": 0.9, "js": 0.78, "walk_back": 0.9, "dash": 0.81, "backdash": 0.9},
+		"pose_size": {"crouch": 0.91, "crouch_guard": 0.85, "jump_attack": 1.1, "air_dash": 1.1, "guard": 0.91, "hit": 0.88, "jump": 0.85, "punch": 0.9, "2p": 0.85, "2k": 0.81, "2s": 0.87, "jp": 0.87, "jk": 0.78, "jh": 0.9, "js": 0.78, "walk_back": 0.9, "dash": 0.81, "backdash": 0.9, "5d": 0.78, "6d": 0.87, "4d": 0.85},
 		"pose_anchor": {"air_dash": Vector2(566, 983), "hit": Vector2(549, 1381), "jump_attack": Vector2(477, 1114), "punch": Vector2(292, 1311), "2p": Vector2(320, 1179), "jh": Vector2(450, 1310)},
 		"joints": {
 			"hip": Vector2(530, 620), "neck": Vector2(530, 250), "head": Vector2(560, 140),
