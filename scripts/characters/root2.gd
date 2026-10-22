@@ -48,7 +48,7 @@ var _proof_age := 0
 
 func _init() -> void:
 	# 체력이 가장 낮고 빠르다
-	max_hp = 360
+	max_hp = 400
 	walk_forward_speed = 4.4
 	walk_back_speed = 3.6
 	run_speed = 10.0

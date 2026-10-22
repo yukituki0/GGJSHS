@@ -25,7 +25,7 @@ var _ghost_frames := 0
 
 func _init() -> void:
 	# 체력은 조금 낮지만 빠르다
-	max_hp = 380
+	max_hp = 410
 	walk_forward_speed = 4.6
 	run_speed = 10.0
 
@@ -43,7 +43,7 @@ func _build_specials() -> void:
 	a.event_frame = 6
 	a.invuln_frames = 6
 	a = _add(AttackData.new("jD", 8, 40, 14, 38, Rect2(-20, -120, 110, 130), AttackData.Level.OVERHEAD, 18, 14))
-	a = _add(AttackData.new("OD", 4, 8, 30, 60, Rect2(10, -220, 420, 220), M, 90, 20))
+	a = _add(AttackData.new("OD", 4, 8, 30, 80, Rect2(10, -220, 420, 220), M, 90, 20))
 	a.title = "BLUE SCREEN"
 	a.cost = Fighter.RC_COST
 	a.invuln_frames = 12

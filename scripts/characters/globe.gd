@@ -24,7 +24,7 @@ var _meteor_hit := AttackData.new("meteor", 0, 0, 0, 22, Rect2(), AttackData.Lev
 var _wave_hit := AttackData.new("wave", 0, 0, 0, 40, Rect2(), AttackData.Level.LOW, 22, 14)
 var _beam_hit := AttackData.new("constellation", 0, 0, 0, 24, Rect2(), AttackData.Level.MID, 22, 14)
 var _bolt_hit := AttackData.new("bolt", 0, 0, 0, 35, Rect2(), AttackData.Level.MID, 20, 14)
-var _typhoon_hit := AttackData.new("typhoon", 0, 0, 0, 9, Rect2(), AttackData.Level.MID, 22, 10)
+var _typhoon_hit := AttackData.new("typhoon", 0, 0, 0, 8, Rect2(), AttackData.Level.MID, 22, 10)
 
 var _meteors: Array = []
 var _stars: Array = []
@@ -33,7 +33,7 @@ var _typhoon: Projectile
 
 func _init() -> void:
 	# 체력이 가장 많고 가장 느리다
-	max_hp = 500
+	max_hp = 470
 	walk_forward_speed = 3.2
 	walk_back_speed = 2.6
 	run_speed = 7.5
@@ -46,7 +46,7 @@ func _build_specials() -> void:
 	#                                 이름  발생 지속 후딜 데미지 판정 범위                  단계 히트 가드
 	var a := _add(AttackData.new("5D", 16, 0, 26, 0, Rect2(), M, 0, 0))
 	a.event_frame = 16
-	a = _add(AttackData.new("6D", 14, 14, 24, 60, Rect2(10, -150, 90, 120), M, 24, 18))
+	a = _add(AttackData.new("6D", 14, 14, 24, 50, Rect2(10, -150, 90, 120), M, 24, 18))
 	a.move_speed = 9.0
 	a.armor_hits = 1
 	a.pushback = 12.0

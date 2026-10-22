@@ -129,6 +129,25 @@ const COUNTER_HITSTOP := 6         # 히트스톱 +6프레임 (Match가 더한�
 var counter_text := 0              # "COUNTER" 글자 남은 프레임
 var last_hit_counter := false      # 방금 맞은 게 카운터였나 (Match가 읽는다)
 
+# ── 콤보 보정 ─────────────────────────────────────────────
+## 길티기어의 데미지 보정(proration)처럼 콤보가 길어질수록 한 대의 데미지가 줄어든다
+## 3번째 기술부터 한 기술마다 x0.9, 아무리 길어도 x0.5 아래로는 안 내려감
+## 여러 번 맞히는 기술(오버드라이브 연타 등)은 한 기술로 센다 → 기술 하나의 데미지는 그대로
+const COMBO_SCALE_FROM := 3
+const COMBO_SCALE_STEP := 0.9
+const COMBO_SCALE_MIN := 0.5
+var combo_hits := 0                # 지금 맞고 있는 콤보의 히트 수 (경직이 풀리면 0)
+var combo_damage := 0              # 지금 콤보로 받은 데미지 합
+var _combo_moves := 0              # 콤보에 들어간 기술 수 (보정 기준)
+var _combo_last: AttackData        # 바로 전에 맞은 기술 (같은 기술 연타는 한 번으로 센다)
+
+
+## 이번 히트(combo_hits번째)의 데미지 배율
+func combo_scale() -> float:
+	if _combo_moves < COMBO_SCALE_FROM:
+		return 1.0
+	return maxf(COMBO_SCALE_MIN, pow(COMBO_SCALE_STEP, _combo_moves - COMBO_SCALE_FROM + 1))
+
 # ── 일반 잡기 ─────────────────────────────────────────────
 ## 상대에게 붙어서 → 또는 ← + HS. 가드 불가. 상대가 땅에 있고 경직 중이 아닐 때만
 const THROW_RANGE := 40.0          # 몸끼리 이 거리 안이면 잡을 수 있다
@@ -1020,6 +1039,17 @@ func receive_attack(attack: AttackData, from_dir: int, damage_scale := 1.0) -> b
 		damage = int(round(damage * COUNTER_DAMAGE))
 		last_hit_counter = true
 		counter_text = 50
+	if state != State.HITSTUN:  # 경직이 아닐 때 맞으면 새 콤보 시작
+		combo_hits = 0
+		combo_damage = 0
+		_combo_moves = 0
+		_combo_last = null
+	combo_hits += 1
+	if attack != _combo_last:
+		_combo_moves += 1
+		_combo_last = attack
+	damage = maxi(1, int(round(damage * combo_scale())))
+	combo_damage += damage
 
 	hp = maxi(hp - damage, 0 if can_die else 1)
 	hit_shake = attack.hitstop

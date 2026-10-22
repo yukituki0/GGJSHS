@@ -32,7 +32,7 @@ var _base_speed := {}
 
 
 func _init() -> void:
-	max_hp = 400
+	max_hp = 420
 	_vine_hit.launch = Vector2(1, -12)
 	_helix_hit.hitstop = 3
 
