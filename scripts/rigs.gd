@@ -27,7 +27,7 @@ const RIGS := {
 	},
 	"common": {
 		"pose_size": {"crouch": 0.9, "5d": 0.85},
-		"pose_anchor": {"2k": Vector2(560, 1003), "5d": Vector2(560, 1357)},
+		"pose_anchor": {"2k": Vector2(560, 1003), "5d": Vector2(560, 1357), "od": Vector2(420, 1058)},
 		"no_fit": ["2H"],
 		"fit_band": {"jS": [0.45, 1.0]},  # 공중 S: 키보드 밑으로 늘어진 케이블 말고 키보드 끝에  # 대공 2H: 그림의 앞쪽 끝(옷자락)이 아니라 원래대로 머리 위를 친다  # 다리를 길게 뻗은 2K: 뒷발이 서 있을 때 뒷발 자리에 오게
 		"joints": {
