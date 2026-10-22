@@ -24,6 +24,7 @@ var color := Color.WHITE
 var age := 0
 var dead := false
 var rehit_cd := 0               # 다시 맞힐 수 있을 때까지 남은 프레임
+var from_super := false         # 오버드라이브 중에 나온 투사체 (맞혀도 텐션이 조금만 찬다)
 
 
 func tick() -> void:

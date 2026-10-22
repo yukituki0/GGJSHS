@@ -121,10 +121,13 @@ func _on_projectile_spawned(p: Projectile) -> void:
 
 
 const SUPERFLASH_FRAMES := 45
+const BURST_FLASH_FRAMES := 20     # 버스트는 짧게 (흐름이 끊기지 않게)
+var superflash_total := SUPERFLASH_FRAMES  # 이번 컷인의 전체 길이 (HUD 연출 진행도 계산용)
 
 
 func _on_super_flash(f: Fighter, attack: AttackData) -> void:
-	superflash = SUPERFLASH_FRAMES
+	superflash = BURST_FLASH_FRAMES if attack.name == "burst" else SUPERFLASH_FRAMES
+	superflash_total = superflash
 	superflash_fighter = f
 	superflash_attack = attack
 
@@ -405,7 +408,8 @@ func _resolve_hits() -> void:
 
 
 ## 맞히기 공통 처리 (몸 공격, 투사체 둘 다). 막혔으면 true
-func _apply_hit(attacker: Fighter, defender: Fighter, attack: AttackData, contact: Vector2, dir: int) -> bool:
+func _apply_hit(attacker: Fighter, defender: Fighter, attack: AttackData, contact: Vector2, dir: int,
+		from_super := false) -> bool:
 	var blocked := defender.receive_attack(attack, dir, attacker.damage_mult)
 	if blocked:
 		Sfx.play("guard", -2.0, 0.08)
@@ -415,7 +419,7 @@ func _apply_hit(attacker: Fighter, defender: Fighter, attack: AttackData, contac
 		Sfx.play("hit_medium", -1.0, 0.08)
 	else:
 		Sfx.play("hit_light", -2.0, 0.1)
-	attacker.on_attack_connected(attack, blocked)
+	attacker.on_attack_connected(attack, blocked, from_super)
 	_hitstop = maxi(_hitstop, attack.hitstop + (Fighter.COUNTER_HITSTOP if defender.last_hit_counter else 0))
 	sparks.append([contact, 10, blocked])
 	if not blocked:
@@ -436,7 +440,7 @@ func _resolve_projectiles() -> void:
 		var hurt := _touching(proj.rect(), target)
 		if hurt.has_area():
 			var contact := proj.rect().intersection(hurt).get_center()
-			_apply_hit(proj.shooter, target, proj.attack, contact, proj.hit_direction())
+			_apply_hit(proj.shooter, target, proj.attack, contact, proj.hit_direction(), proj.from_super)
 			if proj.rehit_interval > 0:
 				proj.rehit_cd = proj.rehit_interval  # 웅덩이처럼 남아서 또 맞힘
 			else:

@@ -42,6 +42,7 @@ const RC_COST := 50.0                   # 로만 캔슬 비용 (게이지 절반
 @export var tension_hit_gain := 4.0     # 공격이 맞았을 때
 @export var tension_block_gain := 2.0   # 공격이 막혔을 때 (공격한 쪽)
 @export var tension_guard_gain := 1.0   # 공격을 막았을 때 (막은 쪽)
+const SUPER_TENSION_RATE := 0.2         # 오버드라이브로 맞혔을 때는 텐션이 이만큼만 (여러 번 때리는 궁극기로 게이지가 다시 차지 않게)
 
 # ── 마력 게이지 (필살기용) ─────────────────────────────────
 ## D 필살기(5D 6D 2D 4D jD)를 쓸 때마다 줄고, 시간이 지나면 저절로 찬다 → 필살기를 막 쓰지 못하게
@@ -390,6 +391,7 @@ func pull_opponent(target_x: float, strength: float, max_dist: float) -> void:
 
 func spawn(projectile: Projectile) -> void:
 	projectile.shooter = self
+	projectile.from_super = state == State.ATTACK and current_attack != null and current_attack.name == "OD"
 	projectile_spawned.emit(projectile)
 
 
@@ -1045,10 +1047,14 @@ func can_block(level: AttackData.Level) -> bool:
 
 
 ## Match가 호출: 공격이 맞았거나 막혔다고 알려준다
-func on_attack_connected(attack: AttackData, blocked: bool) -> void:
+## from_super: 오버드라이브(또는 그때 나온 투사체)로 맞혔나 → 텐션은 조금만
+func on_attack_connected(attack: AttackData, blocked: bool, from_super := false) -> void:
 	if attack == current_attack:
 		attack_connected = true  # 투사체가 맞은 경우엔 지금 하는 공격과 상관없음
-	add_tension(tension_block_gain if blocked else tension_hit_gain)
+	var gain := tension_block_gain if blocked else tension_hit_gain
+	if from_super or attack.name == "OD":
+		gain *= SUPER_TENSION_RATE
+	add_tension(gain)
 	_on_attack_result(attack, blocked)
 
 

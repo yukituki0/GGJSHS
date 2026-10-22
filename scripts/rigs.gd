@@ -50,7 +50,7 @@ const RIGS := {
 		},
 	},
 	"globe": {
-		"pose_size": {"crouch": 1.15, "jump": 1.19, "2p": 0.75, "2k": 0.78, "2s": 0.84, "jp": 0.82, "jk": 0.84, "js": 0.84, "jh": 0.82, "walk_back": 0.9, "dash": 0.8, "5d": 0.91, "6d": 0.81, "od": 0.9},
+		"pose_size": {"crouch": 1.15, "jump": 1.19, "2p": 0.75, "2k": 0.78, "2s": 0.74, "jp": 0.82, "jk": 0.84, "js": 0.84, "jh": 0.82, "walk_back": 0.9, "dash": 0.8, "5d": 0.91, "6d": 0.81, "od": 0.9},
 		"pose_anchor": {"hit": Vector2(157, 1430), "2k": Vector2(524, 1075), "jk": Vector2(795, 1429), "dash": Vector2(700, 1218)},
 		"joints": {
 			"hip": Vector2(520, 620), "neck": Vector2(540, 290), "head": Vector2(580, 170),
@@ -75,7 +75,7 @@ const RIGS := {
 		},
 	},
 	"seed": {
-		"pose_size": {"crouch": 1.02, "jump": 1.12, "punch": 0.9, "2p": 0.85, "2k": 0.85, "2s": 0.9, "jp": 0.77, "jk": 0.78, "js": 0.77, "jh": 0.77, "walk_back": 0.89, "dash": 0.8, "backdash": 0.92, "throw": 0.88, "jump_attack": 0.77, "5d": 0.9, "6d": 0.9, "jd": 0.81},
+		"pose_size": {"crouch": 1.02, "jump": 1.12, "punch": 0.9, "2p": 0.85, "2k": 0.85, "2s": 1.0, "jp": 0.77, "jk": 0.78, "js": 0.77, "jh": 0.77, "walk_back": 0.89, "dash": 0.8, "backdash": 0.92, "throw": 0.88, "jump_attack": 0.77, "5d": 0.9, "6d": 0.9, "jd": 0.81},
 		"pose_anchor": {"punch": Vector2(285, 1596), "2p": Vector2(931, 1282), "2k": Vector2(935, 1207), "2h": Vector2(324, 1584), "jp": Vector2(522, 1284), "dash": Vector2(721, 1434), "jd": Vector2(611, 1508), "od": Vector2(359, 1509)},
 		"joints": {
 			"hip": Vector2(570, 600), "neck": Vector2(590, 260), "head": Vector2(620, 160),

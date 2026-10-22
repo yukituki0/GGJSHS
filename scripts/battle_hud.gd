@@ -493,7 +493,7 @@ func _cutin_color(f: Fighter) -> Color:
 
 func _draw_superflash() -> void:
 	var f := m.superflash_fighter
-	var t := 1.0 - float(m.superflash) / Match.SUPERFLASH_FRAMES  # 0 → 1
+	var t := 1.0 - float(m.superflash) / m.superflash_total  # 0 → 1
 	draw_rect(Rect2(-20, -20, 1320, 760), Color(0, 0, 0, 0.55))
 	# 캐릭터 주변 빛
 	var center := _to_screen(f.position + Vector2(0, -80))
