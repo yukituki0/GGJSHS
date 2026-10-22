@@ -261,10 +261,11 @@ func _end_round(winner: int, result: String) -> void:
 	_set_phase(Phase.ROUND_END)
 
 
-## 트레이닝: 시간 무제한, 텐션 항상 최대, 안 맞고 1초 지나면 체력 회복
+## 트레이닝: 시간 무제한, 텐션/마력 항상 최대, 안 맞고 1초 지나면 체력 회복
 func _update_training() -> void:
 	for f in [p1, p2]:
 		f.tension = Fighter.MAX_TENSION
+		f.mana = Fighter.MAX_MANA
 		if f.state == Fighter.State.HITSTUN or f.state == Fighter.State.BLOCKSTUN:
 			_training_idle[f.player] = 0
 		else:

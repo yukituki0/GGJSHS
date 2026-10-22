@@ -24,6 +24,7 @@ var gatling: Array = []  # 맞히거나 막혔을 때 이어서 쓸 수 있는 �
 # ── 필살기용 추가 정보 (생성 후 필요한 것만 설정) ─────────
 var title := ""          # 화면에 띄울 기술 이름 (오버드라이브 컷인 등)
 var cost := 0.0          # 텐션 소모량 (오버드라이브 50)
+var mana := -1.0         # 마력 소모량. -1이면 기본값 (D 필살기 Fighter.SPECIAL_MANA, 나머지 0)
 var event_frame := -1    # 이 프레임에 캐릭터의 _on_attack_event()가 불린다 (투사체 생성 등)
 var invuln_frames := 0   # 시작부터 이 프레임까지 무적 (공격을 안 맞음)
 var move_speed := 0.0    # 공격 중 앞으로 움직이는 속도 (돌진기)

@@ -43,6 +43,14 @@ const RC_COST := 50.0                   # 로만 캔슬 비용 (게이지 절반
 @export var tension_block_gain := 2.0   # 공격이 막혔을 때 (공격한 쪽)
 @export var tension_guard_gain := 1.0   # 공격을 막았을 때 (막은 쪽)
 
+# ── 마력 게이지 (필살기용) ─────────────────────────────────
+## D 필살기(5D 6D 2D 4D jD)를 쓸 때마다 줄고, 시간이 지나면 저절로 찬다 → 필살기를 막 쓰지 못하게
+## (오버드라이브/로만 캔슬은 지금처럼 텐션을 쓴다)
+const MAX_MANA := 100.0
+const SPECIAL_MANA := 25.0              # 필살기 하나 기본 소모량 (가득이면 4번)
+const SPECIAL_NAMES := ["5D", "6D", "2D", "4D", "jD"]
+@export var mana_regen := 0.15          # 프레임당 회복 (빈 게이지 → 가득까지 약 11초)
+
 # ── 몸 크기 (임시 네모 그래픽 + 밀어내기/피격 판정) ─────────
 const BODY_SIZE := Vector2(70, 160)
 const CROUCH_SIZE := Vector2(80, 100)
@@ -90,6 +98,8 @@ var attack_connected := false   # 이번 공격이 이미 맞았거나 막혔나
 var stun_frames := 0            # 히트스턴/가드스턴 남은 프레임
 var _buffer := {}               # 액션 -> 남은 기억 프레임 (0이면 없음)
 var tension := 0.0
+var mana := MAX_MANA
+var mana_short := 0             # 마력이 모자라 필살기가 안 나갔을 때 게이지가 깜빡이는 남은 프레임
 var hit_shake := 0              # 히트스톱 동안 맞은 쪽이 부르르 떠는 남은 프레임
 var rc_flash := 0               # 로만 캔슬 이펙트 남은 프레임
 var history: Array[Vector2] = []  # 최근 위치 기록 (맨 앞이 가장 오래된 것)
@@ -172,6 +182,9 @@ func tick() -> void:
 		crush_text -= 1
 	if counter_text > 0:
 		counter_text -= 1
+	mana = minf(MAX_MANA, mana + mana_regen)
+	if mana_short > 0:
+		mana_short -= 1
 	_since_block += 1
 	if _since_block > 60:
 		guard_gauge = maxf(0.0, guard_gauge - GUARD_DECAY)
@@ -202,6 +215,8 @@ func reset_for_round(x: float) -> void:
 	hit_shake = 0
 	rc_flash = 0
 	guard_gauge = 0.0
+	mana = MAX_MANA
+	mana_short = 0
 	crush_text = 0
 	counter_text = 0
 	history.clear()
@@ -285,6 +300,24 @@ func _try_counter(_attack_data: AttackData) -> bool:
 ## 이 필살기를 지금 쓸 수 있나 (투사체는 화면에 하나만 등)
 func _can_use_special(_attack_name: String) -> bool:
 	return true
+
+
+## 기술 하나의 마력 소모량. 캐릭터 스크립트에서 a.mana = 값 으로 기술마다 바꿀 수 있다
+func mana_cost(attack_name: String) -> float:
+	if not attacks.has(attack_name):
+		return 0.0
+	var a: AttackData = attacks[attack_name]
+	if a.mana >= 0.0:
+		return a.mana
+	return SPECIAL_MANA if attack_name in SPECIAL_NAMES else 0.0
+
+
+## 마력이 충분한가. 모자라면 게이지를 깜빡여서 알려 준다
+func _has_mana(attack_name: String) -> bool:
+	if mana >= mana_cost(attack_name):
+		return true
+	mana_short = 20
+	return false
 
 
 ## 상대를 target_x 쪽으로 끌어당긴다 (max_dist 안에 있을 때만)
@@ -452,7 +485,7 @@ func _pressed_special() -> String:
 		move = "4D"
 	else:
 		move = "5D"
-	if not attacks.has(move) or not _can_use_special(move):
+	if not attacks.has(move) or not _can_use_special(move) or not _has_mana(move):
 		return ""
 	return move
 
@@ -602,7 +635,7 @@ func _air() -> void:
 	velocity.y += gravity
 
 	# 공중 필살기 (D)
-	if _pressed("d") and attacks.has("jD") and _can_use_special("jD"):
+	if _pressed("d") and attacks.has("jD") and _can_use_special("jD") and _has_mana("jD"):
 		_start_attack("jD")
 		return
 	var attack := _pressed_attack("j")
@@ -709,6 +742,7 @@ func _start_attack(attack_name: String) -> void:
 	_change_state(State.ATTACK)
 	if current_attack.cost > 0:
 		add_tension(-current_attack.cost)
+	mana = maxf(0.0, mana - mana_cost(attack_name))
 	if attack_name == "OD":
 		super_flash.emit(self, current_attack)
 		Sfx.play("overdrive")

@@ -120,6 +120,8 @@ func _draw_hud_images() -> void:
 		# 가드 게이지: 이름 아래 얇은 바 (꽉 차면 다음 가드가 깨짐)
 		var gx := slot.position.x if f.player == 1 else 1280.0 - slot.position.x - GUARD_BAR_W
 		_draw_guard_gauge(f, Rect2(gx, slot.end.y + 36, GUARD_BAR_W, 8), f.player == 2)
+		# 마력 게이지: 가드 게이지 아래 (필살기 한 번 = 한 칸)
+		_draw_mana_gauge(f, Rect2(gx, slot.end.y + 66, GUARD_BAR_W, 10), f.player == 2)
 
 	# 타이머
 	var timer: Texture2D = _tex["hud_timer"]
@@ -170,6 +172,34 @@ func _draw_guard_gauge(f: Fighter, r: Rect2, from_right: bool) -> void:
 	Style.outline(self, Style.slant(r.position.x, r.position.y, r.size.x, r.size.y, 4), Color(1, 1, 1, 0.6), 1.5)
 	Style.text(self, "GUARD", Vector2(r.position.x if not from_right else r.end.x - 60, r.end.y + 14), 12,
 			Style.GRAY, HORIZONTAL_ALIGNMENT_LEFT if not from_right else HORIZONTAL_ALIGNMENT_RIGHT, 60, 0)
+
+
+const MANA_COLOR := Color("3fd8ff")
+
+
+## 마력 게이지: 필살기 소모량(SPECIAL_MANA)마다 칸을 나눠서 몇 번 더 쓸 수 있는지 보이게
+func _draw_mana_gauge(f: Fighter, r: Rect2, from_right: bool) -> void:
+	var ratio := f.mana / Fighter.MAX_MANA
+	var cells := int(Fighter.MAX_MANA / Fighter.SPECIAL_MANA)
+	var gap := 4.0
+	var cw := (r.size.x - gap * (cells - 1)) / cells
+	for i in cells:
+		# 1P는 왼쪽부터, 2P는 오른쪽부터 찬다
+		var k := i if not from_right else cells - 1 - i
+		var x := r.position.x + k * (cw + gap)
+		var fill := clampf(ratio * cells - i, 0.0, 1.0)
+		Style.fill(self, Style.slant(x, r.position.y, cw, r.size.y, 4), Color(0, 0, 0, 0.7))
+		if fill > 0.0:
+			var w := cw * fill
+			var fx := x + cw - w if from_right else x
+			var col := MANA_COLOR if fill >= 1.0 else MANA_COLOR.darkened(0.45)  # 다 찬 칸만 밝게 (쓸 수 있는 횟수)
+			Style.fill(self, Style.slant(fx, r.position.y, w, r.size.y, 4), col)
+		var edge := Color(1, 1, 1, 0.6)
+		if f.mana_short > 0 and f.mana_short % 6 < 3:
+			edge = Style.RED  # 마력이 모자라 필살기가 안 나감
+		Style.outline(self, Style.slant(x, r.position.y, cw, r.size.y, 4), edge, 1.5)
+	Style.text(self, "MANA", Vector2(r.position.x if not from_right else r.end.x - 60, r.end.y + 14), 12,
+			MANA_COLOR.lightened(0.3), HORIZONTAL_ALIGNMENT_LEFT if not from_right else HORIZONTAL_ALIGNMENT_RIGHT, 60, 0)
 
 
 ## 비율 영역 n을 rect 안의 실제 영역으로

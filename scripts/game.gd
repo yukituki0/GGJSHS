@@ -114,7 +114,7 @@ const STRINGS := {
 	"language": ["LANGUAGE", "언어"],
 	"language_name": ["ENGLISH", "한국어"],
 	"help_versus": ["1P vs 2P. First to %d rounds wins.", "1P 대 2P. %d라운드를 먼저 이기면 승리!"],
-	"help_training": ["Practice freely. HP refills, tension is always full.", "자유롭게 연습. 체력은 회복되고 텐션은 항상 가득."],
+	"help_training": ["Practice freely. HP refills, tension and mana are always full.", "자유롭게 연습. 체력은 회복되고 텐션과 마력은 항상 가득."],
 	"help_controls": ["Check the button layout.", "버튼 배치를 확인합니다."],
 	"help_input": ["Switch between keyboard and arcade stick (or press F1).", "키보드 / 아케이드 스틱 전환 (F1로도 가능)"],
 	"help_language": ["Change the language.", "언어를 바꿉니다."],
