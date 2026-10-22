@@ -32,6 +32,10 @@ COMMON_POSES = [
     ('crouch_guard', '앉아서 가드', 'crouching low with arms crossed in front of the face, blocking'),
     ('jump_attack', '점프 공격', 'mid-air downward strike, knees tucked, attacking diagonally downward'),
     ('air_dash', '공중 대시', 'dashing horizontally through the air, body almost horizontal, one arm forward'),
+    ('taunt', '도발 (P+K)', 'cocky taunt toward the opponent on the right: smug grin, beckoning with one hand "come at me", '
+     'other hand on the hip, relaxed confident stance, showing off the character\'s personality'),
+    ('respect', '리스펙트 (→+P+K)', 'showing respect to the opponent on the right: a small polite bow or a thumbs-up with a friendly smile, '
+     'relaxed standing pose, sportsmanlike'),
 ]
 
 # 캐릭터별 필살기/승리 자세: (파일, 기술 이름, Pose 문장)

@@ -130,6 +130,7 @@ const STRINGS := {
 	"overdrive": ["OVERDRIVE (D + HS, 50%)", "오버드라이브 (D + HS, 50%)"],
 	"rc": ["RC (Roman Cancel)", "RC (로만 캔슬)"],
 	"burst": ["BURST (while hit: D + any attack)", "버스트 (맞는 중: D + 공격 버튼)"],
+	"taunt": ["TAUNT (P + K, gives foe 10%) / → + P + K: RESPECT", "도발 (P + K, 상대 텐션 +10%) / 앞 + P + K: 리스펙트"],
 	"demo_play": ["DEMO PLAY  -  PRESS ANY BUTTON", "데모 플레이  -  아무 버튼이나 누르세요"],
 	"dash": ["DASH  (→→ / ←← backdash)", "대시  (→→ / ←← 백스텝)"],
 	"guard": ["GUARD  (hold ←, ↙ = low)", "가드  (← 누르고 있기, ↙ = 하단)"],
@@ -186,6 +187,35 @@ const STRINGS := {
 
 ## 기술표: 캐릭터 id -> [입력, 영어 이름, 한국어 이름, 한국어 설명]  (→ = 상대 쪽, ← = 반대쪽)
 ## 기술을 바꾸면 여기와 docs/MOVES.md도 같이 고친다
+## 도발(P+K) / 리스펙트(→+P+K) 대사: 캐릭터 id → {"taunt": [[영어, 한국어], ...], "respect": [...]}
+## 여러 개면 그때그때 하나를 고른다. 자유롭게 고쳐도 됨
+const TAUNT_LINES := {
+	"chemikid": {
+		"taunt": [["Is that all the reaction you've got?", "반응이 그게 다야?"], ["You're just a catalyst for my win.", "넌 내 승리의 촉매일 뿐"]],
+		"respect": [["Nice chemistry.", "케미 좋은데?"]],
+	},
+	"common": {
+		"taunt": [["404: skill not found.", "404: 실력을 찾을 수 없음"], ["Ctrl+Z won't save you.", "Ctrl+Z로도 못 돌려"]],
+		"respect": [["GG. Well played.", "GG. 잘했어"]],
+	},
+	"globe": {
+		"taunt": [["Feeling the pressure? That's tectonics.", "압력 느껴져? 그게 지각변동이야"], ["You're on shaky ground!", "발밑 조심해!"]],
+		"respect": [["Solid as bedrock. Respect.", "기반암처럼 단단하네. 인정"]],
+	},
+	"chaos": {
+		"taunt": [["Your entropy is showing.", "엔트로피 새고 있어"], ["Zero momentum. Boring.", "운동량 0. 지루해"]],
+		"respect": [["Impressive force.", "힘 좀 쓰는데?"]],
+	},
+	"root2": {
+		"taunt": [["Your odds are irrational.", "네 승률은 무리수야"], ["Q.E.D. already.", "이미 증명 끝"]],
+		"respect": [["A beautiful proof.", "아름다운 증명이었어"]],
+	},
+	"seed": {
+		"taunt": [["Still a sprout, huh?", "아직 새싹이네?"], ["Natural selection says no.", "자연선택이 널 거부했어"]],
+		"respect": [["You've grown a lot!", "많이 자랐구나!"]],
+	},
+}
+
 const MOVE_LISTS := {
 	"chemikid": [
 		["D", "Flask Toss", "플라스크 투척", "포물선, 깨지면 산성 웅덩이"],

@@ -69,6 +69,13 @@ var _attack_shown := 0                  # 지금 공격 그림을 보여 준 프
 var _pose_hold := 0                     # 공격이 끝난 뒤 그림을 더 보여 줄 프레임
 var _hold_tex: Texture2D                # 그때 보여 줄 그림 (마지막 공격 그림)
 
+# ── 도발 / 리스펙트 (길티기어 Strive처럼) ─────────────────────
+## 서 있을 때 P + K 동시 = 도발: 상대 텐션 +10% (나만 손해, 순수 연출)
+## 앞 + P + K = 리스펙트: 상대를 칭찬하는 동작 (게이지 변화 없음)
+const TAUNT_TENSION := 10.0
+var speech := ""                        # 머리 위 말풍선 글자 (도발/리스펙트 대사)
+var speech_frames := 0
+
 # ── 몸 크기 (임시 네모 그래픽 + 밀어내기/피격 판정) ─────────
 const BODY_SIZE := Vector2(70, 160)
 const CROUCH_SIZE := Vector2(80, 100)
@@ -230,6 +237,10 @@ func tick() -> void:
 		crush_text -= 1
 	if counter_text > 0:
 		counter_text -= 1
+	if speech_frames > 0:
+		speech_frames -= 1
+		if state in [State.HITSTUN, State.KO]:
+			speech_frames = 0  # 맞으면 말이 끊긴다
 	mana = minf(MAX_MANA, mana + mana_regen)
 	if mana_short > 0:
 		mana_short -= 1
@@ -282,6 +293,8 @@ func add_tension(amount: float) -> void:
 func _build_attacks() -> void:
 	_add_throws()
 	_add_burst()
+	_add(AttackData.new("taunt", 0, 0, 50, 0, Rect2(), AttackData.Level.MID, 0, 0))
+	_add(AttackData.new("respect", 0, 0, 60, 0, Rect2(), AttackData.Level.MID, 0, 0))
 	var M := AttackData.Level.MID
 	var L := AttackData.Level.LOW
 	var O := AttackData.Level.OVERHEAD
@@ -598,6 +611,10 @@ func _ground_neutral() -> void:
 	if special != "":
 		_start_attack(special)
 		return
+	# 도발 / 리스펙트: P + K를 같이 누르면 (서 있을 때만, 앞을 누르고 있으면 리스펙트)
+	if _pressed("p") and _pressed("k") and not _held("down"):
+		_start_taunt(fwd > 0)
+		return
 	# 일반 잡기: 붙어서 → / ← + HS (아니면 그냥 5H가 나간다)
 	if _pressed("hs") and fwd != 0 and not _held("down") and _in_throw_range():
 		_start_attack("throw_f" if fwd > 0 else "throw_b")
@@ -811,6 +828,16 @@ func _start_attack(attack_name: String) -> void:
 		Sfx.play("special", -3.0, 0.08)
 	else:
 		Sfx.play("whoosh", -8.0, 0.15)
+
+
+func _start_taunt(respect: bool) -> void:
+	_start_attack("respect" if respect else "taunt")
+	var lines: Array = Game.TAUNT_LINES.get(char_id, {}).get("respect" if respect else "taunt", [])
+	if not lines.is_empty():
+		speech = lines.pick_random()[Game.language]
+		speech_frames = current_attack.total_frames() + 20
+	if not respect and opponent != null:
+		opponent.add_tension(TAUNT_TENSION)
 
 
 ## 버스트를 쓸 수 있나 (맞는 중 + 게이지 가득)
@@ -1196,6 +1223,17 @@ func _draw() -> void:
 			minf(1.0, crush_text / 15.0), Vector2(320, 90)):
 		Style.text(self, "GUARD CRUSH!", Vector2(-150, -size.y - 50), 30, Color(1, 0.4, 0.3, minf(1.0, crush_text / 15.0)),
 				HORIZONTAL_ALIGNMENT_CENTER, 300, 6)
+	if speech_frames > 0:  # 도발 대사 말풍선
+		var a := minf(1.0, speech_frames / 10.0)
+		var top := _head_top() if puppet != null else Vector2(0, -size.y)
+		var tw := Game.FONT.get_string_size(speech, HORIZONTAL_ALIGNMENT_LEFT, -1, 20).x + 40.0  # 글자 길이만큼
+		var bubble := Rect2(Vector2(-tw / 2, top.y - 92), Vector2(tw, 44))
+		draw_rect(bubble, Color(1, 1, 1, 0.92 * a))
+		draw_rect(bubble, Color(0, 0, 0, a), false, 3.0)
+		draw_colored_polygon(PackedVector2Array([Vector2(-12, bubble.end.y), Vector2(12, bubble.end.y),
+				Vector2(0, bubble.end.y + 14)]), Color(1, 1, 1, 0.92 * a))
+		Style.text(self, speech, Vector2(bubble.position.x, bubble.position.y + 30), 20, Color(0, 0, 0, a),
+				HORIZONTAL_ALIGNMENT_CENTER, bubble.size.x, 0)
 	if counter_text > 0 and not Style.text_image(self, "COUNTER", Vector2(0, -size.y - 70), 1.0,
 			minf(1.0, counter_text / 15.0), Vector2(300, 90)):
 		Style.text(self, "COUNTER", Vector2(-150, -size.y - 50), 32, Color(1, 0.55, 0.15, minf(1.0, counter_text / 15.0)),
@@ -1388,6 +1426,8 @@ func _pose_texture_now() -> Texture2D:
 				var special := a.name.ends_with("D") or a.is_throw
 				if a.name == "burst":  # 버스트: 전용 그림 → 없으면 오버드라이브 그림
 					names.append_array(["burst", "od"])
+				elif a.name in ["taunt", "respect"]:  # 도발/리스펙트: 전용 그림 → 없으면 승리 그림
+					names.append_array([a.name, "win"])
 				if special:  # 필살기/잡기 전용 그림은 시작부터 끝까지
 					names.append("throw" if a.is_throw else a.name.to_lower())  # 예: chemikid_6d.png
 				# 버튼을 누른 순간부터 공격 그림 (예전엔 발생 뒤부터라 너무 잠깐 보였다)
