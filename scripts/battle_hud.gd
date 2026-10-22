@@ -60,7 +60,9 @@ func _draw() -> void:
 		if m.show_moves:
 			_draw_move_lists()
 		else:
-			_draw_menu(Game.t("pause"), m.pause_items())
+			_draw_menu(Game.t("training_settings") if m.training_settings else Game.t("pause"), m.pause_items())
+			if m.training_settings:
+				Style.gear(self, Vector2(330, 235), 30.0, Style.WHITE)
 
 
 # ── 그림 HUD (assets/ui/hud_*.png) ─────────────────────────
@@ -546,5 +548,8 @@ func _draw_menu(title: String, items: Array, dim := 0.65, title_image := "") -> 
 		Style.fill(self, Style.slant(440, y, 400, 52, 14), Style.RED if selected else Style.PANEL)
 		if selected:
 			Style.outline(self, Style.slant(440, y, 400, 52, 14), Style.WHITE, 3.0)
-		Style.text(self, m.menu_label(items[i]), Vector2(440, y + 37), 30,
+		if items[i] == "training_settings":  # 톱니바퀴 = 따로 들어가는 설정 화면
+			Style.gear(self, Vector2(478, y + 26), 15.0, Style.WHITE if selected else Style.GRAY)
+		var tx := 456.0 if items[i] == "training_settings" else 440.0  # 톱니바퀴 자리만큼 글자를 살짝 오른쪽에
+		Style.text(self, m.menu_label(items[i]), Vector2(tx, y + 37), 30,
 				Style.WHITE if selected else Style.GRAY, HORIZONTAL_ALIGNMENT_CENTER, 414)

@@ -7,7 +7,7 @@ func _init() -> void:
 
 
 ## 항목 순서 (글자는 _items()에서)
-enum Item { VERSUS, CPU, TRAINING, CONTROLS, INPUT, LANGUAGE }
+enum Item { VERSUS, CPU, TRAINING, CHAR_BOOK, CONTROLS, INPUT, LANGUAGE }
 
 var cursor := 0
 
@@ -18,6 +18,7 @@ func _items() -> Array:
 		Game.t("versus"),
 		"%s: < %s >" % [Game.t("vs_cpu"), Game.t(Game.CPU_LEVEL_KEYS[Game.cpu_level])],
 		Game.t("training"),
+		Game.t("char_book"),
 		Game.t("controls"),
 		"%s: %s" % [Game.t("input"), input_name],
 		"%s: %s" % [Game.t("language"), Game.t("language_name")],
@@ -49,6 +50,8 @@ func _process(delta: float) -> void:
 			Item.TRAINING:
 				Game.mode = Game.Mode.TRAINING
 				Game.goto("char_select")
+			Item.CHAR_BOOK:
+				Game.goto("char_book")
 			Item.CONTROLS:
 				Game.goto("controls")
 			Item.INPUT:
@@ -60,11 +63,12 @@ func _process(delta: float) -> void:
 func _draw() -> void:
 	background()
 	header(Game.t("select_mode"))
-	menu_list(_items(), cursor, 200, 60, 28)
+	menu_list(_items(), cursor, 190, 54, 26)
 	var help := [
 		Game.t("help_versus") % Game.ROUNDS_TO_WIN,
 		Game.t("help_cpu"),
 		Game.t("help_training"),
+		Game.t("help_char_book"),
 		Game.t("help_controls"),
 		Game.t("help_input"),
 		Game.t("help_language"),

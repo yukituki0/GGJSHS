@@ -27,33 +27,40 @@ static func _make_title_font() -> FontFile:
 const SETTINGS_PATH := "user://settings.cfg"
 
 ## 캐릭터 목록. 새 캐릭터는 여기에 한 줄 추가 + scripts/characters/에 파일 추가
-## club: [영어, 한국어]
+## club: [영어, 한국어]   concept: 한 줄 설정 [영어, 한국어] (캐릭터 설정집에 나옴)
+## profile(선택): 긴 설정 글 [영어, 한국어]. 적으면 설정집 아래쪽에 나온다
 ## 일러스트: assets/characters/<id>.png 가 있으면 캐릭터 선택/VS 화면에 쓴다 (없으면 색 네모)
 ## face: 일러스트에서 얼굴 위치 (얼굴 중심 x, 얼굴 중심 y, 얼굴 크기) — 셋 다 "그림 폭"에 대한 비율
 ##       체력바 초상화와 필살기 컷인이 이 부분을 잘라 쓴다. 그림이 없으면 무시
 const CHARACTERS: Array[Dictionary] = [
 	{
 		"id": "chemikid", "name": "CHEMIKID", "club": ["CHEMISTRY CLUB  Chemikid", "화학 동아리  Chemikid"],
+		"concept": ["A mad scientist who hurls flasks. Slow, but hits hard.", "플라스크를 던지는 매드 사이언티스트. 느리지만 한 방이 세다"],
 		"color": Color(0.30, 0.85, 0.45), "script": "res://scripts/characters/chemikid.gd", "face": Vector3(0.61, 0.145, 0.22),
 	},
 	{
 		"id": "common", "name": "COMMON", "club": ["COMPUTER CLUB  COMMON", "정보 동아리  COMMON"],
+		"concept": ["A hacker who confuses opponents with traps and teleports.", "함정과 순간이동으로 상대를 헷갈리게 하는 해커"],
 		"color": Color(0.30, 0.65, 1.00), "script": "res://scripts/characters/common.gd", "face": Vector3(0.595, 0.14, 0.22),
 	},
 	{
 		"id": "globe", "name": "GLOBE", "club": ["EARTH SCIENCE CLUB  Globe", "지구과학 동아리  Globe"],
+		"concept": ["A heavyweight of land, sea, sky and space. Highest HP, slow, big hits.", "땅·바다·하늘·우주를 다루는 헤비급. 체력 최고, 느림, 한 방이 크다"],
 		"color": Color("e08a3c"), "script": "res://scripts/characters/globe.gd", "face": Vector3(0.58, 0.18, 0.22),
 	},
 	{
 		"id": "chaos", "name": "CHAOS", "club": ["PHYSICS CLUB  Chaos", "물리 동아리  Chaos"],
+		"concept": ["A grappler who pulls foes in and throws them. Strongest up close.", "끌어당기고 잡아 던지는 잡기형. 가까이 붙어야 강하다"],
 		"color": Color("a05cff"), "script": "res://scripts/characters/chaos.gd", "face": Vector3(0.57, 0.14, 0.22),
 	},
 	{
 		"id": "root2", "name": "ROOT2", "club": ["MATH CLUB  Root2", "수학 동아리  Root2"],
+		"concept": ["A zoner who controls from range. Low HP, fast.", "멀리서 견제하는 원거리형. 체력은 낮고 빠르다"],
 		"color": Color("e8d84a"), "script": "res://scripts/characters/root2.gd", "face": Vector3(0.59, 0.165, 0.22),
 	},
 	{
 		"id": "seed", "name": "SEED", "club": ["BIOLOGY CLUB  Seed", "생명 동아리  Seed"],
+		"concept": ["A trickster who plants, divides and evolves.", "심고, 나누고, 진화하는 설치·변칙형"],
 		"color": Color("ff7ab8"), "script": "res://scripts/characters/seed.gd", "face": Vector3(0.62, 0.15, 0.22),
 	},
 ]
@@ -161,6 +168,13 @@ const STRINGS := {
 	"to_title": ["TITLE", "타이틀로"],
 	"to_mode_select": ["MODE SELECT", "모드 선택으로"],
 	"input_log": ["INPUT LOG", "입력 기록"],
+	"training_settings": ["TRAINING SETTINGS", "트레이닝 설정"],
+	"back": ["BACK", "뒤로"],
+	"char_book": ["CHARACTER BOOK", "캐릭터 설정집"],
+	"help_char_book": ["Profiles, stats and moves of every character.", "캐릭터마다 설정, 능력치, 기술을 볼 수 있어요."],
+	"book_hint": ["LEFT/RIGHT: CHARACTER    K: BACK", "좌우: 캐릭터    K: 뒤로"],
+	"hp": ["HP", "체력"],
+	"profile": ["PROFILE", "설정"],
 	"command_list": ["COMMAND LIST", "기술표"],
 	"command_hint": ["K / START: CLOSE", "K / START: 닫기"],
 	"common_moves": ["COMMON", "공통"],
@@ -237,6 +251,7 @@ const SCENES := {
 	"char_select": "res://scenes/char_select.tscn",
 	"stage_select": "res://scenes/stage_select.tscn",
 	"battle": "res://scenes/battle.tscn",
+	"char_book": "res://scenes/char_book.tscn",
 }
 
 var mode: Mode = Mode.VERSUS

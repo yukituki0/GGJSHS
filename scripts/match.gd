@@ -42,6 +42,7 @@ var tint_frames := 0
 var _camera: Camera2D
 var _training_idle := { 1: 0, 2: 0 }  # 트레이닝: 안 맞고 지난 프레임 (체력 회복용)
 var _stage_texture: Texture2D
+var training_settings := false   # 일시정지 중 ⚙ 트레이닝 설정 화면을 보고 있나
 var _history: Node2D             # 트레이닝 입력 기록 (트레이닝 아니면 null)
 
 @onready var _input_debug: Node2D = $HudLayer/InputDebug
@@ -149,6 +150,7 @@ func _physics_process(_delta: float) -> void:
 		return
 	if phase == Phase.FIGHT and Game.pause_pressed():
 		paused = true
+		training_settings = false
 		menu_cursor = 0
 		return
 
@@ -278,7 +280,9 @@ const RESULT_ITEMS := ["rematch", "to_char_select", "to_mode_select", "to_title"
 ## 일시정지 메뉴 항목 (트레이닝이면 더미 설정이 추가된다)
 func pause_items() -> Array:
 	if is_training():
-		return ["resume", "command_list", "dummy", "hitbox", "input_log", "to_char_select", "to_mode_select", "to_title"]
+		if training_settings:
+			return ["dummy", "hitbox", "input_log", "back"]
+		return ["resume", "command_list", "training_settings", "to_char_select", "to_mode_select", "to_title"]
 	return ["resume", "command_list", "to_char_select", "to_mode_select", "to_title"]
 
 
@@ -288,6 +292,8 @@ func menu_label(key: String) -> String:
 		return "%s: %s" % [Game.t("dummy"), Game.t(Game.DUMMY_KEYS[Game.dummy_mode])]
 	if key == "hitbox":
 		return "%s: %s" % [Game.t("hitbox"), Game.t("on" if p1.debug_draw_boxes else "off")]
+	if key == "training_settings":
+		return Game.t("training_settings")  # 앞에 톱니바퀴 아이콘은 battle_hud가 그림
 	if key == "input_log":
 		return "%s: %s" % [Game.t("input_log"), Game.t("on" if _history != null and _history.visible else "off")]
 	return Game.t(key)
@@ -301,7 +307,11 @@ func _update_pause_menu() -> void:
 	var items := pause_items()
 	menu_cursor = _move_menu(menu_cursor, items.size())
 	if Game.pause_pressed() or Game.menu_back():
-		paused = false
+		if training_settings:  # 설정 화면에서 뒤로 = 일시정지 메뉴로
+			training_settings = false
+			menu_cursor = 2
+		else:
+			paused = false
 		return
 	if not Game.menu_pressed("p"):
 		return
@@ -318,6 +328,12 @@ func _update_pause_menu() -> void:
 				f.debug_draw_boxes = show
 		"command_list":
 			show_moves = true
+		"training_settings":  # ⚙ 트레이닝 설정 (더미 / 판정 보기 / 입력 기록)
+			training_settings = true
+			menu_cursor = 0
+		"back":
+			training_settings = false
+			menu_cursor = 2
 		"input_log":  # 입력 기록 켜기/끄기
 			if _history != null:
 				_history.visible = not _history.visible

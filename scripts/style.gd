@@ -21,6 +21,18 @@ static func slant(x: float, y: float, w: float, h: float, skew: float) -> Packed
 	])
 
 
+## 톱니바퀴 아이콘 (설정 메뉴 표시)
+static func gear(c: CanvasItem, center: Vector2, r: float, color: Color) -> void:
+	var pts := PackedVector2Array()
+	var teeth := 8
+	for i in teeth * 4:
+		var a := TAU * i / (teeth * 4.0)
+		var rr := r if (i % 4) in [1, 2] else r * 0.74
+		pts.append(center + Vector2(rr, 0).rotated(a))
+	c.draw_colored_polygon(pts, color)
+	c.draw_circle(center, r * 0.32, BLACK)
+
+
 static func fill(c: CanvasItem, points: PackedVector2Array, color: Color) -> void:
 	c.draw_colored_polygon(points, color)
 

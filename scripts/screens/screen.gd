@@ -53,12 +53,12 @@ func header(s: String, y := 70.0) -> void:
 	Style.title(self, s, Vector2(50, y + 2), 48, Style.WHITE, HORIZONTAL_ALIGNMENT_LEFT, -1, 8)
 
 
-## 세로 메뉴: 비스듬한 판. 고른 항목은 빨간 판 + 흰 테두리 + 살짝 오른쪽으로
+## 세로 메뉴: 비스듬한 판. 고른 항목은 빨간 판 + 흰 테두리
 func menu_list(items: Array, cursor: int, top: float, gap := 64.0, size := 30) -> void:
 	for i in items.size():
 		var y := top + i * gap
 		var selected := i == cursor
-		var x := W / 2 - 240 + (16.0 if selected else 0.0)
+		var x := W / 2 - 240  # 고른 항목도 같은 자리 (색과 테두리만 바뀜)
 		Style.fill(self, Style.slant(x, y - size - 6, 480, size + 22, 16), Style.RED if selected else Style.PANEL)
 		if selected:
 			Style.outline(self, Style.slant(x, y - size - 6, 480, size + 22, 16), Style.WHITE, 3.0)
