@@ -11,6 +11,7 @@ const SUBTITLE_Y := 572.0          # PRESS START 바로 위 (가운데 해와 �
 const START_Y := 640.0
 
 var _quit_confirm := false
+var _idle := 0                   # 아무 입력이 없던 프레임 (Game.DEMO_WAIT가 되면 데모)
 var _bg: Texture2D
 var _logo: Texture2D
 
@@ -29,6 +30,10 @@ func _process(delta: float) -> void:
 			get_tree().quit()
 		elif Game.menu_back():  # K, SELECT, ESC
 			_quit_confirm = false
+		return
+	_idle = 0 if Input.is_anything_pressed() else _idle + 1
+	if _idle >= Game.DEMO_WAIT:
+		Game.start_demo()
 		return
 	if Input.is_action_just_pressed("ui_cancel"):
 		_quit_confirm = true

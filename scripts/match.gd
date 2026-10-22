@@ -89,7 +89,10 @@ func _spawn(player: int) -> Fighter:
 	var f: Fighter = load(info["script"]).new()
 	f.player = player
 	f.display_name = info["name"]
-	if player == 2 and Game.mode == Game.Mode.CPU:
+	if Game.demo:  # 데모: 둘 다 어려움 CPU
+		f.brain = CpuBrain.new(CpuBrain.Level.HARD)
+		f.display_name = "CPU " + f.display_name
+	elif player == 2 and Game.mode == Game.Mode.CPU:
 		f.brain = CpuBrain.new(Game.cpu_level)
 		f.display_name = "CPU " + f.display_name
 	f.color = info["color"]
@@ -140,6 +143,10 @@ func _unhandled_input(event: InputEvent) -> void:
 # ── 매 프레임 ─────────────────────────────────────────────
 func _physics_process(_delta: float) -> void:
 	phase_frame += 1
+	# 데모: 아무 버튼이나 누르거나 경기가 끝나면 타이틀로
+	if Game.demo and ((phase_frame > 30 and Input.is_anything_pressed()) or phase == Phase.RESULT):
+		Game.end_demo()
+		return
 	if paused:
 		_update_pause_menu()
 		queue_redraw()

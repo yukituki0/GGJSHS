@@ -129,6 +129,8 @@ const STRINGS := {
 	"dust": ["D  (Special: D / 6D / 4D / 2D)", "D  (필살기: D / 앞D / 뒤D / 아래D)"],
 	"overdrive": ["OVERDRIVE (D + HS, 50%)", "오버드라이브 (D + HS, 50%)"],
 	"rc": ["RC (Roman Cancel)", "RC (로만 캔슬)"],
+	"burst": ["BURST (while hit: D + any attack)", "버스트 (맞는 중: D + 공격 버튼)"],
+	"demo_play": ["DEMO PLAY  -  PRESS ANY BUTTON", "데모 플레이  -  아무 버튼이나 누르세요"],
 	"dash": ["DASH  (→→ / ←← backdash)", "대시  (→→ / ←← 백스텝)"],
 	"guard": ["GUARD  (hold ←, ↙ = low)", "가드  (← 누르고 있기, ↙ = 하단)"],
 	"start_pause": ["START / PAUSE", "시작 / 일시정지"],
@@ -266,6 +268,33 @@ const DUMMY_KEYS := ["dummy_human", "dummy_stand", "dummy_crouch", "dummy_jump",
 var dummy_mode := 1             # 기본: 서 있기 (혼자서도 연습할 수 있게)
 var cpu_level := 1              # CpuBrain.Level (0 쉬움, 1 보통, 2 어려움)
 const CPU_LEVEL_KEYS := ["cpu_easy", "cpu_normal", "cpu_hard"]
+
+
+## 데모 (축제용): 타이틀에서 한동안 아무도 안 누르면 CPU끼리 대전을 보여 준다. 아무 버튼이나 누르면 타이틀로
+const DEMO_WAIT := 60 * 20       # 타이틀에서 이만큼(20초) 입력이 없으면 데모 시작
+var demo := false
+var _before_demo := {}           # 데모 전 설정 (끝나면 되돌린다)
+
+
+func start_demo() -> void:
+	_before_demo = {"mode": mode, "selected": selected.duplicate(), "stage": stage}
+	demo = true
+	mode = Mode.CPU
+	var a := randi() % CHARACTERS.size()
+	var b := (a + 1 + randi() % (CHARACTERS.size() - 1)) % CHARACTERS.size()  # 서로 다른 캐릭터
+	selected = {1: a, 2: b}
+	stage = randi() % STAGES.size()
+	goto("battle")
+
+
+func end_demo() -> void:
+	if not demo:
+		return
+	demo = false
+	mode = _before_demo["mode"]
+	selected = _before_demo["selected"]
+	stage = _before_demo["stage"]
+	goto("title")
 
 
 ## 혼자 하는 모드 (캐릭터를 한 사람이 둘 다 고른다)

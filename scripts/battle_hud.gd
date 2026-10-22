@@ -70,6 +70,9 @@ func _draw() -> void:
 			Style.banner(self, m.round_result, Style.GOLD, m.phase_frame / 12.0)
 		Match.Phase.RESULT:
 			_draw_result()
+	if Game.demo and m.phase != Match.Phase.VS_INTRO and Time.get_ticks_msec() % 1200 < 800:  # 데모: 아래에 깜빡이는 안내 (VS 화면에선 이름을 가려서 숨김)
+		Style.fill(self, Style.slant(640 - 300, 600, 600, 44, 14), Color(Style.RED, 0.9))
+		Style.title(self, Game.t("demo_play"), Vector2(0, 632), 28, Style.WHITE, HORIZONTAL_ALIGNMENT_CENTER, 1280, 5)
 	if m.paused:
 		if m.show_moves:
 			_draw_move_lists()
