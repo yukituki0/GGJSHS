@@ -875,7 +875,7 @@ func _fit_hitboxes_to_art() -> void:
 		var dx := clampf(tip.x - ref.hitbox.end.x, -REACH_LIMIT, limit)
 		var dy := clampf(tip.y - ref.hitbox.get_center().y, -HEIGHT_LIMIT, HEIGHT_LIMIT)
 		for move_name: String in group[2]:
-			if attacks.has(move_name):
+			if attacks.has(move_name) and not move_name in no_fit:
 				var a: AttackData = attacks[move_name]
 				# 기본 한도(50)까지는 판정을 통째로 옮기고, 그 이상 늘린 만큼은 앞으로 길게 늘린다 (가까운 상대도 맞게)
 				var stretch := maxf(0.0, dx - REACH_LIMIT)
