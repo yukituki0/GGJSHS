@@ -114,6 +114,24 @@ WEAPON_POSES = [
      'deep lunge, lab coat flaring behind'),
     ('common_slash', 'S 키보드 휘두르기',
      'quick horizontal swing of the mechanical keyboard held in both hands like a bat at chest height, front foot forward'),
+    ('globe_slash', 'S 지질 망치 휘두르기',
+     'quick horizontal swing of the small geologist rock hammer (taken from the belt) held in one hand at chest height, '
+     'arm fully extended forward toward the right, front foot forward'),
+    ('globe_heavy', 'HS 지질 망치 내려찍기',
+     'heavy overhead smash: the geologist rock hammer brought down hard in a big arc in front of the body with both hands, '
+     'arms extended forward and down at waist height, deep lunge, jacket and ponytail flaring'),
+    ('chaos_slash', 'S 손날 베기',
+     'sharp knife-hand chop: one arm swung horizontally forward at chest height, fingers straight like a blade, '
+     'arm fully extended toward the right, lab coat flaring, front foot forward'),
+    ('chaos_heavy', 'HS 양손 장타',
+     'powerful two-handed palm strike: both palms thrust straight forward at chest height, arms fully extended toward the right, '
+     'deep lunge, long hair and lab coat blown back'),
+    ('seed_slash', 'S 손날 휘두르기',
+     'sweeping backhand chop: one arm swung horizontally forward at chest height, arm fully extended toward the right, '
+     'long braid swinging, front foot forward'),
+    ('seed_heavy', 'HS 손바닥 강타',
+     'powerful forward palm strike with one hand at chest height, arm fully extended toward the right, other hand pulled back, '
+     'deep lunge, cardigan and braid flaring behind'),
     ('common_heavy', 'HS 키보드 내려찍기',
      'heavy slam, the mechanical keyboard brought down hard in front of the body with both hands at waist height, '
      'deep lunge, body leaning forward, jacket flaring'),

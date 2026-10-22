@@ -84,7 +84,8 @@ func _process(delta: float) -> void:
 			for p in [1, 2]:
 				if cursor[p] == dummy_slot():
 					Game.selected[p] = Game.TRAINING_DUMMY_INDEX
-			Game.goto("stage_select")
+			# 트레이닝은 항상 격자 배경이라 스테이지를 고를 필요 없이 바로 시작
+			Game.goto("battle" if Game.mode == Game.Mode.TRAINING else "stage_select")
 	else:
 		_done_frames = 0
 

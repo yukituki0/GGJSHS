@@ -967,13 +967,14 @@ func hurt_rects() -> Array[Rect2]:
 ## 같은 자세를 쓰는 다른 기술도 같은 만큼 옮긴다 (5S·5H가 5P보다 긴 건 그대로 = 밸런스 유지)
 const REACH_LIMIT := 50.0   # 그림 때문에 사거리가 너무 크게 바뀌지 않게
 const HEIGHT_LIMIT := 40.0  # 판정 높이도 너무 크게 바뀌지 않게 (앉은 상대에게 맞고 안 맞고가 바뀜)
+const MIN_HITBOX_W := 50.0  # 그림에 맞춰 판정을 줄여도 이 폭보다는 안 좁게
 
 
 func _fit_hitboxes_to_art() -> void:
 	if puppet == null:
 		return
 	# [자세 그림, 기준 기술, 같이 옮길 기술, 손발 끝을 찾을 높이(키 비율)]
-	var groups := [["kick", "5K", ["5K"], 0.2, 0.9]]
+	var groups := [["kick", "5K", ["5K"], 0.2, 1.0]]  # 하이킥 그림도 있어서 머리 높이까지
 	# 기술을 쓰는 그림별로 묶는다 (S 그림이 있으면 5S는 그 그림의 무기 끝에, 2K 그림이 있으면 2K는 그 발끝에)
 	# 앉은 기술은 전용 그림(2p 등)이 없으면 앉은 그림 하나를 같이 쓴다. 2K는 전용 그림이 있을 때만 (발끝 = 바닥 근처)
 	var moves := {"5P": [0.45, 1.0], "5S": [0.45, 1.0], "5H": [0.45, 1.0],
@@ -1022,18 +1023,25 @@ func _fit_hitboxes_to_art() -> void:
 		# 공격할 때 몸이 앞으로 밀리고 기울어지니까(_body_motion), 실제로 그려지는 손발 끝 위치로
 		tip = _attack_lean(ref, 1.0) * tip
 		# 캐릭터마다 일부러 그림 끝까지 늘리고 싶은 기술은 rigs의 reach_limit으로 한도를 바꾼다
-		var limit: float = Rigs.get_rig(char_id).get("reach_limit", {}).get(group[1], REACH_LIMIT)
-		var dx := clampf(tip.x - ref.hitbox.end.x, -REACH_LIMIT, limit)
-		# 공중 기술은 자세마다 높이가 크게 달라서(주먹을 머리 높이로 뻗는 등) 높이 한도를 넉넉하게
-		var h_limit := HEIGHT_LIMIT * (4.0 if group[1].begins_with("j") else 1.0)
-		var dy := clampf(tip.y - ref.hitbox.get_center().y, -h_limit, h_limit)
+		# 공중 기술과 5K는 자세마다 높이가 크게 달라서(하이킥, 주먹을 머리 높이로 뻗는 등) 높이 한도를 넉넉하게
+		var h_limit := HEIGHT_LIMIT * (4.0 if group[1].begins_with("j") or group[1] == "5K" else 1.0)
 		for move_name: String in group[2]:
 			if attacks.has(move_name) and not move_name in no_fit:
 				var a: AttackData = attacks[move_name]
-				# 기본 한도(50)까지는 판정을 통째로 옮기고, 그 이상 늘린 만큼은 앞으로 길게 늘린다 (가까운 상대도 맞게)
-				var stretch := maxf(0.0, dx - REACH_LIMIT)
-				a.hitbox.position.x = maxf(5.0, a.hitbox.position.x + dx - stretch)
-				a.hitbox.size.x += stretch
+				# 같은 그림을 쓰는 기술은 모두 그 그림의 손발 끝에서 끝나게 (기술마다 원래 길이가 달라도)
+				var limit: float = Rigs.get_rig(char_id).get("reach_limit", {}).get(move_name, REACH_LIMIT)
+				var dx := minf(tip.x - a.hitbox.end.x, limit)
+				var dy := clampf(tip.y - a.hitbox.get_center().y, -h_limit, h_limit)
+				if dx >= 0.0:
+					# 기본 한도(50)까지는 판정을 통째로 옮기고, 그 이상 늘린 만큼은 앞으로 길게 늘린다 (가까운 상대도 맞게)
+					var stretch := maxf(0.0, dx - REACH_LIMIT)
+					a.hitbox.position.x += dx - stretch
+					a.hitbox.size.x += stretch
+				else:
+					# 그림이 판정보다 짧으면: 판정을 줄여서 끝을 맞추고 (최소 폭까지), 남는 만큼만 뒤로 옮긴다
+					var shrink := maxf(dx, -(a.hitbox.size.x - MIN_HITBOX_W))
+					a.hitbox.size.x += shrink
+					a.hitbox.position.x = maxf(5.0, a.hitbox.position.x + maxf(dx - shrink, -REACH_LIMIT))
 				a.hitbox.position.y = minf(a.hitbox.position.y + dy, -a.hitbox.size.y)  # 땅 밑으로 안 내려가게
 
 

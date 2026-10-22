@@ -322,8 +322,18 @@ func _draw_body() -> void:
 			for i in range(2, 9, 2):
 				draw_circle(pts[i] + Vector2(12 if i % 4 == 0 else -12, 0), 9, color.lightened(0.2))
 		"clone":
-			# 분신: 반투명한 몸 + 세포막 테두리
+			# 분신: 쏜 캐릭터의 걷는 그림을 초록빛 반투명으로 (걸어가는 세포 분신)
 			var fade := minf(1.0, (lifetime - age) / 10.0)
+			if is_instance_valid(shooter) and shooter.puppet != null:
+				var frames := ["walk", "walk2", "walk3", "walk4"]
+				var wtex := Game.load_texture("res://assets/characters/%s_%s.png" % [shooter.char_id, frames[int(age / 8) % 4]])
+				if wtex == null:
+					wtex = Game.load_texture("res://assets/characters/%s_walk.png" % shooter.char_id)
+				if wtex != null:
+					var tint := Color(0.55, 1.0, 0.6, (0.55 + 0.1 * sin(age * 0.4)) * fade)
+					Puppet.draw_image(self, wtex, shooter._pose_scale() * shooter._pose_size(wtex), hit_direction(),
+							Vector2(0, r.end.y), tint, Transform2D.IDENTITY, shooter._anchor_for(wtex))
+					return
 			draw_rect(r, Color(color, 0.35 * fade))
 			draw_rect(r, Color(color.lightened(0.4), 0.8 * fade), false, 3.0)
 			draw_circle(Vector2(0, -r.size.y * 0.15), 12, Color(color.darkened(0.3), 0.6 * fade))
