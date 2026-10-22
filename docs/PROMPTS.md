@@ -356,22 +356,22 @@ Same character as the attached image: same face, hair, outfit, colors and body p
 
 ### 🌱 SEED
 
-⬜ **앉아 P** → `seed_2p`
+✅ **앉아 P** → `seed_2p`
 ```
 Same character as the attached image: same face, hair, outfit, colors and body proportions. ONLY ONE PERSON in the image: no opponent, no second character, no other people, no enemy silhouette. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed, magnifying glass pendant. Pose: crouching low, quick short jab forward with one fist at waist height. Skirt kept modest, opaque tights. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
 ```
 
-⬜ **앉아 K** → `seed_2k`
+✅ **앉아 K** → `seed_2k`
 ```
 Same character as the attached image: same face, hair, outfit, colors and body proportions. ONLY ONE PERSON in the image: no opponent, no second character, no other people, no enemy silhouette. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed, magnifying glass pendant. Pose: crouching low, poking forward along the ground with the front foot, leg extended low, foot near the floor. Skirt kept modest, opaque tights. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
 ```
 
-⬜ **앉아 S** → `seed_2s`
+✅ **앉아 S** → `seed_2s`
 ```
 Same character as the attached image: same face, hair, outfit, colors and body proportions. ONLY ONE PERSON in the image: no opponent, no second character, no other people, no enemy silhouette. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed, magnifying glass pendant. Pose: crouching low, swinging one hand in a karate chop forward at knee height. Skirt kept modest, opaque tights. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
 ```
 
-⬜ **앉아 HS (대공)** → `seed_2h`
+✅ **앉아 HS (대공)** → `seed_2h`
 ```
 Same character as the attached image: same face, hair, outfit, colors and body proportions. ONLY ONE PERSON in the image: no opponent, no second character, no other people, no enemy silhouette. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed, magnifying glass pendant. Pose: anti-air: rising up from a crouch and swinging one hand in a karate chop straight upward above the head, looking up. Skirt kept modest, opaque tights. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
 ```
