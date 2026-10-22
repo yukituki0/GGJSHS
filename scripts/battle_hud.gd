@@ -13,6 +13,8 @@ var _tex := {}                     # HUD 그림 (assets/ui/hud_*.png). 하나라
 var _use_images := false
 var _bg_vs: Texture2D               # assets/ui/bg_vs.png (없으면 검은 배경)
 var _bg_result: Texture2D           # assets/ui/bg_result.png (없으면 경기 화면 위에 메뉴만)
+var _combo := { 1: [0, 0, 0, 0], 2: [0, 0, 0, 0] }  # 때리는 쪽 → [히트 수, 데미지, 남은 표시 프레임, 숫자가 커지는 남은 프레임]
+const COMBO_SHOW := 70              # 콤보가 끝난 뒤 숫자가 남아 있는 프레임
 
 
 func _ready() -> void:
@@ -31,6 +33,16 @@ func _process(_delta: float) -> void:
 			_trail[f.player] = hp  # 회복/새 라운드
 		elif f.state != Fighter.State.HITSTUN:
 			_trail[f.player] = maxf(hp, _trail[f.player] - 2.5)  # 콤보가 끝나면 줄어든다
+		# 콤보 카운터: f가 맞고 있으면 때리는 쪽(상대) 자리에 표시
+		var hitter: int = 3 - f.player
+		var c: Array = _combo[hitter]
+		if c[3] > 0:
+			c[3] -= 1
+		if f.state in [Fighter.State.HITSTUN, Fighter.State.KO] and f.combo_hits >= 2:
+			var pop: int = 8 if f.combo_hits != c[0] else c[3]  # 한 대 더 들어가면 숫자가 잠깐 커진다
+			_combo[hitter] = [f.combo_hits, f.combo_damage, COMBO_SHOW, pop]
+		elif c[2] > 0:
+			c[2] -= 1
 	queue_redraw()
 
 
@@ -42,6 +54,8 @@ func _draw() -> void:
 		_draw_superflash()
 	if m.phase != Match.Phase.VS_INTRO:
 		_draw_hud()
+		for p in [1, 2]:
+			_draw_combo_counter(p)
 	match m.phase:
 		Match.Phase.VS_INTRO:
 			_draw_vs()
@@ -63,6 +77,21 @@ func _draw() -> void:
 			_draw_menu(Game.t("training_settings") if m.training_settings else Game.t("pause"), m.pause_items())
 			if m.training_settings:
 				Style.gear(self, Vector2(330, 235), 30.0, Style.WHITE)
+
+
+## 콤보 카운터 (길티기어처럼 때리는 쪽 화면 가장자리에 "N HITS")
+func _draw_combo_counter(p: int) -> void:
+	var c: Array = _combo[p]
+	if c[2] <= 0:
+		return
+	var alpha := minf(1.0, c[2] / 20.0)
+	var x := 130.0 if p == 1 else 1280.0 - 130.0 - 240.0
+	var y := 310.0
+	var align := HORIZONTAL_ALIGNMENT_LEFT if p == 1 else HORIZONTAL_ALIGNMENT_RIGHT
+	var num_size: int = 76 + c[3] * 2
+	Style.title(self, str(c[0]), Vector2(x, y), num_size, Color(Style.GOLD, alpha), align, 240, 10)
+	Style.title(self, "HITS", Vector2(x, y + 38), 34, Color(Style.WHITE, alpha), align, 240, 6)
+	Style.text(self, "%d DMG" % c[1], Vector2(x, y + 66), 22, Color(1, 0.55, 0.55, alpha), align, 240, 4)
 
 
 # ── 그림 HUD (assets/ui/hud_*.png) ─────────────────────────
@@ -122,6 +151,9 @@ func _draw_hud_images() -> void:
 		_draw_guard_gauge(f, Rect2(gx, slot.end.y + 36, GUARD_BAR_W, 8), f.player == 2)
 		# 마력 게이지: 가드 게이지 아래 (필살기 한 번 = 한 칸)
 		_draw_mana_gauge(f, Rect2(gx, slot.end.y + 66, GUARD_BAR_W, 10), f.player == 2)
+		# 버스트: 게이지 오른쪽(2P는 왼쪽) 동그라미. 가득이면 금색으로 반짝
+		var bx := gx + GUARD_BAR_W + 34 if f.player == 1 else gx - 34
+		_draw_burst_icon(f, Vector2(bx, slot.end.y + 58))
 
 	# 타이머
 	var timer: Texture2D = _tex["hud_timer"]
@@ -175,6 +207,25 @@ func _draw_guard_gauge(f: Fighter, r: Rect2, from_right: bool) -> void:
 
 
 const MANA_COLOR := Color("3fd8ff")
+
+
+## 버스트 아이콘: 차오르는 만큼 원이 채워지고, 가득 차면 금색 + "B"
+func _draw_burst_icon(f: Fighter, c: Vector2) -> void:
+	var r := 20.0
+	var ratio := f.burst / Fighter.MAX_BURST
+	draw_circle(c, r + 3, Color(0, 0, 0, 0.75))
+	if ratio >= 1.0:
+		var pulse := 0.5 + 0.5 * sin(Time.get_ticks_msec() / 150.0)
+		draw_circle(c, r, Style.GOLD.lerp(Color.WHITE, pulse * 0.35))
+	elif ratio > 0.0:  # 위에서부터 시계 방향으로 채워지는 부채꼴
+		var pts := PackedVector2Array([c])
+		var steps := 32
+		for i in steps + 1:
+			pts.append(c + Vector2(0, -r).rotated(TAU * ratio * i / steps))
+		draw_colored_polygon(pts, Color(0.45, 0.6, 0.75))
+	draw_arc(c, r, 0, TAU, 32, Color(1, 1, 1, 0.8), 2.0)
+	Style.title(self, "B", c + Vector2(-20, 9), 24, Style.BLACK if ratio >= 1.0 else Color(1, 1, 1, 0.5),
+			HORIZONTAL_ALIGNMENT_CENTER, 40, 0)
 
 
 ## 마력 게이지: 필살기 소모량(SPECIAL_MANA)마다 칸을 나눠서 몇 번 더 쓸 수 있는지 보이게

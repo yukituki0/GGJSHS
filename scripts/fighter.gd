@@ -51,6 +51,23 @@ const SPECIAL_MANA := 25.0              # 필살기 하나 기본 소모량 (가
 const SPECIAL_NAMES := ["5D", "6D", "2D", "4D", "jD"]
 @export var mana_regen := 0.15          # 프레임당 회복 (빈 게이지 → 가득까지 약 11초)
 
+# ── 버스트 (길티기어의 사이크 버스트) ──────────────────────
+## 맞고 있는 중에 D + 공격 버튼 → 몸 주위로 충격파를 내서 상대를 날려 보내고 콤보에서 빠져나온다
+## 게이지는 경기 시작 때 가득, 라운드가 바뀌어도 유지. 시간이 지나거나 맞으면 다시 찬다
+const MAX_BURST := 100.0
+const BURST_DAMAGE_GAIN := 0.15         # 받은 데미지 1당 버스트 게이지
+@export var burst_regen := 0.03         # 프레임당 회복 (빈 게이지 → 가득까지 약 55초)
+var burst := MAX_BURST
+var burst_flash := 0                    # 버스트 충격파 이펙트 남은 프레임
+
+# ── 기술 그림 보이는 시간 ─────────────────────────────────
+## 짧은 기술(5P 등)은 그림이 0.2초쯤만 나와서 잘 안 보인다 → 기술이 끝나도 가만히 있으면
+## 그 그림을 최소 POSE_MIN_FRAMES까지 보여 준다 (그림만 남고 판정/움직임은 그대로)
+const POSE_MIN_FRAMES := 24
+var _attack_shown := 0                  # 지금 공격 그림을 보여 준 프레임
+var _pose_hold := 0                     # 공격이 끝난 뒤 그림을 더 보여 줄 프레임
+var _hold_tex: Texture2D                # 그때 보여 줄 그림 (마지막 공격 그림)
+
 # ── 몸 크기 (임시 네모 그래픽 + 밀어내기/피격 판정) ─────────
 const BODY_SIZE := Vector2(70, 160)
 const CROUCH_SIZE := Vector2(80, 100)
@@ -193,6 +210,17 @@ func tick() -> void:
 		history.pop_front()
 	if rc_flash > 0:
 		rc_flash -= 1
+	if burst_flash > 0:
+		burst_flash -= 1
+	if state == State.ATTACK:
+		_attack_shown += 1
+		_pose_hold = 0
+	elif _attack_shown > 0:
+		_pose_hold = maxi(0, POSE_MIN_FRAMES - _attack_shown)
+		_attack_shown = 0
+	elif _pose_hold > 0:
+		_pose_hold -= 1
+	burst = minf(MAX_BURST, burst + burst_regen)
 	if armor_flash > 0:
 		armor_flash -= 1
 	if shock_frames > 0:
@@ -252,6 +280,7 @@ func add_tension(amount: float) -> void:
 ## Rect2(x, y, 너비, 높이): 오른쪽을 볼 때 기준, 발 위치가 (0, 0), 위쪽이 음수
 func _build_attacks() -> void:
 	_add_throws()
+	_add_burst()
 	var M := AttackData.Level.MID
 	var L := AttackData.Level.LOW
 	var O := AttackData.Level.OVERHEAD
@@ -268,6 +297,17 @@ func _build_attacks() -> void:
 	_add(AttackData.new("jK",  6, 5,  8, 28, Rect2(20, -60, 80, 35),  O, 14, 10, ["jS", "jH"]))
 	_add(AttackData.new("jS",  8, 5, 10, 38, Rect2(15, -100, 110, 60), O, 16, 12, ["jH"]))
 	_add(AttackData.new("jH", 11, 6, 12, 50, Rect2(0, -60, 130, 70),  O, 18, 14))
+
+
+## 버스트 (모든 캐릭터 공통): 몸 주위 전체를 치는 충격파. 데미지는 없고 상대를 멀리 날린다
+## 발생 전부터 끝까지 무적이라 맞으면서 쓰면 반드시 빠져나온다 (막히면 빈틈이 크다)
+func _add_burst() -> void:
+	var b := _add(AttackData.new("burst", 8, 6, 28, 0, Rect2(-170, -270, 340, 300), AttackData.Level.MID, 30, 20))
+	b.title = "BURST"
+	b.invuln_frames = 20
+	b.launch = Vector2(11.0, -11.0)
+	b.hitstop = 14
+	b.pushback = 14.0
 
 
 ## 일반 잡기 (모든 캐릭터 공통): 앞 던지기 / 뒤 던지기
@@ -771,8 +811,35 @@ func _start_attack(attack_name: String) -> void:
 		Sfx.play("whoosh", -8.0, 0.15)
 
 
+## 버스트를 쓸 수 있나 (맞는 중 + 게이지 가득)
+func can_burst() -> bool:
+	return state == State.HITSTUN and burst >= MAX_BURST and attacks.has("burst")
+
+
+func _burst_pressed() -> bool:
+	if not _pressed("d"):
+		return false
+	for button in ATTACK_BUTTONS:
+		if _pressed(button):
+			return true
+	return false
+
+
+func _start_burst() -> void:
+	burst = 0.0
+	burst_flash = 30
+	stun_frames = 0
+	velocity = Vector2.ZERO
+	_start_attack("burst")
+	super_flash.emit(self, current_attack)
+	Sfx.play("rc")
+
+
 ## 히트스턴/가드스턴: 시간이 다 지나면 다시 움직일 수 있다
 func _stunned() -> void:
+	if can_burst() and _burst_pressed():
+		_start_burst()
+		return
 	if is_on_ground() and velocity.y >= 0:
 		velocity.x *= ground_friction
 		stun_frames -= 1
@@ -999,7 +1066,7 @@ func is_invulnerable() -> bool:
 ## Match가 호출: 공격을 받았다. 막았으면 true를 돌려준다
 func receive_attack(attack: AttackData, from_dir: int, damage_scale := 1.0) -> bool:
 	var damage := int(round(attack.damage * damage_scale))
-	var counter := in_counter_state() and not attack.is_throw  # 상태가 바뀌기 전에 미리 확인
+	var counter := in_counter_state() and not attack.is_throw and attack.damage > 0  # 상태가 바뀌기 전에 미리 확인 (버스트처럼 데미지 없는 건 카운터 아님)
 	landing_lag = 0
 	last_hit_counter = false
 	if _try_counter(attack):
@@ -1048,10 +1115,12 @@ func receive_attack(attack: AttackData, from_dir: int, damage_scale := 1.0) -> b
 	if attack != _combo_last:
 		_combo_moves += 1
 		_combo_last = attack
-	damage = maxi(1, int(round(damage * combo_scale())))
+	if damage > 0:  # 데미지 없는 기술(버스트 등)은 0 그대로
+		damage = maxi(1, int(round(damage * combo_scale())))
 	combo_damage += damage
 
 	hp = maxi(hp - damage, 0 if can_die else 1)
+	burst = minf(MAX_BURST, burst + damage * BURST_DAMAGE_GAIN)
 	hit_shake = attack.hitstop
 	current_attack = null
 	if hp == 0:
@@ -1097,6 +1166,13 @@ func _draw() -> void:
 			var jitter := 10.0 if (shock_frames + i) % 4 < 2 else -10.0
 			draw_polyline(PackedVector2Array([Vector2(-size.x / 2 - 14, y0), Vector2(-size.x / 4, y0 + jitter),
 					Vector2(size.x / 4, y0 - jitter), Vector2(size.x / 2 + 14, y0)]), Color(1, 0.95, 0.3), 3.0)
+	# 버스트: 금빛/하늘빛 충격파 두 겹
+	if burst_flash > 0:
+		var bt := 1.0 - burst_flash / 30.0
+		var center := Vector2(0, -size.y / 2)
+		draw_circle(center, 60 + bt * 200, Color(0.5, 0.85, 1.0, 0.35 * (1.0 - bt)))
+		draw_arc(center, 60 + bt * 200, 0, TAU, 64, Color(1, 1, 1, 1.0 - bt), 8.0)
+		draw_arc(center, 30 + bt * 140, 0, TAU, 64, Color(0.4, 0.8, 1.0, 1.0 - bt), 5.0)
 	# 로만 캔슬: 퍼져 나가는 원
 	if rc_flash > 0:
 		var t := 1.0 - rc_flash / 20.0
@@ -1283,7 +1359,20 @@ func _stand_pose(move: String) -> String:
 
 
 ## 지금 상태에 맞는 자세 그림 (없으면 null → 기본 그림)
+## 짧은 기술이 끝난 직후 가만히 있으면 방금 공격 그림을 조금 더 보여 준다 (POSE_MIN_FRAMES)
 func _pose_texture() -> Texture2D:
+	if _pose_hold > 0 and _hold_tex != null:
+		var still := state in [State.STAND, State.CROUCH] and velocity.x == 0.0 and landing_lag == 0
+		if still or state == State.AIR:
+			return _hold_tex
+		_pose_hold = 0  # 움직이거나 맞으면 바로 원래 그림으로
+	var tex := _pose_texture_now()
+	if state == State.ATTACK:
+		_hold_tex = tex
+	return tex
+
+
+func _pose_texture_now() -> Texture2D:
 	# 앞에 있는 이름부터 찾아서 그림이 있는 걸 쓴다 (없으면 다음 이름, 다 없으면 기본 그림)
 	var names: Array[String] = []
 	match state:
@@ -1291,18 +1380,20 @@ func _pose_texture() -> Texture2D:
 			if current_attack != null:
 				var a := current_attack
 				var special := a.name.ends_with("D") or a.is_throw
+				if a.name == "burst":  # 버스트: 전용 그림 → 없으면 오버드라이브 그림
+					names.append_array(["burst", "od"])
 				if special:  # 필살기/잡기 전용 그림은 시작부터 끝까지
 					names.append("throw" if a.is_throw else a.name.to_lower())  # 예: chemikid_6d.png
-				if special or a.startup < state_frame:
-					# 앉은/공중 기본기는 기술마다 그림을 따로 둘 수 있다 (예: root2_2k.png, root2_jh.png)
-					if a.name.begins_with("2") or a.name.begins_with("j"):
-						names.append(a.name.to_lower())
-					if a.name.begins_with("2"):
-						names.append("crouch")  # 없으면 앉은 그림으로
-					elif a.name.begins_with("j") and not _is_kick(a):
-						names.append_array(["jump_attack", "punch"])
-					else:
-						names.append("kick" if _is_kick(a) else _stand_pose(a.name))
+				# 버튼을 누른 순간부터 공격 그림 (예전엔 발생 뒤부터라 너무 잠깐 보였다)
+				# 앉은/공중 기본기는 기술마다 그림을 따로 둘 수 있다 (예: root2_2k.png, root2_jh.png)
+				if a.name.begins_with("2") or a.name.begins_with("j"):
+					names.append(a.name.to_lower())
+				if a.name.begins_with("2"):
+					names.append("crouch")  # 없으면 앉은 그림으로
+				elif a.name.begins_with("j") and not _is_kick(a):
+					names.append_array(["jump_attack", "punch"])
+				else:
+					names.append("kick" if _is_kick(a) else _stand_pose(a.name))
 		State.STAND:
 			if landing_lag > 0:
 				names.append("crouch")  # 착지 빈틈: 웅크린 그림
