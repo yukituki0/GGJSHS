@@ -17,6 +17,12 @@ var cursor := { 1: 0, 2: 1 }      # 캐릭터 번호. RANDOM 칸이면 random_sl
 var locked := { 1: false, 2: false }
 var _done_frames := 0
 var _roll := { 1: 0, 2: 0 }       # RANDOM으로 결정한 뒤 룰렛이 도는 남은 프레임
+var _roll_step := { 1: -1, 2: -1 }  # 룰렛이 지금 가리키는 칸 (바뀔 때마다 소리)
+var _flash := { 1: 0, 2: 0 }      # 룰렛이 멈춘 순간 미리보기가 번쩍이는 남은 프레임
+
+const ROLL_FRAMES := 80           # 룰렛 도는 시간
+const ROLL_LAPS := 4              # 처음에 몇 바퀴나 도는지 (빠르게 돌다가 점점 느려짐)
+const FLASH_FRAMES := 14
 
 
 ## 캐릭터 카드 다음 칸 = RANDOM (카드 아래 가로로 긴 칸)
@@ -60,10 +66,17 @@ func _process(delta: float) -> void:
 				return
 
 	for p in [1, 2]:
+		if _flash[p] > 0:
+			_flash[p] -= 1
 		if _roll[p] > 0:
 			_roll[p] -= 1
-			if _roll[p] % 3 == 0 and _roll[p] > 0:
+			var step := _shown(p)
+			if step != _roll_step[p]:
+				_roll_step[p] = step
 				Sfx.play("menu_move")
+			if _roll[p] == 0:
+				_flash[p] = FLASH_FRAMES
+				Sfx.play("menu_ok")
 	if locked[1] and locked[2] and _roll[1] == 0 and _roll[2] == 0:
 		_done_frames += 1
 		if _done_frames >= 40:
@@ -97,7 +110,7 @@ func _update_slot(slot: int, player: int) -> bool:
 		if cursor[slot] == random_slot():
 			# 랜덤: 바로 정하고, 잠깐 룰렛처럼 돌다가 멈추는 연출
 			cursor[slot] = randi() % random_slot()
-			_roll[slot] = 30
+			_roll[slot] = ROLL_FRAMES
 	elif Game.menu_back(player):
 		Game.goto("mode_select")
 		return false
@@ -131,12 +144,18 @@ func _move_vertical(cur: int, dir: int) -> int:
 	return next
 
 
+## 룰렛이 결정된 칸까지 남은 칸 수. 남은 시간의 제곱에 비례 → 처음엔 엄청 빠르고 끝에서 천천히 멈춘다
+func _roll_steps_left(p: int) -> int:
+	var t := float(_roll[p]) / ROLL_FRAMES
+	return int(t * t * ROLL_LAPS * random_slot())
+
+
 ## 화면에 보여줄 캐릭터 번호 (RANDOM 칸이면 계속 바뀌고, 룰렛 중이면 빠르게 돌다가 결정된 캐릭터)
 func _shown(p: int) -> int:
 	if cursor[p] == dummy_slot():
 		return -1
 	if _roll[p] > 0:
-		return (cursor[p] + int(_roll[p] / 3.0)) % random_slot()
+		return posmod(cursor[p] - _roll_steps_left(p), random_slot())
 	if cursor[p] == random_slot():
 		return int(frame / 8.0 + p * 3) % random_slot()
 	return cursor[p]
@@ -198,10 +217,14 @@ func _draw() -> void:
 				HORIZONTAL_ALIGNMENT_CENTER, dr.size.x, 5)
 	# 커서 (1P 빨강 / 2P 파랑, 같은 칸이면 겹쳐서 보이게 크기 다르게)
 	for p in [1, 2]:
-		var rect := _card_rect(cursor[p]).grow(4 if p == 1 else 9)
+		var at: int = _shown(p) if _roll[p] > 0 else cursor[p]  # 룰렛 중이면 카드 위를 빙글빙글
+		var rect := _card_rect(at).grow(4 if p == 1 else 9)
 		var col := _player_color(p)
 		Style.outline(self, Style.slant(rect.position.x, rect.position.y, rect.size.x, rect.size.y, 12), col, 4.0)
-		if cursor[p] >= random_slot():
+		if _roll[p] > 0:  # 룰렛이 가리키는 카드는 환하게
+			var hl := _card_rect(at)
+			Style.fill(self, Style.slant(hl.position.x, hl.position.y, hl.size.x, hl.size.y, 12), Color(col, 0.35))
+		if at >= random_slot():
 			continue  # RANDOM 칸은 가로로 길어서 1P/2P 글자 없이 테두리만
 		var label_x := rect.position.x + 24 if p == 1 else rect.end.x - 10
 		text("%dP" % p, rect.position.y - 8, 22, col, label_x, 4)
@@ -236,7 +259,7 @@ func _fit(art: Texture2D, rect: Rect2) -> Rect2:
 func _draw_preview(p: int, rect: Rect2) -> void:
 	var c: Dictionary = Game.TRAINING_DUMMY if _shown(p) < 0 else Game.CHARACTERS[_shown(p)]
 	var col := _player_color(p)
-	var is_random: bool = cursor[p] == random_slot() or _roll[p] > 0
+	var is_random: bool = cursor[p] == random_slot()  # 아직 RANDOM 칸에 올려만 둔 상태
 	var slope := 20.0 if p == 1 else -20.0
 	var panel := Style.slant(rect.position.x, rect.position.y, rect.size.x, rect.size.y, slope)
 	Style.fill(self, panel, Color(c["color"].darkened(0.7), 0.9))
@@ -250,6 +273,8 @@ func _draw_preview(p: int, rect: Rect2) -> void:
 			draw_colored_polygon(panel, Color(0, 0, 0, 0.55))
 			Style.title(self, "?", Vector2(rect.position.x, rect.get_center().y + 60), 200, Style.GOLD,
 					HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 10)
+		if _roll[p] > 0:  # 룰렛 중: 그림이 바뀔 때마다 살짝 번쩍
+			draw_colored_polygon(panel, Color(1, 1, 1, 0.12 + 0.18 * float(_roll[p] % 4 < 2)))
 	elif c["id"] == "dummy":  # 연습용 인형: 받침대 + 기둥 + 과녁 몸통 + 머리
 		var base := Vector2(rect.get_center().x, rect.end.y - 110)
 		draw_rect(Rect2(base + Vector2(-60, -20), Vector2(120, 20)), Color(0.4, 0.3, 0.2))
@@ -273,6 +298,8 @@ func _draw_preview(p: int, rect: Rect2) -> void:
 	Style.title(self, shown_name, Vector2(rect.get_center().x - W, rect.end.y - 44), 50, Style.WHITE, HORIZONTAL_ALIGNMENT_CENTER, W * 2, 8)
 	if not is_random:
 		text(Game.club_name(c), rect.end.y - 16, 18, Style.GOLD, rect.get_center().x, 0)
+	if _flash[p] > 0:  # 룰렛이 멈춘 순간 하얗게 번쩍
+		draw_colored_polygon(panel, Color(1, 1, 1, 0.8 * _flash[p] / FLASH_FRAMES))
 	Style.outline(self, panel, col if locked[p] else Color(1, 1, 1, 0.2), 5.0 if locked[p] else 2.0)
 	if locked[p] and _roll[p] == 0:
 		Style.fill(self, Style.slant(rect.position.x + 60, rect.position.y + 64, rect.size.x - 120, 50, 10), Style.RED)

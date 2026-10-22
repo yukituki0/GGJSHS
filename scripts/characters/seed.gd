@@ -13,6 +13,8 @@ const VINE_GREEN := Color("5cc85a")
 const DNA_PINK := Color("ff6fae")
 
 const SEED_GROW_FRAMES := 40       # 씨앗이 덩굴이 되기까지
+const SEED_DISTANCE := 230.0       # 5D 씨앗을 심는 거리 (자라난 덩굴이 몸과 안 겹치게)
+const WHIP_START := 90.0           # 6D 덩굴 채찍이 시작하는 곳 (몸 가운데에서 앞으로, 손 근처)
 const PHOTOSYNTHESIS_HEAL := 0.6   # 광합성 프레임당 회복량
 const EVOLVE_FRAMES := 360         # 진화 지속 (6초)
 const EVOLVE_DAMAGE := 1.3
@@ -40,7 +42,7 @@ func _build_specials() -> void:
 	#                                 이름  발생 지속 후딜 데미지 판정 범위                  단계 히트 가드
 	var a := _add(AttackData.new("5D", 12, 0, 20, 0, Rect2(), M, 0, 0))
 	a.event_frame = 12
-	a = _add(AttackData.new("6D", 12, 5, 22, 38, Rect2(20, -115, 230, 40), M, 18, 14))
+	a = _add(AttackData.new("6D", 12, 5, 22, 38, Rect2(60, -115, 230, 40), M, 18, 14))  # 몸 앞에서부터 (6D 그림이 앞으로 뻗은 자세라 몸과 안 겹치게)
 	a = _add(AttackData.new("2D", 10, 0, 22, 0, Rect2(), M, 0, 0))
 	a.event_frame = 10
 	a = _add(AttackData.new("4D", 4, 60, 10, 0, Rect2(), M, 0, 0))
@@ -74,7 +76,7 @@ func _on_attack_event(attack: AttackData) -> void:
 			p.kind = "seed"
 			p.size = Vector2(20, 20)
 			p.color = VINE_GREEN
-			p.position = Vector2(position.x + 150 * facing, ground_y - 8)
+			p.position = Vector2(position.x + SEED_DISTANCE * facing, ground_y - 8)
 			p.lifetime = SEED_GROW_FRAMES
 			_seed = p
 			spawn(p)
@@ -184,14 +186,15 @@ func _draw() -> void:
 			var a: AttackData = current_attack
 			var reach := minf(1.0, float(state_frame - a.startup + 1) / 3.0)
 			var box := a.hitbox
-			var whip_len := (box.end.x + 20.0) * reach
+			var whip_x := WHIP_START
+			var whip_len := (box.end.x + 20.0 - whip_x) * reach
 			var h := whip_len * whip.get_height() / whip.get_width() * 1.4
 			var src := Rect2(0, 0, whip.get_width() * reach, whip.get_height()) if reach < 1.0 else Rect2()
 			draw_set_transform(Vector2.ZERO, 0, Vector2(facing, 1))
 			if src.has_area():
-				draw_texture_rect_region(whip, Rect2(10, box.get_center().y - h / 2, whip_len, h), src)
+				draw_texture_rect_region(whip, Rect2(whip_x, box.get_center().y - h / 2, whip_len, h), src)
 			else:
-				draw_texture_rect(whip, Rect2(10, box.get_center().y - h / 2, whip_len, h), false)
+				draw_texture_rect(whip, Rect2(whip_x, box.get_center().y - h / 2, whip_len, h), false)
 			draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
 		var pts := PackedVector2Array()
 		for i in (0 if whip != null else 7):
