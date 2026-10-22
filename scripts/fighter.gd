@@ -863,7 +863,9 @@ func _fit_hitboxes_to_art() -> void:
 		if tex == null or not attacks.has(group[1]):
 			continue
 		var s := _pose_scale() * _pose_size(tex)
-		var tip := ArtBoxes.front_tip(tex, _anchor_for(tex), group[3], group[4])
+		# rigs의 fit_band로 손발 끝을 찾을 높이를 기술마다 바꿀 수 있다 (늘어진 케이블 같은 게 끝으로 잡힐 때)
+		var band: Array = Rigs.get_rig(char_id).get("fit_band", {}).get(group[1], [group[3], group[4]])
+		var tip := ArtBoxes.front_tip(tex, _anchor_for(tex), band[0], band[1])
 		if tip == Vector2.INF:
 			continue
 		tip *= s
