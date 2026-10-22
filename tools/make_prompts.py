@@ -7,6 +7,7 @@ SAFE = ("Age-appropriate high school student, fully clothed in a modest school u
         "long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, "
         "non-sexualized, natural body proportions, wholesome.")
 SINGLE = ("Same character as the attached image: same face, hair, outfit, colors and body proportions. "
+          "ONLY ONE PERSON in the image: no opponent, no second character, no other people, no enemy silhouette. "
           "Full body, facing right (three-quarter side view), whole body visible from head to feet, "
           "transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, "
           "no ground shadow, no text.")
@@ -27,7 +28,7 @@ COMMON_POSES = [
     ('dash', '달리기 / 대시', 'sprinting forward low, body leaning far forward, clothes and hair streaming behind'),
     ('backdash', '백대시', 'hopping backward, both feet off the ground, arms pulled in, guard up'),
     ('down', '쓰러짐 (KO)', 'knocked down, lying flat on the back on the ground, eyes closed, side view, whole body horizontal'),
-    ('throw', '잡기', "grabbing the opponent's collar with both hands and throwing forward"),
+    ('throw', '잡기', 'throw motion: both hands reaching forward and gripping EMPTY AIR at chest height as if grabbing an invisible collar, then pulling to throw, the opponent is NOT drawn, hands hold nothing'),
     ('crouch_guard', '앉아서 가드', 'crouching low with arms crossed in front of the face, blocking'),
     ('jump_attack', '점프 공격', 'mid-air downward strike, knees tucked, attacking diagonally downward'),
     ('air_dash', '공중 대시', 'dashing horizontally through the air, body almost horizontal, one arm forward'),
@@ -55,7 +56,7 @@ SPECIALS = {
     ],
     'chaos': [
         ('5d', 'D 만유인력', 'one arm stretched forward with fingers curled, pulling something toward her'),
-        ('6d', '→D 운동량 던지기', "lunging forward and grabbing the opponent's collar with both hands"),
+        ('6d', '→D 운동량 던지기', "lunging forward with both hands gripping EMPTY AIR at chest height as if grabbing an invisible collar, the opponent is NOT drawn"),
         ('2d', '↓D 전자기 펄스', 'arms spread wide, hair floating up, body crackling (no actual effect drawn)'),
         ('4d', '←D 양자 터널링', 'gliding forward low, body bent, coat trailing behind'),
         ('jd', '공중D 열팽창 폭발', 'in mid-air, thrusting one palm diagonally downward'),
