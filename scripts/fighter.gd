@@ -873,7 +873,9 @@ func _fit_hitboxes_to_art() -> void:
 		# 캐릭터마다 일부러 그림 끝까지 늘리고 싶은 기술은 rigs의 reach_limit으로 한도를 바꾼다
 		var limit: float = Rigs.get_rig(char_id).get("reach_limit", {}).get(group[1], REACH_LIMIT)
 		var dx := clampf(tip.x - ref.hitbox.end.x, -REACH_LIMIT, limit)
-		var dy := clampf(tip.y - ref.hitbox.get_center().y, -HEIGHT_LIMIT, HEIGHT_LIMIT)
+		# 공중 기술은 자세마다 높이가 크게 달라서(주먹을 머리 높이로 뻗는 등) 높이 한도를 넉넉하게
+		var h_limit := HEIGHT_LIMIT * (4.0 if group[1].begins_with("j") else 1.0)
+		var dy := clampf(tip.y - ref.hitbox.get_center().y, -h_limit, h_limit)
 		for move_name: String in group[2]:
 			if attacks.has(move_name) and not move_name in no_fit:
 				var a: AttackData = attacks[move_name]
