@@ -124,7 +124,8 @@ WEAPON = {
 NORMALS = [
     ('2p', '앉아 P', 'crouching low, quick short jab forward with one fist at waist height'),
     ('2k', '앉아 K', 'crouching low, poking forward along the ground with the front foot, leg extended low, foot near the floor'),
-    ('2s', '앉아 S', 'crouching low, swinging {W} forward at knee height'),
+    ('2s', '앉아 S', 'crouching low with both knees bent, a sweeping strike with {W} far forward at knee height: '
+           'the striking arm fully extended straight toward the right, reaching well past the front foot (a real attack, not a guard stance)'),
     ('2h', '앉아 HS (대공)', 'anti-air: rising up from a crouch and swinging {W} straight upward above the head, looking up'),
     ('jp', '공중 P', 'in mid-air, knees tucked, quick jab forward with one fist'),
     ('jk', '공중 K', 'in mid-air, kicking forward with one leg fully extended'),
