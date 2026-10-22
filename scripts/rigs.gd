@@ -26,6 +26,7 @@ const RIGS := {
 	},
 	"common": {
 		"pose_size": {"crouch": 0.9},
+		"pose_anchor": {"2k": Vector2(560, 1003)},  # 다리를 길게 뻗은 2K: 뒷발이 서 있을 때 뒷발 자리에 오게
 		"joints": {
 			"hip": Vector2(560, 640), "neck": Vector2(560, 250), "head": Vector2(590, 130),
 			"ba_sh": Vector2(440, 300), "ba_el": Vector2(320, 380), "ba_ha": Vector2(330, 190),
