@@ -50,8 +50,8 @@ const RIGS := {
 		},
 	},
 	"globe": {
-		"pose_size": {"crouch": 1.15, "jump": 1.19, "2p": 0.75, "2k": 0.78, "2s": 0.84, "jp": 0.82, "jk": 0.84, "js": 0.84, "jh": 0.82},
-		"pose_anchor": {"hit": Vector2(157, 1430), "2k": Vector2(524, 1075), "jk": Vector2(795, 1429)},
+		"pose_size": {"crouch": 1.15, "jump": 1.19, "2p": 0.75, "2k": 0.78, "2s": 0.84, "jp": 0.82, "jk": 0.84, "js": 0.84, "jh": 0.82, "walk_back": 0.9, "dash": 0.8},
+		"pose_anchor": {"hit": Vector2(157, 1430), "2k": Vector2(524, 1075), "jk": Vector2(795, 1429), "dash": Vector2(700, 1218)},
 		"joints": {
 			"hip": Vector2(520, 620), "neck": Vector2(540, 290), "head": Vector2(580, 170),
 			"ba_sh": Vector2(380, 330), "ba_el": Vector2(250, 450), "ba_ha": Vector2(230, 580),
