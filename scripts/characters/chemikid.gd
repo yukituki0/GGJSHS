@@ -2,7 +2,7 @@ extends Fighter
 ## CHEMIKID (화학 동아리): 플라스크를 던지는 매드 사이언티스트. 느리지만 한 방이 세다
 ##
 ##   5D  플라스크 투척  (산·염기) 포물선 투사체. 바닥에 깨지면 산성 웅덩이(밟으면 계속 조금씩 데미지, 하단)
-##   6D  촉매 돌진      (반응 속도) 앞으로 빠르게 돌진하며 타격
+##   6D  불꽃 반응      (불꽃 반응) 손에서 불꽃을 세 번 내뿜음. 리튬(빨강) → 나트륨(노랑) → 구리(초록), 점점 멀리
 ##   2D  발열 반응      (열화학) 승룡권처럼 위로 솟구치는 대공기 (시작할 때 무적, 착지 빈틈 18F)
 ##   4D  중화 반응      (산·염기) 반격 자세. 이때 공격을 받으면 무효로 하고 받아친다
 ##   jD  앙금 생성      (침전 반응) 공중에서 앙금을 떨어뜨림 → 바닥에 굳어 상대 투사체를 막는 벽 (1개까지)
@@ -17,6 +17,9 @@ const NEUTRAL_FLASH := Color(0.7, 1.0, 0.7, 0.25)
 const COUNTER_START := 4
 const COUNTER_END := 26
 
+## 불꽃 반응: [공격 시작 후 프레임, 캐릭터 앞 거리, 색]. 원소마다 불꽃 색이 다르다
+const FLAMES := [[10, 120, Color("ff3348")], [16, 200, Color("ffd62a")], [22, 280, Color("3dff8f")]]
+
 ## 테르밋 폭발: [공격 시작 후 프레임, 캐릭터 앞 거리]. 마지막은 불꽃 기둥
 const CHAIN_BLASTS := [[8, 110], [14, 190], [20, 270], [26, 350]]
 const PILLAR := [38, 300]
@@ -26,6 +29,7 @@ var _flask_hit := AttackData.new("flask", 0, 0, 0, 32, Rect2(), AttackData.Level
 var _acid_hit := AttackData.new("acid", 0, 0, 0, 7, Rect2(), AttackData.Level.LOW, 10, 6)
 var _blast_hit := AttackData.new("blast", 0, 0, 0, 16, Rect2(), AttackData.Level.MID, 26, 14)
 var _pillar_hit := AttackData.new("thermite", 0, 0, 0, 40, Rect2(), AttackData.Level.MID, 30, 16)
+var _flame_hit := AttackData.new("flame", 0, 0, 0, 15, Rect2(), AttackData.Level.MID, 18, 10)
 var _salt_hit := AttackData.new("precipitate", 0, 0, 0, 20, Rect2(), AttackData.Level.MID, 16, 12)
 
 var _flask: Projectile
@@ -48,9 +52,7 @@ func _build_specials() -> void:
 	#                                 이름  발생 지속 후딜 데미지 판정 범위                    단계 히트 가드
 	var a := _add(AttackData.new("5D", 14, 0, 24, 0, Rect2(), M, 0, 0))
 	a.event_frame = 14
-	a = _add(AttackData.new("6D", 10, 12, 20, 45, Rect2(10, -140, 90, 90), M, 22, 16))
-	a.move_speed = 12.0
-	a.pushback = 10.0
+	a = _add(AttackData.new("6D", 10, 0, 34, 0, Rect2(), M, 0, 0))  # 불꽃은 tick()에서 프레임마다 생성
 	a = _add(AttackData.new("2D", 7, 6, 28, 50, Rect2(-10, -280, 120, 220), M, 24, 16))
 	a.invuln_frames = 7
 	a.rise = Vector2(2.5, -15.0)  # 승룡권처럼 솟구치는 대공 (약 125px, 공중 30프레임)
@@ -155,6 +157,19 @@ func tick() -> void:
 	super()
 	if _counter_text > 0:
 		_counter_text -= 1
+	# 불꽃 반응: 정해진 프레임마다 앞쪽에 색이 다른 불꽃
+	if state == State.ATTACK and current_attack != null and current_attack.name == "6D":
+		for f in FLAMES:
+			if state_frame == f[0]:
+				var p := Projectile.new()
+				p.kind = "flame"
+				p.attack = _flame_hit
+				p.size = Vector2(120, 90)
+				p.color = f[2]
+				p.position = Vector2(position.x + f[1] * facing, position.y - 120)
+				p.lifetime = 14
+				p.rehit_interval = 999  # 맞혀도 불꽃이 끝까지 보이게
+				spawn(p)
 	# 연쇄 반응: 정해진 프레임마다 앞쪽에 폭발
 	if state == State.ATTACK and current_attack != null and current_attack.name == "OD":
 		for blast in CHAIN_BLASTS:
@@ -185,8 +200,26 @@ func _draw() -> void:
 	# 반격 자세 중: 몸 앞에 초록 방패 표시
 	if state == State.ATTACK and current_attack != null and current_attack.name == "4D" \
 			and state_frame >= COUNTER_START and state_frame <= COUNTER_END:
-		var start := -PI / 2 if facing > 0 else PI / 2  # 바라보는 쪽 반원
-		draw_arc(Vector2(facing * 30, -90), 70, start, start + PI, 16, Color(ACID_GREEN, 0.8), 5.0)
+		var shield := Game.load_texture("res://assets/effects/chemikid_neutralize.png")
+		if shield != null:  # 산(빨강)·염기(파랑)가 섞이는 방패 그림이 몸 앞에서 천천히 돈다
+			var px := 190.0 * (0.95 + 0.05 * sin(state_frame * 0.5))
+			var sz := Vector2(shield.get_width(), shield.get_height()) * (px / maxf(shield.get_width(), shield.get_height()))
+			draw_set_transform(Vector2(facing * 70, -110), state_frame * 0.05, Vector2(facing, 1))
+			draw_texture_rect(shield, Rect2(-sz / 2, sz), false, Color(1, 1, 1, 0.8))
+			draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
+		else:
+			var start := -PI / 2 if facing > 0 else PI / 2  # 바라보는 쪽 반원
+			draw_arc(Vector2(facing * 30, -90), 70, start, start + PI, 16, Color(ACID_GREEN, 0.8), 5.0)
+	# 반격 성공: 방패가 크게 퍼지며 사라짐
+	if _counter_text > 30:
+		var shield2 := Game.load_texture("res://assets/effects/chemikid_neutralize.png")
+		if shield2 != null:
+			var t := (40 - _counter_text) / 10.0
+			var px2 := lerpf(190.0, 380.0, t)
+			var sz2 := Vector2(shield2.get_width(), shield2.get_height()) * (px2 / maxf(shield2.get_width(), shield2.get_height()))
+			draw_set_transform(Vector2(facing * 70, -110), 0, Vector2(facing, 1))
+			draw_texture_rect(shield2, Rect2(-sz2 / 2, sz2), false, Color(1.6, 1.6, 1.6, 1.0 - t))
+			draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
 	if _counter_text > 0:
 		draw_string(Game.FONT, Vector2(-120, -230), "NEUTRALIZE!", HORIZONTAL_ALIGNMENT_CENTER, 240, 30,
 				Color(ACID_GREEN, _counter_text / 40.0))

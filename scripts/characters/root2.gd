@@ -12,6 +12,7 @@ extends Fighter
 ##       - 확률의 증명: 주사위 6개를 부채꼴로 (각 데미지 = 눈 x 3)
 
 const GOLD_MATH := Color("ffe14a")
+const EFFECT_ALPHA := 0.7        # 이펙트 그림이 크고 진해서 캐릭터를 가리니까 살짝 투명하게 (글자는 그대로)
 
 const BOOMERANG_SPEED := 14.0
 const BOOMERANG_ACCEL := 0.32    # 되돌아오게 만드는 가속도
@@ -90,6 +91,13 @@ func _can_use_special(attack_name: String) -> bool:
 		"2D":
 			return not _alive(_integral)
 	return true
+
+
+## 모든 투사체/이펙트는 여기를 지나간다: 글자가 아닌 그림만 투명도를 낮춘다
+func spawn(projectile: Projectile) -> void:
+	if projectile.kind != "text":
+		projectile.self_modulate.a = EFFECT_ALPHA
+	super(projectile)
 
 
 func _text(text: String, hit: AttackData, size: int, color := GOLD_MATH) -> Projectile:

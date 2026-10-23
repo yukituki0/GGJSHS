@@ -369,6 +369,18 @@ func _draw_body() -> void:
 				draw_arc(Vector2.ZERO, rad, 0, TAU, 32, Color(color, 0.6), 4.0)
 			draw_circle(Vector2.ZERO, size.x * 0.22 * grow, Color(0.02, 0.0, 0.05))
 			draw_arc(Vector2.ZERO, size.x * 0.22 * grow, 0, TAU, 32, Color(color.lightened(0.4), 0.9), 3.0)
+		"flame":
+			# 불꽃 반응: 하얀 불꽃 그림을 원소 색으로 물들여서. 확 커졌다가 사그라든다
+			var life := float(age) / lifetime
+			var k := minf(1.0, age / 3.0) * (1.0 - 0.3 * life)
+			var tex := Game.load_texture("res://assets/effects/chemikid_flame.png")
+			if tex != null:
+				modulate = Color(color.r * 1.3, color.g * 1.3, color.b * 1.3, minf(1.0, (lifetime - age) / 5.0))
+				_draw_effect("chemikid_flame", Vector2(-10, 0), size.x * 1.6 * k)
+				return
+			for i in 3:  # 그림이 없으면: 겹친 불꽃 방울
+				var rr := size.y * 0.5 * k * (1.0 - i * 0.25)
+				draw_circle(Vector2(i * 14 * hit_direction(), -i * 8), rr, Color(color.lightened(i * 0.3), 0.8 - i * 0.2))
 		"sprite":
 			# 판정 없는 연출용 그림 (extra.fx, extra.px = 큰 변 길이). 커지면서 나타났다가 흐려짐
 			var t := float(age) / lifetime

@@ -135,8 +135,18 @@ func _in_attack(attack_name: String) -> bool:
 
 func _draw() -> void:
 	# 만유인력: 바깥에서 안으로 줄어드는 고리
+	if _in_attack("5D"):
+		var center := Vector2(90 * facing, -110)  # 앞으로 뻗은 손
+		var grav := Game.load_texture("res://assets/effects/chaos_gravity.png")
+		if grav != null:  # 손에 감기는 중력 소용돌이: 모였다가 끌어당기는 동안 빙글빙글
+			var grow := minf(1.0, state_frame / float(current_attack.startup))
+			var px := 150.0 * grow * (1.0 + 0.08 * sin(state_frame * 0.6))
+			var sz := Vector2(grav.get_width(), grav.get_height()) * (px / maxf(grav.get_width(), grav.get_height()))
+			draw_set_transform(center, -state_frame * 0.25 * facing, Vector2.ONE)
+			draw_texture_rect(grav, Rect2(-sz / 2, sz), false)
+			draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
 	if _in_attack("5D") and state_frame > current_attack.startup:
-		var center := Vector2(90 * facing, -90)
+		var center := Vector2(90 * facing, -110)
 		for i in 3:
 			var t := fmod(state_frame * 0.05 + i / 3.0, 1.0)
 			draw_arc(center, GRAVITY_RANGE * 0.5 * (1.0 - t), 0, TAU, 40, Color(PURPLE, 0.5 * t), 4.0)

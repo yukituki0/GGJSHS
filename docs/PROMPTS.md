@@ -8,14 +8,14 @@
 
 | 캐릭터 | 기본 전신·자세 6·상반신·얼굴·컷인 | 걷기 시트 | 뒤로 걷기 | 달리기 / 대시 | 백대시 | 쓰러짐 (KO) | 잡기 | 앉아서 가드 | 점프 공격 | 공중 대시 | 도발 (P+K) | 리스펙트 (→+P+K) | 필살기·승리 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 🧪 CHEMIKID | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ | ⬜ | 7/7 |
+| 🧪 CHEMIKID | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ | ⬜ | 6/7 |
 | 💻 COMMON | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ | ⬜ | 7/7 |
 | 🌀 CHAOS | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ | ⬜ | 7/7 |
 | 🌍 GLOBE | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ | ⬜ | 7/7 |
 | 📐 ROOT2 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ | ⬜ | 7/7 |
 | 🌱 SEED | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ | ⬜ | 7/7 |
 
-이펙트: 26/26
+이펙트: 26/29
 
 ## 0-0. 글자 그림 (한 장씩, 첨부 없이)
 
@@ -140,9 +140,9 @@ Same character as the attached image: same face, hair, outfit, colors and body p
 Same character as the attached image: same face, hair, outfit, colors and body proportions. ONLY ONE PERSON in the image: no opponent, no second character, no other people, no enemy silhouette. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed, geologist hammer on the belt. Pose: quick horizontal swing of the small geologist rock hammer (taken from the belt) held in one hand at chest height, arm fully extended forward toward the right, front foot forward. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
 ```
 
-✅ **HS 지질 망치 내려찍기** → `globe_heavy`
+✅ **HS 지질 망치 크게 휘두르기 (멀리 닿게)** → `globe_heavy`
 ```
-Same character as the attached image: same face, hair, outfit, colors and body proportions. ONLY ONE PERSON in the image: no opponent, no second character, no other people, no enemy silhouette. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed, geologist hammer on the belt. Pose: heavy overhead smash: the geologist rock hammer brought down hard in a big arc in front of the body with both hands, arms extended forward and down at waist height, deep lunge, jacket and ponytail flaring. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+Same character as the attached image: same face, hair, outfit, colors and body proportions. ONLY ONE PERSON in the image: no opponent, no second character, no other people, no enemy silhouette. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Empty-handed, geologist hammer on the belt. Pose: big long-reach hammer swing: gripping the very END of the geologist rock hammer handle with both hands, both arms fully stretched FAR forward toward the right at chest height so the hammer head is the farthest point of the whole image, the hammer head reaching well past the front foot, very deep wide lunge with the front knee bent and the back leg straight, upper body leaning far forward, head facing right, jacket and ponytail flaring behind. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
 ```
 
 ✅ **S 손날 베기** → `chaos_slash`
@@ -781,9 +781,9 @@ Same character as the attached image: same face, hair, outfit, colors and body p
 Same character as the attached image: same face, hair, outfit, colors and body proportions. ONLY ONE PERSON in the image: no opponent, no second character, no other people, no enemy silhouette. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his glowing green flask. Pose: throwing the flask upward and forward with one arm, other hand on the belt. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
 ```
 
-✅ **→D 촉매 돌진** → `chemikid_6d`
+⬜ **→D 불꽃 반응** → `chemikid_6d`
 ```
-Same character as the attached image: same face, hair, outfit, colors and body proportions. ONLY ONE PERSON in the image: no opponent, no second character, no other people, no enemy silhouette. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his glowing green flask. Pose: charging forward low like a sprinter, flask held back, coat flying. Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
+Same character as the attached image: same face, hair, outfit, colors and body proportions. ONLY ONE PERSON in the image: no opponent, no second character, no other people, no enemy silhouette. Full body, facing right (three-quarter side view), whole body visible from head to feet, transparent background (real alpha channel, not a checkerboard pattern), no effects, no glowing particles, no energy, no motion lines, no ground shadow, no text. Holding his glowing green flask. Pose: flame test: one arm thrust straight forward at chest height with the palm open toward the right as if releasing fire from the hand, the other hand holding the flask up near the shoulder, firm wide stance, lab coat flaring, NO fire drawn (the game adds the flames). Age-appropriate high school student, fully clothed in a modest school uniform or club outfit, long sleeves or jacket, knee-length or longer skirt/pants, no exposed skin other than face and hands, non-sexualized, natural body proportions, wholesome. Japanese anime fighting game art style, cel-shaded with hard-edged shadows, thick black ink outlines, high contrast, saturated colors, dramatic rim lighting, gritty rock-and-roll / heavy metal aesthetic, color accents of crimson red, black and white.
 ```
 
 ✅ **↓D 발열 반응** → `chemikid_2d`
@@ -1061,6 +1061,21 @@ A single 2D fighting game special effect sprite: a jagged white-yellow lightning
 ✅ **태풍** → `globe_typhoon`
 ```
 A single 2D fighting game special effect sprite: a swirling grey-blue tornado vortex with debris. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
+```
+
+⬜ **만유인력 (D, 손에 감기는 중력)** → `chaos_gravity`
+```
+A single 2D fighting game special effect sprite: a swirling violet-and-black gravity vortex wrapped around an invisible hand: spiraling rings of distorted space, tiny pebbles and dust orbiting inward, a dark core in the center, round overall shape, NO hand drawn, nothing else. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
+```
+
+⬜ **불꽃 반응 (→D, 게임이 빨강·노랑·초록으로 색을 바꿈)** → `chemikid_flame`
+```
+A single 2D fighting game special effect sprite: a single burst of fire flaring out horizontally toward the right like a burner flame, WHITE-hot and very light grey colors only (the game tints it red, yellow and green), wider than tall, soft flickering edges, nothing else. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
+```
+
+⬜ **중화 반응 방패 (←D)** → `chemikid_neutralize`
+```
+A single 2D fighting game special effect sprite: a round chemistry barrier seen from the side: a swirling disc where acid-red and base-blue liquid mix together into clear white light in the center, bubbles and tiny hexagon molecule shapes around the rim, glowing, NO letters. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
 ✅ **블랙홀** → `chaos_blackhole`

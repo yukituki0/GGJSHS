@@ -219,7 +219,7 @@ const TAUNT_LINES := {
 const MOVE_LISTS := {
 	"chemikid": [
 		["D", "Flask Toss", "플라스크 투척", "포물선, 깨지면 산성 웅덩이"],
-		["→ + D", "Catalyst Rush", "촉매 돌진", "빠른 돌진 공격"],
+		["→ + D", "Flame Test", "불꽃 반응", "빨강·노랑·초록 불꽃 3연타"],
 		["↓ + D", "Exotherm", "발열 반응", "위로 폭발하는 대공기 (무적)"],
 		["← + D", "Neutralize", "중화 반응", "반격 자세"],
 		["AIR D", "Precipitate", "앙금 생성", "바닥에 굳어 투사체를 막는 벽"],

@@ -42,7 +42,9 @@ COMMON_POSES = [
 SPECIALS = {
     'chemikid': [
         ('5d', 'D 플라스크 투척', 'throwing the flask upward and forward with one arm, other hand on the belt'),
-        ('6d', '→D 촉매 돌진', 'charging forward low like a sprinter, flask held back, coat flying'),
+        ('6d', '→D 불꽃 반응', 'flame test: one arm thrust straight forward at chest height with the palm open toward the right as if '
+                              'releasing fire from the hand, the other hand holding the flask up near the shoulder, firm wide stance, '
+                              'lab coat flaring, NO fire drawn (the game adds the flames)'),
         ('2d', '↓D 발열 반응', 'leaping straight up with one fist raised high, flask held down by the side'),
         ('4d', '←D 중화 반응', 'counter stance, gloved palm held forward to block, flask hidden behind the back'),
         ('jd', '공중D 앙금 생성', 'in mid-air, throwing the flask straight down with both hands'),
@@ -117,9 +119,11 @@ WEAPON_POSES = [
     ('globe_slash', 'S 지질 망치 휘두르기',
      'quick horizontal swing of the small geologist rock hammer (taken from the belt) held in one hand at chest height, '
      'arm fully extended forward toward the right, front foot forward'),
-    ('globe_heavy', 'HS 지질 망치 내려찍기',
-     'heavy overhead smash: the geologist rock hammer brought down hard in a big arc in front of the body with both hands, '
-     'arms extended forward and down at waist height, deep lunge, jacket and ponytail flaring'),
+    ('globe_heavy', 'HS 지질 망치 크게 휘두르기 (멀리 닿게)',
+     'big long-reach hammer swing: gripping the very END of the geologist rock hammer handle with both hands, '
+     'both arms fully stretched FAR forward toward the right at chest height so the hammer head is the farthest point of the whole image, '
+     'the hammer head reaching well past the front foot, very deep wide lunge with the front knee bent and the back leg straight, '
+     'upper body leaning far forward, head facing right, jacket and ponytail flaring behind'),
     ('chaos_slash', 'S 손날 베기',
      'sharp knife-hand chop: one arm swung horizontally forward at chest height, fingers straight like a blade, '
      'arm fully extended toward the right, lab coat flaring, front foot forward'),
@@ -190,6 +194,15 @@ EFFECTS = [
     ('globe_star', '별자리 별', 'a single bright glowing star with sparkles'),
     ('globe_lightning', '낙뢰', 'a jagged white-yellow lightning bolt striking straight down, tall and thin'),
     ('globe_typhoon', '태풍', 'a swirling grey-blue tornado vortex with debris'),
+    ('chaos_gravity', '만유인력 (D, 손에 감기는 중력)',
+     'a swirling violet-and-black gravity vortex wrapped around an invisible hand: spiraling rings of distorted space, '
+     'tiny pebbles and dust orbiting inward, a dark core in the center, round overall shape, NO hand drawn, nothing else'),
+    ('chemikid_flame', '불꽃 반응 (→D, 게임이 빨강·노랑·초록으로 색을 바꿈)',
+     'a single burst of fire flaring out horizontally toward the right like a burner flame, WHITE-hot and very light grey colors only '
+     '(the game tints it red, yellow and green), wider than tall, soft flickering edges, nothing else'),
+    ('chemikid_neutralize', '중화 반응 방패 (←D)',
+     'a round chemistry barrier seen from the side: a swirling disc where acid-red and base-blue liquid mix together into '
+     'clear white light in the center, bubbles and tiny hexagon molecule shapes around the rim, glowing, NO letters'),
     ('chaos_blackhole', '블랙홀', 'a small black hole with a glowing violet accretion ring, slightly tilted'),
     ('chaos_spark', '전자기 방전', 'a ball of crackling yellow electric sparks'),
     ('chaos_steam', '증기 폭발', 'a burst of white hot steam spreading outward'),
