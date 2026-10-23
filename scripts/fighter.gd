@@ -187,6 +187,23 @@ func _ready() -> void:
 	if art != null and not rig.is_empty():
 		puppet = Puppet.new(art, rig)
 		_fit_hitboxes_to_art()
+	_pad_hitboxes()
+
+
+## 공격 판정을 그림보다 조금 넉넉하게 (눈으로는 닿았는데 안 맞는 느낌이 없게)
+## 앞으로 HITBOX_PAD.x, 위아래로 HITBOX_PAD.y씩. 잡기는 사거리가 정해져 있어서 그대로
+const HITBOX_PAD := Vector2(18.0, 10.0)
+
+
+func _pad_hitboxes() -> void:
+	for a: AttackData in attacks.values():
+		if a.is_throw or not a.hitbox.has_area():
+			continue
+		a.hitbox.size.x += HITBOX_PAD.x
+		a.hitbox.position.y -= HITBOX_PAD.y
+		a.hitbox.size.y += HITBOX_PAD.y * 2
+		if a.hitbox.end.y > 0.0:  # 땅 밑으로는 안 늘림
+			a.hitbox.size.y -= a.hitbox.end.y
 
 
 ## 1프레임 진행. Match가 매 프레임 1P → 2P 순서로 직접 호출한다 (처리 순서를 고정하려고)
@@ -419,7 +436,18 @@ func _held(action: String) -> bool:
 		return _dummy_held(action)
 	if not action in InputManager.ACTIONS:
 		return false  # "guard"는 더미/CPU 전용 (사람은 ← 누르기로 가드)
-	return Input.is_action_pressed(InputManager.action_name(player, action))
+	for p in _input_players():
+		if Input.is_action_pressed(InputManager.action_name(p, action)):
+			return true
+	return false
+
+
+## 이 캐릭터를 움직이는 조작 (보통은 자기 자리 하나)
+## 트레이닝에서 상대가 더미면 1P 키든 2P 키든 내 캐릭터를 움직인다 (2P 자리에서 연습하는 사람도 바로 할 수 있게)
+func _input_players() -> Array:
+	if Game.mode == Game.Mode.TRAINING and player == 1 and opponent != null and opponent.dummy != Dummy.HUMAN:
+		return [1, 2]
+	return [player]
 
 
 ## 더미가 "누르고 있는" 버튼
@@ -525,7 +553,10 @@ func _just_pressed(action: String) -> bool:
 		return brain.just_pressed(action)
 	if dummy != Dummy.HUMAN:
 		return false
-	return Input.is_action_just_pressed(InputManager.action_name(player, action))
+	for p in _input_players():
+		if Input.is_action_just_pressed(InputManager.action_name(p, action)):
+			return true
+	return false
 
 
 ## 좌우 입력을 "상대 기준"으로 바꿔준다: 1 = 앞(상대 쪽), -1 = 뒤, 0 = 없음

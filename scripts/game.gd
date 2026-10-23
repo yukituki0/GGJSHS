@@ -167,7 +167,7 @@ const STRINGS := {
 	"hitbox": ["HITBOX", "판정 보기"],
 	"on": ["ON", "켜짐"],
 	"off": ["OFF", "꺼짐"],
-	"dummy_human": ["2P CONTROL", "2P가 조작"],
+	"dummy_human": ["2P CONTROL", "2P가 조작"],  # 이때는 1P 키로만 내 캐릭터, 2P 키로 더미
 	"dummy_stand": ["STAND", "서 있기"],
 	"dummy_crouch": ["CROUCH", "앉기"],
 	"dummy_jump": ["JUMP", "점프"],
