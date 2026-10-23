@@ -6,7 +6,13 @@ extends RefCounted
 ##   5 = 중립(서서), 2 = 아래(앉아서), j = 점프 중
 ##   예: 5P = 서서 P, 2K = 앉아서 K, jS = 점프 S
 
-enum Level { MID, LOW, OVERHEAD }  # 중단(아무 가드나 됨) / 하단(앉아서 가드) / 중단 위(서서 가드)
+## 막는 방향 기준 (대전 격투 게임 용어, 나무위키 "판정" 참고)
+##   MID      = 상단: 서서 가드, 앉아 가드 둘 다 막힌다 (대부분의 기술)
+##   OVERHEAD = 중단: 서서만 막힌다. 앉아 가드는 맞음 (점프 공격 등)
+##   LOW      = 하단: 앉아서만 막힌다. 서서 가드는 맞음 (앉아 K, 쓸기 등)
+## (공격 부위 기준 = 머리 위로 지나가는지는 판정 위치로 따로 정해진다: 앉으면 맞는 판정이 낮아져서 높은 기술은 헛친다)
+enum Level { MID, LOW, OVERHEAD }
+const LEVEL_NAMES := {Level.MID: ["HIGH", "상단"], Level.LOW: ["LOW", "하단"], Level.OVERHEAD: ["OVERHEAD", "중단"]}
 
 var name: String
 var startup: int        # 발생: 버튼 누르고 판정이 나오기까지 프레임

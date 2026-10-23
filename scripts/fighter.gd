@@ -1357,6 +1357,8 @@ func _draw() -> void:
 		var label: String = State.keys()[state]
 		if current_attack != null:
 			label += " " + current_attack.name
+			if current_attack.hitbox.has_area() and not current_attack.is_throw:  # 막는 방향: 상단/중단/하단
+				label += " [%s]" % AttackData.LEVEL_NAMES[current_attack.level][Game.language]
 		draw_string(Game.FONT, Vector2(-size.x / 2, -size.y - 38),
 				label, HORIZONTAL_ALIGNMENT_LEFT, -1, 16)
 		# 색은 길티기어 판정 보기 모드와 같게: 밀어내기 노랑, 맞는 판정 초록(카운터 상태면 하늘색), 공격 빨강, 잡기 보라

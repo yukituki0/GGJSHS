@@ -150,7 +150,7 @@ const STRINGS := {
 	"taunt": ["TAUNT ({P} + {K}, gives foe 10%) / → + {P} + {K}: RESPECT", "도발 ({P} + {K}, 상대 텐션 +10%) / 앞 + {P} + {K}: 리스펙트"],
 	"demo_play": ["DEMO PLAY  -  PRESS ANY BUTTON", "데모 플레이  -  아무 버튼이나 누르세요"],
 	"dash": ["DASH  (→→ / ←← backdash)", "대시  (→→ / ←← 백스텝)"],
-	"guard": ["GUARD  (hold ←, ↙ = low)", "가드  (← 누르고 있기, ↙ = 하단)"],
+	"guard": ["GUARD  (hold ← = high/overhead, ↙ = high/low)", "가드  (← 서서: 상단·중단 / ↙ 앉아: 상단·하단)"],
 	"start_pause": ["START / PAUSE", "시작 / 일시정지"],
 	"select_back": ["SELECT (BACK / PAUSE)", "SELECT (뒤로 / 일시정지)"],
 	"combo_hint": ["COMBO: hit or block, then press a stronger button ({P} > {K} > {S} > {HS})",
@@ -286,7 +286,7 @@ const MOVE_LISTS := {
 
 ## 모든 캐릭터 공통 조작 (기술표 아래쪽에 표시)
 const COMMON_MOVES := [
-	["← / ↙", "Guard", "가드", "뒤를 누르고 있기. ↙ = 하단 가드"],
+	["← / ↙", "Guard", "가드", "← 서서: 상단·중단 / ↙ 앉아: 상단·하단"],
 	["→/← + HS", "Throw", "잡기", "붙어서. 가드 불가 (경직·공중 상대는 X)"],
 	["P → K → S → HS", "Gatling", "개틀링", "맞히거나 막히면 더 강한 버튼으로"],
 	["RC", "Roman Cancel", "로만 캔슬", "공격 취소 (텐션 50%)"],
