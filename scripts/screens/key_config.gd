@@ -1,7 +1,8 @@
 extends Screen
 ## 키 설정: 1P / 2P의 버튼 배치를 바꾼다 (조작법 화면에서 P)
 ## 칸을 고르고 P → 새 키(키보드 모드) / 새 버튼(조이스틱 모드)을 누르면 바뀐다. 이미 쓰던 키면 서로 맞바꾼다
-## 조이스틱 모드에서는 방향(스틱)은 바꾸지 않고 버튼만. ESC는 언제나 뒤로/취소 (키를 잘못 바꿔도 빠져나올 수 있게)
+## 키보드 키를 누르면 키보드 배치가, 스틱 버튼을 누르면 스틱 배치가 바뀐다 (화면 표시는 마지막에 누른 장치 기준)
+## 스틱 방향(레버)은 바꾸지 않고 버튼만. ESC는 언제나 뒤로/취소 (키를 잘못 바꿔도 빠져나올 수 있게)
 
 
 func _init() -> void:
@@ -60,14 +61,13 @@ func _input(event: InputEvent) -> void:
 	var player := col + 1
 	if event is InputEventKey and event.physical_keycode == KEY_ESCAPE:
 		waiting = false
-	elif InputManager.mode == InputManager.Mode.KEYBOARD and event is InputEventKey:
+	elif event is InputEventKey:
 		if event.physical_keycode in [KEY_F1, KEY_F2, KEY_F3, KEY_F11]:
 			return  # 기능 키는 못 쓰게
-		InputManager.bind(player, action, event.physical_keycode)
+		InputManager.bind(player, action, event.physical_keycode, true)
 		waiting = false
-	elif InputManager.mode == InputManager.Mode.JOYSTICK and event is InputEventJoypadButton \
-			and event.device == player - 1:
-		InputManager.bind(player, action, event.button_index)
+	elif event is InputEventJoypadButton and event.device == player - 1 and not action in DIRECTIONS:
+		InputManager.bind(player, action, event.button_index, false)  # 스틱은 버튼만 (방향은 레버)
 		waiting = false
 	if not waiting:
 		Game.save_settings()

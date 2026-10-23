@@ -52,6 +52,8 @@ const JOY_DIRECTION_MAP := {
 ## 아케이드 스틱은 디지털이라 축 값이 0 아니면 ±1로 튄다. 0.5면 충분히 안전하다.
 const DEADZONE := 0.5
 
+## 키보드와 조이스틱은 항상 둘 다 입력된다. mode는 "안내 글자를 어느 쪽 이름으로 보여 줄지"만 정한다
+## (마지막으로 누른 장치로 저절로 바뀐다. F1이나 메뉴로 직접 바꿀 수도 있음)
 var mode: Mode = Mode.KEYBOARD
 
 ## 키 설정 화면에서 바꾼 배치 (기본값과 다른 것만). 플레이어 → { 액션: 키 코드 / 버튼 번호 }
@@ -60,14 +62,19 @@ var custom_joy := {1: {}, 2: {}}
 
 
 func _ready() -> void:
-	set_mode(Mode.KEYBOARD)
+	rebuild()
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	# F1: 조작 모드 토글 (축제 현장에서 급하게 바꿀 때)
-	if event is InputEventKey and event.pressed and not event.echo \
-			and event.physical_keycode == KEY_F1:
-		toggle_mode()
+## 마지막으로 누른 장치에 맞춰 안내 글자 모드를 바꾼다
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.physical_keycode == KEY_F1:
+			toggle_mode()
+		elif mode != Mode.KEYBOARD and not event.physical_keycode in [KEY_F2, KEY_F3, KEY_F11, KEY_ESCAPE]:
+			set_mode(Mode.KEYBOARD)
+	elif mode != Mode.JOYSTICK and ((event is InputEventJoypadButton and event.pressed)
+			or (event is InputEventJoypadMotion and absf(event.axis_value) > DEADZONE)):
+		set_mode(Mode.JOYSTICK)
 
 
 func toggle_mode() -> void:
@@ -75,7 +82,14 @@ func toggle_mode() -> void:
 
 
 func set_mode(new_mode: Mode) -> void:
+	if mode == new_mode:
+		return
 	mode = new_mode
+	mode_changed.emit(mode)
+
+
+## 모든 액션에 키보드 키 + 조이스틱 입력을 같이 등록
+func rebuild() -> void:
 	for player in [1, 2]:
 		for action in ACTIONS:
 			var id := action_name(player, action)
@@ -84,7 +98,6 @@ func set_mode(new_mode: Mode) -> void:
 			InputMap.action_erase_events(id)
 			for event in _events_for(player, action):
 				InputMap.action_add_event(id, event)
-	mode_changed.emit(mode)
 
 
 ## 예: action_name(1, "hs") -> "p1_hs"
@@ -102,8 +115,7 @@ func joy_button_for(player: int, action: String) -> int:
 
 
 ## 키 설정: player의 action을 code(키보드 키 또는 조이스틱 버튼)로. 같은 키를 쓰던 다른 액션과는 서로 바꾼다
-func bind(player: int, action: String, code: int) -> void:
-	var keyboard := mode == Mode.KEYBOARD
+func bind(player: int, action: String, code: int, keyboard := true) -> void:
 	var table: Dictionary = custom_keys[player] if keyboard else custom_joy[player]
 	var old := key_for(player, action) if keyboard else joy_button_for(player, action)
 	for other: String in ACTIONS:
@@ -113,37 +125,36 @@ func bind(player: int, action: String, code: int) -> void:
 		if cur == code:
 			table[other] = old  # 겹치면 맞바꿈
 	table[action] = code
-	set_mode(mode)
+	rebuild()
 
 
 func reset_bindings() -> void:
 	custom_keys = {1: {}, 2: {}}
 	custom_joy = {1: {}, 2: {}}
-	set_mode(mode)
+	rebuild()
 
 
 func _events_for(player: int, action: String) -> Array[InputEvent]:
 	var events: Array[InputEvent] = []
-	if mode == Mode.KEYBOARD:
-		var key := InputEventKey.new()
-		key.physical_keycode = key_for(player, action) as Key
-		events.append(key)
-	else:
-		var device := player - 1  # 먼저 꽂힌 인코더 = 1P(device 0), 다음 = 2P(device 1)
-		if action in JOY_DIRECTION_MAP:
-			var dir: Dictionary = JOY_DIRECTION_MAP[action]
-			var motion := InputEventJoypadMotion.new()
-			motion.device = device
-			motion.axis = dir["axis"]
-			motion.axis_value = dir["value"]
-			events.append(motion)
-			var dpad := InputEventJoypadButton.new()
-			dpad.device = device
-			dpad.button_index = dir["button"]
-			events.append(dpad)
-		elif action in JOY_BUTTON_MAP:
-			var button := InputEventJoypadButton.new()
-			button.device = device
-			button.button_index = joy_button_for(player, action) as JoyButton
-			events.append(button)
+	var key := InputEventKey.new()
+	key.physical_keycode = key_for(player, action) as Key
+	events.append(key)
+	# 조이스틱도 항상 같이
+	var device := player - 1  # 먼저 꽂힌 인코더 = 1P(device 0), 다음 = 2P(device 1)
+	if action in JOY_DIRECTION_MAP:
+		var dir: Dictionary = JOY_DIRECTION_MAP[action]
+		var motion := InputEventJoypadMotion.new()
+		motion.device = device
+		motion.axis = dir["axis"]
+		motion.axis_value = dir["value"]
+		events.append(motion)
+		var dpad := InputEventJoypadButton.new()
+		dpad.device = device
+		dpad.button_index = dir["button"]
+		events.append(dpad)
+	elif action in JOY_BUTTON_MAP:
+		var button := InputEventJoypadButton.new()
+		button.device = device
+		button.button_index = joy_button_for(player, action) as JoyButton
+		events.append(button)
 	return events

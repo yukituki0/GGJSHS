@@ -96,7 +96,7 @@ const STRINGS := {
 	"subtitle": ["- JEJU SCIENCE HIGH SCHOOL CLUB SHOWDOWN -", "- 제주과학고등학교 동아리 최강자 결정전 -"],
 	"press_start": ["PRESS {START}", "{START} 버튼을 누르세요"],
 	"press_start_kb": ["PRESS {P}", "{P} 키를 누르세요"],  # 키보드 모드일 때 (뒤에 _kb가 붙은 글자가 있으면 그걸 쓴다)
-	"f1_hint": ["F1: KEYBOARD / JOYSTICK", "F1: 키보드 / 조이스틱 전환"],
+	"f1_hint": ["F1: KEY NAMES (KEYBOARD / STICK)", "F1: 버튼 이름 표시 (키보드 / 스틱)"],
 
 	"select_mode": ["SELECT MODE", "모드 선택"],
 	"versus": ["VERSUS", "대전"],
@@ -117,7 +117,8 @@ const STRINGS := {
 	"help_versus": ["1P vs 2P. First to %d rounds wins.", "1P 대 2P. %d라운드를 먼저 이기면 승리!"],
 	"help_training": ["Practice freely. HP refills, tension and mana are always full.", "자유롭게 연습. 체력은 회복되고 텐션과 마력은 항상 가득."],
 	"help_controls": ["Check the button layout.", "버튼 배치를 확인합니다."],
-	"help_input": ["Switch between keyboard and arcade stick (or press F1).", "키보드 / 아케이드 스틱 전환 (F1로도 가능)"],
+	"help_input": ["Keyboard and stick always work. This only changes the button names shown (auto, or F1).",
+			"키보드와 스틱은 항상 같이 됩니다. 안내에 보일 버튼 이름만 바꿔요 (자동, F1로도 가능)"],
 	"help_language": ["Change the language.", "언어를 바꿉니다."],
 	"menu_hint": ["{P} / {START}: OK      {K}: BACK", "{P} / {START}: 결정      {K}: 뒤로"],
 	"back_hint": ["{K} / {START}: BACK", "{K} / {START}: 뒤로"],
@@ -432,6 +433,7 @@ func _load_settings() -> void:
 	language = cfg.get_value("game", "language", Language.EN)
 	InputManager.custom_keys = cfg.get_value("keys", "keyboard", {1: {}, 2: {}})
 	InputManager.custom_joy = cfg.get_value("keys", "joystick", {1: {}, 2: {}})
+	InputManager.rebuild()
 	InputManager.set_mode(cfg.get_value("game", "input_mode", InputManager.Mode.KEYBOARD))
 
 
