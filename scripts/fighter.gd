@@ -119,6 +119,9 @@ var _dash_dir := 1              # 버퍼에 있는 대시 방향 (1 = 앞 대시
 
 var attacks := {}               # "5P" -> AttackData
 var current_attack: AttackData
+const JUMP_CANCEL := ["2H"]     # 맞히거나 막히면 점프로 캔슬할 수 있는 기술
+const SAME_CHAIN_MAX := 2       # 같은 기술 이어 치기 최대 (5P 5P 5P = 2번 이어 침)
+var _same_chain := 0
 var attack_connected := false   # 이번 공격이 이미 맞았거나 막혔나 (한 번만 판정 + 개틀링 조건)
 var stun_frames := 0            # 히트스턴/가드스턴 남은 프레임
 var _buffer := {}               # 액션 -> 남은 기억 프레임 (0이면 없음)
@@ -341,10 +344,10 @@ func _build_attacks() -> void:
 	_add(AttackData.new("5P",  4, 3,  8, 22, Rect2(25, -115, 70, 25), M, 12, 9,  ["5P", "5K", "2K", "5S", "2S"]))
 	_add(AttackData.new("5K",  6, 3, 12, 30, Rect2(25, -80, 85, 25),  M, 15, 11, ["5S", "2S", "5H"]))
 	_add(AttackData.new("5S",  8, 4, 16, 40, Rect2(25, -120, 120, 35), M, 17, 13, ["5H", "2S"]))
-	_add(AttackData.new("5H", 12, 5, 22, 55, Rect2(20, -150, 140, 60), M, 20, 15))
+	_add(AttackData.new("5H", 12, 5, 22, 55, Rect2(20, -150, 140, 60), M, 20, 15, ["2H"]))
 	_add(AttackData.new("2P",  4, 3,  8, 18, Rect2(25, -70, 65, 22),  M, 11, 8,  ["2P", "5P", "2K", "5S", "2S"]))
 	_add(AttackData.new("2K",  5, 3, 10, 20, Rect2(25, -25, 90, 25),  L, 13, 10, ["5S", "2S", "5H"]))
-	_add(AttackData.new("2S",  8, 4, 16, 35, Rect2(25, -45, 120, 30), L, 16, 12, ["5H"]))
+	_add(AttackData.new("2S",  8, 4, 16, 35, Rect2(25, -45, 120, 30), L, 16, 12, ["5H", "2H"]))
 	var launcher := _add(AttackData.new("2H", 11, 5, 22, 50, Rect2(10, -190, 90, 110), M, 20, 15))
 	launcher.launch = Vector2(2.0, -17.0)  # 대공 2H: 맞으면 상대가 높이 떠오른다 (떨어질 때까지 못 움직임)
 	_add(AttackData.new("jP",  4, 4,  6, 20, Rect2(20, -110, 70, 30), O, 12, 9,  ["jK", "jS"]))
@@ -829,20 +832,42 @@ func _attack() -> void:
 		_on_attack_event(current_attack)
 
 	if attack_connected:
+		var is_special := current_attack.name.ends_with("D") or current_attack.name == "OD"
 		# 일반기가 맞거나 막히면 필살기로 캔슬 가능 (필살기끼리는 안 됨)
-		if not airborne and not current_attack.name.ends_with("D") and current_attack.name != "OD":
+		if not airborne and not is_special:
 			var special := _pressed_special()
 			if special != "":
 				_start_attack(special)
 				return
+		# 공중 기본기 → 공중D (공중 콤보 마무리)
+		if airborne and not is_special and current_attack.name.begins_with("j") and _pressed("d") \
+				and attacks.has("jD") and _can_use_special("jD") and _has_mana("jD"):
+			_start_attack("jD")
+			return
+		# 필살기 → 오버드라이브 (D + HS, 길티기어의 슈퍼 캔슬)
+		if is_special and current_attack.name != "OD" and not airborne:
+			if _pressed_special() == "OD":
+				_start_attack("OD")
+				return
+		# 점프 캔슬: 띄우는 2H가 맞으면 ↑로 바로 뛰어서 공중 콤보
+		if current_attack.name in JUMP_CANCEL and not airborne and _held("up"):
+			current_attack = null
+			_same_chain = 0
+			_start_prejump(_input_forward())
+			return
 		var prefix := "j" if airborne else ("2" if _held("down") else "5")
 		var next := _pressed_attack(prefix)
 		if next != "" and next in current_attack.gatling:
-			_start_attack(next)
-			return
+			# 같은 기술로 이어 치기(5P → 5P)는 SAME_CHAIN_MAX번까지만 (벽에서 무한 연타 방지)
+			_same_chain = _same_chain + 1 if next == current_attack.name else 0
+			if _same_chain < SAME_CHAIN_MAX:
+				_start_attack(next)
+				return
+			_same_chain = SAME_CHAIN_MAX
 
 	if state_frame >= current_attack.total_frames():
 		current_attack = null
+		_same_chain = 0
 		_change_state(State.AIR if airborne else State.STAND)
 		if not airborne:
 			_ground_neutral()  # 버퍼에 남은 입력이 있으면 같은 프레임에 바로 나가도록
@@ -869,8 +894,8 @@ func _start_attack(attack_name: String) -> void:
 	current_attack = attacks[attack_name]
 	attack_connected = false
 	_armor_used = 0
-	if is_on_ground():
-		velocity.x = 0
+	if is_on_ground() and velocity.x * facing > 0.0:
+		velocity.x = 0  # 앞으로 가던 건 멈춤. 뒤로 밀려나던 건(벽 앞 넉백) 그대로 둬서 연타로 붙어 있지 못하게
 	_change_state(State.ATTACK)
 	if current_attack.cost > 0:
 		add_tension(-current_attack.cost)

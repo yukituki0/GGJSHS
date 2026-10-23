@@ -27,6 +27,7 @@ var rehit_cd := 0               # 다시 맞힐 수 있을 때까지 남은 프�
 var from_super := false         # 오버드라이브 중에 나온 투사체 (맞혀도 텐션이 조금만 찬다)
 var spent := false              # 이미 맞혀서 끝난 투사체: 판정 없이 느려지며 흐려지다 사라진다 (맞는 순간 안 보이던 문제)
 const SPENT_FRAMES := 12
+const CLONE_SHIFT := -45.0       # Seed 분신 그림을 판정 쪽으로 미는 양 (그림이 판정보다 앞에 그려져서 뒤로)
 var _spent_alpha := 1.0
 
 
@@ -370,8 +371,9 @@ func _draw_body() -> void:
 					wtex = Game.load_texture("res://assets/characters/%s_walk.png" % shooter.char_id)
 				if wtex != null:
 					var tint := Color(0.55, 1.0, 0.6, (0.55 + 0.1 * sin(age * 0.4)) * fade)
+					# 걷기 그림의 발 기준점 때문에 몸이 판정보다 앞에 그려져서, 몸이 판정 가운데에 오게 밀어서 그린다
 					Puppet.draw_image(self, wtex, shooter._pose_scale() * shooter._pose_size(wtex), hit_direction(),
-							Vector2(0, r.end.y), tint, Transform2D.IDENTITY, shooter._anchor_for(wtex))
+							Vector2(CLONE_SHIFT * hit_direction(), r.end.y), tint, Transform2D.IDENTITY, shooter._anchor_for(wtex))
 					return
 			draw_rect(r, Color(color, 0.35 * fade))
 			draw_rect(r, Color(color.lightened(0.4), 0.8 * fade), false, 3.0)
