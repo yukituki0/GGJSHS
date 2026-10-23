@@ -133,7 +133,40 @@ func _in_attack(attack_name: String) -> bool:
 	return state == State.ATTACK and current_attack != null and current_attack.name == attack_name
 
 
+## 운동량 던지기(→D): 뻗은 손에서 잡기 범위 끝까지 전기 줄기가 뻗어 상대를 붙잡는다
+## (손보다 잡기 범위가 훨씬 길어서, 전기로 끌어당기는 것처럼 보이게)
+const GRAB_BOLT_EXTRA := 60.0
+
+
+func _draw_grab_bolt() -> void:
+	if not _in_attack("6D") or state_frame < 2 or state_frame > current_attack.startup + current_attack.active + 10:
+		return
+	var a: AttackData = current_attack
+	var hand := art_tip("6d", 0.55, 1.0)
+	if hand == Vector2.INF:
+		hand = Vector2(110, -130)
+	hand.x = (hand.x - 40.0) * facing  # 손바닥 안쪽에서 시작 (손끝에서 시작하면 짧아 보임)
+	var reach := minf(1.0, float(state_frame) / a.startup)
+	var end_x := (a.hitbox.end.x + GRAB_BOLT_EXTRA) * facing  # 잡기 범위 끝보다 조금 더 (번개가 상대 쪽으로 쭉 뻗게)
+	var end := Vector2(lerpf(hand.x, end_x, reach), hand.y + 10)
+	if opponent != null and opponent.state == State.HITSTUN and attack_connected:
+		end = opponent.position - position + Vector2(0, -opponent.body_size().y * 0.6)  # 잡혔으면 상대 몸에
+	var fade := clampf(1.0 - float(state_frame - a.startup - a.active) / 10.0, 0.0, 1.0)
+	for layer in 2:  # 바깥 보라 + 안쪽 흰 번개
+		var pts := PackedVector2Array([hand])
+		var steps := 7
+		for i in range(1, steps):
+			var p := hand.lerp(end, float(i) / steps)
+			p.y += sin(state_frame * 2.3 + i * 1.9 + layer) * 14.0
+			pts.append(p)
+		pts.append(end)
+		var col := Color(PURPLE.lightened(0.2), 0.8 * fade) if layer == 0 else Color(1, 1, 1, 0.9 * fade)
+		draw_polyline(pts, col, 7.0 if layer == 0 else 2.5)
+	draw_circle(end, 14.0 + 4.0 * sin(state_frame * 1.5), Color(PURPLE.lightened(0.4), 0.6 * fade))
+
+
 func _draw() -> void:
+	_draw_grab_bolt()
 	# 만유인력: 바깥에서 안으로 줄어드는 고리
 	if _in_attack("5D"):
 		var center := Vector2(90 * facing, -110)  # 앞으로 뻗은 손

@@ -15,7 +15,7 @@
 | 📐 ROOT2 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 7/7 |
 | 🌱 SEED | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 7/7 |
 
-이펙트: 29/31
+이펙트: 31/31
 
 ## 0-0. 글자 그림 (한 장씩, 첨부 없이)
 
@@ -1078,12 +1078,12 @@ A single 2D fighting game special effect sprite: a single burst of fire flaring 
 A single 2D fighting game special effect sprite: a round chemistry barrier seen from the side: a swirling disc where acid-red and base-blue liquid mix together into clear white light in the center, bubbles and tiny hexagon molecule shapes around the rim, glowing, NO letters. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **지각 돌진 흙먼지 (→D, 몸 뒤로 튀는 바위·먼지)** → `globe_rush`
+✅ **지각 돌진 흙먼지 (→D, 몸 뒤로 튀는 바위·먼지)** → `globe_rush`
 ```
 A single 2D fighting game special effect sprite: a burst of broken rock chunks and brown dust kicked up from the ground and flying backward to the LEFT, as if something just dashed forward to the right, wider than tall, sitting on a flat ground line at the bottom, flat 2-tone cel shading in brown and orange, clean black outlines, NO realistic texture, nothing else. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **광합성 햇빛 (←D, 위에서 쏟아지는 빛 기둥)** → `seed_sunlight`
+✅ **광합성 햇빛 (←D, 위에서 쏟아지는 빛 기둥)** → `seed_sunlight`
 ```
 A single 2D fighting game special effect sprite: a soft vertical column of warm sunlight pouring straight DOWN from the top edge to the bottom, about 2 times taller than wide, pale yellow and white, a few small floating leaves and sparkles inside, edges fading out softly, flat stylized anime look, NO sun disc, NO character, nothing else. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
