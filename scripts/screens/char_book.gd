@@ -70,7 +70,7 @@ func _draw() -> void:
 		var mv: Array = moves[i]
 		var y := 356.0 + i * 44.0
 		Style.fill(self, Style.slant(px + 10, y - 26, 110, 36, 8), Style.RED.darkened(0.3))
-		Style.text(self, mv[0], Vector2(px + 10, y), 18, Style.WHITE, HORIZONTAL_ALIGNMENT_CENTER, 116, 3)
+		Style.text(self, Game.command_text(mv[0]), Vector2(px + 10, y), 18, Style.WHITE, HORIZONTAL_ALIGNMENT_CENTER, 116, 3)
 		Style.text(self, mv[1 + lang], Vector2(px + 136, y), 20, Style.GOLD, HORIZONTAL_ALIGNMENT_LEFT, -1, 3)
 		if lang == Game.Language.KO:
 			Style.text(self, mv[3], Vector2(px + 330, y), 16, Style.WHITE, HORIZONTAL_ALIGNMENT_LEFT, 330, 0)

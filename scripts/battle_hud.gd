@@ -606,7 +606,7 @@ func _draw_move_lists() -> void:
 	for i in Game.COMMON_MOVES.size():
 		var mv: Array = Game.COMMON_MOVES[i]
 		var desc: String = (" - " + mv[3]) if Game.language == Game.Language.KO else ""
-		Style.text(self, "%s   %s%s" % [mv[0], mv[1 + Game.language], desc], Vector2(40, 594 + i * 30), 18,
+		Style.text(self, "%s   %s%s" % [Game.command_text(mv[0]), mv[1 + Game.language], desc], Vector2(40, 594 + i * 30), 18,
 				Style.WHITE, HORIZONTAL_ALIGNMENT_LEFT, -1, 3)
 	Style.text(self, Game.t("command_hint"), Vector2(0, 708), 16, Style.GRAY, HORIZONTAL_ALIGNMENT_RIGHT, 1250, 0)
 
@@ -614,7 +614,7 @@ func _draw_move_lists() -> void:
 func _draw_move_row(mv: Array, x: float, y: float) -> void:
 	Style.fill(self, Style.slant(x, y - 30, 580, 56, 10), Color(Style.PANEL, 0.9))
 	Style.fill(self, Style.slant(x, y - 30, 110, 56, 10), Style.RED.darkened(0.3))
-	Style.text(self, mv[0], Vector2(x + 4, y + 6), 20, Style.WHITE, HORIZONTAL_ALIGNMENT_CENTER, 110, 4)
+	Style.text(self, Game.command_text(mv[0]), Vector2(x + 4, y + 6), 20, Style.WHITE, HORIZONTAL_ALIGNMENT_CENTER, 110, 4)
 	Style.text(self, mv[1 + Game.language], Vector2(x + 126, y - 4), 22, Style.GOLD, HORIZONTAL_ALIGNMENT_LEFT, -1, 4)
 	if Game.language == Game.Language.KO:  # 설명은 한국어로만 적어 둠
 		Style.text(self, mv[3], Vector2(x + 126, y + 20), 16, Style.WHITE, HORIZONTAL_ALIGNMENT_LEFT, -1, 0)

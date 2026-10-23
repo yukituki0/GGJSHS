@@ -94,7 +94,8 @@ const STAGES: Array[Dictionary] = [
 ## 라운드 연출(ROUND 1, FIGHT!, K.O.)은 격투겜 관례라 영어 그대로 둔다
 const STRINGS := {
 	"subtitle": ["- JEJU SCIENCE HIGH SCHOOL CLUB SHOWDOWN -", "- 제주과학고등학교 동아리 최강자 결정전 -"],
-	"press_start": ["PRESS START", "START 버튼을 누르세요"],
+	"press_start": ["PRESS {START}", "{START} 버튼을 누르세요"],
+	"press_start_kb": ["PRESS {P}", "{P} 키를 누르세요"],  # 키보드 모드일 때 (뒤에 _kb가 붙은 글자가 있으면 그걸 쓴다)
 	"f1_hint": ["F1: KEYBOARD / JOYSTICK", "F1: 키보드 / 조이스틱 전환"],
 
 	"select_mode": ["SELECT MODE", "모드 선택"],
@@ -103,9 +104,9 @@ const STRINGS := {
 	"cpu_easy": ["EASY", "쉬움"],
 	"cpu_normal": ["NORMAL", "보통"],
 	"cpu_hard": ["HARD", "어려움"],
-	"help_cpu": ["1P vs computer.  LEFT/RIGHT: difficulty", "컴퓨터와 대전.  좌우: 난이도 바꾸기"],
-	"cpu_select_hint": ["Pick your character, then the CPU's    P: OK    K: BACK",
-			"내 캐릭터 → CPU 캐릭터 순서로 고르기    P: 결정    K: 뒤로"],
+	"help_cpu": ["1P vs computer.  {LR}: difficulty", "컴퓨터와 대전.  {LR}: 난이도 바꾸기"],
+	"cpu_select_hint": ["Pick your character, then the CPU's    {P}: OK    {K}: BACK",
+			"내 캐릭터 → CPU 캐릭터 순서로 고르기    {P}: 결정    {K}: 뒤로"],
 	"training": ["TRAINING", "트레이닝"],
 	"controls": ["CONTROLS", "조작법"],
 	"input": ["INPUT", "조작 장치"],
@@ -118,8 +119,8 @@ const STRINGS := {
 	"help_controls": ["Check the button layout.", "버튼 배치를 확인합니다."],
 	"help_input": ["Switch between keyboard and arcade stick (or press F1).", "키보드 / 아케이드 스틱 전환 (F1로도 가능)"],
 	"help_language": ["Change the language.", "언어를 바꿉니다."],
-	"menu_hint": ["P / START: OK      K: BACK", "P / START: 결정      K: 뒤로"],
-	"back_hint": ["K / START: BACK", "K / START: 뒤로"],
+	"menu_hint": ["{P} / {START}: OK      {K}: BACK", "{P} / {START}: 결정      {K}: 뒤로"],
+	"back_hint": ["{K} / {START}: BACK", "{K} / {START}: 뒤로"],
 
 	"move": ["MOVE", "이동"],
 	"punch": ["P  (Punch)", "P  (펀치)"],
@@ -127,28 +128,28 @@ const STRINGS := {
 	"slash": ["S  (Slash)", "S  (슬래시)"],
 	"heavy": ["HS (Heavy Slash)", "HS (헤비 슬래시)"],
 	"dust": ["D  (Special: D / 6D / 4D / 2D)", "D  (필살기: D / 앞D / 뒤D / 아래D)"],
-	"overdrive": ["OVERDRIVE (D + HS, 50%)", "오버드라이브 (D + HS, 50%)"],
+	"overdrive": ["OVERDRIVE ({D} + {HS}, 50%)", "오버드라이브 ({D} + {HS}, 50%)"],
 	"rc": ["RC (Roman Cancel)", "RC (로만 캔슬)"],
-	"burst": ["BURST (while hit: D + any attack)", "버스트 (맞는 중: D + 공격 버튼)"],
-	"taunt": ["TAUNT (P + K, gives foe 10%) / → + P + K: RESPECT", "도발 (P + K, 상대 텐션 +10%) / 앞 + P + K: 리스펙트"],
+	"burst": ["BURST (while hit: {D} + any attack)", "버스트 (맞는 중: {D} + 공격 버튼)"],
+	"taunt": ["TAUNT ({P} + {K}, gives foe 10%) / → + {P} + {K}: RESPECT", "도발 ({P} + {K}, 상대 텐션 +10%) / 앞 + {P} + {K}: 리스펙트"],
 	"demo_play": ["DEMO PLAY  -  PRESS ANY BUTTON", "데모 플레이  -  아무 버튼이나 누르세요"],
 	"dash": ["DASH  (→→ / ←← backdash)", "대시  (→→ / ←← 백스텝)"],
 	"guard": ["GUARD  (hold ←, ↙ = low)", "가드  (← 누르고 있기, ↙ = 하단)"],
 	"start_pause": ["START / PAUSE", "시작 / 일시정지"],
 	"select_back": ["SELECT (BACK / PAUSE)", "SELECT (뒤로 / 일시정지)"],
-	"combo_hint": ["COMBO: hit or block, then press a stronger button (P > K > S > HS)",
-			"콤보: 맞히거나 막히면 더 강한 버튼으로 이어서 (P > K > S > HS)"],
+	"combo_hint": ["COMBO: hit or block, then press a stronger button ({P} > {K} > {S} > {HS})",
+			"콤보: 맞히거나 막히면 더 강한 버튼으로 이어서 ({P} > {K} > {S} > {HS})"],
 
 	"char_select": ["CHARACTER SELECT", "캐릭터 선택"],
-	"select_hint": ["LEFT/RIGHT: SELECT    P: OK    K: CANCEL", "좌우: 선택    P: 결정    K: 취소"],
+	"select_hint": ["{LR}: SELECT    {P}: OK    {K}: CANCEL", "{LR}: 선택    {P}: 결정    {K}: 취소"],
 	"ok": ["OK!", "결정!"],
 	"ready": ["READY!", "준비 완료!"],
 
 	"stage_select": ["STAGE SELECT", "스테이지 선택"],
 	"random": ["RANDOM", "랜덤"],
-	"stage_hint": ["LEFT/RIGHT: SELECT    P: OK    K: BACK", "좌우: 선택    P: 결정    K: 뒤로"],
-	"training_select_hint": ["Pick your character, then the dummy's    P: OK    K: BACK",
-			"내 캐릭터 → 더미 캐릭터 순서로 고르기    P: 결정    K: 뒤로"],
+	"stage_hint": ["{LR}: SELECT    {P}: OK    {K}: BACK", "{LR}: 선택    {P}: 결정    {K}: 뒤로"],
+	"training_select_hint": ["Pick your character, then the dummy's    {P}: OK    {K}: BACK",
+			"내 캐릭터 → 더미 캐릭터 순서로 고르기    {P}: 결정    {K}: 뒤로"],
 	"dummy": ["DUMMY", "더미"],
 	"hitbox": ["HITBOX", "판정 보기"],
 	"on": ["ON", "켜짐"],
@@ -161,7 +162,7 @@ const STRINGS := {
 	"dummy_guard_low": ["CROUCH GUARD", "앉아서 가드"],
 	"dummy_guard_auto": ["AUTO GUARD", "자동 가드"],
 	"quit_confirm": ["Quit the game?", "게임을 종료할까요?"],
-	"quit_hint": ["P: YES    K / ESC: NO", "P: 예    K / ESC: 아니오"],
+	"quit_hint": ["{P}: YES    {K} / ESC: NO", "{P}: 예    {K} / ESC: 아니오"],
 	"esc_hint": ["ESC: QUIT", "ESC: 종료"],
 
 	"pause": ["PAUSE", "일시정지"],
@@ -175,11 +176,11 @@ const STRINGS := {
 	"back": ["BACK", "뒤로"],
 	"char_book": ["CHARACTER BOOK", "캐릭터 설정집"],
 	"help_char_book": ["Profiles, stats and moves of every character.", "캐릭터마다 설정, 능력치, 기술을 볼 수 있어요."],
-	"book_hint": ["LEFT/RIGHT: CHARACTER    K: BACK", "좌우: 캐릭터    K: 뒤로"],
+	"book_hint": ["{LR}: CHARACTER    {K}: BACK", "{LR}: 캐릭터    {K}: 뒤로"],
 	"hp": ["HP", "체력"],
 	"profile": ["PROFILE", "설정"],
 	"command_list": ["COMMAND LIST", "기술표"],
-	"command_hint": ["K / START: CLOSE", "K / START: 닫기"],
+	"command_hint": ["{K} / {START}: CLOSE", "{K} / {START}: 닫기"],
 	"common_moves": ["COMMON", "공통"],
 	"wins": ["%dP %s WINS!", "%dP %s 승리!"],
 	"draw_game": ["DRAW GAME", "무승부"],
@@ -348,7 +349,50 @@ func _unhandled_input(event: InputEvent) -> void:
 
 ## 번역된 글자. 예: Game.t("press_start")
 func t(key: String) -> String:
-	return STRINGS[key][language]
+	if InputManager.mode == InputManager.Mode.KEYBOARD and STRINGS.has(key + "_kb"):
+		key += "_kb"
+	return keys_in(STRINGS[key][language])
+
+
+## 버튼 이름: 키보드 모드면 1P 키보드 키 ("Y", "U" ...), 스틱 모드면 버튼 이름 ("P", "K" ...)
+const BUTTON_NAMES := {"p": "P", "k": "K", "s": "S", "hs": "HS", "d": "D", "rc": "RC", "start": "START", "select": "SELECT"}
+
+
+func button_name(action: String) -> String:
+	if InputManager.mode == InputManager.Mode.KEYBOARD:
+		return OS.get_keycode_string(InputManager.KEYBOARD_MAP[1][action])
+	return BUTTON_NAMES[action]
+
+
+## 글자 속 {P} {K} {S} {HS} {D} {RC} {START} {SELECT} {LR}를 지금 조작 장치의 버튼 이름으로
+func keys_in(s: String) -> String:
+	if not "{" in s:
+		return s
+	for action: String in BUTTON_NAMES:
+		s = s.replace("{%s}" % BUTTON_NAMES[action], button_name(action))
+	var lr: String
+	if InputManager.mode == InputManager.Mode.KEYBOARD:
+		lr = "%s/%s" % [button_name_dir("left"), button_name_dir("right")]
+	else:
+		lr = "LEFT/RIGHT" if language == Language.EN else "좌우"
+	return s.replace("{LR}", lr)
+
+
+func button_name_dir(action: String) -> String:
+	return OS.get_keycode_string(InputManager.KEYBOARD_MAP[1][action])
+
+
+## 기술표 커맨드 ("D + HS", "→ + D" 등) 속 버튼 글자를 키보드 모드면 키 이름으로 바꾼다
+func command_text(cmd: String) -> String:
+	if InputManager.mode != InputManager.Mode.KEYBOARD:
+		return cmd
+	var re := RegEx.create_from_string("\\b(HS|RC|P|K|S|D)\\b")
+	var out := ""
+	var last := 0
+	for m in re.search_all(cmd):
+		out += cmd.substr(last, m.get_start() - last) + button_name(m.get_string().to_lower())
+		last = m.get_end()
+	return out + cmd.substr(last)
 
 
 func toggle_language() -> void:
