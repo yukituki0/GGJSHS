@@ -188,6 +188,28 @@ func _ready() -> void:
 		puppet = Puppet.new(art, rig)
 		_fit_hitboxes_to_art()
 	_pad_hitboxes()
+	_frames_by_reach()
+
+
+## 리치에 맞춘 프레임: 그림에 맞춘 판정이 보통(6명 중간값)보다 길면 조금 느리게, 짧으면 조금 빠르게
+## (길게 닿는 기술은 위험 부담이 있고, 짧은 기술은 빨라야 쓸모가 있게). 발생 -1~+2, 후딜 -2~+4 프레임
+const REACH_BASE := {"5P": 129, "5K": 141, "5S": 144, "5H": 180, "2P": 128, "2K": 103, "2S": 140, "2H": 134,
+		"jP": 147, "jK": 156, "jS": 176, "jH": 90}
+var frame_changes := {}  # 기술 → [발생 변화, 후딜 변화] (기술표/디버그용)
+
+
+func _frames_by_reach() -> void:
+	for move: String in REACH_BASE:
+		if not attacks.has(move):
+			continue
+		var a: AttackData = attacks[move]
+		var diff: float = a.hitbox.end.x - REACH_BASE[move]
+		var ds := clampi(roundi(diff / 35.0), -1, 2)
+		var dr := clampi(roundi(diff / 20.0), -2, 4)
+		a.startup = maxi(3, a.startup + ds)
+		a.recovery = maxi(4, a.recovery + dr)
+		if ds != 0 or dr != 0:
+			frame_changes[move] = [ds, dr]
 
 
 ## 공격 판정을 그림보다 조금 넉넉하게 (눈으로는 닿았는데 안 맞는 느낌이 없게)

@@ -149,15 +149,19 @@ WEAPON = {
     'chaos': 'one hand in a karate chop', 'globe': 'one hand in a karate chop', 'seed': 'one hand in a karate chop',
 }
 NORMALS = [
-    ('2p', '앉아 P', 'crouching low, quick short jab forward with one fist at waist height'),
-    ('2k', '앉아 K', 'crouching low, poking forward along the ground with the front foot, leg extended low, foot near the floor'),
+    ('2p', '앉아 P', 'crouching low, quick jab with one fist at waist height, the punching arm FULLY extended straight toward the right, '
+                    'fist reaching well past the front knee'),
+    ('2k', '앉아 K', 'crouching low, sweeping kick: the front leg FULLY extended straight forward along the floor toward the right, '
+                    'foot at ankle height reaching far ahead of the body, the other knee bent'),
     ('2s', '앉아 S', 'crouching low with both knees bent, a sweeping strike with {W} far forward at knee height: '
            'the striking arm fully extended straight toward the right, reaching well past the front foot (a real attack, not a guard stance)'),
     ('2h', '앉아 HS (대공)', 'anti-air: rising up from a crouch and swinging {W} straight upward above the head, looking up'),
     ('jp', '공중 P', 'in mid-air, knees tucked, quick jab forward with one fist'),
-    ('jk', '공중 K', 'in mid-air, kicking forward with one leg fully extended'),
+    ('jk', '공중 K', 'in mid-air, flying side kick: one leg FULLY extended straight forward toward the right at hip height, '
+                    'the foot is the farthest point of the image, the other knee tucked'),
     ('js', '공중 S', 'in mid-air, swinging {W} horizontally forward at chest height'),
-    ('jh', '공중 HS', 'in mid-air, big downward swing of {W} in front of the body, body arched forward'),
+    ('jh', '공중 HS', 'in mid-air, big diagonal downward swing of {W} reaching FAR forward and down toward the lower right, '
+                    'the striking arm fully extended well in front of the body (not close to the chest), body leaning forward'),
 ]
 
 # 글자 그림 (assets/ui/text_<이름>.png): 지금 폰트로 쓰는 큰 글자를 그림으로. (이름, 설명, 정확한 글자, 색)
