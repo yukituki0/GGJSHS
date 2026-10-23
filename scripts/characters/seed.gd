@@ -148,6 +148,7 @@ func tick() -> void:
 		v.color = VINE_GREEN
 		v.position = Vector2(_seed.position.x, ground_y - 110)
 		v.lifetime = 30
+		v.rehit_interval = 999  # 맞혀도 바로 사라지지 않고 덩굴이 끝까지 보이게
 		_seed.dead = true
 		spawn(v)
 	# 광합성: 지속 시간 동안 체력 회복 (소수점은 모아서)

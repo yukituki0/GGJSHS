@@ -310,7 +310,9 @@ func _draw_body() -> void:
 		"vine":
 			# 덩굴: 아래에서 위로 솟는 굵은 줄기 + 잎
 			var grow := minf(1.0, age / 5.0)
-			if _draw_ground_effect("seed_vine", r.end.y + 8, r.size.y * 1.15, minf(1.0, (lifetime - age) / 8.0), grow):
+			var vtex := Game.load_texture("res://assets/effects/seed_vine.png")
+			var vw := r.size.y * 1.3 * vtex.get_width() / vtex.get_height() if vtex != null else 0.0  # 키(판정 높이의 1.3배)에 맞춘 폭
+			if _draw_ground_effect("seed_vine", r.end.y + 8, vw, minf(1.0, (lifetime - age) / 8.0), grow):
 				return
 			var top := r.end.y - r.size.y * grow
 			var pts := PackedVector2Array()
