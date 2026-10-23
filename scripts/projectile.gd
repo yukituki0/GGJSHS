@@ -156,6 +156,9 @@ func _draw_body() -> void:
 			var t := float(age) / lifetime
 			var jtex := Game.load_texture("res://assets/effects/%s.png" % extra.get("fx", ""))
 			if jtex != null:
+				if extra.has("hand") and is_instance_valid(shooter) and shooter.state == Fighter.State.ATTACK \
+						and shooter.current_attack != null and shooter.current_attack.name == extra.get("move", ""):
+					extra["from"] = shooter.position + extra["hand"]  # 쏜 캐릭터가 떨어지는 동안 손을 따라감
 				var from: Vector2 = extra["from"] - position  # 이 투사체 기준 손 위치
 				var tip := r.size.x * 0.5 * velocity.normalized()  # 판정 앞끝까지
 				var len := from.distance_to(tip)

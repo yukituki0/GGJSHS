@@ -15,7 +15,7 @@
 | 📐 ROOT2 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 7/7 |
 | 🌱 SEED | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 7/7 |
 
-이펙트: 31/32
+이펙트: 32/32
 
 ## 0-0. 글자 그림 (한 장씩, 첨부 없이)
 
@@ -1103,7 +1103,7 @@ A single 2D fighting game special effect sprite: a ball of crackling yellow elec
 A single 2D fighting game special effect sprite: a burst of white hot steam spreading outward. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **열팽창 증기 분사 (공중D, 손에서 뿜어 나오는 원뿔)** → `chaos_steam_jet`
+✅ **열팽창 증기 분사 (공중D, 손에서 뿜어 나오는 원뿔)** → `chaos_steam_jet`
 ```
 A single 2D fighting game special effect sprite: a jet of scalding white-and-orange steam blasting out horizontally from LEFT to RIGHT like a cone: a narrow hot point at the very left edge (where a palm would be) widening into a big billowing cloud at the right edge, about 2.5 times wider than tall, heat shimmer streaks inside, flat 2-tone cel shading, clean black outlines, NO hand drawn, nothing else. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```

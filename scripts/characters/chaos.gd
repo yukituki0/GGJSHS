@@ -81,6 +81,7 @@ func _on_attack_event(attack: AttackData) -> void:
 			var hand := art_tip("jd", 0.0, 1.0, "jD")  # 아래로 내민 손바닥
 			if hand == Vector2.INF:
 				hand = Vector2(100, -90)
+			hand -= Vector2(30, 0)  # 손가락 끝이 아니라 손바닥에서 뿜어 나오게
 			p.kind = "jet"
 			p.attack = _steam_hit
 			p.size = Vector2(120, 120)
@@ -88,7 +89,8 @@ func _on_attack_event(attack: AttackData) -> void:
 			p.position = position + Vector2(hand.x * facing, hand.y) + Vector2(50 * facing, 30)
 			p.velocity = Vector2(7.0 * facing, 4.0)
 			p.lifetime = 18
-			p.extra = {"fx": "chaos_steam_jet", "from": position + Vector2(hand.x * facing, hand.y), "fallback": "chaos_steam"}
+			p.extra = {"fx": "chaos_steam_jet", "from": position + Vector2(hand.x * facing, hand.y), "fallback": "chaos_steam",
+					"hand": Vector2(hand.x * facing, hand.y), "move": "jD"}  # 기술 중엔 움직이는 손을 따라간다
 			spawn(p)
 		"OD":
 			var p := Projectile.new()

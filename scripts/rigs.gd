@@ -16,7 +16,7 @@ class_name Rigs
 const RIGS := {
 	"chemikid": {
 		"pose_size": {"crouch": 1.15, "crouch_guard": 0.95, "jump": 1.12, "heavy": 0.72, "2d": 1.16, "2k": 0.72, "2p": 0.81, "2s": 0.72, "dash": 0.88, "guard": 0.86, "hit": 0.83, "jd": 0.88, "jh": 0.74, "jk": 0.9, "od": 1.14, "punch": 0.78, "slash": 0.83},
-		"pose_anchor": {"heavy": Vector2(650, 1280), "2h": Vector2(273, 1343), "2p": Vector2(352, 1050), "4d": Vector2(296, 1279), "5d": Vector2(727, 1279), "air_dash": Vector2(547, 961), "dash": Vector2(650, 1216), "jd": Vector2(334, 1025), "js": Vector2(322, 1164), "6d": Vector2(214, 1278)},  # 깊은 런지: 뒷발 쪽을 기준으로 해서 몸이 앞으로 확 튀지 않게
+		"pose_anchor": {"heavy": Vector2(650, 1280), "2h": Vector2(273, 1343), "2p": Vector2(352, 1050), "4d": Vector2(296, 1279), "5d": Vector2(727, 1279), "air_dash": Vector2(547, 961), "dash": Vector2(650, 1216), "js": Vector2(322, 1164), "6d": Vector2(214, 1278)},  # 깊은 런지: 뒷발 쪽을 기준으로 해서 몸이 앞으로 확 튀지 않게
 		"joints": {
 			"hip": Vector2(560, 620), "neck": Vector2(570, 240), "head": Vector2(600, 150),
 			"ba_sh": Vector2(430, 260), "ba_el": Vector2(300, 380), "ba_ha": Vector2(430, 450),
@@ -40,7 +40,7 @@ const RIGS := {
 	},
 	"chaos": {
 		"fit_band": {"5S": [0.7, 1.0]},  # S 손날: 앞으로 펄럭이는 가운 자락 말고 뻗은 손끝에
-		"pose_size": {"crouch": 0.91, "crouch_guard": 0.85, "jump_attack": 1.1, "air_dash": 1.1, "guard": 0.91, "hit": 0.88, "jump": 0.85, "punch": 0.9, "2p": 0.85, "2k": 0.81, "2s": 0.87, "jp": 0.87, "jk": 0.78, "jh": 0.9, "js": 0.78, "walk_back": 0.9, "dash": 0.81, "backdash": 0.9, "5d": 0.78, "6d": 0.87, "4d": 0.85, "od": 1.13, "2h": 1.1, "slash": 0.84, "heavy": 0.84},
+		"pose_size": {"crouch": 0.91, "crouch_guard": 0.85, "jump_attack": 1.1, "air_dash": 1.1, "guard": 0.91, "hit": 0.88, "jump": 0.85, "punch": 0.9, "2p": 0.85, "2k": 0.81, "2s": 0.87, "jp": 0.87, "jk": 0.78, "jh": 0.9, "js": 0.78, "walk_back": 0.9, "dash": 0.81, "backdash": 0.9, "5d": 0.78, "6d": 0.87, "4d": 0.85, "od": 1.13, "2h": 1.1, "slash": 0.84, "heavy": 0.84, "jd": 0.89},
 		"pose_anchor": {"air_dash": Vector2(566, 983), "hit": Vector2(549, 1381), "jump_attack": Vector2(477, 1114), "punch": Vector2(292, 1311), "2p": Vector2(320, 1179), "jh": Vector2(450, 1310), "od": Vector2(340, 1244)},
 		"no_fit": ["2D"],  # 2D 전자기 펄스: 몸 주위 전체를 치는 기술이라 그림 앞끝에 맞추면 뒤쪽 판정이 없어짐
 		"joints": {
@@ -66,7 +66,7 @@ const RIGS := {
 	"root2": {
 		"pose_size": {"crouch": 0.88, "2p": 0.88, "2k": 0.88, "2h": 1.15, "heavy": 0.75, "air_dash": 0.77, "5d": 0.8, "2d": 0.89, "guard": 0.85, "jd": 1.18, "jh": 1.1},
 		# jd: 컴퍼스 끝이 발보다 한참 아래라 부츠 바닥을 발 위치로 / win: 땅에 세운 컴퍼스 끝 말고 두 부츠 가운데
-		"pose_anchor": {"jd": Vector2(440, 1169), "win": Vector2(610, 1423), "jp": Vector2(714, 923), "jk": Vector2(560, 850), "6d": Vector2(865, 1433), "js": Vector2(455, 908), "od": Vector2(457, 1424)},
+		"pose_anchor": {"win": Vector2(610, 1423), "jp": Vector2(714, 923), "jk": Vector2(560, 850), "6d": Vector2(865, 1433), "js": Vector2(455, 908), "od": Vector2(457, 1424)},
 		"reach_limit": {"5H": 120},  # 5H 판정을 컴퍼스 끝까지 (원거리형). 6D는 그보다 더 길게 root2.gd에서
 		"no_fit": ["6D"],  # 6D는 5H보다 길게 일부러 정한 사거리
 		"joints": {
@@ -79,7 +79,7 @@ const RIGS := {
 	},
 	"seed": {
 		"pose_size": {"crouch": 1.02, "jump": 1.12, "punch": 0.9, "2p": 0.85, "2k": 0.85, "2s": 1.0, "jp": 0.77, "jk": 0.78, "js": 0.77, "jh": 0.85, "walk_back": 0.89, "dash": 0.8, "backdash": 0.92, "throw": 0.88, "jump_attack": 0.77, "5d": 0.9, "6d": 0.9, "jd": 0.81, "slash": 0.85, "heavy": 0.87},
-		"pose_anchor": {"punch": Vector2(285, 1596), "2p": Vector2(931, 1282), "2k": Vector2(935, 1207), "2h": Vector2(324, 1584), "jp": Vector2(522, 1284), "dash": Vector2(721, 1434), "jd": Vector2(611, 1508), "od": Vector2(359, 1509)},
+		"pose_anchor": {"punch": Vector2(285, 1596), "2p": Vector2(931, 1282), "2k": Vector2(935, 1207), "2h": Vector2(324, 1584), "jp": Vector2(522, 1284), "dash": Vector2(721, 1434), "od": Vector2(359, 1509)},
 		"joints": {
 			"hip": Vector2(570, 600), "neck": Vector2(590, 260), "head": Vector2(620, 160),
 			"ba_sh": Vector2(430, 320), "ba_el": Vector2(330, 480), "ba_ha": Vector2(290, 620),
