@@ -1460,7 +1460,9 @@ func _pose_texture_now() -> Texture2D:
 				elif a.name in ["taunt", "respect"]:  # 도발/리스펙트: 전용 그림 → 없으면 승리 그림
 					names.append_array([a.name, "win"])
 				if special:  # 필살기/잡기 전용 그림은 시작부터 끝까지
-					names.append("throw" if a.is_throw else a.name.to_lower())  # 예: chemikid_6d.png
+					names.append(a.name.to_lower())  # 예: chemikid_6d.png (커맨드 잡기도 전용 그림이 있으면 그것부터)
+					if a.is_throw:
+						names.append("throw")  # 없으면 일반 잡기 그림
 				# 버튼을 누른 순간부터 공격 그림 (예전엔 발생 뒤부터라 너무 잠깐 보였다)
 				# 앉은/공중 기본기는 기술마다 그림을 따로 둘 수 있다 (예: root2_2k.png, root2_jh.png)
 				if a.name.begins_with("2") or a.name.begins_with("j"):
