@@ -78,14 +78,17 @@ func _on_attack_event(attack: AttackData) -> void:
 				history.clear()
 		"jD":
 			var p := Projectile.new()
-			p.kind = "explosion"
+			var hand := art_tip("jd", 0.0, 1.0, "jD")  # 아래로 내민 손바닥
+			if hand == Vector2.INF:
+				hand = Vector2(100, -90)
+			p.kind = "jet"
 			p.attack = _steam_hit
 			p.size = Vector2(120, 120)
 			p.color = HEAT
-			p.position = position + Vector2(100 * facing, -90)  # 손 높이에서 앞으로
+			p.position = position + Vector2(hand.x * facing, hand.y) + Vector2(50 * facing, 30)
 			p.velocity = Vector2(7.0 * facing, 4.0)
 			p.lifetime = 18
-			p.extra = {"fx": "chaos_steam"}  # 증기 폭발 그림 (없으면 원래 원 모양)
+			p.extra = {"fx": "chaos_steam_jet", "from": position + Vector2(hand.x * facing, hand.y), "fallback": "chaos_steam"}
 			spawn(p)
 		"OD":
 			var p := Projectile.new()

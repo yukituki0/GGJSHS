@@ -65,7 +65,8 @@ SPECIALS = {
         ('6d', '→D 운동량 던지기', "lunging forward with both hands gripping EMPTY AIR at chest height as if grabbing an invisible collar, the opponent is NOT drawn"),
         ('2d', '↓D 전자기 펄스', 'arms spread wide, hair floating up, body crackling (no actual effect drawn)'),
         ('4d', '←D 양자 터널링', 'gliding forward low, body bent, coat trailing behind'),
-        ('jd', '공중D 열팽창 폭발', 'in mid-air, thrusting one palm diagonally downward'),
+        ('jd', '공중D 열팽창 폭발', 'in mid-air, thrusting one open palm diagonally DOWN and forward toward the lower right with the arm fully '
+                                  'extended, the other arm pulled back, lab coat and long hair blown upward, NO steam drawn (the game adds it)'),
         ('od', 'D+HS 블랙홀', 'both hands cupped together in front of the chest, compressing something, intense stare'),
         ('win', '승리', 'victory pose, arms crossed, looking down coldly with a slight smile'),
     ],
@@ -214,6 +215,10 @@ EFFECTS = [
     ('chaos_blackhole', '블랙홀', 'a small black hole with a glowing violet accretion ring, slightly tilted'),
     ('chaos_spark', '전자기 방전', 'a ball of crackling yellow electric sparks'),
     ('chaos_steam', '증기 폭발', 'a burst of white hot steam spreading outward'),
+    ('chaos_steam_jet', '열팽창 증기 분사 (공중D, 손에서 뿜어 나오는 원뿔)',
+     'a jet of scalding white-and-orange steam blasting out horizontally from LEFT to RIGHT like a cone: a narrow hot point at the very '
+     'left edge (where a palm would be) widening into a big billowing cloud at the right edge, about 2.5 times wider than tall, '
+     'heat shimmer streaks inside, flat 2-tone cel shading, clean black outlines, NO hand drawn, nothing else'),
     ('root2_boomerang', '√2 부메랑', 'a golden square-root symbol shaped like a spinning boomerang'),
     ('root2_pillar', '적분 기둥 (↓D, 바닥에서 솟는 가늘고 긴 그림)',
      'ONE thin sharp beam of light shooting straight UP from the ground, shaped like a tall elongated integral sign, '

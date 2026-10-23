@@ -159,8 +159,8 @@ var _hand_cache := Vector2.INF
 ## 불꽃 반응 자세 그림에서 뻗은 손끝 (발 기준). 그림이 없으면 대충 가슴 앞
 func _flame_hand() -> Vector2:
 	if _hand_cache == Vector2.INF:
-		var tip := art_tip("6d", 0.55, 1.0)
-		_hand_cache = tip - Vector2(10, 0) if tip != Vector2.INF else Vector2(100, -145)
+		var tip := art_tip("6d", 0.55, 1.0, "6D")
+		_hand_cache = tip - Vector2(25, 0) if tip != Vector2.INF else Vector2(100, -145)  # 손바닥 안쪽부터
 	return _hand_cache
 
 

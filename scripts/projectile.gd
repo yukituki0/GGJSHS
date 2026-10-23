@@ -151,6 +151,22 @@ func _draw_body() -> void:
 				var bx := r.position.x + fmod(i * 37.0 + age * 0.7, r.size.x)
 				var by := -fmod(age * 1.2 + i * 13.0, 30.0)
 				draw_circle(Vector2(bx, by), 4, Color(color, 0.7 * fade))
+		"jet":
+			# 손에서 뿜어 나오는 분사 (열팽창 증기): 손(extra.from, 세계 좌표)에서 지금 위치까지 원뿔 그림을 늘려 그린다
+			var t := float(age) / lifetime
+			var jtex := Game.load_texture("res://assets/effects/%s.png" % extra.get("fx", ""))
+			if jtex != null:
+				var from: Vector2 = extra["from"] - position  # 이 투사체 기준 손 위치
+				var tip := r.size.x * 0.5 * velocity.normalized()  # 판정 앞끝까지
+				var len := from.distance_to(tip)
+				var h := len * jtex.get_height() / jtex.get_width() * (0.8 + 0.4 * t)
+				var dir := hit_direction()
+				draw_set_transform(from, (tip - from).angle() if dir > 0 else (tip - from).angle() - PI, Vector2(dir, 1))
+				draw_texture_rect(jtex, Rect2(0, -h / 2, len, h), false, Color(1, 1, 1, 1.0 - t * t))
+				draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
+				return
+			extra["fx"] = extra.get("fallback", "")  # 분사 그림이 없으면 예전 폭발 그림으로
+			kind = "explosion"
 		"explosion":
 			# 폭발: 커지면서 사라지는 원
 			var t := float(age) / lifetime

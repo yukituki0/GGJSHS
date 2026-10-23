@@ -69,7 +69,10 @@ func _on_attack_event(attack: AttackData) -> void:
 			p.attack = _packet_hit
 			p.size = Vector2(44, 28)
 			p.color = CYAN
-			p.position = position + Vector2(60 * facing, -110)
+			var tip := art_tip("5d", 0.4, 1.0, "5D")  # 총처럼 겨눈 키보드 끝
+			if tip == Vector2.INF:
+				tip = Vector2(60, -110)
+			p.position = position + Vector2((tip.x - 10.0) * facing, tip.y + 6.0)
 			p.velocity = Vector2(11 * facing, 0)
 			_packet = p
 			spawn(p)
