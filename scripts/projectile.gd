@@ -25,6 +25,20 @@ var age := 0
 var dead := false
 var rehit_cd := 0               # 다시 맞힐 수 있을 때까지 남은 프레임
 var from_super := false         # 오버드라이브 중에 나온 투사체 (맞혀도 텐션이 조금만 찬다)
+var spent := false              # 이미 맞혀서 끝난 투사체: 판정 없이 느려지며 흐려지다 사라진다 (맞는 순간 안 보이던 문제)
+const SPENT_FRAMES := 12
+var _spent_alpha := 1.0
+
+
+## 맞혔을 때: 바로 지우지 않고 그 자리에서 흐려지며 사라지게
+func spend() -> void:
+	spent = true
+	_spent_alpha = self_modulate.a
+	velocity *= 0.25
+	gravity = 0.0
+	accel = Vector2.ZERO
+	ground_y = INF  # 흐려지는 동안 바닥에 닿아도 웅덩이 등이 생기지 않게
+	lifetime = mini(lifetime, age + SPENT_FRAMES)
 
 
 func tick() -> void:
@@ -60,6 +74,10 @@ func hit_direction() -> int:
 
 # ── 그리기 ────────────────────────────────────────────────
 func _draw() -> void:
+	if spent:  # 맞힌 뒤: 살짝 커지며 흐려짐
+		var t := 1.0 - float(lifetime - age) / SPENT_FRAMES
+		draw_set_transform(Vector2.ZERO, 0, Vector2.ONE * (1.0 + 0.3 * t))
+		self_modulate.a = _spent_alpha * (1.0 - t)
 	_draw_body()
 	# 트레이닝 판정 보기: 쏜 캐릭터가 판정 보기 중이면 투사체 판정도 (공격 빨강, 막는 벽 노랑, 작동 전엔 점선 느낌으로 흐리게)
 	if shooter != null and is_instance_valid(shooter) and shooter.debug_draw_boxes and (attack != null or blocks_projectiles):
@@ -378,7 +396,17 @@ func _draw_body() -> void:
 			var tex := Game.load_texture("res://assets/effects/chemikid_flame.png")
 			if tex != null:
 				modulate = Color(color.r * 1.3, color.g * 1.3, color.b * 1.3, minf(1.0, (lifetime - age) / 5.0))
-				_draw_effect("chemikid_flame", Vector2(-10, 0), size.x * 1.6 * k)
+				var dir := hit_direction()
+				if extra.has("from_x"):
+					# 손끝(from_x)에서 판정 앞끝까지 쭉 뻗는 불꽃 (뿜어져 나오며 길어짐)
+					var start: float = (extra["from_x"] - position.x) * dir
+					var reach: float = (size.x / 2 - start) * minf(1.0, age / 3.0)
+					var h: float = reach * tex.get_height() / tex.get_width() * 1.3 * (1.0 - 0.3 * life)
+					draw_set_transform(Vector2.ZERO, 0, Vector2(dir, 1))
+					draw_texture_rect(tex, Rect2(start, -h / 2, reach, h), false)
+					draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
+				else:
+					_draw_effect("chemikid_flame", Vector2(-10, 0), size.x * 1.6 * k)
 				return
 			for i in 3:  # 그림이 없으면: 겹친 불꽃 방울
 				var rr := size.y * 0.5 * k * (1.0 - i * 0.25)

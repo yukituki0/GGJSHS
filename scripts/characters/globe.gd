@@ -160,3 +160,18 @@ func tick() -> void:
 	# 태풍: 근처의 상대를 소용돌이 쪽으로 끌어당긴다
 	if _alive(_typhoon):
 		pull_opponent(_typhoon.position.x, 3.0, 450.0)
+
+
+func _draw() -> void:
+	# 지각 돌진: 몸 뒤로 바위 파편과 흙먼지가 튄다 (globe_rush.png가 있을 때)
+	if state == State.ATTACK and current_attack != null and current_attack.name == "6D" \
+			and state_frame >= current_attack.startup - 4:
+		var tex := Game.load_texture("res://assets/effects/globe_rush.png")
+		if tex != null:
+			var t := float(state_frame - current_attack.startup + 4) / (current_attack.active + 8)
+			var w := 260.0
+			var h := w * tex.get_height() / tex.get_width()
+			draw_set_transform(Vector2(-60 * facing, 0), 0, Vector2(facing, 1))
+			draw_texture_rect(tex, Rect2(-w / 2, -h, w, h), false, Color(1, 1, 1, clampf(1.2 - t, 0.0, 1.0)))
+			draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
+	super()

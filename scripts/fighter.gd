@@ -1047,6 +1047,27 @@ func _fit_hitboxes_to_art() -> void:
 				a.hitbox.position.y = minf(a.hitbox.position.y + dy, -a.hitbox.size.y)  # 땅 밑으로 안 내려가게
 
 
+## 자세 그림(<id>_<pose>.png)에서 앞으로 가장 멀리 나간 손발 끝 (발 기준 게임 좌표, 오른쪽을 볼 때)
+## lo~hi: 찾을 높이 (키 비율, 0=발 1=머리). 그림이 없으면 Vector2.INF
+func art_tip(pose: String, lo := 0.45, hi := 1.0) -> Vector2:
+	var tex := Game.load_texture("res://assets/characters/%s_%s.png" % [char_id, pose])
+	if tex == null or puppet == null:
+		return Vector2.INF
+	var tip := ArtBoxes.front_tip(tex, _anchor_for(tex), lo, hi)
+	if tip == Vector2.INF:
+		return tip
+	return tip * _pose_scale() * _pose_size(tex)
+
+
+## 잔상: world_pos 자리에 내 기본 그림을 tint 색으로 흐리게 (순간이동·되감기 연출). 그림이 없으면 false
+func draw_ghost(world_pos: Vector2, tint: Color) -> bool:
+	if puppet == null:
+		return false
+	Puppet.draw_image(self, puppet.texture, puppet.scale, facing, world_pos - position, tint,
+			Transform2D.IDENTITY, puppet.anchor)
+	return true
+
+
 ## 이름 목록 중 그림이 있는 첫 자세 이름 (없으면 "")
 func _first_pose(names: Array) -> String:
 	for n: String in names:

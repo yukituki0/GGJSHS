@@ -203,6 +203,14 @@ EFFECTS = [
     ('chemikid_neutralize', '중화 반응 방패 (←D)',
      'a round chemistry barrier seen from the side: a swirling disc where acid-red and base-blue liquid mix together into '
      'clear white light in the center, bubbles and tiny hexagon molecule shapes around the rim, glowing, NO letters'),
+    ('globe_rush', '지각 돌진 흙먼지 (→D, 몸 뒤로 튀는 바위·먼지)',
+     'a burst of broken rock chunks and brown dust kicked up from the ground and flying backward to the LEFT, '
+     'as if something just dashed forward to the right, wider than tall, sitting on a flat ground line at the bottom, '
+     'flat 2-tone cel shading in brown and orange, clean black outlines, NO realistic texture, nothing else'),
+    ('seed_sunlight', '광합성 햇빛 (←D, 위에서 쏟아지는 빛 기둥)',
+     'a soft vertical column of warm sunlight pouring straight DOWN from the top edge to the bottom, '
+     'about 2 times taller than wide, pale yellow and white, a few small floating leaves and sparkles inside, '
+     'edges fading out softly, flat stylized anime look, NO sun disc, NO character, nothing else'),
     ('chaos_blackhole', '블랙홀', 'a small black hole with a glowing violet accretion ring, slightly tilted'),
     ('chaos_spark', '전자기 방전', 'a ball of crackling yellow electric sparks'),
     ('chaos_steam', '증기 폭발', 'a burst of white hot steam spreading outward'),

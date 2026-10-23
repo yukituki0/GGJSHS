@@ -149,7 +149,8 @@ func _draw() -> void:
 	if _ghost_frames > 0:
 		var size := body_size()
 		var a := _ghost_frames / 20.0
-		draw_rect(Rect2(_ghost_pos - position + Vector2(-size.x / 2, -size.y), size), Color(CYAN, 0.4 * a))
+		if not draw_ghost(_ghost_pos, Color(0.4, 1.0, 1.0, 0.45 * a)):  # 되감기 전 자리에 하늘색 내 모습
+			draw_rect(Rect2(_ghost_pos - position + Vector2(-size.x / 2, -size.y), size), Color(CYAN, 0.4 * a))
 		draw_string(Game.FONT, _ghost_pos - position + Vector2(-60, -size.y - 40), "Ctrl+Z",
 				HORIZONTAL_ALIGNMENT_CENTER, 120, 22, Color(CYAN, a))
 	super()

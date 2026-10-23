@@ -430,7 +430,7 @@ func _apply_hit(attacker: Fighter, defender: Fighter, attack: AttackData, contac
 ## 투사체: 상대 몸에 맞기, 투사체끼리 부딪히기, 다 된 것 지우기
 func _resolve_projectiles() -> void:
 	for proj in projectiles:
-		if proj.dead or proj.attack == null or not proj.is_armed() or proj.rehit_cd > 0:
+		if proj.dead or proj.spent or proj.attack == null or not proj.is_armed() or proj.rehit_cd > 0:
 			continue
 		var target := p2 if proj.shooter == p1 else p1
 		if target.state == Fighter.State.KO or target.is_invulnerable():
@@ -444,11 +444,11 @@ func _resolve_projectiles() -> void:
 			if proj.rehit_interval > 0:
 				proj.rehit_cd = proj.rehit_interval  # 웅덩이처럼 남아서 또 맞힘
 			else:
-				proj.dead = true
+				proj.spend()  # 바로 지우지 않고 흐려지며 사라짐
 	# 투사체끼리: 방화벽은 상대 투사체를 지우고, 나머지는 서로 상쇄
 	for a in projectiles:
 		for b in projectiles:
-			if a == b or a.dead or b.dead or a.shooter == b.shooter:
+			if a == b or a.dead or b.dead or a.spent or b.spent or a.shooter == b.shooter:
 				continue
 			if not a.rect().intersects(b.rect()):
 				continue

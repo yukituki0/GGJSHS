@@ -153,6 +153,17 @@ func _try_counter(_attack_data: AttackData) -> bool:
 	return true
 
 
+var _hand_cache := Vector2.INF
+
+
+## 불꽃 반응 자세 그림에서 뻗은 손끝 (발 기준). 그림이 없으면 대충 가슴 앞
+func _flame_hand() -> Vector2:
+	if _hand_cache == Vector2.INF:
+		var tip := art_tip("6d", 0.55, 1.0)
+		_hand_cache = tip - Vector2(10, 0) if tip != Vector2.INF else Vector2(100, -145)
+	return _hand_cache
+
+
 func tick() -> void:
 	super()
 	if _counter_text > 0:
@@ -166,7 +177,9 @@ func tick() -> void:
 				p.attack = _flame_hit
 				p.size = Vector2(120, 90)
 				p.color = f[2]
-				p.position = Vector2(position.x + f[1] * facing, position.y - 145)  # 뻗은 손 높이
+				var hand := _flame_hand()
+				p.position = Vector2(position.x + f[1] * facing, position.y + hand.y)
+				p.extra = {"from_x": position.x + hand.x * facing}  # 불꽃은 뻗은 손끝에서 여기까지 그려진다
 				p.lifetime = 14
 				p.rehit_interval = 999  # 맞혀도 불꽃이 끝까지 보이게
 				spawn(p)
@@ -195,31 +208,50 @@ func tick() -> void:
 			spawn(pillar)
 
 
+## 중화 반응 방패: 몸 전체를 감싸는 큰 원판 (캐릭터가 그 안에 들어가 있게 몸 뒤에 그린다)
+const SHIELD_CENTER := Vector2(10, -125)
+const SHIELD_PX := 340.0
+
+
+func _draw_shield(px: float, rot: float, tint: Color) -> void:
+	var shield := Game.load_texture("res://assets/effects/chemikid_neutralize.png")
+	if shield == null:
+		return
+	var sz := Vector2(shield.get_width(), shield.get_height()) * (px / maxf(shield.get_width(), shield.get_height()))
+	draw_set_transform(SHIELD_CENTER * Vector2(facing, 1), rot, Vector2(facing, 1))
+	draw_texture_rect(shield, Rect2(-sz / 2, sz), false, tint)
+	draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
+
+
 func _draw() -> void:
+	var guarding := state == State.ATTACK and current_attack != null and current_attack.name == "4D" \
+			and state_frame >= COUNTER_START and state_frame <= COUNTER_END
+	var has_shield := Game.load_texture("res://assets/effects/chemikid_neutralize.png") != null
+	# 반격 자세 중: 산(빨강)·염기(파랑)가 섞이는 방패가 몸 뒤에서 천천히 돌며 몸 전체를 감싼다
+	if guarding and has_shield:
+		var grow := minf(1.0, (state_frame - COUNTER_START + 1) / 4.0)
+		_draw_shield(SHIELD_PX * grow * (0.97 + 0.03 * sin(state_frame * 0.5)), state_frame * 0.05, Color(1, 1, 1, 0.75))
+	# 발열 반응: 솟구치는 동안 발밑에서 불기둥 폭발 (발열 폭발 그림 재사용)
+	if state == State.ATTACK and current_attack != null and current_attack.name == "2D" \
+			and state_frame >= current_attack.startup - 2 and state_frame <= current_attack.startup + 16:
+		var boom := Game.load_texture("res://assets/effects/chemikid_explosion.png")
+		if boom != null:
+			var t := float(state_frame - current_attack.startup + 2) / 18.0
+			var w := lerpf(150.0, 230.0, t)
+			var h := w * boom.get_height() / boom.get_width()
+			draw_texture_rect(boom, Rect2(Vector2(-w / 2 + 20 * facing, ground_y - position.y - h + 10), Vector2(w, h)),
+					false, Color(1, 1, 1, clampf(1.3 - t, 0.0, 1.0)))
 	super()
-	# 반격 자세 중: 몸 앞에 초록 방패 표시
-	if state == State.ATTACK and current_attack != null and current_attack.name == "4D" \
-			and state_frame >= COUNTER_START and state_frame <= COUNTER_END:
-		var shield := Game.load_texture("res://assets/effects/chemikid_neutralize.png")
-		if shield != null:  # 산(빨강)·염기(파랑)가 섞이는 방패 그림이 몸 앞에서 천천히 돈다
-			var px := 190.0 * (0.95 + 0.05 * sin(state_frame * 0.5))
-			var sz := Vector2(shield.get_width(), shield.get_height()) * (px / maxf(shield.get_width(), shield.get_height()))
-			draw_set_transform(Vector2(facing * 70, -110), state_frame * 0.05, Vector2(facing, 1))
-			draw_texture_rect(shield, Rect2(-sz / 2, sz), false, Color(1, 1, 1, 0.8))
-			draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
+	if guarding:
+		if has_shield:  # 앞쪽에는 얇은 테두리만 (캐릭터가 방패 안에 있는 느낌)
+			draw_arc(SHIELD_CENTER * Vector2(facing, 1), SHIELD_PX * 0.47, 0, TAU, 48, Color(1, 1, 1, 0.35), 3.0)
 		else:
 			var start := -PI / 2 if facing > 0 else PI / 2  # 바라보는 쪽 반원
 			draw_arc(Vector2(facing * 30, -90), 70, start, start + PI, 16, Color(ACID_GREEN, 0.8), 5.0)
 	# 반격 성공: 방패가 크게 퍼지며 사라짐
 	if _counter_text > 30:
-		var shield2 := Game.load_texture("res://assets/effects/chemikid_neutralize.png")
-		if shield2 != null:
-			var t := (40 - _counter_text) / 10.0
-			var px2 := lerpf(190.0, 380.0, t)
-			var sz2 := Vector2(shield2.get_width(), shield2.get_height()) * (px2 / maxf(shield2.get_width(), shield2.get_height()))
-			draw_set_transform(Vector2(facing * 70, -110), 0, Vector2(facing, 1))
-			draw_texture_rect(shield2, Rect2(-sz2 / 2, sz2), false, Color(1.6, 1.6, 1.6, 1.0 - t))
-			draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
+		var t := (40 - _counter_text) / 10.0
+		_draw_shield(lerpf(SHIELD_PX, SHIELD_PX * 1.8, t), 0.0, Color(1.6, 1.6, 1.6, 1.0 - t))
 	if _counter_text > 0:
 		draw_string(Game.FONT, Vector2(-120, -230), "NEUTRALIZE!", HORIZONTAL_ALIGNMENT_CENTER, 240, 30,
 				Color(ACID_GREEN, _counter_text / 40.0))

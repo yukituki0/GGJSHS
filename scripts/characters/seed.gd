@@ -176,6 +176,14 @@ func _draw() -> void:
 		draw_rect(Rect2(-size.x / 2 - 6, -size.y - 6, size.x + 12, size.y + 12), Color(LEAF, 0.5), false, 3.0)
 	# 광합성 중: 위에서 내려오는 햇빛
 	if state == State.ATTACK and current_attack != null and current_attack.name == "4D":
+		var sun := Game.load_texture("res://assets/effects/seed_sunlight.png")
+		if sun != null:  # 머리 위에서 쏟아지는 햇빛 기둥 (몸이 그 안에 들어가게)
+			var w := 240.0
+			var h := w * sun.get_height() / sun.get_width()
+			var a := minf(1.0, state_frame / 8.0) * (0.75 + 0.15 * sin(state_frame * 0.3))
+			draw_texture_rect(sun, Rect2(-w / 2, 10 - h, w, h), false, Color(1, 1, 1, a))
+	if state == State.ATTACK and current_attack != null and current_attack.name == "4D" \
+			and Game.load_texture("res://assets/effects/seed_sunlight.png") == null:
 		for i in 3:
 			var x := (i - 1) * 24.0
 			draw_line(Vector2(x - 20, -size.y - 120), Vector2(x, -size.y - 10), Color(1, 0.95, 0.5, 0.6), 4.0)

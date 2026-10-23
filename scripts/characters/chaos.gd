@@ -169,7 +169,8 @@ func _draw() -> void:
 	if _ghost_frames > 0:
 		var a := _ghost_frames / 20.0
 		var size := body_size()
-		draw_rect(Rect2(_ghost_pos - position + Vector2(-size.x / 2, -size.y), size), Color(PURPLE, 0.35 * a))
+		if not draw_ghost(_ghost_pos, Color(0.75, 0.45, 1.0, 0.45 * a)):  # 사라진 자리에 보랏빛 내 모습
+			draw_rect(Rect2(_ghost_pos - position + Vector2(-size.x / 2, -size.y), size), Color(PURPLE, 0.35 * a))
 		for i in 6:
 			draw_circle(_ghost_pos - position + Vector2(sin(i * 2.1) * 40, -size.y * 0.5 + cos(i * 1.7) * 60),
 					10, Color(PURPLE, 0.3 * a))
