@@ -103,7 +103,8 @@ assets/
   effects/      필살기 이펙트 그림 (<id>_<이름>.png)
   stages/       스테이지 배경
   ui/           HUD, 로고, 메뉴 배경, 글자 그림
-  sfx/          효과음·배경음
+  sound/        효과음·배경음
+  fonts/        글꼴
 scenes/         화면 (title, mode_select, char_select, stage_select, battle, controls, key_config, char_book)
 scripts/
   fighter.gd        캐릭터 공통: 상태 머신, 입력, 가드, 콤보 보정, 판정, 자세 그림
