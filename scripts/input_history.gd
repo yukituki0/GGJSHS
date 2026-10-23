@@ -19,6 +19,7 @@ var _prev_held := {1: {}, 2: {}}
 
 func _physics_process(_delta: float) -> void:
 	if match_node == null or match_node.paused:
+		queue_redraw()  # 일시정지 중엔 안 그리도록 다시 그리기
 		return
 	for f: Fighter in [match_node.p1, match_node.p2]:
 		if f == null or not _shown(f):
@@ -58,7 +59,7 @@ func _numpad(f: Fighter) -> int:
 
 
 func _draw() -> void:
-	if match_node == null:
+	if match_node == null or match_node.paused:  # 일시정지 메뉴(트레이닝 설정 등) 위로 겹쳐 보이지 않게
 		return
 	for f: Fighter in [match_node.p1, match_node.p2]:
 		if f == null or not _shown(f):

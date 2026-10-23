@@ -29,6 +29,9 @@ func _process(delta: float) -> void:
 	super(delta)
 	if Game.menu_back() or Game.menu_pressed("start"):
 		Game.goto("mode_select")
+	elif Game.menu_pressed("p"):  # 키 설정 화면으로
+		Sfx.play("menu_ok")
+		Game.goto("key_config")
 
 
 ## 액션에 연결된 입력 이름 (예: "W", "Num 4", "Joy 3")
@@ -63,4 +66,4 @@ func _draw() -> void:
 				names.append(_input_name(p, a))
 			text(" ".join(names), y, 24, Style.GOLD, 700 if p == 1 else 980, 0)
 	text(Game.t("combo_hint"), 660, 20, Style.WHITE, W / 2, 4)
-	text(Game.t("back_hint"), 700, 18, Style.GRAY, W / 2, 0)
+	text(Game.t("controls_hint"), 700, 18, Style.GRAY, W / 2, 0)

@@ -54,6 +54,10 @@ const DEADZONE := 0.5
 
 var mode: Mode = Mode.KEYBOARD
 
+## 키 설정 화면에서 바꾼 배치 (기본값과 다른 것만). 플레이어 → { 액션: 키 코드 / 버튼 번호 }
+var custom_keys := {1: {}, 2: {}}
+var custom_joy := {1: {}, 2: {}}
+
 
 func _ready() -> void:
 	set_mode(Mode.KEYBOARD)
@@ -88,11 +92,41 @@ func action_name(player: int, action: String) -> String:
 	return "p%d_%s" % [player, action]
 
 
+## 지금 쓰는 키보드 키 / 조이스틱 버튼 (키 설정에서 바꿨으면 그 값)
+func key_for(player: int, action: String) -> int:
+	return custom_keys[player].get(action, KEYBOARD_MAP[player][action])
+
+
+func joy_button_for(player: int, action: String) -> int:
+	return custom_joy[player].get(action, JOY_BUTTON_MAP.get(action, -1))
+
+
+## 키 설정: player의 action을 code(키보드 키 또는 조이스틱 버튼)로. 같은 키를 쓰던 다른 액션과는 서로 바꾼다
+func bind(player: int, action: String, code: int) -> void:
+	var keyboard := mode == Mode.KEYBOARD
+	var table: Dictionary = custom_keys[player] if keyboard else custom_joy[player]
+	var old := key_for(player, action) if keyboard else joy_button_for(player, action)
+	for other: String in ACTIONS:
+		if other == action:
+			continue
+		var cur := key_for(player, other) if keyboard else joy_button_for(player, other)
+		if cur == code:
+			table[other] = old  # 겹치면 맞바꿈
+	table[action] = code
+	set_mode(mode)
+
+
+func reset_bindings() -> void:
+	custom_keys = {1: {}, 2: {}}
+	custom_joy = {1: {}, 2: {}}
+	set_mode(mode)
+
+
 func _events_for(player: int, action: String) -> Array[InputEvent]:
 	var events: Array[InputEvent] = []
 	if mode == Mode.KEYBOARD:
 		var key := InputEventKey.new()
-		key.physical_keycode = KEYBOARD_MAP[player][action]
+		key.physical_keycode = key_for(player, action) as Key
 		events.append(key)
 	else:
 		var device := player - 1  # 먼저 꽂힌 인코더 = 1P(device 0), 다음 = 2P(device 1)
@@ -110,6 +144,6 @@ func _events_for(player: int, action: String) -> Array[InputEvent]:
 		elif action in JOY_BUTTON_MAP:
 			var button := InputEventJoypadButton.new()
 			button.device = device
-			button.button_index = JOY_BUTTON_MAP[action]
+			button.button_index = joy_button_for(player, action) as JoyButton
 			events.append(button)
 	return events

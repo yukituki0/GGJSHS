@@ -121,6 +121,19 @@ const STRINGS := {
 	"help_language": ["Change the language.", "언어를 바꿉니다."],
 	"menu_hint": ["{P} / {START}: OK      {K}: BACK", "{P} / {START}: 결정      {K}: 뒤로"],
 	"back_hint": ["{K} / {START}: BACK", "{K} / {START}: 뒤로"],
+	"controls_hint": ["{P}: KEY CONFIG      {K} / {START}: BACK", "{P}: 키 설정      {K} / {START}: 뒤로"],
+	"key_config": ["KEY CONFIG", "키 설정"],
+	"key_config_hint": ["ARROWS: MOVE    {P}: CHANGE    ESC: BACK", "방향키: 이동    {P}: 바꾸기    ESC: 뒤로"],
+	"press_new_key": ["Press a new key for %s  (ESC: cancel)", "%s에 쓸 새 키를 누르세요  (ESC: 취소)"],
+	"press_new_button": ["Press a new button for %s  (ESC: cancel)", "%s에 쓸 새 버튼을 누르세요  (ESC: 취소)"],
+	"reset_keys": ["RESET TO DEFAULT", "기본값으로 되돌리기"],
+	"key_up": ["UP (JUMP)", "위 (점프)"],
+	"key_down": ["DOWN (CROUCH)", "아래 (앉기)"],
+	"key_left": ["LEFT", "왼쪽"],
+	"key_right": ["RIGHT", "오른쪽"],
+	"key_d": ["D  (Special)", "D  (필살기)"],
+	"key_start": ["START", "START (시작/일시정지)"],
+	"key_select": ["SELECT", "SELECT (뒤로)"],
 
 	"move": ["MOVE", "이동"],
 	"punch": ["P  (Punch)", "P  (펀치)"],
@@ -281,6 +294,7 @@ const SCENES := {
 	"title": "res://scenes/title.tscn",
 	"mode_select": "res://scenes/mode_select.tscn",
 	"controls": "res://scenes/controls.tscn",
+	"key_config": "res://scenes/key_config.tscn",
 	"char_select": "res://scenes/char_select.tscn",
 	"stage_select": "res://scenes/stage_select.tscn",
 	"battle": "res://scenes/battle.tscn",
@@ -360,7 +374,7 @@ const BUTTON_NAMES := {"p": "P", "k": "K", "s": "S", "hs": "HS", "d": "D", "rc":
 
 func button_name(action: String) -> String:
 	if InputManager.mode == InputManager.Mode.KEYBOARD:
-		return OS.get_keycode_string(InputManager.KEYBOARD_MAP[1][action])
+		return OS.get_keycode_string(InputManager.key_for(1, action))
 	return BUTTON_NAMES[action]
 
 
@@ -379,7 +393,7 @@ func keys_in(s: String) -> String:
 
 
 func button_name_dir(action: String) -> String:
-	return OS.get_keycode_string(InputManager.KEYBOARD_MAP[1][action])
+	return OS.get_keycode_string(InputManager.key_for(1, action))
 
 
 ## 기술표 커맨드 ("D + HS", "→ + D" 등) 속 버튼 글자를 키보드 모드면 키 이름으로 바꾼다
@@ -406,6 +420,8 @@ func save_settings() -> void:
 	var cfg := ConfigFile.new()
 	cfg.set_value("game", "language", language)
 	cfg.set_value("game", "input_mode", InputManager.mode)
+	cfg.set_value("keys", "keyboard", InputManager.custom_keys)
+	cfg.set_value("keys", "joystick", InputManager.custom_joy)
 	cfg.save(SETTINGS_PATH)
 
 
@@ -414,6 +430,8 @@ func _load_settings() -> void:
 	if cfg.load(SETTINGS_PATH) != OK:
 		return
 	language = cfg.get_value("game", "language", Language.EN)
+	InputManager.custom_keys = cfg.get_value("keys", "keyboard", {1: {}, 2: {}})
+	InputManager.custom_joy = cfg.get_value("keys", "joystick", {1: {}, 2: {}})
 	InputManager.set_mode(cfg.get_value("game", "input_mode", InputManager.Mode.KEYBOARD))
 
 
