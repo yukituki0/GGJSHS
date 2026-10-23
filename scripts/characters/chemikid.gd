@@ -18,7 +18,7 @@ const COUNTER_START := 4
 const COUNTER_END := 26
 
 ## 불꽃 반응: [공격 시작 후 프레임, 캐릭터 앞 거리, 색]. 원소마다 불꽃 색이 다르다
-const FLAMES := [[10, 120, Color("ff3348")], [16, 200, Color("ffd62a")], [22, 280, Color("3dff8f")]]
+const FLAMES := [[10, 150, Color("ff3348")], [16, 230, Color("ffd62a")], [22, 310, Color("3dff8f")]]
 
 ## 테르밋 폭발: [공격 시작 후 프레임, 캐릭터 앞 거리]. 마지막은 불꽃 기둥
 const CHAIN_BLASTS := [[8, 110], [14, 190], [20, 270], [26, 350]]
@@ -166,7 +166,7 @@ func tick() -> void:
 				p.attack = _flame_hit
 				p.size = Vector2(120, 90)
 				p.color = f[2]
-				p.position = Vector2(position.x + f[1] * facing, position.y - 120)
+				p.position = Vector2(position.x + f[1] * facing, position.y - 145)  # 뻗은 손 높이
 				p.lifetime = 14
 				p.rehit_interval = 999  # 맞혀도 불꽃이 끝까지 보이게
 				spawn(p)

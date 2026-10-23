@@ -16,7 +16,7 @@ class_name Rigs
 const RIGS := {
 	"chemikid": {
 		"pose_size": {"crouch": 1.15, "crouch_guard": 0.95, "jump": 1.12, "heavy": 0.72, "2d": 1.16, "2k": 0.72, "2p": 0.81, "2s": 0.72, "dash": 0.88, "guard": 0.86, "hit": 0.83, "jd": 0.88, "jh": 0.74, "jk": 0.9, "od": 1.14, "punch": 0.78, "slash": 0.83},
-		"pose_anchor": {"heavy": Vector2(650, 1280), "2h": Vector2(273, 1343), "2p": Vector2(352, 1050), "4d": Vector2(296, 1279), "5d": Vector2(727, 1279), "air_dash": Vector2(547, 961), "dash": Vector2(650, 1216), "jd": Vector2(334, 1025), "js": Vector2(322, 1164)},  # 깊은 런지: 뒷발 쪽을 기준으로 해서 몸이 앞으로 확 튀지 않게
+		"pose_anchor": {"heavy": Vector2(650, 1280), "2h": Vector2(273, 1343), "2p": Vector2(352, 1050), "4d": Vector2(296, 1279), "5d": Vector2(727, 1279), "air_dash": Vector2(547, 961), "dash": Vector2(650, 1216), "jd": Vector2(334, 1025), "js": Vector2(322, 1164), "6d": Vector2(214, 1278)},  # 깊은 런지: 뒷발 쪽을 기준으로 해서 몸이 앞으로 확 튀지 않게
 		"joints": {
 			"hip": Vector2(560, 620), "neck": Vector2(570, 240), "head": Vector2(600, 150),
 			"ba_sh": Vector2(430, 260), "ba_el": Vector2(300, 380), "ba_ha": Vector2(430, 450),
