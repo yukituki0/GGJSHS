@@ -1037,6 +1037,8 @@ func _fit_hitboxes_to_art() -> void:
 					var stretch := maxf(0.0, dx - REACH_LIMIT)
 					a.hitbox.position.x += dx - stretch
 					a.hitbox.size.x += stretch
+				elif move_name.ends_with("D") or move_name == "OD":
+					pass  # 필살기는 채찍·넓은 공격처럼 그림(손)보다 길게 정한 사거리라 줄이지 않는다
 				else:
 					# 그림이 판정보다 짧으면: 판정을 줄여서 끝을 맞추고 (최소 폭까지), 남는 만큼만 뒤로 옮긴다
 					var shrink := maxf(dx, -(a.hitbox.size.x - MIN_HITBOX_W))

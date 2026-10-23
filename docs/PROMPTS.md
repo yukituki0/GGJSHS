@@ -15,7 +15,7 @@
 | 📐 ROOT2 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ | ⬜ | 7/7 |
 | 🌱 SEED | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ | ⬜ | 7/7 |
 
-이펙트: 26/29
+이펙트: 29/29
 
 ## 0-0. 글자 그림 (한 장씩, 첨부 없이)
 
@@ -1063,17 +1063,17 @@ A single 2D fighting game special effect sprite: a jagged white-yellow lightning
 A single 2D fighting game special effect sprite: a swirling grey-blue tornado vortex with debris. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **만유인력 (D, 손에 감기는 중력)** → `chaos_gravity`
+✅ **만유인력 (D, 손에 감기는 중력)** → `chaos_gravity`
 ```
 A single 2D fighting game special effect sprite: a swirling violet-and-black gravity vortex wrapped around an invisible hand: spiraling rings of distorted space, tiny pebbles and dust orbiting inward, a dark core in the center, round overall shape, NO hand drawn, nothing else. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **불꽃 반응 (→D, 게임이 빨강·노랑·초록으로 색을 바꿈)** → `chemikid_flame`
+✅ **불꽃 반응 (→D, 게임이 빨강·노랑·초록으로 색을 바꿈)** → `chemikid_flame`
 ```
 A single 2D fighting game special effect sprite: a single burst of fire flaring out horizontally toward the right like a burner flame, WHITE-hot and very light grey colors only (the game tints it red, yellow and green), wider than tall, soft flickering edges, nothing else. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **중화 반응 방패 (←D)** → `chemikid_neutralize`
+✅ **중화 반응 방패 (←D)** → `chemikid_neutralize`
 ```
 A single 2D fighting game special effect sprite: a round chemistry barrier seen from the side: a swirling disc where acid-red and base-blue liquid mix together into clear white light in the center, bubbles and tiny hexagon molecule shapes around the rim, glowing, NO letters. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
@@ -1098,9 +1098,9 @@ A single 2D fighting game special effect sprite: a burst of white hot steam spre
 A single 2D fighting game special effect sprite: a golden square-root symbol shaped like a spinning boomerang. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-✅ **적분 기둥** → `root2_pillar`
+✅ **적분 기둥 (↓D, 바닥에서 솟는 가늘고 긴 그림)** → `root2_pillar`
 ```
-A single 2D fighting game special effect sprite: a tall golden pillar of light rising from the ground with integral symbol patterns. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
+A single 2D fighting game special effect sprite: ONE thin sharp beam of light shooting straight UP from the ground, shaped like a tall elongated integral sign, very narrow (about 5 times taller than wide), flat 2-tone cel shading in gold and white only, crisp clean edges, a small flat burst of light at the base, a few thin golden line sparks, minimal detail, NO glow haze, NO realistic texture, NO particles cloud, nothing else. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
 ✅ **주사위** → `root2_dice`
@@ -1123,9 +1123,9 @@ A single 2D fighting game special effect sprite: a huge round golden official se
 A single 2D fighting game special effect sprite: a large flat glowing golden magic circle made of geometry: concentric circles, a triangle and square inscribed, compass arcs and ruler tick marks, seen from the front, abstract math symbol shapes but NO readable letters or numbers. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-✅ **덩굴 (↓ 씨앗에서 솟음, 세로로 긴 그림)** → `seed_vine`
+✅ **덩굴 (D 씨앗에서 솟음, 가늘고 긴 그림)** → `seed_vine`
 ```
-A single 2D fighting game special effect sprite: ONE single thick green thorny plant vine shooting straight UP out of the ground like a pillar, tall and narrow (about 3 times taller than wide), cracked dirt and small rocks at its base on a flat ground line, a few leaves flying, nothing else. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
+A single 2D fighting game special effect sprite: ONE slender green plant sprout whipping straight UP out of the ground, thin stem (about 6 times taller than wide), gently curling at the top with two or three small leaves and one small pink bud, a tiny tuft of dirt at its base, flat 2-tone cel shading in only green and light green, bold clean black outline, simple and stylized like a fighting game sprite, NO thick trunk, NO thorns, NO rocks, NO realistic texture, NO glow, nothing else. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
 ✅ **덩굴 채찍 (→D, 가로로 쭉 뻗은 그림)** → `seed_whip`

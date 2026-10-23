@@ -14,6 +14,7 @@ const DNA_PINK := Color("ff6fae")
 
 const SEED_GROW_FRAMES := 40       # 씨앗이 덩굴이 되기까지
 const SEED_DISTANCE := 230.0       # 5D 씨앗을 심는 거리 (자라난 덩굴이 몸과 안 겹치게)
+const WHIP_LINGER := 8.0          # 판정이 끝난 뒤에도 채찍이 흐려지며 남는 프레임 (눈에 보이게)
 const WHIP_START := 90.0           # 6D 덩굴 채찍이 시작하는 곳 (몸 가운데에서 앞으로, 손 근처)
 const PHOTOSYNTHESIS_HEAL := 0.6   # 광합성 프레임당 회복량
 const EVOLVE_FRAMES := 360         # 진화 지속 (6초)
@@ -42,7 +43,7 @@ func _build_specials() -> void:
 	#                                 이름  발생 지속 후딜 데미지 판정 범위                  단계 히트 가드
 	var a := _add(AttackData.new("5D", 12, 0, 20, 0, Rect2(), M, 0, 0))
 	a.event_frame = 12
-	a = _add(AttackData.new("6D", 12, 5, 22, 38, Rect2(60, -115, 230, 40), M, 18, 14))  # 몸 앞에서부터 (6D 그림이 앞으로 뻗은 자세라 몸과 안 겹치게)
+	a = _add(AttackData.new("6D", 12, 8, 19, 38, Rect2(60, -115, 230, 40), M, 18, 14))  # 몸 앞에서부터 (6D 그림이 앞으로 뻗은 자세라 몸과 안 겹치게)
 	a = _add(AttackData.new("2D", 10, 0, 22, 0, Rect2(), M, 0, 0))
 	a.event_frame = 10
 	a = _add(AttackData.new("4D", 4, 60, 10, 0, Rect2(), M, 0, 0))
@@ -179,7 +180,9 @@ func _draw() -> void:
 			draw_line(Vector2(x - 20, -size.y - 120), Vector2(x, -size.y - 10), Color(1, 0.95, 0.5, 0.6), 4.0)
 	# 덩굴 채찍
 	if state == State.ATTACK and current_attack != null and current_attack.name == "6D" \
-			and current_attack.is_active(state_frame):
+			and state_frame > current_attack.startup \
+			and state_frame <= current_attack.startup + current_attack.active + WHIP_LINGER:
+		var fade := clampf(1.0 - float(state_frame - current_attack.startup - current_attack.active) / WHIP_LINGER, 0.0, 1.0)
 		var whip := Game.load_texture("res://assets/effects/seed_whip.png")
 		if whip != null:
 			# 채찍 그림을 판정 길이만큼 쭉 뻗게 (나오는 동안 앞으로 늘어남)
@@ -192,9 +195,9 @@ func _draw() -> void:
 			var src := Rect2(0, 0, whip.get_width() * reach, whip.get_height()) if reach < 1.0 else Rect2()
 			draw_set_transform(Vector2.ZERO, 0, Vector2(facing, 1))
 			if src.has_area():
-				draw_texture_rect_region(whip, Rect2(whip_x, box.get_center().y - h / 2, whip_len, h), src)
+				draw_texture_rect_region(whip, Rect2(whip_x, box.get_center().y - h / 2, whip_len, h), src, Color(1, 1, 1, fade))
 			else:
-				draw_texture_rect(whip, Rect2(whip_x, box.get_center().y - h / 2, whip_len, h), false)
+				draw_texture_rect(whip, Rect2(whip_x, box.get_center().y - h / 2, whip_len, h), false, Color(1, 1, 1, fade))
 			draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
 		var pts := PackedVector2Array()
 		for i in (0 if whip != null else 7):

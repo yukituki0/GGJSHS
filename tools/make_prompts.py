@@ -207,7 +207,11 @@ EFFECTS = [
     ('chaos_spark', '전자기 방전', 'a ball of crackling yellow electric sparks'),
     ('chaos_steam', '증기 폭발', 'a burst of white hot steam spreading outward'),
     ('root2_boomerang', '√2 부메랑', 'a golden square-root symbol shaped like a spinning boomerang'),
-    ('root2_pillar', '적분 기둥', 'a tall golden pillar of light rising from the ground with integral symbol patterns'),
+    ('root2_pillar', '적분 기둥 (↓D, 바닥에서 솟는 가늘고 긴 그림)',
+     'ONE thin sharp beam of light shooting straight UP from the ground, shaped like a tall elongated integral sign, '
+     'very narrow (about 5 times taller than wide), flat 2-tone cel shading in gold and white only, crisp clean edges, '
+     'a small flat burst of light at the base, a few thin golden line sparks, minimal detail, '
+     'NO glow haze, NO realistic texture, NO particles cloud, nothing else'),
     ('root2_dice', '주사위', 'a single golden six-sided die with black dots'),
     ('root2_number', '숫자 블록 (숫자 없이 — 게임이 1·1·2·3·5를 위에 씀)',
      'a heavy golden stone block falling, seen from the front, a large smooth empty flat face in the center with a raised beveled border, '
@@ -218,9 +222,11 @@ EFFECTS = [
     ('root2_qed_circle', '궁극기 수식 마법진 (상대 머리 위 배경)',
      'a large flat glowing golden magic circle made of geometry: concentric circles, a triangle and square inscribed, '
      'compass arcs and ruler tick marks, seen from the front, abstract math symbol shapes but NO readable letters or numbers'),
-    ('seed_vine', '덩굴 (↓ 씨앗에서 솟음, 세로로 긴 그림)',
-     'ONE single thick green thorny plant vine shooting straight UP out of the ground like a pillar, tall and narrow (about 3 times taller than wide), '
-     'cracked dirt and small rocks at its base on a flat ground line, a few leaves flying, nothing else'),
+    ('seed_vine', '덩굴 (D 씨앗에서 솟음, 가늘고 긴 그림)',
+     'ONE slender green plant sprout whipping straight UP out of the ground, thin stem (about 6 times taller than wide), '
+     'gently curling at the top with two or three small leaves and one small pink bud, a tiny tuft of dirt at its base, '
+     'flat 2-tone cel shading in only green and light green, bold clean black outline, simple and stylized like a fighting game sprite, '
+     'NO thick trunk, NO thorns, NO rocks, NO realistic texture, NO glow, nothing else'),
     ('seed_whip', '덩굴 채찍 (→D, 가로로 쭉 뻗은 그림)',
      'ONE single long green thorny vine whip stretched out STRAIGHT horizontally from the left edge to the right edge like a cracking whip, '
      'very wide and thin (about 5 times wider than tall), slight S-wave, the right tip curled with a motion blur crack, '
