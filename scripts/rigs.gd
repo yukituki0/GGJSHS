@@ -52,9 +52,9 @@ const RIGS := {
 		},
 	},
 	"globe": {
-		"fit_band": {"5H": [0.15, 1.0]},  # HS 망치 내려찍기: 망치 머리가 무릎 높이까지 내려와서
-		"pose_size": {"crouch": 1.15, "jump": 1.19, "2p": 0.75, "2k": 0.78, "2s": 0.91, "jp": 0.82, "jk": 0.84, "js": 0.84, "jh": 0.9, "walk_back": 0.9, "dash": 0.8, "5d": 0.91, "6d": 0.81, "od": 0.9, "slash": 0.88, "heavy": 0.91},
-		"pose_anchor": {"hit": Vector2(157, 1430), "2k": Vector2(524, 1075), "jk": Vector2(795, 1429), "dash": Vector2(700, 1218), "heavy": Vector2(367, 1356)},
+		"reach_limit": {"5H": 120},  # HS 망치 멀리 휘두르기: 판정을 망치 머리까지
+		"pose_size": {"crouch": 1.15, "jump": 1.19, "2p": 0.75, "2k": 0.78, "2s": 0.91, "jp": 0.82, "jk": 0.84, "js": 0.84, "jh": 0.9, "walk_back": 0.9, "dash": 0.8, "5d": 0.91, "6d": 0.81, "od": 0.9, "slash": 0.88, "heavy": 0.89},
+		"pose_anchor": {"hit": Vector2(157, 1430), "2k": Vector2(524, 1075), "jk": Vector2(795, 1429), "dash": Vector2(700, 1218), "heavy": Vector2(835, 1356)},
 		"joints": {
 			"hip": Vector2(520, 620), "neck": Vector2(540, 290), "head": Vector2(580, 170),
 			"ba_sh": Vector2(380, 330), "ba_el": Vector2(250, 450), "ba_ha": Vector2(230, 580),
