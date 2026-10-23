@@ -40,8 +40,8 @@ func _build_specials() -> void:
 	var M := AttackData.Level.MID
 	#                                 이름  발생 지속 후딜 데미지 판정 범위                    단계 히트 가드
 	var a := _add(AttackData.new("5D", 10, 22, 16, 0, Rect2(), M, 0, 0))
-	# 커맨드 잡기: 일반 잡기(사거리 90, 40 데미지, 후딜 22)보다 사거리 2배, 데미지 2배. 대신 빗나가면 빈틈이 크다
-	a = _add(AttackData.new("6D", 6, 3, 40, 80, Rect2(10, -150, 170, 140), M, 30, 0))
+	# 커맨드 잡기: 일반 잡기(사거리 90, 40 데미지, 후딜 22)보다 사거리 2배, 데미지 2배. 대신 빗나가면 빈틈이 조금 더 크다
+	a = _add(AttackData.new("6D", 6, 3, 30, 80, Rect2(10, -150, 170, 140), M, 30, 0))  # 후딜 40 → 30 (빗나가도 너무 오래 무방비이지 않게)
 	a.is_throw = true
 	a.launch = Vector2(-11, -13)  # 등 뒤로 넘겨 던진다
 	a.hitstop = 14
