@@ -975,6 +975,7 @@ func _check_landing() -> void:
 
 
 func _land() -> void:
+	_air_hits = 0
 	if current_attack != null:
 		landing_lag = current_attack.landing_recovery
 	position.y = ground_y
@@ -1207,7 +1208,19 @@ func in_counter_state() -> bool:
 
 ## 공격 시작부터 invuln_frames 동안은 무적
 func is_invulnerable() -> bool:
+	if juggle_immune():
+		return true
 	return state == State.ATTACK and current_attack != null and state_frame <= current_attack.invuln_frames
+
+
+## 공중 콤보 제한: 공중에서 JUGGLE_LIMIT대 넘게 맞으면 땅에 떨어질 때까지 더 안 맞는다 (무한 띄우기 방지)
+const JUGGLE_LIMIT := 8
+const HITSTUN_DECAY_FROM := 5
+var _air_hits := 0
+
+
+func juggle_immune() -> bool:
+	return state == State.HITSTUN and not is_on_ground() and _air_hits >= JUGGLE_LIMIT
 
 
 ## Match가 호출: 공격을 받았다. 막았으면 true를 돌려준다
@@ -1259,6 +1272,7 @@ func receive_attack(attack: AttackData, from_dir: int, damage_scale := 1.0) -> b
 		_combo_moves = 0
 		_combo_last = null
 	combo_hits += 1
+	_air_hits = _air_hits + 1 if not is_on_ground() else 0
 	if attack != _combo_last:
 		_combo_moves += 1
 		_combo_last = attack
@@ -1275,6 +1289,9 @@ func receive_attack(attack: AttackData, from_dir: int, damage_scale := 1.0) -> b
 		_change_state(State.KO)
 		return false
 	stun_frames = attack.hitstun + (COUNTER_HITSTUN if counter else 0)
+	# 경직 감소: 콤보가 길어질수록 경직이 짧아져서 언젠가는 끊긴다 (길티기어처럼). 6히트부터 한 대마다 -6%, 최소 절반
+	if combo_hits > HITSTUN_DECAY_FROM:
+		stun_frames = maxi(4, int(stun_frames * maxf(0.5, 1.0 - 0.06 * (combo_hits - HITSTUN_DECAY_FROM))))
 	if attack.launch != Vector2.ZERO:
 		velocity = Vector2(attack.launch.x * from_dir, attack.launch.y)  # 던지기 등: 크게 날아감
 		position.y -= 1  # 땅에서 떨어뜨려야 공중 경직으로 처리된다

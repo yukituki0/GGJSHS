@@ -11,8 +11,11 @@ extends RefCounted
 ##   think     다음 행동을 고르기까지 걸리는 프레임 (작을수록 빠르게 판단)
 ##   punish    상대가 기술을 헛치거나 막혀서 빈틈이 있을 때 바로 때릴 확률
 ##   burst     콤보를 burst_hits대 이상 맞으면 버스트로 빠져나올 확률
+##   master    달인 전용 기술: 정해진 최대 데미지 콤보 길(2H 띄우기 → 점프 캔슬 → 공중 콤보 → 공중D),
+##             필살기 → 오버드라이브 연결, 막힌 위험한 기술은 로만 캔슬로 안전하게, 점프 대공은 띄워서 공중 콤보,
+##             먼 거리 빈틈은 긴 기술로 때리기
 
-enum Level { EASY, NORMAL, HARD }
+enum Level { EASY, NORMAL, HARD, MASTER }
 
 const PARAMS := {
 	Level.EASY: { "react": 20, "guard": 0.3, "low_guard": 0.25, "combo": 0.4, "anti_air": 0.15,
@@ -21,7 +24,14 @@ const PARAMS := {
 			"throw": 0.35, "special": 0.3, "think": [12, 30], "punish": 0.45, "burst": 0.5, "burst_hits": 4 },
 	Level.HARD: { "react": 5, "guard": 0.9, "low_guard": 0.9, "combo": 0.95, "anti_air": 0.85,
 			"throw": 0.5, "special": 0.35, "think": [6, 18], "punish": 0.85, "burst": 0.85, "burst_hits": 3 },
+	Level.MASTER: { "react": 3, "guard": 0.97, "low_guard": 0.97, "combo": 1.0, "anti_air": 0.95,
+			"throw": 0.55, "special": 0.35, "think": [4, 12], "punish": 0.97, "burst": 0.95, "burst_hits": 3,
+			"master": true },
 }
+
+## 달인 콤보 길: 이어갈 수 있는 기술 중 앞에 있는 것부터 고른다 (띄우는 2H로 모아서 공중 콤보)
+const MASTER_ROUTE := ["2H", "5H", "5S", "2S", "5K", "2K", "5P", "2P"]
+const AIR_ROUTE := ["s", "hs"]       # 점프 캔슬 뒤 공중에서 누를 순서 (jS → jH → 공중D)
 
 var p: Dictionary
 var _held := {}            # 지금 누르고 있는 버튼
@@ -36,6 +46,8 @@ var _combo_for: AttackData        # 이어갈지 이미 정한 기술 (기술마
 var _aa_decided := false
 var _burst_decided := -1           # 버스트를 쓸지 정한 콤보 히트 수 (같은 히트에서 두 번 안 정하게)
 var _punish_decided := false
+var _air_step := 0                 # 달인 공중 콤보 진행 (0 = jS, 1 = jH, 2 = 공중D)
+var _rc_decided: AttackData        # 막힌 기술을 로만 캔슬할지 이미 정한 기술
 
 
 func _init(level: int) -> void:
@@ -94,8 +106,20 @@ func think(me: Fighter) -> void:
 		_held["down"] = _guard_low
 		return
 
+	# 1.5) 달인: 공중 콤보 (2H 점프 캔슬로 뛰어오른 뒤 떠 있는 상대에게 jS → jH → 공중D)
+	if p.has("master") and not me.is_on_ground() and opp.state == Fighter.State.HITSTUN \
+			and not opp.is_on_ground() and me.state == Fighter.State.AIR and dist < 200 and _air_step < AIR_ROUTE.size():
+		_press(AIR_ROUTE[_air_step])
+		_air_step += 1
+		return
+	if me.is_on_ground() and me.state != Fighter.State.ATTACK:
+		_air_step = 0
+
 	# 2) 콤보: 내 공격이 맞거나 막히면 combo 확률로 다음 기술을 이어서 누른다 (기술마다 다시 정함)
 	if me.state == Fighter.State.ATTACK and me.current_attack != null:
+		if p.has("master"):
+			_master_attack(me, opp, fwd)
+			return
 		if me.attack_connected and _combo_for != me.current_attack:
 			_combo_for = me.current_attack
 			if randf() < p["combo"]:
@@ -108,7 +132,10 @@ func think(me: Fighter) -> void:
 		if not _punish_decided:
 			_punish_decided = true
 			if randf() < p["punish"]:
-				_press_move(["5K", "2K", "5P"].pick_random() if dist < 130 else "5S", fwd)
+				if p.has("master"):  # 달인: 거리에 맞는 가장 센 시작기 (먼 빈틈은 5H)
+					_press_move("2K" if dist < 120 else ("5S" if dist < 170 else "5H"), fwd)
+				else:
+					_press_move(["5K", "2K", "5P"].pick_random() if dist < 130 else "5S", fwd)
 				return
 	else:
 		_punish_decided = false
@@ -118,6 +145,11 @@ func think(me: Fighter) -> void:
 		if not _aa_decided:
 			_aa_decided = true
 			if randf() < p["anti_air"]:
+				# 달인 Chemikid: 무적 대공(↓D)이 있으면 그걸로
+				if p.has("master") and me.char_id == "chemikid" and not _usable_specials(me, ["2D"]).is_empty():
+					_held["down"] = true
+					_press("d")
+					return
 				_held["down"] = true
 				_press("hs")
 				return
@@ -130,6 +162,61 @@ func think(me: Fighter) -> void:
 	if _plan_frames <= 0:
 		_choose_plan(me, opp, dist)
 	_do_plan(me, opp, dist, fwd, back)
+
+
+## 달인: 공격 중 판단. 맞으면 콤보 길대로 이어가고, 막혔는데 위험한 기술이면 로만 캔슬
+func _master_attack(me: Fighter, opp: Fighter, fwd: String) -> void:
+	var a := me.current_attack
+	if not me.attack_connected:
+		return
+	var blocked := opp.state == Fighter.State.BLOCKSTUN
+	if _combo_for == a:
+		# 2H 점프 캔슬: 맞힌 2H에서는 위를 계속 누르고 있어야 점프가 나간다
+		if a.name in Fighter.JUMP_CANCEL and not blocked and me.is_on_ground():
+			_held["up"] = true
+			_held[fwd] = true
+		return
+	_combo_for = a
+	var is_special := a.name.ends_with("D") or a.name == "OD"
+	if blocked:
+		# 막힌 큰 기술(필살기·5H)은 텐션이 있으면 로만 캔슬로 빈틈 없애기
+		if (is_special or a.name == "5H") and a.name != "OD" and me.tension >= Fighter.RC_COST and _rc_decided != a:
+			_rc_decided = a
+			_press("rc")
+		elif not is_special and a.gatling.size() > 0:
+			_press_move(a.gatling[0], fwd)  # 막혀도 개틀링으로 압박 계속
+		return
+	# 맞음: 필살기 → 오버드라이브
+	if is_special:
+		if a.name != "OD" and me.tension >= Fighter.RC_COST and me.attacks.has("OD"):
+			_press("d")
+			_press("hs")
+		return
+	# 공중 기본기 → 다음 공중기 → 공중D
+	if a.name.begins_with("j"):
+		if a.gatling.size() > 0:
+			var nxt: String = a.gatling[-1]
+			_press(nxt.substr(1).to_lower().replace("h", "hs"))
+		elif not _usable_specials(me, ["jD"]).is_empty():
+			_press("d")
+		return
+	# 2H: 점프 캔슬로 공중 콤보
+	if a.name in Fighter.JUMP_CANCEL and me.is_on_ground():
+		_held["up"] = true
+		_held[fwd] = true
+		_air_step = 0
+		return
+	# 땅 기본기: 콤보 길에서 가장 센 다음 기술, 더 없으면 필살기
+	for mv: String in MASTER_ROUTE:
+		if mv in a.gatling:
+			_press_move(mv, fwd)
+			return
+	var specials := _usable_specials(me, ["6D", "2D", "5D"])
+	if not specials.is_empty():
+		_press_move(specials[0], fwd)
+	elif me.tension >= Fighter.RC_COST and me.attacks.has("OD"):
+		_press("d")
+		_press("hs")
 
 
 ## 상대가 공격 후딜 중인가 (판정이 사라진 뒤 아직 못 움직이는 때)

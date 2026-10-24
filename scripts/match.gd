@@ -90,7 +90,7 @@ func _spawn(player: int) -> Fighter:
 	f.player = player
 	f.display_name = info["name"]
 	if Game.demo:  # 데모: 둘 다 어려움 CPU
-		f.brain = CpuBrain.new(CpuBrain.Level.HARD)
+		f.brain = CpuBrain.new(CpuBrain.Level.MASTER)  # 데모는 달인끼리 (콤보가 화려하게)
 		f.display_name = "CPU " + f.display_name
 	elif player == 2 and Game.mode == Game.Mode.CPU:
 		f.brain = CpuBrain.new(Game.cpu_level)
