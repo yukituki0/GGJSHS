@@ -126,6 +126,7 @@ var _same_chain := 0
 var attack_connected := false   # 이번 공격이 이미 맞았거나 막혔나 (한 번만 판정 + 개틀링 조건)
 var stun_frames := 0            # 히트스턴/가드스턴 남은 프레임
 var _buffer := {}               # 액션 -> 남은 기억 프레임 (0이면 없음)
+var _age := {}                  # 액션 -> 마지막으로 누른 뒤 지난 프레임 (동시 입력 판정용, 써도 안 지워짐)
 var tension := 0.0
 var mana := MAX_MANA
 var mana_short := 0             # 마력이 모자라 필살기가 안 나갔을 때 게이지가 깜빡이는 남은 프레임
@@ -304,6 +305,7 @@ func tick_frozen() -> void:
 	for action in BUFFERED_ACTIONS:
 		if brain == null and _just_pressed(action):
 			_buffer[action] = input_buffer_frames
+			_age[action] = 0
 	if hit_shake > 0:
 		hit_shake -= 1
 	queue_redraw()
@@ -326,6 +328,7 @@ func reset_for_round(x: float) -> void:
 	counter_text = 0
 	history.clear()
 	_buffer.clear()
+	_age.clear()
 	_change_state(State.STAND)
 	_face_opponent()
 
@@ -540,6 +543,37 @@ func _pressed(action: String) -> bool:
 	return _buffer.get(action, 0) > 0
 
 
+## 두 버튼을 "동시에" 눌렀나: 둘 다 버퍼에 있고, 누른 시점 차이가 SIMUL_WINDOW 프레임 이하
+## (따로따로 누른 버튼이 버퍼에 같이 남아 있어서 도발/오버드라이브/버스트가 나가 버리는 것 방지)
+const SIMUL_WINDOW := 3
+
+
+## 사람은 정확히 같은 프레임에 누르기 어려우니, 먼저 누른 버튼의 기술이 막 나간 직후(SIMUL_WINDOW 프레임 안)에
+## 두 번째 버튼이 들어오면 _upgrade_together()가 합친 기술로 바꿔 준다 (격투겜의 동시 입력 판정과 같은 방식)
+func _together(a: String, b: String) -> bool:
+	var age_a: int = _age.get(a, 999)
+	var age_b: int = _age.get(b, 999)
+	return age_a <= input_buffer_frames and age_b <= input_buffer_frames and absi(age_a - age_b) <= SIMUL_WINDOW \
+			and (_pressed(a) or _pressed(b))
+
+
+## 방금(SIMUL_WINDOW 안) 시작한 기술을 동시 입력 기술로 바꾸기: 5P/5K → 도발, 5D/5H → 오버드라이브
+func _upgrade_together() -> bool:
+	if current_attack == null or state_frame > SIMUL_WINDOW or not is_on_ground():
+		return false
+	var from := current_attack.name
+	if from in ["5P", "5K", "6K"] and _together("p", "k") and attacks.has("taunt"):
+		mana += mana_cost(from)
+		_start_taunt(_input_forward() > 0)
+		return true
+	if from in ["5D", "6D", "4D", "2D", "5H"] and _together("d", "hs") and attacks.has("OD") \
+			and tension >= attacks["OD"].cost:
+		mana += mana_cost(from)
+		_start_attack("OD")
+		return true
+	return false
+
+
 func _consume(action: String) -> void:
 	_buffer[action] = 0
 
@@ -549,8 +583,10 @@ func _consume(action: String) -> void:
 func _update_buffer() -> void:
 	_update_dash_taps()
 	for action in BUFFERED_ACTIONS:
+		_age[action] = _age.get(action, 999) + 1
 		if _just_pressed(action):
 			_buffer[action] = input_buffer_frames
+			_age[action] = 0
 		elif _buffer.get(action, 0) > 0:
 			_buffer[action] -= 1
 
@@ -613,7 +649,7 @@ func _pressed_special() -> String:
 	if not _pressed("d"):
 		return ""
 	var move := ""
-	if _pressed("hs") and attacks.has("OD") and tension >= attacks["OD"].cost:
+	if _together("d", "hs") and attacks.has("OD") and tension >= attacks["OD"].cost:
 		move = "OD"
 	elif _held("down"):
 		move = "2D"
@@ -678,7 +714,7 @@ func _ground_neutral() -> void:
 		_start_attack(special)
 		return
 	# 도발 / 리스펙트: P + K를 같이 누르면 (서 있을 때만, 앞을 누르고 있으면 리스펙트)
-	if _pressed("p") and _pressed("k") and not _held("down"):
+	if _together("p", "k") and not _held("down"):
 		_start_taunt(fwd > 0)
 		return
 	# 일반 잡기: 붙어서 → / ← + HS (아니면 그냥 5H가 나간다)
@@ -824,6 +860,8 @@ func _guard() -> void:
 
 ## 공격 중: 발생 → 지속 → 후딜이 끝나면 원래 상태로. 맞히거나 막히면 개틀링 가능
 func _attack() -> void:
+	if _upgrade_together():
+		return
 	var airborne := not is_on_ground() or velocity.y < 0
 	if airborne:
 		velocity.y += gravity
@@ -939,7 +977,7 @@ func _burst_pressed() -> bool:
 	if not _pressed("d"):
 		return false
 	for button in ATTACK_BUTTONS:
-		if _pressed(button):
+		if _together("d", button):
 			return true
 	return false
 
