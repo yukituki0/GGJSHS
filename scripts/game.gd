@@ -477,9 +477,52 @@ func stage_info() -> Dictionary:
 var _textures := {}
 
 func load_texture(path: String) -> Texture2D:
+	if _pending.has(path):  # 미리 불러오기 중이던 그림: 끝날 때까지 기다렸다가 받기
+		_pending.erase(path)
+		_textures[path] = ResourceLoader.load_threaded_get(path)
 	if not _textures.has(path):
 		_textures[path] = load(path) if ResourceLoader.exists(path) else null
 	return _textures[path]
+
+
+## 캐릭터 그림 미리 불러오기 (백그라운드). 그림이 장당 1~3MB라 기술을 처음 쓸 때 불러오면 화면이 멈칫한다
+var _pending := {}
+
+
+## 그 캐릭터의 그림 파일들 (assets/characters/<id>.png, <id>_*.png)
+func character_paths(id: String) -> Array[String]:
+	var out: Array[String] = []
+	for f in ResourceLoader.list_directory("res://assets/characters/"):
+		if f.ends_with(".png") and (f == id + ".png" or f.begins_with(id + "_")):
+			out.append("res://assets/characters/" + f)
+	return out
+
+
+## 이펙트·글자 그림 (assets/effects, assets/ui/text_*) 경로
+func effect_paths() -> Array[String]:
+	var out: Array[String] = []
+	for f in ResourceLoader.list_directory("res://assets/effects/"):
+		if f.ends_with(".png"):
+			out.append("res://assets/effects/" + f)
+	for f in ResourceLoader.list_directory("res://assets/ui/"):
+		if f.begins_with("text_") and f.ends_with(".png"):
+			out.append("res://assets/ui/" + f)
+	return out
+
+
+func preload_paths(paths: Array[String]) -> void:
+	for path in paths:
+		if not _textures.has(path) and not _pending.has(path):
+			if ResourceLoader.load_threaded_request(path) == OK:
+				_pending[path] = true
+
+
+func preload_characters(indices: Array) -> void:
+	preload_paths(effect_paths())
+	for i in indices:
+		if i < 0 or i >= CHARACTERS.size():
+			continue  # 트레이닝 더미 등
+		preload_paths(character_paths(CHARACTERS[i]["id"]))
 
 
 func character_art(info: Dictionary) -> Texture2D:

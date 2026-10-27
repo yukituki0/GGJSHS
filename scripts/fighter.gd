@@ -1637,6 +1637,32 @@ func _anchor_for(tex: Texture2D) -> Vector2:
 	return a
 
 
+## 그림 미리 분석하기: 자세 그림마다 발 위치·맞는 판정·머리 위치를 처음 쓸 때 픽셀을 훑어서 구하는데,
+## 대전 중에 하면 멈칫하니까 VS 화면 동안 조금씩 미리 해 둔다. 아직 남았으면 true
+var _warm_queue: Array[String] = []
+var _warm_started := false
+
+
+func warm_art_step(count: int) -> bool:
+	if puppet == null:
+		return false
+	if not _warm_started:
+		_warm_started = true
+		_warm_queue = Game.character_paths(char_id)
+	for i in count:
+		if _warm_queue.is_empty():
+			return false
+		var path: String = _warm_queue.pop_back()
+		var tex := Game.load_texture(path)
+		var screen_only := path.ends_with("_select.png") or path.ends_with("_face.png") or path.ends_with("_cutin.png")
+		if tex != null and not screen_only:  # 화면용 그림(컷인 등)은 불러오기만
+			var a := _anchor_for(tex)
+			ArtBoxes.hurt_boxes(tex, a)
+			Puppet.head_x(tex)
+			Puppet.top_row(tex)
+	return not _warm_queue.is_empty()
+
+
 ## 지금 그려지는 그림의 머리 꼭대기 (캐릭터 발 기준 게임 좌표, 오른쪽을 볼 때)
 func _head_top() -> Vector2:
 	var tex := _pose_texture()

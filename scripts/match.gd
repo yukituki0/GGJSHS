@@ -40,6 +40,8 @@ var superflash_attack: AttackData
 var tint_color := Color.TRANSPARENT  # 화면 전체 색 효과 (HUD가 그림)
 var tint_frames := 0
 var _camera: Camera2D
+var _art_warm := false           # 캐릭터 그림 미리 분석 끝남
+var _fx_queue: Array[String] = []  # 아직 안 불러온 이펙트·글자 그림
 var _training_idle := { 1: 0, 2: 0 }  # 트레이닝: 안 맞고 지난 프레임 (체력 회복용)
 var _stage_texture: Texture2D
 var training_settings := false   # 일시정지 중 ⚙ 트레이닝 설정 화면을 보고 있나
@@ -69,7 +71,14 @@ func _ready() -> void:
 	add_child(_camera)
 	_input_debug.visible = false
 
-	if is_training():
+	Game.preload_characters([Game.selected[1], Game.selected[2]])
+	_fx_queue = Game.effect_paths()
+	if is_training():  # 트레이닝은 VS 화면이 없으니 바로 다 분석해 둔다 (들어갈 때 한 번만 잠깐 멈춤)
+		while p1.warm_art_step(8) or p2.warm_art_step(8):
+			pass
+		for path in _fx_queue:
+			Game.load_texture(path)
+		_fx_queue.clear()
 		for f in [p1, p2]:
 			f.can_die = false
 		p2.dummy = Game.dummy_mode as Fighter.Dummy  # 2P 자리는 더미 (혼자 연습)
@@ -146,6 +155,13 @@ func _unhandled_input(event: InputEvent) -> void:
 # ── 매 프레임 ─────────────────────────────────────────────
 func _physics_process(_delta: float) -> void:
 	phase_frame += 1
+	if not _art_warm:  # VS 화면 동안 그림 미리 분석 (한 프레임에 조금씩)
+		var more1 := p1.warm_art_step(2)
+		var more2 := p2.warm_art_step(2)
+		for i in 3:  # 이펙트·글자 그림도 처음 쓸 때 멈칫하지 않게 불러 둔다
+			if not _fx_queue.is_empty():
+				Game.load_texture(_fx_queue.pop_back())
+		_art_warm = not (more1 or more2 or not _fx_queue.is_empty())
 	# 데모: 아무 버튼이나 누르거나 경기가 끝나면 타이틀로
 	if Game.demo and ((phase_frame > 30 and Input.is_anything_pressed()) or phase == Phase.RESULT):
 		Game.end_demo()

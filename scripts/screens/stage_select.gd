@@ -15,6 +15,7 @@ var _textures := []      # 스테이지별 사진 (없으면 null)
 
 
 func _ready() -> void:
+	Game.preload_characters([Game.selected.get(1, -1), Game.selected.get(2, -1)])  # 스테이지 고르는 동안 캐릭터 그림을 미리
 	for info in Game.STAGES:
 		_textures.append(Game.load_texture("res://assets/stages/%s.png" % info["id"]))
 	cursor = 0 if Game.stage_random else Game.stage + 1
