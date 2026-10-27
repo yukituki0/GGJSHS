@@ -102,7 +102,6 @@ SPECIALS = {
 # 다시 뽑을 그림: (파일, 설명, Pose 문장). 새 그림을 넣으면 여기서 지운다
 REDO = [
     # 판정보다 그림이 짧아서 판정이 허공에 떠 있는 것 (실측: 그림 끝 / 판정 끝)
-    ('seed_2p', '앉아 P (37 / 73)', 'DEEP CROUCH, squatting very low: both knees fully bent, hips dropped close to the floor, the top of the head only about two thirds of standing height, upper body hunched forward (NOT a standing wide stance, legs NOT straight), quick short jab with one fist at waist height, the punching arm FULLY extended straight forward toward the right, the other fist guarding the chin'),
 ]
 
 # 무기 공격 (길티기어처럼 S = 가벼운 무기 공격, HS = 크고 느린 무기 공격). 5S → <id>_slash, 5H → <id>_heavy
