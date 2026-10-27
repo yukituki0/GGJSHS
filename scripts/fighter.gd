@@ -33,7 +33,8 @@ enum State {
 @export var airdash_speed := 11.0
 @export var air_actions := 1            # 공중에서 2단 점프/공중 대시를 몇 번 쓸 수 있나 (둘이 공유)
 @export var ground_friction := 0.85     # 밀려날 때 속도가 줄어드는 비율
-@export var input_buffer_frames := 8    # 버튼을 몇 프레임 전에 눌러도 기억해 둘지
+@export var input_buffer_frames := 5    # 버튼을 몇 프레임 전에 눌러도 기억해 둘지 (스파6: 4프레임 일찍 = 5프레임 창)
+const WAKEUP_BUFFER_FRAMES := 7         # 쓰러져 있을 때(기상 직전) 누른 버튼은 더 오래 기억 (스파6 기상 버퍼 7프레임)
 
 # ── 텐션 게이지 ───────────────────────────────────────────
 const MAX_TENSION := 100.0
@@ -304,7 +305,7 @@ func tick_frozen() -> void:
 		_update_dash_taps()
 	for action in BUFFERED_ACTIONS:
 		if brain == null and _just_pressed(action):
-			_buffer[action] = input_buffer_frames
+			_buffer[action] = _buffer_frames()
 			_age[action] = 0
 	if hit_shake > 0:
 		hit_shake -= 1
@@ -578,6 +579,10 @@ func _consume(action: String) -> void:
 	_buffer[action] = 0
 
 
+func _buffer_frames() -> int:
+	return WAKEUP_BUFFER_FRAMES if state == State.DOWN else input_buffer_frames
+
+
 ## 입력 버퍼: 누른 순간부터 input_buffer_frames 동안 "눌렀음"을 기억한다.
 ## 후딜 중에 조금 일찍 눌러도, 움직일 수 있게 되는 순간 바로 나간다.
 func _update_buffer() -> void:
@@ -585,7 +590,7 @@ func _update_buffer() -> void:
 	for action in BUFFERED_ACTIONS:
 		_age[action] = _age.get(action, 999) + 1
 		if _just_pressed(action):
-			_buffer[action] = input_buffer_frames
+			_buffer[action] = _buffer_frames()
 			_age[action] = 0
 		elif _buffer.get(action, 0) > 0:
 			_buffer[action] -= 1
