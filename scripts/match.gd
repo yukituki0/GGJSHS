@@ -525,6 +525,28 @@ const CAMERA_MARGIN := 260.0     # 캐릭터 바깥으로 보여줄 여유 (가�
 const CAMERA_GROUND_SCREEN_Y := 650.0  # 바닥이 화면에서 이 높이에 오게
 
 
+## 배경 원근: 배경은 멀리 있으니까 카메라가 확대해도 캐릭터보다 덜 커지고 덜 움직인다 (길티기어 스테이지처럼)
+## 0 = 배경이 화면에 고정, 1 = 캐릭터와 똑같이 확대
+const STAGE_PARALLAX := 0.3
+
+
+## 배경 그림을 그릴 곳 (게임 좌표). 화면에서 배경 배율 = 1 + (카메라 배율 - 1) x STAGE_PARALLAX
+func _stage_rect() -> Rect2:
+	var z := _camera.zoom.x
+	var half := Vector2(640.0, 360.0) / z
+	var sb := 1.0 + (z - 1.0) * STAGE_PARALLAX
+	var screen_size := Vector2(1280.0, 720.0) * sb
+	# 카메라가 스테이지 왼쪽 끝 ~ 오른쪽 끝 중 어디쯤인지 (0~1)에 맞춰 배경도 그만큼 밀어 준다
+	var room := Vector2(1280.0, 720.0) - half * 2.0
+	var u := Vector2(0.5, 1.0)
+	if room.x > 0.5:
+		u.x = clampf((_camera.position.x - half.x) / room.x, 0.0, 1.0)
+	if room.y > 0.5:
+		u.y = clampf((_camera.position.y - half.y) / room.y, 0.0, 1.0)
+	var screen_pos := -(screen_size - Vector2(1280.0, 720.0)) * u
+	return Rect2(_camera.position + (screen_pos - Vector2(640.0, 360.0)) / z, screen_size / z)
+
+
 func _update_camera() -> void:
 	if p1 == null or p2 == null:
 		return
@@ -548,7 +570,7 @@ func _draw() -> void:
 		_draw_training_stage()
 		return
 	if _stage_texture != null:
-		draw_texture_rect(_stage_texture, Rect2(0, 0, 1280, 720), false)
+		draw_texture_rect(_stage_texture, _stage_rect(), false)
 		return
 	# 임시 배경: 위아래 그라데이션 + 바닥
 	var info := Game.stage_info()
