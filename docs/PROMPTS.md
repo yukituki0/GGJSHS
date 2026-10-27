@@ -15,7 +15,7 @@
 | 📐 ROOT2 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 7/7 |
 | 🌱 SEED | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 7/7 |
 
-이펙트: 34/42
+이펙트: 38/42
 
 ## 0-0. 글자 그림 (한 장씩, 첨부 없이)
 
@@ -1043,22 +1043,22 @@ A single 2D fighting game special effect sprite: a sharp hit spark burst: bright
 A single 2D fighting game special effect sprite: a defensive block spark: a small cyan-white hexagon flash with short straight light rays, crisp and clean, round overall. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **가드 방패 (공통, 몸 앞)** → `fx_guard_shield`
+✅ **가드 방패 (공통, 몸 앞)** → `fx_guard_shield`
 ```
 A single 2D fighting game special effect sprite: a curved translucent cyan energy barrier seen from the side, a tall crescent shape bulging toward the right, hexagon pattern faintly inside, glowing edge. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **버스트 충격파 (공통)** → `fx_burst`
+✅ **버스트 충격파 (공통)** → `fx_burst`
 ```
 A single 2D fighting game special effect sprite: a powerful circular shockwave ring exploding outward: gold and sky-blue double ring, white flash in the center, a few speed lines, round. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **로만 캔슬 (공통)** → `fx_rc`
+✅ **로만 캔슬 (공통)** → `fx_rc`
 ```
 A single 2D fighting game special effect sprite: a crimson red circular ring wave expanding outward with thin red speed lines and a few small red sparks, round, mostly empty center. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **감전 (Chaos ↓D에 맞은 상대 몸 주위)** → `fx_shock`
+✅ **감전 (Chaos ↓D에 맞은 상대 몸 주위)** → `fx_shock`
 ```
 A single 2D fighting game special effect sprite: crackling yellow electric arcs forming a rough upright oval cage, as if wrapped around an invisible standing person, empty center, taller than wide. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```

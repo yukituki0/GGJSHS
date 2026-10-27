@@ -1441,7 +1441,7 @@ func _draw() -> void:
 		_draw_puppet(shake_x)
 	else:
 		_draw_body(rect, body_color, size)
-	if shock_frames > 0 and not draw_fx("fx_shock", Vector2(0, -size.y / 2), size.y * 1.4,
+	if shock_frames > 0 and not draw_fx("fx_shock", Vector2(0, -size.y * 0.72), size.y * 1.6,
 			0.3 if shock_frames % 4 < 2 else -0.3, 0.9):
 		# 감전: 몸 둘레에 지직거리는 노란 번개
 		for i in 4:
@@ -1450,7 +1450,7 @@ func _draw() -> void:
 			draw_polyline(PackedVector2Array([Vector2(-size.x / 2 - 14, y0), Vector2(-size.x / 4, y0 + jitter),
 					Vector2(size.x / 4, y0 - jitter), Vector2(size.x / 2 + 14, y0)]), Color(1, 0.95, 0.3), 3.0)
 	# 버스트: 금빛/하늘빛 충격파 두 겹
-	if burst_flash > 0 and not draw_fx("fx_burst", Vector2(0, -size.y / 2), 140 + (1.0 - burst_flash / 30.0) * 420,
+	if burst_flash > 0 and not draw_fx("fx_burst", Vector2(0, -size.y * 0.72), 140 + (1.0 - burst_flash / 30.0) * 420,
 			0.0, burst_flash / 30.0):
 		var bt := 1.0 - burst_flash / 30.0
 		var center := Vector2(0, -size.y / 2)
@@ -1458,7 +1458,7 @@ func _draw() -> void:
 		draw_arc(center, 60 + bt * 200, 0, TAU, 64, Color(1, 1, 1, 1.0 - bt), 8.0)
 		draw_arc(center, 30 + bt * 140, 0, TAU, 64, Color(0.4, 0.8, 1.0, 1.0 - bt), 5.0)
 	# 로만 캔슬: 퍼져 나가는 원
-	if rc_flash > 0 and not draw_fx("fx_rc", Vector2(0, -size.y / 2), 100 + (1.0 - rc_flash / 20.0) * 340,
+	if rc_flash > 0 and not draw_fx("fx_rc", Vector2(0, -size.y * 0.72), 100 + (1.0 - rc_flash / 20.0) * 340,
 			0.0, rc_flash / 20.0):
 		var t := 1.0 - rc_flash / 20.0
 		draw_arc(Vector2(0, -size.y / 2), 40 + t * 160, 0, TAU, 48,
