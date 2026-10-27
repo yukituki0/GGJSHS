@@ -48,6 +48,10 @@ var _proof_age := 0
 
 
 func _init() -> void:
+	_big_boomerang_hit.guard_gain = OD_GUARD_GAIN  # 궁극기: 막으면 깎이기만 하고 가드 크러시는 안 나게
+	_proof_pillar_hit.guard_gain = OD_GUARD_GAIN  # 궁극기: 막으면 깎이기만 하고 가드 크러시는 안 나게
+	_side_pillar_hit.guard_gain = OD_GUARD_GAIN  # 궁극기: 막으면 깎이기만 하고 가드 크러시는 안 나게
+	_qed_hit.guard_gain = OD_GUARD_GAIN  # 궁극기: 막으면 깎이기만 하고 가드 크러시는 안 나게
 	# 체력이 가장 낮고 빠르다
 	max_hp = 400
 	walk_forward_speed = 4.4
@@ -210,6 +214,8 @@ func _spawn_pillar(x: float, hit: AttackData, arm: int) -> Projectile:
 func _spawn_dice(per_pip: int, vel: Vector2, hit_name := "dice") -> void:
 	var roll := randi_range(1, 6)
 	var hit := AttackData.new(hit_name, 0, 0, 0, roll * per_pip, Rect2(), AttackData.Level.MID, 12 + roll * 2, 12)
+	if hit_name == "dice_od":
+		hit.guard_gain = OD_GUARD_GAIN
 	var p := Projectile.new()
 	p.kind = "dice"
 	p.attack = hit

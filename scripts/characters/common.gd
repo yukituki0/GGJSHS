@@ -44,6 +44,7 @@ func _build_specials() -> void:
 	a.invuln_frames = 6
 	a = _add(AttackData.new("jD", 8, 40, 14, 38, Rect2(-20, -120, 110, 130), AttackData.Level.OVERHEAD, 18, 14))
 	a = _add(AttackData.new("OD", 4, 8, 30, 80, Rect2(10, -220, 420, 220), M, 90, 20))
+	a.guard_gain = OD_GUARD_GAIN
 	a.title = "BLUE SCREEN"
 	a.cost = Fighter.RC_COST
 	a.invuln_frames = 12

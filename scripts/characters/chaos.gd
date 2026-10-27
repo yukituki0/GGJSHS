@@ -28,6 +28,8 @@ var _ghost_frames := 0
 
 
 func _init() -> void:
+	_hole_hit.guard_gain = OD_GUARD_GAIN  # 궁극기: 막으면 깎이기만 하고 가드 크러시는 안 나게
+	_burst_hit.guard_gain = OD_GUARD_GAIN  # 궁극기: 막으면 깎이기만 하고 가드 크러시는 안 나게
 	# 체력 많고 보통 속도
 	max_hp = 460
 	walk_forward_speed = 3.8

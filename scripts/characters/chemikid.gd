@@ -39,6 +39,8 @@ var _counter_text := 0  # "NEUTRALIZE!" 글자 남은 프레임
 
 
 func _init() -> void:
+	_blast_hit.guard_gain = OD_GUARD_GAIN  # 궁극기: 막으면 깎이기만 하고 가드 크러시는 안 나게
+	_pillar_hit.guard_gain = OD_GUARD_GAIN  # 궁극기: 막으면 깎이기만 하고 가드 크러시는 안 나게
 	# 체력이 많고 느리다
 	max_hp = 440
 	walk_forward_speed = 3.6

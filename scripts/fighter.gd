@@ -146,6 +146,7 @@ const GUARD_MAX := 100.0
 const GUARD_PER_BLOCK := 2.0       # 막을 때 = 가드 경직 x 이 값
 const GUARD_DECAY := 0.25          # 안 막는 동안 프레임당 감소 (1초 뒤부터)
 const GUARD_CRUSH_STUN := 45       # 가드 크러시 무방비 시간
+const OD_GUARD_GAIN := 0.15        # 여러 번 때리는 궁극기(투사체)를 막을 때 가드 게이지 배율 (길티기어처럼 궁극기는 막으면 긁기 데미지만)
 var guard_gauge := 0.0
 var _since_block := 999
 var landing_lag := 0               # 대공기 착지 빈틈 남은 프레임
@@ -1416,7 +1417,7 @@ func receive_attack(attack: AttackData, from_dir: int, damage_scale := 1.0) -> b
 			_change_state(State.HITSTUN)
 			Sfx.play("hit_heavy")
 			return false
-		guard_gauge = minf(GUARD_MAX, guard_gauge + attack.blockstun * GUARD_PER_BLOCK)
+		guard_gauge = minf(GUARD_MAX, guard_gauge + attack.blockstun * GUARD_PER_BLOCK * attack.guard_gain)
 		stun_frames = attack.blockstun
 		velocity.x = attack.pushback * from_dir
 		_change_state(State.BLOCKSTUN)
