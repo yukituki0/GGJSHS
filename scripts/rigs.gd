@@ -80,8 +80,8 @@ const RIGS := {
 		},
 	},
 	"seed": {
-		"pose_size": {"crouch": 1.02, "jump": 1.12, "punch": 0.9, "2p": 0.85, "2k": 0.85, "2s": 1.0, "jp": 0.77, "jk": 0.78, "js": 0.77, "walk_back": 0.89, "dash": 0.8, "backdash": 0.92, "throw": 0.88, "jump_attack": 0.77, "5d": 0.9, "6d": 0.9, "jd": 0.81, "slash": 0.85, "heavy": 0.87},
-		"pose_anchor": {"punch": Vector2(285, 1596), "2p": Vector2(931, 1282), "2k": Vector2(935, 1207), "2h": Vector2(324, 1584), "jp": Vector2(522, 1284), "dash": Vector2(721, 1434), "od": Vector2(359, 1509), "jh": Vector2(578, 1087)},
+		"pose_size": {"crouch": 1.02, "jump": 1.12, "punch": 0.9, "2p": 0.85, "2s": 1.0, "jp": 0.77, "jk": 0.78, "js": 0.77, "walk_back": 0.89, "dash": 0.8, "backdash": 0.92, "throw": 0.88, "jump_attack": 0.77, "5d": 0.9, "6d": 0.9, "jd": 0.81, "slash": 0.85, "heavy": 0.87, "2k": 0.82},
+		"pose_anchor": {"punch": Vector2(285, 1596), "2p": Vector2(931, 1282), "2h": Vector2(324, 1584), "jp": Vector2(522, 1284), "dash": Vector2(721, 1434), "od": Vector2(359, 1509), "jh": Vector2(578, 1087)},
 		"joints": {
 			"hip": Vector2(570, 600), "neck": Vector2(590, 260), "head": Vector2(620, 160),
 			"ba_sh": Vector2(430, 320), "ba_el": Vector2(330, 480), "ba_ha": Vector2(290, 620),
