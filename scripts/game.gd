@@ -75,11 +75,11 @@ const STAGES: Array[Dictionary] = [
 	},
 	{
 		"id": "lobby", "name": ["LOBBY", "중앙 로비"],
-		"sky": [Color("e8ecea"), Color("c8d0cc")], "floor": Color("2f6a72"), "wall_base": 0.64,
+		"sky": [Color("e8ecea"), Color("c8d0cc")], "floor": Color("2f6a72"),
 	},
 	{
 		"id": "cherry_road", "name": ["CHERRY TREE ROAD", "벚나무 길"],
-		"sky": [Color("9fb3c8"), Color("d8dde2")], "floor": Color("4a4a4e"), "wall_base": 0.62,
+		"sky": [Color("9fb3c8"), Color("d8dde2")], "floor": Color("4a4a4e"),
 	},
 	{
 		"id": "playground", "name": ["PLAYGROUND", "운동장"],
@@ -87,7 +87,7 @@ const STAGES: Array[Dictionary] = [
 	},
 	{
 		"id": "hallway", "name": ["HALLWAY", "복도"],
-		"sky": [Color("3a3a42"), Color("1c1c22")], "floor": Color("5a5550"), "wall_base": 0.665,
+		"sky": [Color("3a3a42"), Color("1c1c22")], "floor": Color("5a5550"),
 	},
 ]
 

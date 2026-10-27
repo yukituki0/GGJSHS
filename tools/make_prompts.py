@@ -416,7 +416,7 @@ for f, ko, desc in EFFECTS:
 out += ['## 5. 스테이지 배경 (학교 사진 첨부, 16:9 가로)', '',
         '> 사진을 첨부해서 한 장씩. 바닥(캐릭터가 서는 곳)이 그림 아래쪽 약 85% 높이에 오게. 받은 그림은 `assets/stages/<id>.png`', '']
 # 다시 뽑을 배경: 문·나무·난간이 캐릭터에 비해 너무 크게 나온 것 (지금 그림을 첨부해서 카메라만 뒤로)
-STAGE_REDO = ['cherry_road', 'lobby', 'hallway']
+STAGE_REDO = []  # 다 뽑음 (cherry_road, lobby, hallway 넓게)
 WIDE = ("IMPORTANT SCALE: the camera is pulled far back, so everything looks SMALL and far away: "
         "a door or a person-height object is only about one quarter of the image height, trees and windows are small, "
         "and much more of the place is visible on the left and right. "
