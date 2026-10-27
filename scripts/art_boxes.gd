@@ -7,7 +7,7 @@ class_name ArtBoxes
 
 const BANDS := 4            # 머리 / 몸통 / 허리 / 다리
 const FILL := 0.25          # 세로줄에서 이만큼 이상 그림이 차 있어야 몸으로 친다
-const STEP := 4             # 픽셀 건너뛰며 검사 (빠르게)
+const STEP := 2             # 픽셀 건너뛰며 검사 (빠르게)
 
 static var _cache := {}
 

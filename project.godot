@@ -27,6 +27,7 @@ renderer/rendering_method.mobile="gl_compatibility"
 InputManager="*res://scripts/input_manager.gd"
 Game="*res://scripts/game.gd"
 Sfx="*res://scripts/sfx.gd"
+PerfOverlay="*res://scripts/perf_overlay.gd"
 
 [gui]
 

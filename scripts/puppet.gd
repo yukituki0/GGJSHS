@@ -19,7 +19,7 @@ const BONES := [
 	["leg_f1", "", "fl_hip", "fl_kn"],
 	["leg_f2", "leg_f1", "fl_kn", "fl_ft"],
 ]
-const GRID := 28.0        # 그물 칸 크기 (그림 픽셀)
+const GRID := 14.0        # 그물 칸 크기 (그림 픽셀)
 const WEIGHTS := 3        # 점 하나가 따라가는 뼈 개수
 
 var texture: Texture2D
@@ -302,7 +302,7 @@ static func top_row(tex: Texture2D) -> int:
 static var _feet := {}
 
 
-## 맨 아래 60픽셀 안에 있는 발들의 가운데
+## 맨 아래 30픽셀 안에 있는 발들의 가운데
 static func _feet_anchor(tex: Texture2D) -> Vector2:
 	var key := tex.resource_path
 	if _feet.has(key):
@@ -314,8 +314,8 @@ static func _feet_anchor(tex: Texture2D) -> Vector2:
 		bottom -= 1
 	var lo := w
 	var hi := 0
-	for y in range(maxi(0, bottom - 60), bottom + 1, 2):
-		for x in range(0, w, 2):
+	for y in range(maxi(0, bottom - 30), bottom + 1, 1):
+		for x in range(0, w, 1):
 			if img.get_pixel(x, y).a > 0.3:
 				lo = mini(lo, x)
 				hi = maxi(hi, x)
