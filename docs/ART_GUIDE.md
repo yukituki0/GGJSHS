@@ -21,7 +21,7 @@
 | 구분 | 파일 | 개수 | 상태 |
 |---|---|---|---|
 | HUD | `assets/ui/hud_*.png` | 체력 틀/채움, 타이머, 텐션 1P/2P | ✅ 완료 |
-| 스테이지 (**실제 학교 사진**) | `assets/stages/` `school_front` `lobby` `cherry_road` `playground` `hallway` `.png` | 5 | 📷 사진 찍음 → 애니풍 변환 중 ([PROMPTS.md 5번](PROMPTS.md)) |
+| 스테이지 (**실제 학교 사진**) | `assets/stages/` `school_front` `lobby` `cherry_road` `playground` `hallway` `.png` | 5 | ✅ 5/5 (학교 사진 → 애니풍) |
 | 캐릭터 전신 (투명 배경) | `assets/characters/<id>.png` | 6 (남3 여3) | ✅ 6/6 |
 | 캐릭터 자세 그림 | `assets/characters/<id>_<자세>.png` | 6 x 6 | ✅ 6/6 |
 | 타이틀 로고 | `assets/ui/logo.png` | 1 | ✅ 완료 |
