@@ -15,7 +15,7 @@
 | 📐 ROOT2 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 7/7 |
 | 🌱 SEED | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 7/7 |
 
-이펙트: 32/42
+이펙트: 34/42
 
 ## 0. 다시 뽑을 그림 (판정에 맞게 우선!)
 
@@ -35,7 +35,7 @@ Same character as the attached image: same face, hair, outfit, colors and body p
 Fighting game announcer text logo that reads exactly "ROUND 1" (spelled R-O-U-N-D-1), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic white silver chrome gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
 ```
 
-⬜ **잡기 풀기** "THROW BREAK" → `text_throw_break`
+✅ **잡기 풀기** "THROW BREAK" → `text_throw_break`
 ```
 Fighting game announcer text logo that reads exactly "THROW BREAK" (spelled T-H-R-O-W-B-R-E-A-K), only these characters, no other text or letters. Bold aggressive heavy metal lettering like a 2D anime fighting game, slightly slanted, sharp angular edges, thick black outline plus a thin white outer stroke, metallic cool sky-blue and white chrome gradient with bright highlights, subtle glow and a few sparks around the edges. Horizontal, centered, wide margins, transparent background (real alpha channel, not a checkerboard pattern), no character, no background scene.
 ```
@@ -1042,12 +1042,12 @@ Same character as the attached image: same face, hair, outfit, colors and body p
 
 ## 4. 기술 이펙트 (첨부 없이, 1:1 정사각형)
 
-⬜ **맞힘 불꽃 (공통)** → `fx_hit`
+✅ **맞힘 불꽃 (공통)** → `fx_hit`
 ```
 A single 2D fighting game special effect sprite: a sharp hit spark burst: bright white center with jagged golden-orange star rays shooting outward, comic-style impact, round overall. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **막힘 불꽃 (공통)** → `fx_guard`
+✅ **막힘 불꽃 (공통)** → `fx_guard`
 ```
 A single 2D fighting game special effect sprite: a defensive block spark: a small cyan-white hexagon flash with short straight light rays, crisp and clean, round overall. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
