@@ -27,7 +27,7 @@ const RIGS := {
 	},
 	"common": {
 		"reach_limit": {"jS": 80},  # 그림 끝까지 닿게 (눈으로 닿았는데 안 맞는 일 없게)
-		"pose_size": {"crouch": 0.9, "5d": 0.85, "2k": 0.91, "2p": 0.9, "2s": 0.91, "6d": 0.76, "backdash": 0.9, "dash": 0.78, "guard": 0.91, "heavy": 0.77, "hit": 1.12, "jk": 0.79, "jp": 0.83, "punch": 0.81, "slash": 0.86, "walk_back": 0.81},
+		"pose_size": {"crouch": 0.9, "5d": 0.85, "2k": 0.91, "2p": 0.9, "2s": 0.91, "6d": 0.76, "backdash": 0.9, "dash": 0.78, "guard": 0.91, "heavy": 0.77, "hit": 1.12, "jk": 0.79, "jp": 0.83, "punch": 0.81, "slash": 0.86, "walk_back": 0.81, "jh": 0.78},
 		"pose_anchor": {"2k": Vector2(560, 1003), "5d": Vector2(560, 1357), "od": Vector2(420, 1058), "2s": Vector2(288, 1086), "dash": Vector2(603, 1289), "heavy": Vector2(358, 1358), "jp": Vector2(334, 1439), "slash": Vector2(244, 1356)},
 		"no_fit": ["2H"],
 		"fit_band": {"jS": [0.45, 1.0]},  # 공중 S: 키보드 밑으로 늘어진 케이블 말고 키보드 끝에  # 대공 2H: 그림의 앞쪽 끝(옷자락)이 아니라 원래대로 머리 위를 친다  # 다리를 길게 뻗은 2K: 뒷발이 서 있을 때 뒷발 자리에 오게
@@ -80,8 +80,8 @@ const RIGS := {
 		},
 	},
 	"seed": {
-		"pose_size": {"crouch": 1.02, "jump": 1.12, "punch": 0.9, "2p": 0.85, "2s": 1.0, "jp": 0.77, "jk": 0.78, "js": 0.77, "walk_back": 0.89, "dash": 0.8, "backdash": 0.92, "throw": 0.88, "jump_attack": 0.77, "5d": 0.9, "6d": 0.9, "jd": 0.81, "slash": 0.85, "heavy": 0.87, "2k": 0.82},
-		"pose_anchor": {"punch": Vector2(285, 1596), "2p": Vector2(931, 1282), "2h": Vector2(324, 1584), "jp": Vector2(522, 1284), "dash": Vector2(721, 1434), "od": Vector2(359, 1509), "jh": Vector2(578, 1087)},
+		"pose_size": {"crouch": 1.02, "jump": 1.12, "2p": 0.85, "2s": 1.0, "jp": 0.77, "jk": 0.78, "js": 0.77, "walk_back": 0.89, "dash": 0.8, "backdash": 0.92, "throw": 0.88, "jump_attack": 0.77, "5d": 0.9, "6d": 0.9, "jd": 0.81, "slash": 0.85, "heavy": 0.87, "2k": 0.82, "punch": 0.78},
+		"pose_anchor": {"2p": Vector2(931, 1282), "2h": Vector2(324, 1584), "jp": Vector2(522, 1284), "dash": Vector2(721, 1434), "od": Vector2(359, 1509), "jh": Vector2(578, 1087)},
 		"joints": {
 			"hip": Vector2(570, 600), "neck": Vector2(590, 260), "head": Vector2(620, 160),
 			"ba_sh": Vector2(430, 320), "ba_el": Vector2(330, 480), "ba_ha": Vector2(290, 620),
