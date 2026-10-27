@@ -3,7 +3,8 @@ extends Node
 ##
 ## assets/sound/<이름>.ogg / .wav / .mp3 를 이름으로 찾아서 재생한다. 파일이 없으면 조용히 넘어간다.
 ## 지금 들어 있는 효과음은 tools/make_sfx.py로 합성한 임시 소리. 같은 이름의 파일로 덮어쓰면 바뀐다.
-## 배경음: bgm_menu (메뉴 화면), bgm_battle (대전) - 파일을 넣으면 반복 재생된다
+## 배경음: bgm_menu (메뉴 화면), bgm_battle1, bgm_battle2 ... (대전, 경기마다 하나를 무작위로) - 파일을 넣으면 반복 재생된다
+## 곡 출처·라이선스는 README.md의 "음악 출처"
 
 const POOL_SIZE := 12           # 동시에 날 수 있는 효과음 수
 
@@ -56,6 +57,16 @@ func play(sound: String, volume_db := 0.0, pitch_jitter := 0.0) -> void:
 
 
 ## 배경음 바꾸기. 같은 곡이 이미 나오고 있으면 그대로 둔다. 파일이 없으면 멈춤
+## prefix1, prefix2 ... 중 있는 파일 하나를 무작위로 틀기 (없으면 prefix 이름 그대로)
+func play_bgm_random(prefix: String) -> void:
+	var names: Array[String] = []
+	var i := 1
+	while _stream("%s%d" % [prefix, i]) != null:
+		names.append("%s%d" % [prefix, i])
+		i += 1
+	play_bgm(names.pick_random() if not names.is_empty() else prefix)
+
+
 func play_bgm(sound: String) -> void:
 	_setup()
 	if sound == _bgm_name and _bgm.playing:

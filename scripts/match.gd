@@ -49,7 +49,7 @@ var _history: Node2D             # 트레이닝 입력 기록 (트레이닝 아�
 
 
 func _ready() -> void:
-	Sfx.play_bgm("bgm_battle")
+	Sfx.play_bgm_random("bgm_battle")
 	if Game.stage_random:
 		Game.stage = randi() % Game.STAGES.size()
 	_stage_texture = Game.load_texture("res://assets/stages/%s.png" % Game.stage_info()["id"])

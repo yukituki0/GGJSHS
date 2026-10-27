@@ -86,10 +86,33 @@ sec = 1.2
 n = int(RATE * sec)
 save('ko', hit(sec, 25, 80, 3) + sweep(sec, 200, 50) * env(n, decay=2.5) * 0.5, 0.95)
 # 메뉴: 이동 / 결정 / 취소
-save('menu_move', np.sin(2 * np.pi * 880 * t(0.05)) * env(int(RATE * 0.05), decay=60), 0.3)
-save('menu_ok', (np.sin(2 * np.pi * 660 * t(0.15)) + np.sin(2 * np.pi * 990 * t(0.15)) * 0.6)
-     * env(int(RATE * 0.15), decay=18), 0.4)
-save('menu_back', sweep(0.12, 600, 300) * env(int(RATE * 0.12), decay=20), 0.35)
+# 메뉴 소리: 부드러운 사인파 대신 배음이 많은 사각파 + 짧은 금속성 클릭으로 날카롭게
+mrng = np.random.default_rng(11)  # 다른 효과음의 노이즈가 바뀌지 않게 따로
+
+
+def square(sec, f, duty=0.5):
+    """사각파 (배음이 많아서 날카로운 소리)"""
+    return np.where((t(sec) * f) % 1.0 < duty, 1.0, -1.0)
+
+
+def click(sec, k=3):
+    """아주 짧은 고음 잡음 (금속을 튕기는 듯한 시작음)"""
+    x = mrng.uniform(-1, 1, int(RATE * sec))
+    return (x - lowpass(x, k)) * env(len(x), attack=0.0005, decay=400)
+
+
+sec = 0.045
+save('menu_move', (square(sec, 1760, 0.25) * 0.5 + np.sin(2 * np.pi * 3520 * t(sec)) * 0.3)
+     * env(int(RATE * sec), attack=0.0008, decay=90) + click(sec) * 0.6, 0.3)
+sec = 0.16
+f = np.concatenate([np.full(int(RATE * 0.05), 1320.0), np.full(int(RATE * sec) - int(RATE * 0.05), 1980.0)])
+ok = np.where((np.cumsum(f) / RATE) % 1.0 < 0.3, 1.0, -1.0)
+save('menu_ok', (ok * 0.55 + np.sin(2 * np.pi * np.cumsum(f * 2) / RATE) * 0.25)
+     * env(int(RATE * sec), attack=0.0008, decay=22) + click(sec, 2) * 0.7, 0.4)
+sec = 0.1
+fb = np.linspace(1100, 520, int(RATE * sec))
+back = np.where((np.cumsum(fb) / RATE) % 1.0 < 0.4, 1.0, -1.0)
+save('menu_back', back * env(int(RATE * sec), attack=0.0008, decay=35) * 0.6 + click(sec) * 0.4, 0.33)
 # 라운드 시작 "FIGHT!" 강조음
 sec = 0.5
 n = int(RATE * sec)

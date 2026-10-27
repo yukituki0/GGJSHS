@@ -141,6 +141,21 @@ docs/           기술표, 그림 가이드, 프롬프트 모음, 베타 테스�
 
 ---
 
+## 음악 출처
+
+메뉴는 `bgm_menu`, 대전은 `bgm_battle1~3` 중 하나를 경기마다 무작위로 튼다 (`assets/sound/`, 음량은 -16 LUFS로 맞춤).
+
+| 파일 | 곡 | 만든 사람 | 라이선스 |
+|---|---|---|---|
+| `bgm_menu.ogg` | neorock83 | [魔王魂 (maou.audio)](https://maou.audio/) | 魔王魂 이용 규약 (출처 "魔王魂" 표기) |
+| `bgm_battle1.ogg` | [Fight Theme (Metal)](https://opengameart.org/content/fight-theme-metal) | Fato_Shadow | CC-BY 3.0 |
+| `bgm_battle2.ogg` | [JRPG Epic Rock Battle Theme #1](https://opengameart.org/content/jrpg-epic-rock-battle-theme-1) (loop) | HydroGene | CC0 |
+| `bgm_battle3.ogg` | [Red Engines Blue Wings & boss_battle_06_alternate](https://opengameart.org/node/167341) | Alexandr Zhelanov, nene | CC-BY 4.0 |
+
+효과음은 `tools/make_sfx.py`로 직접 합성했다.
+
+---
+
 ## 문서
 
 | 문서 | 내용 |
