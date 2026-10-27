@@ -22,7 +22,7 @@ static func hurt_boxes(tex: Texture2D, anchor: Vector2) -> Array[Rect2]:
 	var top := 0
 	while top < img.get_height() - 1 and not _row_has(img, top):
 		top += 1
-	var bottom := int(anchor.y)
+	var bottom := mini(int(anchor.y), img.get_height())  # 발 위치가 그림 아래 바깥이어도 그림 안에서만 검사
 	var band_h := float(bottom - top) / BANDS
 	var boxes: Array[Rect2] = []
 	for b in BANDS:

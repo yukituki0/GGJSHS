@@ -56,7 +56,7 @@ const RIGS := {
 	"globe": {
 		"reach_limit": {"5H": 120},  # HS 망치 멀리 휘두르기: 판정을 망치 머리까지
 		"pose_size": {"crouch": 1.15, "jump": 1.19, "2p": 0.75, "2k": 0.78, "2s": 0.91, "jp": 0.82, "js": 0.84, "walk_back": 0.9, "dash": 0.8, "5d": 0.91, "6d": 0.81, "od": 0.9, "slash": 0.88, "heavy": 0.89, "jk": 0.83},
-		"pose_anchor": {"hit": Vector2(157, 1430), "2k": Vector2(524, 1075), "dash": Vector2(700, 1218), "heavy": Vector2(835, 1356), "jh": Vector2(560, 1359)},
+		"pose_anchor": {"hit": Vector2(157, 1430), "2k": Vector2(524, 1075), "dash": Vector2(700, 1218), "heavy": Vector2(835, 1031), "jh": Vector2(560, 1359)},
 		"joints": {
 			"hip": Vector2(520, 620), "neck": Vector2(540, 290), "head": Vector2(580, 170),
 			"ba_sh": Vector2(380, 330), "ba_el": Vector2(250, 450), "ba_ha": Vector2(230, 580),
