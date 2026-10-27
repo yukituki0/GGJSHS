@@ -1257,14 +1257,29 @@ Redraw the attached photo as a 2D anime fighting game stage background: the fron
 Redraw the attached photo as a 2D anime fighting game stage background: the outdoor school basketball court in front of the pink and beige three-story school buildings, pine trees on the right, big white clouds in a blue sky. Keep the same place, layout and buildings as the photo. Wide 16:9 landscape, 1920x1080. Straight-on side view at standing eye level, like a Guilty Gear / Street Fighter stage: a flat open floor runs across the whole bottom of the image, and the line where the characters stand is at about 85% of the image height, with nothing blocking the floor in the middle. No people, no characters, no text or letters except where described above, no UI. Painterly anime background art, cel-shaded with clean outlines, slightly muted colors and soft depth so fighters in front stand out, dramatic lighting, a little darker and calmer than the characters.
 ```
 
+🔁 **복도 다시 뽑기** (지금 `stages/hallway.png` 그림 첨부) → `stages/hallway`
+```
+Redraw the attached background as a wider, more zoomed-out version of the same place: the second-floor school hallway with a glass and steel railing in front of a wall of big black-framed windows looking out on the campus buildings and green hills. Same art style, colors and lighting as the attached image. IMPORTANT SCALE: the camera is pulled far back, so everything looks SMALL and far away: a door or a person-height object is only about one quarter of the image height, trees and windows are small, and much more of the place is visible on the left and right. The floor is only a NARROW strip: the line where the wall (or the road side) meets the floor is at about 78% of the image height. Wide 16:9 landscape, 1920x1080, straight-on side view at standing eye level like a Guilty Gear / Street Fighter stage. No people, no characters, no text or letters, no UI.
+```
+
 ✅ **복도** (2층 난간 창문 사진 (369)) → `stages/hallway`
 ```
 Redraw the attached photo as a 2D anime fighting game stage background: the second-floor school hallway with a glass and steel railing in front of a wall of big black-framed windows looking out on the campus buildings and green hills. Keep the same place, layout and buildings as the photo. Wide 16:9 landscape, 1920x1080. Straight-on side view at standing eye level, like a Guilty Gear / Street Fighter stage: a flat open floor runs across the whole bottom of the image, and the line where the characters stand is at about 85% of the image height, with nothing blocking the floor in the middle. No people, no characters, no text or letters except where described above, no UI. Painterly anime background art, cel-shaded with clean outlines, slightly muted colors and soft depth so fighters in front stand out, dramatic lighting, a little darker and calmer than the characters.
 ```
 
+🔁 **벚나무 길 다시 뽑기** (지금 `stages/cherry_road.png` 그림 첨부) → `stages/cherry_road`
+```
+Redraw the attached background as a wider, more zoomed-out version of the same place: the long campus road lined with cherry trees and round trimmed bushes, the pink school building on the left, autumn leaves, cloudy sky. Same art style, colors and lighting as the attached image. IMPORTANT SCALE: the camera is pulled far back, so everything looks SMALL and far away: a door or a person-height object is only about one quarter of the image height, trees and windows are small, and much more of the place is visible on the left and right. The floor is only a NARROW strip: the line where the wall (or the road side) meets the floor is at about 78% of the image height. Wide 16:9 landscape, 1920x1080, straight-on side view at standing eye level like a Guilty Gear / Street Fighter stage. No people, no characters, no text or letters, no UI.
+```
+
 ✅ **벚나무 길** (벚나무 길 사진 (371)) → `stages/cherry_road`
 ```
 Redraw the attached photo as a 2D anime fighting game stage background: the long campus road lined with cherry trees and round trimmed bushes, the pink school building on the left, autumn leaves, cloudy sky. Keep the same place, layout and buildings as the photo. Wide 16:9 landscape, 1920x1080. Straight-on side view at standing eye level, like a Guilty Gear / Street Fighter stage: a flat open floor runs across the whole bottom of the image, and the line where the characters stand is at about 85% of the image height, with nothing blocking the floor in the middle. No people, no characters, no text or letters except where described above, no UI. Painterly anime background art, cel-shaded with clean outlines, slightly muted colors and soft depth so fighters in front stand out, dramatic lighting, a little darker and calmer than the characters.
+```
+
+🔁 **중앙 로비 다시 뽑기** (지금 `stages/lobby.png` 그림 첨부) → `stages/lobby`
+```
+Redraw the attached background as a wider, more zoomed-out version of the same place: the school lobby with a teal rubber floor, a big black TV and two windows on the white wall, two small potted plants, framed calligraphy above. Same art style, colors and lighting as the attached image. IMPORTANT SCALE: the camera is pulled far back, so everything looks SMALL and far away: a door or a person-height object is only about one quarter of the image height, trees and windows are small, and much more of the place is visible on the left and right. The floor is only a NARROW strip: the line where the wall (or the road side) meets the floor is at about 78% of the image height. Wide 16:9 landscape, 1920x1080, straight-on side view at standing eye level like a Guilty Gear / Street Fighter stage. No people, no characters, no text or letters, no UI.
 ```
 
 ✅ **중앙 로비** (로비 사진 (370)) → `stages/lobby`

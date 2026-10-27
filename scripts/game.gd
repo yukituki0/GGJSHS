@@ -67,6 +67,7 @@ const CHARACTERS: Array[Dictionary] = [
 
 ## 스테이지 목록. 배경 그림: assets/stages/<id>.png (1920x1080 권장, 없으면 코드로 그린 임시 배경)
 ## sky: 임시 배경의 [위, 아래] 색
+## wall_base: 배경 그림에서 벽(길)과 바닥이 만나는 높이 비율. 있으면 그 아래 바닥을 눌러서 캐릭터가 벽 가까이 서 보이게
 const STAGES: Array[Dictionary] = [
 	{
 		"id": "school_front", "name": ["MAIN GATE - SUNSET", "제주과학고 정문 - 석양"],
@@ -74,11 +75,11 @@ const STAGES: Array[Dictionary] = [
 	},
 	{
 		"id": "lobby", "name": ["LOBBY", "중앙 로비"],
-		"sky": [Color("e8ecea"), Color("c8d0cc")], "floor": Color("2f6a72"),
+		"sky": [Color("e8ecea"), Color("c8d0cc")], "floor": Color("2f6a72"), "wall_base": 0.64,
 	},
 	{
 		"id": "cherry_road", "name": ["CHERRY TREE ROAD", "벚나무 길"],
-		"sky": [Color("9fb3c8"), Color("d8dde2")], "floor": Color("4a4a4e"),
+		"sky": [Color("9fb3c8"), Color("d8dde2")], "floor": Color("4a4a4e"), "wall_base": 0.62,
 	},
 	{
 		"id": "playground", "name": ["PLAYGROUND", "운동장"],
@@ -86,7 +87,7 @@ const STAGES: Array[Dictionary] = [
 	},
 	{
 		"id": "hallway", "name": ["HALLWAY", "복도"],
-		"sky": [Color("3a3a42"), Color("1c1c22")], "floor": Color("5a5550"),
+		"sky": [Color("3a3a42"), Color("1c1c22")], "floor": Color("5a5550"), "wall_base": 0.665,
 	},
 ]
 

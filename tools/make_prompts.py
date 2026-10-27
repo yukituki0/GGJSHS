@@ -415,8 +415,20 @@ for f, ko, desc in EFFECTS:
 
 out += ['## 5. 스테이지 배경 (학교 사진 첨부, 16:9 가로)', '',
         '> 사진을 첨부해서 한 장씩. 바닥(캐릭터가 서는 곳)이 그림 아래쪽 약 85% 높이에 오게. 받은 그림은 `assets/stages/<id>.png`', '']
+# 다시 뽑을 배경: 문·나무·난간이 캐릭터에 비해 너무 크게 나온 것 (지금 그림을 첨부해서 카메라만 뒤로)
+STAGE_REDO = ['cherry_road', 'lobby', 'hallway']
+WIDE = ("IMPORTANT SCALE: the camera is pulled far back, so everything looks SMALL and far away: "
+        "a door or a person-height object is only about one quarter of the image height, trees and windows are small, "
+        "and much more of the place is visible on the left and right. "
+        "The floor is only a NARROW strip: the line where the wall (or the road side) meets the floor is at about 78% of the image height. ")
 for sid, ko, photo, desc in STAGE_PHOTOS:
     done = '✅' if os.path.exists(f'assets/stages/{sid}.png') else '⬜'
+    if sid in STAGE_REDO:
+        out += [f'🔁 **{ko} 다시 뽑기** (지금 `stages/{sid}.png` 그림 첨부) → `stages/{sid}`', '```',
+                f"Redraw the attached background as a wider, more zoomed-out version of the same place: {desc}. Same art style, colors and lighting as the attached image. "
+                + WIDE + "Wide 16:9 landscape, 1920x1080, straight-on side view at standing eye level like a Guilty Gear / Street Fighter stage. "
+                "No people, no characters, no text or letters, no UI.",
+                '```', '']
     out += [f'{done} **{ko}** ({photo}) → `stages/{sid}`', '```',
             f"Redraw the attached photo as a 2D anime fighting game stage background: {desc}. Keep the same place, layout and buildings as the photo. "
             "Wide 16:9 landscape, 1920x1080. Straight-on side view at standing eye level, like a Guilty Gear / Street Fighter stage: "

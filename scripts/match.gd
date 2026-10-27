@@ -520,14 +520,14 @@ func _update_effects() -> void:
 ## 카메라: 두 캐릭터를 따라가며 확대 (길티기어처럼 캐릭터가 크게 보이게)
 ## 가까우면 최대 CAMERA_MAX_ZOOM배, 멀어지거나 높이 뛰면 둘 다 보이도록 줄인다 (최소 1배 = 스테이지 전체)
 ## 게임 판정/거리는 그대로이고 보이는 크기만 바뀐다
-const CAMERA_MAX_ZOOM := 1.5
-const CAMERA_MARGIN := 260.0     # 캐릭터 바깥으로 보여줄 여유 (가로)
+const CAMERA_MAX_ZOOM := 1.7
+const CAMERA_MARGIN := 210.0     # 캐릭터 바깥으로 보여줄 여유 (가로)
 const CAMERA_GROUND_SCREEN_Y := 650.0  # 바닥이 화면에서 이 높이에 오게
 
 
 ## 배경 원근: 배경은 멀리 있으니까 카메라가 확대해도 캐릭터보다 덜 커지고 덜 움직인다 (길티기어 스테이지처럼)
 ## 0 = 배경이 화면에 고정, 1 = 캐릭터와 똑같이 확대
-const STAGE_PARALLAX := 0.3
+const STAGE_PARALLAX := 0.15
 
 
 ## 배경 그림을 그릴 곳 (게임 좌표). 화면에서 배경 배율 = 1 + (카메라 배율 - 1) x STAGE_PARALLAX
@@ -545,6 +545,27 @@ func _stage_rect() -> Rect2:
 		u.y = clampf((_camera.position.y - half.y) / room.y, 0.0, 1.0)
 	var screen_pos := -(screen_size - Vector2(1280.0, 720.0)) * u
 	return Rect2(_camera.position + (screen_pos - Vector2(640.0, 360.0)) / z, screen_size / z)
+
+
+## 바닥 누르기: 그림에서 벽 아래(wall_base) 바닥이 너무 넓으면, 위쪽을 조금(최대 STAGE_FLOOR_STRETCH배) 세로로 늘리고
+## 그만큼 바닥을 눌러서 벽이 캐릭터 발 가까이 오게 한다
+const STAGE_FLOOR_STRETCH := 1.12
+const STAGE_WALL_MAX := 0.8      # 벽 아래 선이 화면 높이의 이 비율보다 내려가지 않게 (발은 0.86)
+
+
+func _draw_stage_texture() -> void:
+	var r := _stage_rect()
+	var info := Game.stage_info()
+	if not info.has("wall_base"):
+		draw_texture_rect(_stage_texture, r, false)
+		return
+	var f: float = info["wall_base"]
+	var f2 := minf(f * STAGE_FLOOR_STRETCH, STAGE_WALL_MAX)
+	var tw := float(_stage_texture.get_width())
+	var th := float(_stage_texture.get_height())
+	draw_texture_rect_region(_stage_texture, Rect2(r.position, Vector2(r.size.x, r.size.y * f2)), Rect2(0, 0, tw, th * f))
+	draw_texture_rect_region(_stage_texture, Rect2(r.position + Vector2(0, r.size.y * f2), Vector2(r.size.x, r.size.y * (1.0 - f2))),
+			Rect2(0, th * f, tw, th * (1.0 - f)))
 
 
 func _update_camera() -> void:
@@ -570,7 +591,7 @@ func _draw() -> void:
 		_draw_training_stage()
 		return
 	if _stage_texture != null:
-		draw_texture_rect(_stage_texture, _stage_rect(), false)
+		_draw_stage_texture()
 		return
 	# 임시 배경: 위아래 그라데이션 + 바닥
 	var info := Game.stage_info()
