@@ -104,6 +104,18 @@ REDO = [
     # 판정보다 그림이 짧아서 판정이 허공에 떠 있는 것 (실측: 그림 끝 / 판정 끝)
 ]
 
+# 스테이지 배경 (학교 사진을 첨부해서 애니풍으로 바꾸기). assets/stages/<id>.png, 1920x1080
+STAGE_PHOTOS = [
+    ('playground', '운동장', '농구장 사진 (372)',
+     'the outdoor school basketball court in front of the pink and beige three-story school buildings, pine trees on the right, big white clouds in a blue sky'),
+    ('hallway', '복도', '2층 난간 창문 사진 (369)',
+     'the second-floor school hallway with a glass and steel railing in front of a wall of big black-framed windows looking out on the campus buildings and green hills'),
+    ('cherry_road', '벚나무 길', '벚나무 길 사진 (371)',
+     'the long campus road lined with cherry trees and round trimmed bushes, the pink school building on the left, autumn leaves, cloudy sky'),
+    ('lobby', '중앙 로비', '로비 사진 (370)',
+     'the school lobby with a teal rubber floor, a big black TV and two windows on the white wall, two small potted plants, framed calligraphy above'),
+]
+
 # 무기 공격 (길티기어처럼 S = 가벼운 무기 공격, HS = 크고 느린 무기 공격). 5S → <id>_slash, 5H → <id>_heavy
 WEAPON_POSES = [
     ('root2_slash', 'S 컴퍼스 찌르기', 'thrusting the giant compass forward with both hands at chest height, front foot forward'),
@@ -394,6 +406,19 @@ for f, ko, desc in EFFECTS:
     out += [f'{mark(f)} **{ko}** → `{f}`', '```',
             f"A single 2D fighting game special effect sprite: {desc}. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), "
             "bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.",
+            '```', '']
+
+out += ['## 5. 스테이지 배경 (학교 사진 첨부, 16:9 가로)', '',
+        '> 사진을 첨부해서 한 장씩. 바닥(캐릭터가 서는 곳)이 그림 아래쪽 약 85% 높이에 오게. 받은 그림은 `assets/stages/<id>.png`', '']
+for sid, ko, photo, desc in STAGE_PHOTOS:
+    done = '✅' if os.path.exists(f'assets/stages/{sid}.png') else '⬜'
+    out += [f'{done} **{ko}** ({photo}) → `stages/{sid}`', '```',
+            f"Redraw the attached photo as a 2D anime fighting game stage background: {desc}. Keep the same place, layout and buildings as the photo. "
+            "Wide 16:9 landscape, 1920x1080. Straight-on side view at standing eye level, like a Guilty Gear / Street Fighter stage: "
+            "a flat open floor runs across the whole bottom of the image, and the line where the characters stand is at about 85% of the image height, "
+            "with nothing blocking the floor in the middle. No people, no characters, no text, no letters, no UI. "
+            "Painterly anime background art, cel-shaded with clean outlines, slightly muted colors and soft depth so fighters in front stand out, "
+            "dramatic lighting, " + "a little darker and calmer than the characters.",
             '```', '']
 
 open('docs/PROMPTS.md', 'w', encoding='utf-8').write('\n'.join(out))

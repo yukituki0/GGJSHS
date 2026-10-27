@@ -1242,3 +1242,27 @@ A single 2D fighting game special effect sprite: ONE single glowing DNA double h
 ```
 A single 2D fighting game special effect sprite: a swirling burst of pink cherry-blossom petals and green leaves spreading outward in a circle from the center, empty center, nothing else. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
+
+## 5. 스테이지 배경 (학교 사진 첨부, 16:9 가로)
+
+> 사진을 첨부해서 한 장씩. 바닥(캐릭터가 서는 곳)이 그림 아래쪽 약 85% 높이에 오게. 받은 그림은 `assets/stages/<id>.png`
+
+⬜ **운동장** (농구장 사진 (372)) → `stages/playground`
+```
+Redraw the attached photo as a 2D anime fighting game stage background: the outdoor school basketball court in front of the pink and beige three-story school buildings, pine trees on the right, big white clouds in a blue sky. Keep the same place, layout and buildings as the photo. Wide 16:9 landscape, 1920x1080. Straight-on side view at standing eye level, like a Guilty Gear / Street Fighter stage: a flat open floor runs across the whole bottom of the image, and the line where the characters stand is at about 85% of the image height, with nothing blocking the floor in the middle. No people, no characters, no text, no letters, no UI. Painterly anime background art, cel-shaded with clean outlines, slightly muted colors and soft depth so fighters in front stand out, dramatic lighting, a little darker and calmer than the characters.
+```
+
+⬜ **복도** (2층 난간 창문 사진 (369)) → `stages/hallway`
+```
+Redraw the attached photo as a 2D anime fighting game stage background: the second-floor school hallway with a glass and steel railing in front of a wall of big black-framed windows looking out on the campus buildings and green hills. Keep the same place, layout and buildings as the photo. Wide 16:9 landscape, 1920x1080. Straight-on side view at standing eye level, like a Guilty Gear / Street Fighter stage: a flat open floor runs across the whole bottom of the image, and the line where the characters stand is at about 85% of the image height, with nothing blocking the floor in the middle. No people, no characters, no text, no letters, no UI. Painterly anime background art, cel-shaded with clean outlines, slightly muted colors and soft depth so fighters in front stand out, dramatic lighting, a little darker and calmer than the characters.
+```
+
+⬜ **벚나무 길** (벚나무 길 사진 (371)) → `stages/cherry_road`
+```
+Redraw the attached photo as a 2D anime fighting game stage background: the long campus road lined with cherry trees and round trimmed bushes, the pink school building on the left, autumn leaves, cloudy sky. Keep the same place, layout and buildings as the photo. Wide 16:9 landscape, 1920x1080. Straight-on side view at standing eye level, like a Guilty Gear / Street Fighter stage: a flat open floor runs across the whole bottom of the image, and the line where the characters stand is at about 85% of the image height, with nothing blocking the floor in the middle. No people, no characters, no text, no letters, no UI. Painterly anime background art, cel-shaded with clean outlines, slightly muted colors and soft depth so fighters in front stand out, dramatic lighting, a little darker and calmer than the characters.
+```
+
+⬜ **중앙 로비** (로비 사진 (370)) → `stages/lobby`
+```
+Redraw the attached photo as a 2D anime fighting game stage background: the school lobby with a teal rubber floor, a big black TV and two windows on the white wall, two small potted plants, framed calligraphy above. Keep the same place, layout and buildings as the photo. Wide 16:9 landscape, 1920x1080. Straight-on side view at standing eye level, like a Guilty Gear / Street Fighter stage: a flat open floor runs across the whole bottom of the image, and the line where the characters stand is at about 85% of the image height, with nothing blocking the floor in the middle. No people, no characters, no text, no letters, no UI. Painterly anime background art, cel-shaded with clean outlines, slightly muted colors and soft depth so fighters in front stand out, dramatic lighting, a little darker and calmer than the characters.
+```

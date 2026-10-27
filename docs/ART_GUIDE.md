@@ -9,7 +9,7 @@
 |---|---|---|
 | 화학 실험실 배경 | `assets/stages/lab.png` | 1920×1080 (16:9), PNG |
 | 컴퓨터실 배경 | `assets/stages/computer.png` | 1920×1080 (16:9), PNG |
-| 옥상(제주 바다) 배경 | `assets/stages/rooftop.png` | 1920×1080 (16:9), PNG |
+| 벚나무 길 배경 | `assets/stages/cherry_road.png` | 1920×1080 (16:9), PNG |
 | CHEMIKID 전신 일러스트 | `assets/characters/chemikid.png` | 세로로 긴 그림, **투명 배경** PNG |
 | COMMON 전신 일러스트 | `assets/characters/common.png` | 세로로 긴 그림, **투명 배경** PNG |
 | 타이틀 로고 | `assets/ui/logo.png` | 가로로 긴 그림, **투명 배경** PNG |
@@ -21,7 +21,7 @@
 | 구분 | 파일 | 개수 | 상태 |
 |---|---|---|---|
 | HUD | `assets/ui/hud_*.png` | 체력 틀/채움, 타이머, 텐션 1P/2P | ✅ 완료 |
-| 스테이지 (**실제 학교 사진**) | `assets/stages/` `lab` `computer` `rooftop` `playground` `hallway` `.png` | 5 | ⬜ 사진 찍기 |
+| 스테이지 (**실제 학교 사진**) | `assets/stages/` `lab` `computer` `cherry_road` `playground` `hallway` `.png` | 5 | 📷 사진 찍음 → 애니풍 변환 중 ([PROMPTS.md 5번](PROMPTS.md)) |
 | 캐릭터 전신 (투명 배경) | `assets/characters/<id>.png` | 6 (남3 여3) | ✅ 6/6 |
 | 캐릭터 자세 그림 | `assets/characters/<id>_<자세>.png` | 6 x 6 | ✅ 6/6 |
 | 타이틀 로고 | `assets/ui/logo.png` | 1 | ✅ 완료 |
@@ -243,10 +243,8 @@ no text, no logo, no watermark.
 > A high school computer lab late at night. Rows of glowing monitors, server racks with blinking
 > blue LEDs, tangled cables, cyan holographic code floating in the air, dark room lit mostly by screens.
 
-**3) 옥상 - 제주 바다 (rooftop.png)**
-> The rooftop of a high school on Jeju Island at sunset. Orange and purple sky, the ocean on the horizon,
-> Hallasan mountain silhouette in the far distance, black volcanic basalt stone walls, a chain-link fence,
-> strong wind blowing.
+**3) 운동장 · 복도 · 벚나무 길 · 로비**
+> 실제 학교 사진을 첨부해서 바꾼다. 프롬프트는 [`PROMPTS.md`](PROMPTS.md)의 "5. 스테이지 배경"
 
 ---
 

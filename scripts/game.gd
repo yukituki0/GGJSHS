@@ -77,8 +77,8 @@ const STAGES: Array[Dictionary] = [
 		"sky": [Color("101a33"), Color("070b16")], "floor": Color("1e2433"),
 	},
 	{
-		"id": "rooftop", "name": ["ROOFTOP - JEJU SEA", "옥상 - 제주 바다"],
-		"sky": [Color("f08a4b"), Color("6a2c5a")], "floor": Color("3a3440"),
+		"id": "cherry_road", "name": ["CHERRY TREE ROAD", "벚나무 길"],
+		"sky": [Color("9fb3c8"), Color("d8dde2")], "floor": Color("4a4a4e"),
 	},
 	{
 		"id": "playground", "name": ["PLAYGROUND", "운동장"],
