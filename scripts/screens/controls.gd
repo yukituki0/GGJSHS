@@ -19,7 +19,7 @@ const ROWS := [
 	["burst", ["d", "p"]],
 	["throw_tech", ["right", "hs"]],
 	["overhead_kick", ["right", "k"]],
-	["taunt", ["p", "k"]],
+	["taunt", ["select"]],
 	["dash", ["right", "right"]],  # 1P(오른쪽을 볼 때) 기준으로 표시
 	["guard", ["left"]],
 	["start_pause", ["start"]],

@@ -72,8 +72,8 @@ var _pose_hold := 0                     # 공격이 끝난 뒤 그림을 더 보
 var _hold_tex: Texture2D                # 그때 보여 줄 그림 (마지막 공격 그림)
 
 # ── 도발 / 리스펙트 (길티기어 Strive처럼) ─────────────────────
-## 서 있을 때 P + K 동시 = 도발: 상대 텐션 +10% (나만 손해, 순수 연출)
-## 앞 + P + K = 리스펙트: 상대를 칭찬하는 동작 (게이지 변화 없음)
+## 서 있을 때 SELECT = 도발: 상대 텐션 +10% (나만 손해, 순수 연출)
+## 앞 + SELECT = 리스펙트: 상대를 칭찬하는 동작 (게이지 변화 없음)
 const TAUNT_TENSION := 10.0
 var speech := ""                        # 머리 위 말풍선 글자 (도발/리스펙트 대사)
 var speech_frames := 0
@@ -85,7 +85,7 @@ const CROUCH_SIZE := Vector2(80, 100)
 ## 버튼 우선순위: 동시에 눌렀으면 강한 버튼이 이긴다
 const ATTACK_BUTTONS: Array[String] = ["hs", "s", "k", "p"]
 ## 입력 버퍼에 기억해 둘 버튼 (누르는 "순간"이 중요한 것들). "dash"는 버튼이 아니라 같은 방향 두 번 (66 / 44)
-const BUFFERED_ACTIONS: Array[String] = ["hs", "s", "k", "p", "d", "dash", "up", "rc"]
+const BUFFERED_ACTIONS: Array[String] = ["hs", "s", "k", "p", "d", "dash", "up", "rc", "select"]
 const DASH_TAP_WINDOW := 14     # 첫 번째를 누르고 이 프레임 안에 같은 방향을 또 누르면 대시
 const HISTORY_FRAMES := 60      # 위치 기록 길이 (커몬 Ctrl+Z 등에서 사용)
 
@@ -559,15 +559,11 @@ func _together(a: String, b: String) -> bool:
 			and (_pressed(a) or _pressed(b))
 
 
-## 방금(SIMUL_WINDOW 안) 시작한 기술을 동시 입력 기술로 바꾸기: 5P/5K → 도발, 5D/5H → 오버드라이브
+## 방금(SIMUL_WINDOW 안) 시작한 기술을 동시 입력 기술로 바꾸기: 5D/5H → 오버드라이브
 func _upgrade_together() -> bool:
 	if current_attack == null or state_frame > SIMUL_WINDOW or not is_on_ground():
 		return false
 	var from := current_attack.name
-	if from in ["5P", "5K", "6K"] and _together("p", "k") and attacks.has("taunt"):
-		mana += mana_cost(from)
-		_start_taunt(_input_forward() > 0)
-		return true
 	if from in ["5D", "6D", "4D", "2D", "5H"] and _together("d", "hs") and attacks.has("OD") \
 			and tension >= attacks["OD"].cost:
 		mana += mana_cost(from)
@@ -719,8 +715,10 @@ func _ground_neutral() -> void:
 	if special != "":
 		_start_attack(special)
 		return
-	# 도발 / 리스펙트: P + K를 같이 누르면 (서 있을 때만, 앞을 누르고 있으면 리스펙트)
-	if _together("p", "k") and not _held("down"):
+	# 도발 / 리스펙트: 길티기어처럼 전용 버튼(SELECT) 하나로 (서 있을 때만, 앞을 누르고 있으면 리스펙트)
+	# 예전엔 P + K였는데 공격하다가 자꾸 나가서 바꿈
+	if _pressed("select") and not _held("down"):
+		_consume("select")
 		_start_taunt(fwd > 0)
 		return
 	# 일반 잡기: 붙어서 → / ← + HS (아니면 그냥 5H가 나간다)

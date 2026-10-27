@@ -151,7 +151,7 @@ const STRINGS := {
 	"burst": ["BURST (while hit: {D} + any attack)", "버스트 (맞는 중: {D} + 공격 버튼)"],
 	"throw_tech": ["THROW / BREAK  (→/← + {HS} / {HS} when grabbed)", "잡기 / 잡기 풀기  (→/← + {HS} / 잡힐 때 {HS})"],
 	"overhead_kick": ["OVERHEAD  (→ + {K})", "중단 발차기  (→ + {K})"],
-	"taunt": ["TAUNT ({P} + {K}, gives foe 10%) / → + {P} + {K}: RESPECT", "도발 ({P} + {K}, 상대 텐션 +10%) / 앞 + {P} + {K}: 리스펙트"],
+	"taunt": ["TAUNT ({SELECT}, gives foe 10%) / → + {SELECT}: RESPECT", "도발 ({SELECT}, 상대 텐션 +10%) / 앞 + {SELECT}: 리스펙트"],
 	"demo_play": ["DEMO PLAY  -  PRESS ANY BUTTON", "데모 플레이  -  아무 버튼이나 누르세요"],
 	"dash": ["DASH  (→→ / ←← backdash)", "대시  (→→ / ←← 백스텝)"],
 	"guard": ["GUARD  (hold ← = high/overhead, ↙ = high/low)", "가드  (← 서서: 상단·중단 / ↙ 앉아: 상단·하단)"],
@@ -208,7 +208,7 @@ const STRINGS := {
 
 ## 기술표: 캐릭터 id -> [입력, 영어 이름, 한국어 이름, 한국어 설명]  (→ = 상대 쪽, ← = 반대쪽)
 ## 기술을 바꾸면 여기와 docs/MOVES.md도 같이 고친다
-## 도발(P+K) / 리스펙트(→+P+K) 대사: 캐릭터 id → {"taunt": [[영어, 한국어], ...], "respect": [...]}
+## 도발(SELECT) / 리스펙트(→+SELECT) 대사: 캐릭터 id → {"taunt": [[영어, 한국어], ...], "respect": [...]}
 ## 여러 개면 그때그때 하나를 고른다. 자유롭게 고쳐도 됨
 const TAUNT_LINES := {
 	"chemikid": {
@@ -585,6 +585,6 @@ func menu_back(player := 0) -> bool:
 	return pressed
 
 
-## 일시정지 (START, SELECT, 키보드 ESC)
+## 일시정지 (START, 키보드 ESC). SELECT는 대전 중 도발 버튼이라 뺌
 func pause_pressed() -> bool:
-	return menu_pressed("start") or menu_pressed("select") or Input.is_action_just_pressed("ui_cancel")
+	return menu_pressed("start") or Input.is_action_just_pressed("ui_cancel")
