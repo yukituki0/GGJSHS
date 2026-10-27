@@ -14,6 +14,7 @@ signal screen_tint(color: Color, frames: int)  # 화면 전체 색 효과 (블�
 enum State {
 	STAND, CROUCH, RUN, BACKDASH, PREJUMP, AIR, AIRDASH,
 	GUARD, ATTACK, HITSTUN, BLOCKSTUN, KO,
+	DOWN,  # 쓰러짐 → 기상 (공중에서 맞고 떨어졌을 때). 무적
 }
 
 # ── 튜닝 값 (단위: 픽셀 / 프레임) ─────────────────────────
@@ -279,6 +280,9 @@ func tick() -> void:
 		crush_text -= 1
 	if counter_text > 0:
 		counter_text -= 1
+	if tech_text > 0:
+		tech_text -= 1
+	_hs_age = 0 if _just_pressed("hs") else _hs_age + 1
 	if speech_frames > 0:
 		speech_frames -= 1
 		if state in [State.HITSTUN, State.KO]:
@@ -345,6 +349,9 @@ func _build_attacks() -> void:
 	_add(AttackData.new("5K",  6, 3, 12, 30, Rect2(25, -80, 85, 25),  M, 15, 11, ["5S", "2S", "5H"]))
 	_add(AttackData.new("5S",  8, 4, 16, 40, Rect2(25, -120, 120, 35), M, 17, 13, ["5H", "2S"]))
 	_add(AttackData.new("5H", 12, 5, 22, 55, Rect2(20, -150, 140, 60), M, 20, 15, ["2H"]))
+	# 6K: 땅 중단 (길티기어 더스트·스파 특수기 중단처럼). 느려서 보고 서서 막을 수 있지만, 앉아 가드만 하는 상대를 깬다
+	var oh := _add(AttackData.new("6K", 20, 4, 18, 32, Rect2(20, -150, 95, 70), O, 22, 12))
+	oh.hitstop = 10
 	_add(AttackData.new("2P",  4, 3,  8, 18, Rect2(25, -70, 65, 22),  M, 11, 8,  ["2P", "5P", "2K", "5S", "2S"]))
 	_add(AttackData.new("2K",  5, 3, 10, 20, Rect2(25, -25, 90, 25),  L, 13, 10, ["5S", "2S", "5H"]))
 	_add(AttackData.new("2S",  8, 4, 16, 35, Rect2(25, -45, 120, 30), L, 16, 12, ["5H", "2H"]))
@@ -657,6 +664,8 @@ func _update_state() -> void:
 			_stunned()
 		State.KO:
 			_ko()
+		State.DOWN:
+			_down()
 
 
 ## 서 있거나 앉아 있을 때: 공격, 가드, 점프, 대시, 앉기, 걷기
@@ -677,6 +686,8 @@ func _ground_neutral() -> void:
 		_start_attack("throw_f" if fwd > 0 else "throw_b")
 		return
 	var attack := _pressed_attack("2" if _held("down") else "5")
+	if attack == "5K" and fwd > 0 and attacks.has("6K"):
+		attack = "6K"  # 앞 + K = 땅에서 쓰는 중단 (느리지만 앉아 가드를 깬다)
 	if attack != "":
 		_start_attack(attack)
 		return
@@ -954,10 +965,40 @@ func _stunned() -> void:
 		if stun_frames <= 0:
 			_change_state(State.GUARD if state == State.BLOCKSTUN and _guard_held() else State.STAND)
 	else:
-		# 공중에서 맞으면 땅에 떨어질 때까지 못 움직인다
+		# 공중에서 맞으면 땅에 떨어질 때까지 못 움직인다. 맞은 채로 떨어지면 쓰러졌다가 일어난다
 		velocity.y += gravity
 		if position.y + velocity.y >= ground_y:
-			_land()
+			if state == State.HITSTUN:
+				_knockdown()
+			else:
+				_land()
+
+
+# ── 다운 / 기상 ───────────────────────────────────────────
+## 공중에서 맞고 떨어지면 잠깐 누워 있다가 일어난다. 그동안은 무적 (상대는 일어나는 순간을 노리는 공방)
+const DOWN_FRAMES := 34      # 누워 있는 시간 (끝 WAKEUP_FRAMES는 일어나는 동작)
+const WAKEUP_FRAMES := 10
+
+
+func _knockdown() -> void:
+	_air_hits = 0
+	position.y = ground_y
+	velocity = Vector2.ZERO
+	current_attack = null
+	_change_state(State.DOWN)
+	Sfx.play("hit_light", -6.0, 0.05)
+
+
+func _down() -> void:
+	velocity.x *= 0.8
+	if state_frame >= DOWN_FRAMES:
+		_change_state(State.STAND)
+		_face_opponent()
+
+
+## 쓰러졌다가 일어나는 중인가 (그림: 누운 그림 → 마지막엔 앉은 그림)
+func is_waking() -> bool:
+	return state == State.DOWN and state_frame >= DOWN_FRAMES - WAKEUP_FRAMES
 
 
 func _ko() -> void:
@@ -1055,6 +1096,10 @@ func _fit_hitboxes_to_art() -> void:
 		return
 	# [자세 그림, 기준 기술, 같이 옮길 기술, 손발 끝을 찾을 높이(키 비율)]
 	var groups := [["kick", "5K", ["5K"], 0.2, 1.0]]  # 하이킥 그림도 있어서 머리 높이까지
+	if Game.load_texture("res://assets/characters/%s_6k.png" % char_id) != null:
+		groups.append(["6k", "6K", ["6K"], 0.2, 1.0])  # 중단 전용 그림이 있으면 그 발끝에
+	else:
+		groups[0][2].append("6K")  # 없으면 킥 그림을 같이 쓴다
 	# 기술을 쓰는 그림별로 묶는다 (S 그림이 있으면 5S는 그 그림의 무기 끝에, 2K 그림이 있으면 2K는 그 발끝에)
 	# 앉은 기술은 전용 그림(2p 등)이 없으면 앉은 그림 하나를 같이 쓴다. 2K는 전용 그림이 있을 때만 (발끝 = 바닥 근처)
 	var moves := {"5P": [0.45, 1.0], "5S": [0.45, 1.0], "5H": [0.45, 1.0],
@@ -1208,7 +1253,7 @@ func in_counter_state() -> bool:
 
 ## 공격 시작부터 invuln_frames 동안은 무적
 func is_invulnerable() -> bool:
-	if juggle_immune():
+	if juggle_immune() or state == State.DOWN:
 		return true
 	return state == State.ATTACK and current_attack != null and state_frame <= current_attack.invuln_frames
 
@@ -1221,6 +1266,36 @@ var _air_hits := 0
 
 func juggle_immune() -> bool:
 	return state == State.HITSTUN and not is_on_ground() and _air_hits >= JUGGLE_LIMIT
+
+
+# ── 잡기 풀기 / 긁기 데미지 ────────────────────────────────
+const THROW_TECH_WINDOW := 8   # 잡히기 전 이 프레임 안에 HS를 눌렀으면 잡기 풀기
+const CHIP_RATE := 0.15        # 막았을 때 깎이는 비율 (필살기·투사체), 궁극기는 CHIP_RATE_SUPER
+const CHIP_RATE_SUPER := 0.25
+const NORMAL_NAMES := ["5P", "5K", "5S", "5H", "6K", "2P", "2K", "2S", "2H", "jP", "jK", "jS", "jH"]
+var _hs_age := 999             # HS를 누른 뒤 지난 프레임
+var tech_text := 0             # "THROW BREAK" 글자 남은 프레임
+
+
+func chip_damage(attack: AttackData, damage: int) -> int:
+	if damage <= 0 or attack.name in NORMAL_NAMES or attack.is_throw:
+		return 0
+	var rate := CHIP_RATE_SUPER if attack.name == "OD" else CHIP_RATE
+	return maxi(1, int(round(damage * rate)))
+
+
+## 잡기 풀기: 둘 다 뒤로 튕겨 나가고 짧게 경직 (누구도 데미지 없음)
+func _throw_break(from_dir: int) -> void:
+	tech_text = 40
+	stun_frames = 12
+	velocity.x = 9.0 * from_dir
+	_change_state(State.BLOCKSTUN)
+	if opponent != null:
+		opponent.current_attack = null
+		opponent.stun_frames = 12
+		opponent.velocity.x = -9.0 * from_dir
+		opponent._change_state(State.BLOCKSTUN)
+	Sfx.play("guard", 0.0, 0.05)
 
 
 ## Match가 호출: 공격을 받았다. 막았으면 true를 돌려준다
@@ -1243,8 +1318,16 @@ func receive_attack(attack: AttackData, from_dir: int, damage_scale := 1.0) -> b
 			velocity = Vector2(6.0 * from_dir, -10.0)
 			_change_state(State.KO)
 		return false
+	# 잡기 풀기: 일반 잡기(→/← + HS)를 당하는 순간 앞뒤로 HS를 누르고 있었으면 (조금 일찍 눌러도 됨) 풀린다
+	if attack.is_throw and attack.name in ["throw_f", "throw_b"] and _hs_age <= THROW_TECH_WINDOW:
+		_throw_break(from_dir)
+		return true
 	if not attack.unblockable and not attack.is_throw and can_block(attack.level):
 		add_tension(tension_guard_gain)
+		# 긁기 데미지: 필살기·투사체·궁극기는 막아도 조금 깎인다 (기본기는 0). 긁기로는 KO되지 않는다
+		var chip := chip_damage(attack, damage)
+		if chip > 0:
+			hp = maxi(1, hp - chip)
 		_since_block = 0
 		if guard_gauge >= GUARD_MAX:
 			# 가드 크러시: 가드가 깨지고 잠깐 무방비 (데미지는 없음)
@@ -1365,6 +1448,9 @@ func _draw() -> void:
 				Vector2(0, bubble.end.y + 14)]), Color(1, 1, 1, 0.92 * a))
 		Style.text(self, speech, Vector2(bubble.position.x, bubble.position.y + 30), 20, Color(0, 0, 0, a),
 				HORIZONTAL_ALIGNMENT_CENTER, bubble.size.x, 0)
+	if tech_text > 0:
+		Style.text(self, "THROW BREAK", Vector2(-160, -size.y - 50), 30, Color(0.5, 0.9, 1.0, minf(1.0, tech_text / 15.0)),
+				HORIZONTAL_ALIGNMENT_CENTER, 320, 6)
 	if counter_text > 0 and not Style.text_image(self, "COUNTER", Vector2(0, -size.y - 70), 1.0,
 			minf(1.0, counter_text / 15.0), Vector2(300, 90)):
 		Style.text(self, "COUNTER", Vector2(-150, -size.y - 50), 32, Color(1, 0.55, 0.15, minf(1.0, counter_text / 15.0)),
@@ -1566,6 +1652,8 @@ func _pose_texture_now() -> Texture2D:
 					if a.is_throw:
 						names.append("throw")  # 없으면 일반 잡기 그림
 				# 버튼을 누른 순간부터 공격 그림 (예전엔 발생 뒤부터라 너무 잠깐 보였다)
+				if a.name == "6K":
+					names.append("6k")  # 땅 중단 전용 그림 (없으면 킥 그림)
 				# 앉은/공중 기본기는 기술마다 그림을 따로 둘 수 있다 (예: root2_2k.png, root2_jh.png)
 				if a.name.begins_with("2") or a.name.begins_with("j"):
 					names.append(a.name.to_lower())
@@ -1598,6 +1686,8 @@ func _pose_texture_now() -> Texture2D:
 			if is_on_ground() and state_frame > 6:
 				names.append("down")  # 쓰러져 누운 그림
 			names.append("hit")
+		State.DOWN:
+			names.append("crouch" if is_waking() else "down")  # 누워 있다가 일어날 땐 웅크린 그림
 		State.CROUCH, State.PREJUMP:
 			names.append("crouch")
 		State.AIR:

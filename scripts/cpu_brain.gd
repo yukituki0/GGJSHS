@@ -11,6 +11,8 @@ extends RefCounted
 ##   think     다음 행동을 고르기까지 걸리는 프레임 (작을수록 빠르게 판단)
 ##   punish    상대가 기술을 헛치거나 막혀서 빈틈이 있을 때 바로 때릴 확률
 ##   burst     콤보를 burst_hits대 이상 맞으면 버스트로 빠져나올 확률
+##   tech      일반 잡기를 당하는 순간 잡기 풀기(HS)를 누를 확률
+##   overhead  상대가 앉아서 막고 있으면 땅 중단(6K)을 섞을 확률
 ##   master    달인 전용 기술: 정해진 최대 데미지 콤보 길(2H 띄우기 → 점프 캔슬 → 공중 콤보 → 공중D),
 ##             필살기 → 오버드라이브 연결, 막힌 위험한 기술은 로만 캔슬로 안전하게, 점프 대공은 띄워서 공중 콤보,
 ##             먼 거리 빈틈은 긴 기술로 때리기
@@ -19,14 +21,17 @@ enum Level { EASY, NORMAL, HARD, MASTER }
 
 const PARAMS := {
 	Level.EASY: { "react": 20, "guard": 0.3, "low_guard": 0.25, "combo": 0.4, "anti_air": 0.15,
-			"throw": 0.15, "special": 0.2, "think": [22, 46], "punish": 0.1, "burst": 0.2, "burst_hits": 6 },
+			"throw": 0.15, "special": 0.2, "think": [22, 46], "punish": 0.1, "burst": 0.2, "burst_hits": 6,
+			"tech": 0.05, "overhead": 0.05 },
 	Level.NORMAL: { "react": 11, "guard": 0.65, "low_guard": 0.6, "combo": 0.75, "anti_air": 0.5,
-			"throw": 0.35, "special": 0.3, "think": [12, 30], "punish": 0.45, "burst": 0.5, "burst_hits": 4 },
+			"throw": 0.35, "special": 0.3, "think": [12, 30], "punish": 0.45, "burst": 0.5, "burst_hits": 4,
+			"tech": 0.3, "overhead": 0.2 },
 	Level.HARD: { "react": 5, "guard": 0.9, "low_guard": 0.9, "combo": 0.95, "anti_air": 0.85,
-			"throw": 0.5, "special": 0.35, "think": [6, 18], "punish": 0.85, "burst": 0.85, "burst_hits": 3 },
+			"throw": 0.5, "special": 0.35, "think": [6, 18], "punish": 0.85, "burst": 0.85, "burst_hits": 3,
+			"tech": 0.6, "overhead": 0.35 },
 	Level.MASTER: { "react": 3, "guard": 0.97, "low_guard": 0.97, "combo": 1.0, "anti_air": 0.95,
 			"throw": 0.55, "special": 0.35, "think": [4, 12], "punish": 0.97, "burst": 0.95, "burst_hits": 3,
-			"master": true },
+			"tech": 0.8, "overhead": 0.45, "master": true },
 }
 
 ## 달인 콤보 길: 이어갈 수 있는 기술 중 앞에 있는 것부터 고른다 (띄우는 2H로 모아서 공중 콤보)
@@ -48,6 +53,7 @@ var _burst_decided := -1           # 버스트를 쓸지 정한 콤보 히트 �
 var _punish_decided := false
 var _air_step := 0                 # 달인 공중 콤보 진행 (0 = jS, 1 = jH, 2 = 공중D)
 var _rc_decided: AttackData        # 막힌 기술을 로만 캔슬할지 이미 정한 기술
+var _tech_for: AttackData          # 잡기 풀기를 시도할지 이미 정한 잡기
 
 
 func _init(level: int) -> void:
@@ -82,8 +88,17 @@ func think(me: Fighter) -> void:
 			_press("d")
 			_press("p")
 			return
-	if me.state == Fighter.State.HITSTUN:
+	if me.state in [Fighter.State.HITSTUN, Fighter.State.DOWN]:
 		return
+	# 0.5) 잡기 풀기: 상대가 일반 잡기를 시작하면 tech 확률로 HS
+	if opp.state == Fighter.State.ATTACK and opp.current_attack != null \
+			and opp.current_attack.name in ["throw_f", "throw_b"] and _tech_for != opp.current_attack:
+		_tech_for = opp.current_attack
+		if randf() < p["tech"]:
+			_press("hs")
+			return
+	elif opp.state != Fighter.State.ATTACK:
+		_tech_for = null
 	var dx := opp.position.x - me.position.x
 	var dist := absf(dx)
 	var fwd := "right" if dx > 0 else "left"
@@ -155,6 +170,19 @@ func think(me: Fighter) -> void:
 				return
 	elif opp.is_on_ground():
 		_aa_decided = false
+
+	# 3.5) 기상 공방: 상대가 쓰러져 있으면 붙어서 일어나는 순간 하단(2K)/중단(6K)/잡기로 흔든다
+	if opp.state == Fighter.State.DOWN and me.is_on_ground() and can_act:
+		if dist > 110:
+			_held[fwd] = true
+		elif opp.state_frame >= Fighter.DOWN_FRAMES - 4:
+			var r := randf()
+			if r < p["overhead"]:
+				_held[fwd] = true
+				_press("k")
+			elif r < 0.75:
+				_press_move("2K", fwd)
+		return
 
 	# 4) 평소: 거리에 따라 행동(plan)을 골라 정해진 시간 동안 한다
 	_plan_frames -= 1
@@ -314,7 +342,13 @@ func _do_plan(me: Fighter, _opp: Fighter, dist: float, fwd: String, back: String
 				_press_move(["5S", "5K", "2K", "2S"].pick_random(), fwd)
 		"attack":
 			if first:
-				_press_move(["5P", "5K", "2K", "2P"].pick_random(), fwd)
+				# 상대가 앉아서 막고 있으면 중단(6K)을 섞는다
+				if _opp.state in [Fighter.State.GUARD, Fighter.State.BLOCKSTUN, Fighter.State.CROUCH] \
+						and _opp._held("down") and randf() < p["overhead"]:
+					_held[fwd] = true
+					_press("k")
+				else:
+					_press_move(["5P", "5K", "2K", "2P"].pick_random(), fwd)
 		"throw":
 			if me._in_throw_range():
 				_held[fwd] = true

@@ -148,6 +148,8 @@ const STRINGS := {
 	"overdrive": ["OVERDRIVE ({D} + {HS}, 50%)", "오버드라이브 ({D} + {HS}, 50%)"],
 	"rc": ["RC (Roman Cancel)", "RC (로만 캔슬)"],
 	"burst": ["BURST (while hit: {D} + any attack)", "버스트 (맞는 중: {D} + 공격 버튼)"],
+	"throw_tech": ["THROW / BREAK  (→/← + {HS} / {HS} when grabbed)", "잡기 / 잡기 풀기  (→/← + {HS} / 잡힐 때 {HS})"],
+	"overhead_kick": ["OVERHEAD  (→ + {K})", "중단 발차기  (→ + {K})"],
 	"taunt": ["TAUNT ({P} + {K}, gives foe 10%) / → + {P} + {K}: RESPECT", "도발 ({P} + {K}, 상대 텐션 +10%) / 앞 + {P} + {K}: 리스펙트"],
 	"demo_play": ["DEMO PLAY  -  PRESS ANY BUTTON", "데모 플레이  -  아무 버튼이나 누르세요"],
 	"dash": ["DASH  (→→ / ←← backdash)", "대시  (→→ / ←← 백스텝)"],
@@ -288,7 +290,8 @@ const MOVE_LISTS := {
 ## 모든 캐릭터 공통 조작 (기술표 아래쪽에 표시)
 const COMMON_MOVES := [
 	["← / ↙", "Guard", "가드", "← 서서: 상단·중단 / ↙ 앉아: 상단·하단"],
-	["→/← + HS", "Throw", "잡기", "붙어서. 가드 불가 (경직·공중 상대는 X)"],
+	["→/← + HS", "Throw", "잡기", "붙어서. 가드 불가. 잡히는 순간 HS로 풀기"],
+	["→ + K", "Overhead", "중단 발차기", "느리지만 앉아 가드를 깸"],
 	["P → K → S → HS", "Gatling", "개틀링", "맞히거나 막히면 더 강한 버튼으로"],
 	["RC", "Roman Cancel", "로만 캔슬", "공격 취소 (텐션 50%)"],
 	["→→ / ←←", "Dash / Backdash", "대시 / 백스텝", "→ 계속 누르면 달리기. 공중에서도 가능"],

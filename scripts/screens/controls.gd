@@ -17,6 +17,8 @@ const ROWS := [
 	["overdrive", ["d", "hs"]],
 	["rc", ["rc"]],
 	["burst", ["d", "p"]],
+	["throw_tech", ["right", "hs"]],
+	["overhead_kick", ["right", "k"]],
 	["taunt", ["p", "k"]],
 	["dash", ["right", "right"]],  # 1P(오른쪽을 볼 때) 기준으로 표시
 	["guard", ["left"]],
@@ -55,10 +57,10 @@ func _draw() -> void:
 	text("1P", 150, 30, Color(1, 0.45, 0.45), 700)
 	text("2P", 150, 30, Color(0.45, 0.7, 1), 980)
 	for i in ROWS.size():
-		var y := 190 + i * 34
+		var y := 182 + i * 31
 		var label := Game.t(ROWS[i][0])
 		var actions: Array = ROWS[i][1]
-		Style.fill(self, Style.slant(180, y - 26, 920, 32, 10), Color(Style.PANEL, 0.85 if i % 2 == 0 else 0.5))
+		Style.fill(self, Style.slant(180, y - 24, 920, 29, 10), Color(Style.PANEL, 0.85 if i % 2 == 0 else 0.5))
 		Style.text(self, label, Vector2(200, y), 21, Style.WHITE)
 		for p in [1, 2]:
 			var names: Array[String] = []
