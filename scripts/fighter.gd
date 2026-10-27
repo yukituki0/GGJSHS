@@ -1074,13 +1074,48 @@ func hurt_rects() -> Array[Rect2]:
 	else:
 		tex = puppet.texture
 	var out: Array[Rect2] = []
+	var body_front := 0.0
 	for b: Rect2 in ArtBoxes.hurt_boxes(tex, anchor):
 		var r := Rect2(b.position * s, b.size * s)
+		body_front = maxf(body_front, r.end.x)
 		if facing < 0:
 			r.position.x = -r.position.x - r.size.x
 		r.position += position
 		out.append(r)
+	var limb := _limb_hurtbox(body_front)
+	if limb.has_area():
+		out.append(limb)
 	return out
+
+
+## 공격하는 팔·다리의 맞는 판정 (길티기어·스파처럼): 공격 판정 바로 직전부터 후딜 절반까지,
+## 몸 앞에서 공격 판정 끝 조금 앞까지 생긴다 → 헛친 긴 기술의 팔다리를 때려서 반격할 수 있다.
+## 무기(컴퍼스·키보드·플라스크·망치·채찍)로 치는 기술은 무기 부분은 안 맞게 더 짧게 (판정 분리)
+const LIMB_SHORT := 18.0        # 맨손: 공격 판정 끝보다 이만큼 짧게 (때리는 쪽이 조금 유리하게)
+const WEAPON_SHORT := 0.45      # 무기: 공격 판정 길이의 이 비율만큼 무기로 보고 빼준다
+const WEAPON_MOVES := {
+	"root2": ["5S", "5H", "2S", "2H", "jS", "jH", "6D"], "common": ["5S", "5H", "2S", "2H", "jS", "jH"],
+	"chemikid": ["5S", "5H", "2S", "jS", "jH"], "globe": ["5S", "5H"], "seed": ["6D"],
+}
+
+
+func _limb_hurtbox(body_front: float) -> Rect2:
+	if state != State.ATTACK or current_attack == null or current_attack.is_throw or not current_attack.hitbox.has_area():
+		return Rect2()
+	var a := current_attack
+	if state_frame < a.startup - 2 or state_frame > a.startup + a.active + a.recovery / 2:
+		return Rect2()
+	var hb := a.hitbox
+	var front := hb.end.x - LIMB_SHORT
+	if a.name in WEAPON_MOVES.get(char_id, []):
+		front = hb.end.x - hb.size.x * WEAPON_SHORT
+	if front <= body_front:
+		return Rect2()
+	var r := Rect2(body_front - 4.0, hb.position.y + hb.size.y * 0.2, front - body_front + 4.0, hb.size.y * 0.6)
+	if facing < 0:
+		r.position.x = -r.position.x - r.size.x
+	r.position += position
+	return r
 
 
 ## 공격 판정(히트박스)을 그림에 맞추기: 서서/앉아서/공중 기본기 + 전용 그림이 있는 몸 공격 필살기.

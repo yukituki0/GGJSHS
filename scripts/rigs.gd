@@ -26,6 +26,7 @@ const RIGS := {
 		},
 	},
 	"common": {
+		"reach_limit": {"jS": 80},  # 그림 끝까지 닿게 (눈으로 닿았는데 안 맞는 일 없게)
 		"pose_size": {"crouch": 0.9, "5d": 0.85, "2k": 0.91, "2p": 0.9, "2s": 0.91, "6d": 0.76, "backdash": 0.9, "dash": 0.78, "guard": 0.91, "heavy": 0.77, "hit": 1.12, "jk": 0.79, "jp": 0.83, "punch": 0.81, "slash": 0.86, "walk_back": 0.81},
 		"pose_anchor": {"2k": Vector2(560, 1003), "5d": Vector2(560, 1357), "od": Vector2(420, 1058), "2s": Vector2(288, 1086), "dash": Vector2(603, 1289), "heavy": Vector2(358, 1358), "jp": Vector2(334, 1439), "slash": Vector2(244, 1356)},
 		"no_fit": ["2H"],
@@ -39,6 +40,7 @@ const RIGS := {
 		},
 	},
 	"chaos": {
+		"reach_limit": {"jS": 80},  # 그림 끝까지 닿게 (눈으로 닿았는데 안 맞는 일 없게)
 		"fit_band": {"5S": [0.7, 1.0]},  # S 손날: 앞으로 펄럭이는 가운 자락 말고 뻗은 손끝에
 		"pose_size": {"crouch": 0.91, "crouch_guard": 0.85, "jump_attack": 1.1, "air_dash": 1.1, "guard": 0.91, "hit": 0.88, "jump": 0.85, "punch": 0.9, "2p": 0.85, "2k": 0.81, "2s": 0.87, "jp": 0.87, "jk": 0.78, "jh": 0.9, "js": 0.78, "walk_back": 0.9, "dash": 0.81, "backdash": 0.9, "5d": 0.78, "6d": 0.87, "4d": 0.85, "od": 1.13, "2h": 1.1, "slash": 0.84, "heavy": 0.84, "jd": 0.89},
 		"pose_anchor": {"air_dash": Vector2(566, 983), "hit": Vector2(549, 1381), "jump_attack": Vector2(477, 1114), "punch": Vector2(292, 1311), "2p": Vector2(320, 1179), "jh": Vector2(450, 1310), "od": Vector2(340, 1244)},
@@ -67,7 +69,7 @@ const RIGS := {
 		"pose_size": {"crouch": 0.88, "2p": 0.88, "2k": 0.88, "2h": 1.15, "heavy": 0.75, "air_dash": 0.77, "5d": 0.8, "2d": 0.89, "guard": 0.85, "jd": 1.18, "jh": 1.1},
 		# jd: 컴퍼스 끝이 발보다 한참 아래라 부츠 바닥을 발 위치로 / win: 땅에 세운 컴퍼스 끝 말고 두 부츠 가운데
 		"pose_anchor": {"win": Vector2(610, 1423), "jp": Vector2(714, 923), "jk": Vector2(560, 850), "6d": Vector2(865, 1433), "js": Vector2(455, 908), "od": Vector2(457, 1424)},
-		"reach_limit": {"5H": 120},  # 5H 판정을 컴퍼스 끝까지 (원거리형). 6D는 그보다 더 길게 root2.gd에서
+		"reach_limit": {"5H": 120, "2S": 120, "jS": 120},  # 5H·2S·jS 판정을 컴퍼스 끝까지 (원거리형). 6D는 그보다 더 길게 root2.gd에서
 		"no_fit": ["6D"],  # 6D는 5H보다 길게 일부러 정한 사거리
 		"joints": {
 			"hip": Vector2(560, 560), "neck": Vector2(560, 270), "head": Vector2(600, 150),

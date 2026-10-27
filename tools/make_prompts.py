@@ -156,6 +156,8 @@ NORMALS = [
     ('2s', '앉아 S', 'crouching low with both knees bent, a sweeping strike with {W} far forward at knee height: '
            'the striking arm fully extended straight toward the right, reaching well past the front foot (a real attack, not a guard stance)'),
     ('2h', '앉아 HS (대공)', 'anti-air: rising up from a crouch and swinging {W} straight upward above the head, looking up'),
+    ('6k', '앞 K (땅 중단 발차기)', 'overhead heel-drop kick: one leg raised high and swinging DOWN onto the opponent in front, the heel at head height '
+                    'reaching forward toward the right, standing on the other leg, body leaning slightly back, a big committed slow attack'),
     ('jp', '공중 P', 'in mid-air, knees tucked, quick jab forward with one fist'),
     ('jk', '공중 K', 'in mid-air, flying side kick: one leg FULLY extended straight forward toward the right at hip height, '
                     'the foot is the farthest point of the image, the other knee tucked'),
