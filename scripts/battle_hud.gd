@@ -452,6 +452,12 @@ func _draw_sparks() -> void:
 	for spark in m.sparks:
 		var pos := _to_screen(spark[0])
 		var t: float = spark[1] / 10.0
+		var sfx := Game.load_texture("res://assets/effects/%s.png" % ("fx_guard" if spark[2] else "fx_hit"))
+		if sfx != null:  # 맞힘/막힘 불꽃 그림: 커지면서 사라짐
+			var px := (90.0 if spark[2] else 120.0) * (1.4 - 0.5 * t)
+			var sz := Vector2(sfx.get_width(), sfx.get_height()) * (px / maxf(sfx.get_width(), sfx.get_height()))
+			draw_texture_rect(sfx, Rect2(pos - sz / 2, sz), false, Color(1, 1, 1, t))
+			continue
 		if spark[2]:
 			draw_arc(pos, 30 * (1.5 - t), 0, TAU, 24, Color(Style.CYAN, t), 5.0)
 		else:

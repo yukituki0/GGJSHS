@@ -1441,7 +1441,8 @@ func _draw() -> void:
 		_draw_puppet(shake_x)
 	else:
 		_draw_body(rect, body_color, size)
-	if shock_frames > 0:
+	if shock_frames > 0 and not draw_fx("fx_shock", Vector2(0, -size.y / 2), size.y * 1.4,
+			0.3 if shock_frames % 4 < 2 else -0.3, 0.9):
 		# 감전: 몸 둘레에 지직거리는 노란 번개
 		for i in 4:
 			var y0 := -size.y * (0.2 + i * 0.2)
@@ -1449,14 +1450,16 @@ func _draw() -> void:
 			draw_polyline(PackedVector2Array([Vector2(-size.x / 2 - 14, y0), Vector2(-size.x / 4, y0 + jitter),
 					Vector2(size.x / 4, y0 - jitter), Vector2(size.x / 2 + 14, y0)]), Color(1, 0.95, 0.3), 3.0)
 	# 버스트: 금빛/하늘빛 충격파 두 겹
-	if burst_flash > 0:
+	if burst_flash > 0 and not draw_fx("fx_burst", Vector2(0, -size.y / 2), 140 + (1.0 - burst_flash / 30.0) * 420,
+			0.0, burst_flash / 30.0):
 		var bt := 1.0 - burst_flash / 30.0
 		var center := Vector2(0, -size.y / 2)
 		draw_circle(center, 60 + bt * 200, Color(0.5, 0.85, 1.0, 0.35 * (1.0 - bt)))
 		draw_arc(center, 60 + bt * 200, 0, TAU, 64, Color(1, 1, 1, 1.0 - bt), 8.0)
 		draw_arc(center, 30 + bt * 140, 0, TAU, 64, Color(0.4, 0.8, 1.0, 1.0 - bt), 5.0)
 	# 로만 캔슬: 퍼져 나가는 원
-	if rc_flash > 0:
+	if rc_flash > 0 and not draw_fx("fx_rc", Vector2(0, -size.y / 2), 100 + (1.0 - rc_flash / 20.0) * 340,
+			0.0, rc_flash / 20.0):
 		var t := 1.0 - rc_flash / 20.0
 		draw_arc(Vector2(0, -size.y / 2), 40 + t * 160, 0, TAU, 48,
 				Color(1, 0.2, 0.3, 1.0 - t), 6.0)
@@ -1483,7 +1486,8 @@ func _draw() -> void:
 				Vector2(0, bubble.end.y + 14)]), Color(1, 1, 1, 0.92 * a))
 		Style.text(self, speech, Vector2(bubble.position.x, bubble.position.y + 30), 20, Color(0, 0, 0, a),
 				HORIZONTAL_ALIGNMENT_CENTER, bubble.size.x, 0)
-	if tech_text > 0:
+	if tech_text > 0 and not Style.text_image(self, "THROW BREAK", Vector2(0, -size.y - 70), 1.0,
+			minf(1.0, tech_text / 15.0), Vector2(320, 90)):
 		Style.text(self, "THROW BREAK", Vector2(-160, -size.y - 50), 30, Color(0.5, 0.9, 1.0, minf(1.0, tech_text / 15.0)),
 				HORIZONTAL_ALIGNMENT_CENTER, 320, 6)
 	if counter_text > 0 and not Style.text_image(self, "COUNTER", Vector2(0, -size.y - 70), 1.0,
@@ -1847,9 +1851,37 @@ func _attack_reach() -> float:
 
 
 ## 가드: 몸 앞에 반투명 방패 (그림을 구부리는 대신)
+## 이펙트 그림 하나 그리기 (assets/effects/<fx>.png). center = 캐릭터 발 기준, px = 큰 변 길이. 그림이 없으면 false
+## 그림이 생기면 코드로 그리던 임시 연출 대신 그림이 나온다
+func draw_fx(fx: String, center: Vector2, px: float, rot := 0.0, alpha := 1.0) -> bool:
+	var tex := Game.load_texture("res://assets/effects/%s.png" % fx)
+	if tex == null:
+		return false
+	var sz := Vector2(tex.get_width(), tex.get_height()) * (px / maxf(tex.get_width(), tex.get_height()))
+	draw_set_transform(center, rot * facing, Vector2(facing, 1))
+	draw_texture_rect(tex, Rect2(-sz / 2, sz), false, Color(1, 1, 1, alpha))
+	draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
+	return true
+
+
+## 이펙트 그림을 from → to로 늘려 그리기 (번개 줄기, 찌르기 궤적 등). 그림은 왼쪽 → 오른쪽 방향
+func draw_fx_span(fx: String, from: Vector2, to: Vector2, thickness: float, alpha := 1.0) -> bool:
+	var tex := Game.load_texture("res://assets/effects/%s.png" % fx)
+	if tex == null:
+		return false
+	var length := from.distance_to(to)
+	draw_set_transform(from, (to - from).angle(), Vector2.ONE)
+	draw_texture_rect(tex, Rect2(0, -thickness / 2, length, thickness), false, Color(1, 1, 1, alpha))
+	draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
+	return true
+
+
 func _draw_guard_shield() -> void:
 	var low := _held("down")
 	var center := Vector2(facing * 80, -60 if low else -95)
+	var hit_flash := 1.0 if state == State.BLOCKSTUN and state_frame < 6 else 0.0
+	if draw_fx("fx_guard_shield", Vector2(80, -60 if low else -95), 130.0 if low else 160.0, 0.0, 0.7 + 0.3 * hit_flash):
+		return
 	var start := -PI * 0.4 if facing > 0 else PI * 0.6
 	var flash := 1.0 if state == State.BLOCKSTUN and state_frame < 6 else 0.0
 	var col := Color(0.55, 0.8, 1.0, 0.55 + 0.4 * flash)

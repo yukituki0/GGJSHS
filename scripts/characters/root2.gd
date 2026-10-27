@@ -260,7 +260,8 @@ func _stamp_qed() -> void:
 func _draw() -> void:
 	# 컴퍼스 찌르기: 몸에서 뻗어 나가는 컴퍼스 다리
 	if state == State.ATTACK and current_attack != null and current_attack.name == "6D" \
-			and current_attack.is_active(state_frame):
+			and current_attack.is_active(state_frame) \
+			and not draw_fx_span("root2_thrust", Vector2(20 * facing, -115), Vector2(320 * facing, -115), 70.0):
 		draw_line(Vector2(20 * facing, -115), Vector2(310 * facing, -115), Color(0.85, 0.85, 0.9), 6.0)
 		draw_line(Vector2(20 * facing, -115), Vector2(275 * facing, -80), Color(0.85, 0.85, 0.9), 4.0)
 	super()

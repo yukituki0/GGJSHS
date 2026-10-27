@@ -100,7 +100,15 @@ SPECIALS = {
 }
 
 # 다시 뽑을 그림: (파일, 설명, Pose 문장). 새 그림을 넣으면 여기서 지운다
-REDO = []
+REDO = [
+    # 판정보다 그림이 짧아서 판정이 허공에 떠 있는 것 (실측: 그림 끝 / 판정 끝)
+    ('globe_jh', '공중 HS (24 / 73)', 'in mid-air, big diagonal downward swing of one hand in a karate chop reaching FAR forward and down toward the lower right'),
+    ('seed_jh', '공중 HS (24 / 73)', 'in mid-air, big diagonal downward palm strike reaching FAR forward and down toward the lower right'),
+    ('common_jh', '공중 HS (35 / 73)', 'in mid-air, big diagonal downward swing of the mechanical keyboard reaching FAR forward and down toward the lower right'),
+    ('seed_2p', '앉아 P (37 / 73)', 'crouching low, quick jab with one fist at waist height, the punching arm FULLY extended straight toward the right'),
+    ('seed_2k', '앉아 K (37 / 73)', 'crouching low, sweeping kick with the front leg FULLY extended straight forward along the floor toward the right'),
+    ('globe_jk', '공중 K (52 / 73)', 'in mid-air, flying side kick with one leg FULLY extended straight forward toward the right'),
+]
 
 # 무기 공격 (길티기어처럼 S = 가벼운 무기 공격, HS = 크고 느린 무기 공격). 5S → <id>_slash, 5H → <id>_heavy
 WEAPON_POSES = [
@@ -169,6 +177,7 @@ NORMALS = [
 # 글자 그림 (assets/ui/text_<이름>.png): 지금 폰트로 쓰는 큰 글자를 그림으로. (이름, 설명, 정확한 글자, 색)
 TEXTS = [
     ('round1', '라운드 1', 'ROUND 1', 'white silver chrome'),
+    ('throw_break', '잡기 풀기', 'THROW BREAK', 'cool sky-blue and white chrome'),
     ('round2', '라운드 2', 'ROUND 2', 'white silver chrome'),
     ('final_round', '마지막 라운드', 'FINAL ROUND', 'blood red and silver chrome'),
     ('fight', '싸움 시작', 'FIGHT!', 'blazing gold and orange fire'),
@@ -188,6 +197,13 @@ TEXTS = [
 ]
 
 EFFECTS = [
+    # 공통 (모든 캐릭터): 지금은 코드로 그린 임시 연출
+    ('fx_hit', '맞힘 불꽃 (공통)', 'a sharp hit spark burst: bright white center with jagged golden-orange star rays shooting outward, comic-style impact, round overall'),
+    ('fx_guard', '막힘 불꽃 (공통)', 'a defensive block spark: a small cyan-white hexagon flash with short straight light rays, crisp and clean, round overall'),
+    ('fx_guard_shield', '가드 방패 (공통, 몸 앞)', 'a curved translucent cyan energy barrier seen from the side, a tall crescent shape bulging toward the right, hexagon pattern faintly inside, glowing edge'),
+    ('fx_burst', '버스트 충격파 (공통)', 'a powerful circular shockwave ring exploding outward: gold and sky-blue double ring, white flash in the center, a few speed lines, round'),
+    ('fx_rc', '로만 캔슬 (공통)', 'a crimson red circular ring wave expanding outward with thin red speed lines and a few small red sparks, round, mostly empty center'),
+    ('fx_shock', '감전 (Chaos ↓D에 맞은 상대 몸 주위)', 'crackling yellow electric arcs forming a rough upright oval cage, as if wrapped around an invisible standing person, empty center, taller than wide'),
     ('chemikid_flask', '플라스크 (투사체)', 'a glass Erlenmeyer flask filled with glowing toxic-green liquid, tilted as if thrown'),
     ('chemikid_puddle', '산성 웅덩이', 'a flat bubbling puddle of glowing green acid seen from the side, very wide and thin'),
     ('chemikid_explosion', '발열 폭발', 'a tall chemical explosion bursting upward, orange fire mixed with green smoke'),
@@ -218,6 +234,7 @@ EFFECTS = [
      'a soft vertical column of warm sunlight pouring straight DOWN from the top edge to the bottom, '
      'about 2 times taller than wide, pale yellow and white, a few small floating leaves and sparkles inside, '
      'edges fading out softly, flat stylized anime look, NO sun disc, NO character, nothing else'),
+    ('chaos_grab_bolt', '운동량 던지기 전기 줄기 (→D, 가로로 긴 그림)', 'ONE horizontal bolt of violet-and-white lightning stretching straight from the left edge to the right edge, jagged zigzag, a bright grabbing spark at the right end, very wide and thin (about 6 times wider than tall)'),
     ('chaos_blackhole', '블랙홀', 'a small black hole with a glowing violet accretion ring, slightly tilted'),
     ('chaos_spark', '전자기 방전', 'a ball of crackling yellow electric sparks'),
     ('chaos_steam', '증기 폭발', 'a burst of white hot steam spreading outward'),
@@ -226,6 +243,7 @@ EFFECTS = [
      'left edge (where a palm would be) widening into a big billowing cloud at the right edge, about 2.5 times wider than tall, '
      'heat shimmer streaks inside, flat 2-tone cel shading, clean black outlines, NO hand drawn, nothing else'),
     ('root2_boomerang', '√2 부메랑', 'a golden square-root symbol shaped like a spinning boomerang'),
+    ('root2_thrust', '컴퍼스 찌르기 궤적 (→D, 가로로 긴 그림)', 'ONE long straight golden thrust streak flying from left to right like a spear trail, a sharp bright point at the right end, thin geometric ruler tick marks along it, very wide and thin (about 6 times wider than tall)'),
     ('root2_pillar', '적분 기둥 (↓D, 바닥에서 솟는 가늘고 긴 그림)',
      'ONE thin sharp beam of light shooting straight UP from the ground, shaped like a tall elongated integral sign, '
      'very narrow (about 5 times taller than wide), flat 2-tone cel shading in gold and white only, crisp clean edges, '
@@ -241,6 +259,8 @@ EFFECTS = [
     ('root2_qed_circle', '궁극기 수식 마법진 (상대 머리 위 배경)',
      'a large flat glowing golden magic circle made of geometry: concentric circles, a triangle and square inscribed, '
      'compass arcs and ruler tick marks, seen from the front, abstract math symbol shapes but NO readable letters or numbers'),
+    ('seed_seed', '씨앗 (D, 땅에 심긴 씨)', 'a small brown seed half-buried in a tiny mound of dirt with one tiny green sprout and two little leaves popping out, cute, simple, side view'),
+    ('seed_aura', '진화 오라 (D+HS 6초 강화 중 몸 주위)', 'a soft pink-and-green glowing aura shaped like a tall upright oval flame with cherry-blossom petals and small leaves rising upward, empty center, taller than wide'),
     ('seed_vine', '덩굴 (D 씨앗에서 솟음, 가늘고 긴 그림)',
      'ONE slender green plant sprout whipping straight UP out of the ground, thin stem (about 6 times taller than wide), '
      'gently curling at the top with two or three small leaves and one small pink bud, a tiny tuft of dirt at its base, '
@@ -271,9 +291,32 @@ def mark(*names):
     return '✅' if all(has(n) for n in names) else '⬜'
 
 
-def pose_prompt(char, name, pose):
+# 판정에 맞춘 리치: 게임의 공격 판정 끝 = 그림의 손발(무기) 끝 + 18px 이 되게.
+# 6명 같은 기술 판정 길이의 중간값에서 18을 뺀 값을 서 있는 키(235)로 나눈 비율. (자세 파일 끝 이름 → (비율, 높이 설명))
+REACH = {
+    'punch': (0.47, 'at chest height'), 'kick': (0.52, 'at head height'), '6k': (0.50, 'the heel at head height, coming down'),
+    'slash': (0.54, 'at chest height'), 'heavy': (0.69, 'at chest-to-waist height'),
+    '2p': (0.47, 'at waist height while crouching'), '2k': (0.36, 'at ankle height along the floor'),
+    '2s': (0.52, 'at knee height'), 'jp': (0.55, 'at chest height in mid-air'), 'jk': (0.59, 'at hip height in mid-air'),
+    'js': (0.67, 'at chest height in mid-air'), 'jh': (0.50, 'diagonally down-forward in mid-air'),
+}
+REACH_OVERRIDE = {'root2_heavy': 1.1, 'root2_2s': 1.1, 'root2_js': 1.0, 'globe_heavy': 0.85}  # 일부러 긴 무기 기술
+
+
+def reach_text(file):
+    key = file.split('_', 1)[1]
+    if key not in REACH:
+        return ''
+    ratio, where = REACH[key]
+    ratio = REACH_OVERRIDE.get(file, ratio)
+    return (f" REACH (must match the game's hit area): the very tip of the attacking hand, foot or weapon ends about "
+            f"{int(ratio * 100)}% of the character's full standing height in front of the body's center line, {where}. "
+            "The attacking limb is fully extended and clearly separated from the body. Leave empty space around it, nothing cropped.")
+
+
+def pose_prompt(char, name, pose, file=''):
     extra = ' Skirt kept modest, opaque tights.' if char in SKIRT else ''
-    return f"{SINGLE} {name}. Pose: {pose}.{extra} {SAFE} {STYLE}"
+    return f"{SINGLE} {name}. Pose: {pose}.{extra}{reach_text(file) if file else ''} {SAFE} {STYLE}"
 
 
 out = ['# 완성 프롬프트 모음 (복사해서 바로 붙여넣기)', '',
@@ -294,11 +337,11 @@ for cid, title, _ in CHARS:
 out += ['', '이펙트: %d/%d' % (sum(has(f) for f, _, _ in EFFECTS), len(EFFECTS)), '']
 
 if REDO:
-    out += ['## 0. 다시 뽑을 그림', '']
+    out += ['## 0. 다시 뽑을 그림 (판정에 맞게 우선!)', '', '> 괄호 = 지금 그림 끝 / 판정 끝 (발 기준 px). REACH 문장이 판정 길이에 맞춰 들어가 있다', '']
     for f, ko, pose in REDO:
         cid = f.split('_')[0]
         item = next(i for c, _, i in CHARS if c == cid)
-        out += [f'⬜ **{ko}** → `{f}`', '```', pose_prompt(cid, item[0].upper() + item[1:], pose), '```', '']
+        out += [f'⬜ **{ko}** → `{f}`', '```', pose_prompt(cid, item[0].upper() + item[1:], pose, f), '```', '']
 
 out += ['## 0-0. 글자 그림 (한 장씩, 첨부 없이)', '',
         '> AI가 글자를 틀리게 쓰는 일이 많으니 받으면 철자를 꼭 확인. 틀리면 다시 뽑기', '']
@@ -316,7 +359,7 @@ out += ['## 0-1. 무기 공격 S / HS (한 장씩)', '',
 for f, ko, pose in WEAPON_POSES:
     cid = f.split('_')[0]
     item = next(i for c, _, i in CHARS if c == cid)
-    out += [f'{mark(f)} **{ko}** → `{f}`', '```', pose_prompt(cid, item[0].upper() + item[1:], pose), '```', '']
+    out += [f'{mark(f)} **{ko}** → `{f}`', '```', pose_prompt(cid, item[0].upper() + item[1:], pose, f), '```', '']
 
 out += ['## 0-2. 앉은 / 공중 기본기 (한 장씩)', '',
         '> 없으면 앉은 기술은 앉은 그림, 공중 기술은 점프 공격 그림을 같이 쓴다. 자주 쓰는 2K(하단)·2H(대공)·jK·jH부터 추천', '']
@@ -324,7 +367,7 @@ for cid, title, item in CHARS:
     out += [f'### {title}', '']
     for f, ko, pose in NORMALS:
         out += [f'{mark(cid + "_" + f)} **{ko}** → `{cid}_{f}`', '```',
-                pose_prompt(cid, item[0].upper() + item[1:], pose.replace('{W}', WEAPON[cid])), '```', '']
+                pose_prompt(cid, item[0].upper() + item[1:], pose.replace('{W}', WEAPON[cid]), f'{cid}_{f}'), '```', '']
 
 out += ['## 1. 걷기 시트 (4프레임, 한 장)', '']
 for cid, title, item in CHARS:

@@ -100,7 +100,7 @@ static func banner(c: CanvasItem, s: String, color: Color, t := 1.0) -> void:
 const TEXT_IMAGES := {
 	"ROUND 1": "round1", "ROUND 2": "round2", "FINAL ROUND": "final_round", "FIGHT!": "fight",
 	"K.O.": "ko", "DOUBLE K.O.": "double_ko", "TIME UP": "time_up", "DRAW GAME": "draw_game",
-	"COUNTER": "counter", "GUARD CRUSH!": "guard_crush", "VS": "vs", "READY!": "ready",
+	"COUNTER": "counter", "THROW BREAK": "throw_break", "GUARD CRUSH!": "guard_crush", "VS": "vs", "READY!": "ready",
 	"ALGEBRA!": "root2_algebra", "CALCULUS!": "root2_calculus", "PROBABILITY!": "root2_probability",
 }
 const DARK_BAND := ["K.O.", "DOUBLE K.O."]  # 빨간 글자 그림이라 띠를 어둡게 (빨강 위 빨강은 안 보임)

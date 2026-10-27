@@ -157,6 +157,8 @@ func _draw_grab_bolt() -> void:
 	if opponent != null and opponent.state == State.HITSTUN and attack_connected:
 		end = opponent.position - position + Vector2(0, -opponent.body_size().y * 0.6)  # 잡혔으면 상대 몸에
 	var fade := clampf(1.0 - float(state_frame - a.startup - a.active) / 10.0, 0.0, 1.0)
+	if draw_fx_span("chaos_grab_bolt", hand, end, 60.0 + 8.0 * sin(state_frame * 1.7), fade):
+		return
 	for layer in 2:  # 바깥 보라 + 안쪽 흰 번개
 		var pts := PackedVector2Array([hand])
 		var steps := 7
