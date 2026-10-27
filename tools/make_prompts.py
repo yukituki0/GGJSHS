@@ -102,12 +102,9 @@ SPECIALS = {
 # 다시 뽑을 그림: (파일, 설명, Pose 문장). 새 그림을 넣으면 여기서 지운다
 REDO = [
     # 판정보다 그림이 짧아서 판정이 허공에 떠 있는 것 (실측: 그림 끝 / 판정 끝)
-    ('globe_jh', '공중 HS (24 / 73)', 'in mid-air, big diagonal downward swing of one hand in a karate chop reaching FAR forward and down toward the lower right'),
-    ('seed_jh', '공중 HS (24 / 73)', 'in mid-air, big diagonal downward palm strike reaching FAR forward and down toward the lower right'),
     ('common_jh', '공중 HS (35 / 73)', 'in mid-air, big diagonal downward swing of the mechanical keyboard reaching FAR forward and down toward the lower right'),
     ('seed_2p', '앉아 P (37 / 73)', 'crouching low, quick jab with one fist at waist height, the punching arm FULLY extended straight toward the right'),
     ('seed_2k', '앉아 K (37 / 73)', 'crouching low, sweeping kick with the front leg FULLY extended straight forward along the floor toward the right'),
-    ('globe_jk', '공중 K (52 / 73)', 'in mid-air, flying side kick with one leg FULLY extended straight forward toward the right'),
 ]
 
 # 무기 공격 (길티기어처럼 S = 가벼운 무기 공격, HS = 크고 느린 무기 공격). 5S → <id>_slash, 5H → <id>_heavy
