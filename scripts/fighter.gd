@@ -1949,7 +1949,10 @@ func _draw_guard_shield() -> void:
 	var low := _held("down")
 	var center := Vector2(facing * 80, -60 if low else -95)
 	var hit_flash := 1.0 if state == State.BLOCKSTUN and state_frame < 6 else 0.0
-	if draw_fx("fx_guard_shield", Vector2(80, -60 if low else -95), 130.0 if low else 160.0, 0.0, 0.7 + 0.3 * hit_flash):
+	# 방패는 지금 그림의 몸 앞쪽 끝 바로 앞에, 머리부터 발까지 덮게 (상대 쪽 = facing 방향)
+	var front := body_size().x / 2.0 + 18.0
+	var top := minf(_head_top().y, -60.0) if puppet != null else (-60.0 if low else -150.0)
+	if draw_fx("fx_guard_shield", Vector2(front * facing, top * 0.5), -top * 1.08, 0.0, 0.75 + 0.25 * hit_flash):
 		return
 	var start := -PI * 0.4 if facing > 0 else PI * 0.6
 	var flash := 1.0 if state == State.BLOCKSTUN and state_frame < 6 else 0.0
