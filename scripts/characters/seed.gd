@@ -169,7 +169,7 @@ func tick() -> void:
 func _draw() -> void:
 	var size := body_size()
 	# 진화 중: 몸 주위로 올라가는 분홍빛
-	if _evolve_frames > 0 and not draw_fx("seed_aura", Vector2(0, -size.y / 2), size.y * 1.6, 0.0,
+	if _evolve_frames > 0 and not draw_fx("seed_aura", Vector2(0, -size.y * 0.72), size.y * 1.75, 0.0,
 			0.6 + 0.2 * sin(_evolve_frames * 0.15)):
 		for i in 5:
 			var t := fmod(_evolve_frames * 0.02 + i * 0.2, 1.0)

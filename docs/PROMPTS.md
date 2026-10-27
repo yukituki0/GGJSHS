@@ -15,7 +15,7 @@
 | 📐 ROOT2 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 7/7 |
 | 🌱 SEED | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 7/7 |
 
-이펙트: 38/42
+이펙트: 42/42
 
 ## 0-0. 글자 그림 (한 장씩, 첨부 없이)
 
@@ -1153,7 +1153,7 @@ A single 2D fighting game special effect sprite: a burst of broken rock chunks a
 A single 2D fighting game special effect sprite: a soft vertical column of warm sunlight pouring straight DOWN from the top edge to the bottom, about 2 times taller than wide, pale yellow and white, a few small floating leaves and sparkles inside, edges fading out softly, flat stylized anime look, NO sun disc, NO character, nothing else. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **운동량 던지기 전기 줄기 (→D, 가로로 긴 그림)** → `chaos_grab_bolt`
+✅ **운동량 던지기 전기 줄기 (→D, 가로로 긴 그림)** → `chaos_grab_bolt`
 ```
 A single 2D fighting game special effect sprite: ONE horizontal bolt of violet-and-white lightning stretching straight from the left edge to the right edge, jagged zigzag, a bright grabbing spark at the right end, very wide and thin (about 6 times wider than tall). No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
@@ -1183,7 +1183,7 @@ A single 2D fighting game special effect sprite: a jet of scalding white-and-ora
 A single 2D fighting game special effect sprite: a golden square-root symbol shaped like a spinning boomerang. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **컴퍼스 찌르기 궤적 (→D, 가로로 긴 그림)** → `root2_thrust`
+✅ **컴퍼스 찌르기 궤적 (→D, 가로로 긴 그림)** → `root2_thrust`
 ```
 A single 2D fighting game special effect sprite: ONE long straight golden thrust streak flying from left to right like a spear trail, a sharp bright point at the right end, thin geometric ruler tick marks along it, very wide and thin (about 6 times wider than tall). No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
@@ -1213,12 +1213,12 @@ A single 2D fighting game special effect sprite: a huge round golden official se
 A single 2D fighting game special effect sprite: a large flat glowing golden magic circle made of geometry: concentric circles, a triangle and square inscribed, compass arcs and ruler tick marks, seen from the front, abstract math symbol shapes but NO readable letters or numbers. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **씨앗 (D, 땅에 심긴 씨)** → `seed_seed`
+✅ **씨앗 (D, 땅에 심긴 씨)** → `seed_seed`
 ```
 A single 2D fighting game special effect sprite: a small brown seed half-buried in a tiny mound of dirt with one tiny green sprout and two little leaves popping out, cute, simple, side view. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```
 
-⬜ **진화 오라 (D+HS 6초 강화 중 몸 주위)** → `seed_aura`
+✅ **진화 오라 (D+HS 6초 강화 중 몸 주위)** → `seed_aura`
 ```
 A single 2D fighting game special effect sprite: a soft pink-and-green glowing aura shaped like a tall upright oval flame with cherry-blossom petals and small leaves rising upward, empty center, taller than wide. No character, centered, transparent background (real alpha channel, not a checkerboard pattern), bold cel-shaded anime effect style with thick black outlines, high contrast, saturated colors, no text, no letters.
 ```

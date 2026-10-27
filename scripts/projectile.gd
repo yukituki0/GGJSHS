@@ -342,7 +342,7 @@ func _draw_body() -> void:
 			Style.text(self, str(extra.get("n", 1)), Vector2(-30, -32), 28, Style.RED, HORIZONTAL_ALIGNMENT_CENTER, 60, 4)
 		"seed":
 			# 씨앗: 땅에 박힌 작은 씨 + 자라나는 싹 (그림이 있으면 그림이 커지며 흔들림)
-			if _draw_effect("seed_seed", Vector2(0, -10), 30.0 + minf(1.0, age / 30.0) * 24.0, sin(age * 0.4) * 0.15):
+			if _draw_effect("seed_seed", Vector2(0, -14), 36.0 + minf(1.0, age / 30.0) * 30.0, sin(age * 0.4) * 0.15):
 				return
 			draw_circle(Vector2.ZERO, 7, Color("8a5a2a"))
 			var sprout := minf(1.0, age / 30.0) * 18
