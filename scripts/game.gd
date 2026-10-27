@@ -69,12 +69,12 @@ const CHARACTERS: Array[Dictionary] = [
 ## sky: 임시 배경의 [위, 아래] 색
 const STAGES: Array[Dictionary] = [
 	{
-		"id": "lab", "name": ["CHEMISTRY LAB", "화학 실험실"],
-		"sky": [Color("1d2b2a"), Color("0d1414")], "floor": Color("2b2f2e"),
+		"id": "school_front", "name": ["MAIN GATE - SUNSET", "제주과학고 정문 - 석양"],
+		"sky": [Color("f0a0b8"), Color("8a7aa8")], "floor": Color("5a5a62"),
 	},
 	{
-		"id": "computer", "name": ["COMPUTER ROOM", "컴퓨터실"],
-		"sky": [Color("101a33"), Color("070b16")], "floor": Color("1e2433"),
+		"id": "lobby", "name": ["LOBBY", "중앙 로비"],
+		"sky": [Color("e8ecea"), Color("c8d0cc")], "floor": Color("2f6a72"),
 	},
 	{
 		"id": "cherry_road", "name": ["CHERRY TREE ROAD", "벚나무 길"],

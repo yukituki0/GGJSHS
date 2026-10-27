@@ -106,6 +106,11 @@ REDO = [
 
 # 스테이지 배경 (학교 사진을 첨부해서 애니풍으로 바꾸기). assets/stages/<id>.png, 1920x1080
 STAGE_PHOTOS = [
+    ('school_front', '제주과학고 정문 - 석양', '정면 사진 (374)',
+     'the front of Jeju Science High School at sunset: the white main building with a triangular gable roof, a round clock, a big arched window and four white columns, '
+     'pink and beige three-story wings on both sides, a wide paved plaza in front, a pink and lavender sunset sky. '
+     'Keep only the English sign "JEJU SCIENCE HIGH SCHOOL" (spelled J-E-J-U S-C-I-E-N-C-E H-I-G-H S-C-H-O-O-L) on the building; '
+     'every other sign, banner and LED board is blank with no Korean or other letters'),
     ('playground', '운동장', '농구장 사진 (372)',
      'the outdoor school basketball court in front of the pink and beige three-story school buildings, pine trees on the right, big white clouds in a blue sky'),
     ('hallway', '복도', '2층 난간 창문 사진 (369)',
@@ -416,7 +421,7 @@ for sid, ko, photo, desc in STAGE_PHOTOS:
             f"Redraw the attached photo as a 2D anime fighting game stage background: {desc}. Keep the same place, layout and buildings as the photo. "
             "Wide 16:9 landscape, 1920x1080. Straight-on side view at standing eye level, like a Guilty Gear / Street Fighter stage: "
             "a flat open floor runs across the whole bottom of the image, and the line where the characters stand is at about 85% of the image height, "
-            "with nothing blocking the floor in the middle. No people, no characters, no text, no letters, no UI. "
+            "with nothing blocking the floor in the middle. No people, no characters, no text or letters except where described above, no UI. "
             "Painterly anime background art, cel-shaded with clean outlines, slightly muted colors and soft depth so fighters in front stand out, "
             "dramatic lighting, " + "a little darker and calmer than the characters.",
             '```', '']
