@@ -10,6 +10,7 @@ extends Node2D
 enum Phase { VS_INTRO, ROUND_INTRO, FIGHT, ROUND_END, RESULT }
 
 const GROUND_Y := 620.0
+const FEET_HALF_WIDTH := 30.0   # 바닥 함정(웅덩이 등)이 밟았다고 치는 발 폭의 절반
 const WALL_LEFT := 40.0
 const WALL_RIGHT := 1240.0
 const START_X := { 1: 440.0, 2: 840.0 }
@@ -454,6 +455,10 @@ func _resolve_projectiles() -> void:
 		if not proj.hits_airborne and not target.is_on_ground():
 			continue
 		var hurt := _touching(proj.rect(), target)
+		if not proj.hits_airborne and hurt.has_area():
+			# 바닥 함정은 발이 실제로 밟았을 때만 (벌린 팔·다리 그림 판정에 걸려 넘어가도 맞는 일 없게)
+			var feet := Rect2(target.position.x - FEET_HALF_WIDTH, target.position.y - 30, FEET_HALF_WIDTH * 2, 30)
+			hurt = proj.rect().intersection(feet) if proj.rect().intersects(feet) else Rect2()
 		if hurt.has_area():
 			var contact := proj.rect().intersection(hurt).get_center()
 			_apply_hit(proj.shooter, target, proj.attack, contact, proj.hit_direction(), proj.from_super)

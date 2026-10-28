@@ -145,7 +145,7 @@ func _draw_body() -> void:
 		"acid":
 			# 산성 웅덩이: 납작한 초록 + 올라오는 거품
 			var fade := minf(1.0, (lifetime - age) / 30.0)
-			if _draw_ground_effect("chemikid_puddle", 10.0, r.size.x * 1.3, fade, minf(1.0, age / 6.0)):
+			if _draw_ground_effect("chemikid_puddle", 10.0, r.size.x * 1.15, fade, minf(1.0, age / 6.0)):
 				return
 			draw_rect(Rect2(r.position.x, -4, r.size.x, 10), Color(color, 0.55 * fade))
 			for i in 4:

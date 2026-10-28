@@ -9,6 +9,8 @@ extends Fighter
 ##   OD  테르밋 반응    (산화환원, D+HS, 텐션 50%) 앞쪽 연쇄 폭발 → 마지막에 초고온 불꽃 기둥
 
 const ACID_GREEN := Color("7dff6a")
+## 산성 웅덩이 폭: 앞 점프(약 170 이동)로 겨우, 대시 점프·공중 대시로는 여유 있게 넘을 수 있게 (예전 170은 점프로 못 넘음)
+const ACID_WIDTH := 100.0
 const THERMITE := Color("ff8a1e")
 const SALT_WHITE := Color("eef4f6")
 const NEUTRAL_FLASH := Color(0.7, 1.0, 0.7, 0.25)
@@ -117,7 +119,7 @@ func _on_flask_landed(pos: Vector2) -> void:
 	var p := Projectile.new()
 	p.kind = "acid"
 	p.attack = _acid_hit
-	p.size = Vector2(170, 24)
+	p.size = Vector2(ACID_WIDTH, 24)
 	p.color = ACID_GREEN
 	p.position = Vector2(pos.x, ground_y - 10)
 	p.lifetime = 240
