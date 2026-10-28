@@ -57,15 +57,15 @@ func _draw() -> void:
 	text("1P", 150, 30, Color(1, 0.45, 0.45), 700)
 	text("2P", 150, 30, Color(0.45, 0.7, 1), 980)
 	for i in ROWS.size():
-		var y := 182 + i * 31
+		var y := 178 + i * 29
 		var label := Game.t(ROWS[i][0])
 		var actions: Array = ROWS[i][1]
-		Style.fill(self, Style.slant(180, y - 24, 920, 29, 10), Color(Style.PANEL, 0.85 if i % 2 == 0 else 0.5))
+		Style.fill(self, Style.slant(180, y - 23, 920, 27, 10), Color(Style.PANEL, 0.85 if i % 2 == 0 else 0.5))
 		Style.text(self, label, Vector2(200, y), 21, Style.WHITE)
 		for p in [1, 2]:
 			var names: Array[String] = []
 			for a in actions:
 				names.append(_input_name(p, a))
 			text(" ".join(names), y, 24, Style.GOLD, 700 if p == 1 else 980, 0)
-	text(Game.t("combo_hint"), 660, 20, Style.WHITE, W / 2, 4)
+	text(Game.t("combo_hint"), 670, 20, Style.WHITE, W / 2, 4)
 	text(Game.t("controls_hint"), 700, 18, Style.GRAY, W / 2, 0)

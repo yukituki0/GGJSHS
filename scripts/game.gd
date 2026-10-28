@@ -126,7 +126,9 @@ const STRINGS := {
 	"back_hint": ["{K} / {START}: BACK", "{K} / {START}: 뒤로"],
 	"controls_hint": ["{P}: KEY CONFIG      {K} / {START}: BACK", "{P}: 키 설정      {K} / {START}: 뒤로"],
 	"key_config": ["KEY CONFIG", "키 설정"],
-	"key_config_hint": ["ARROWS: MOVE (top row: tab)    {P}: CHANGE    ESC: BACK", "방향키: 이동 (맨 위 줄: 탭 바꾸기)    {P}: 바꾸기    ESC: 뒤로"],
+	"key_config_hint": ["ARROWS: MOVE    {P}: CHANGE    ESC: BACK", "방향키: 이동    {P}: 바꾸기    ESC: 뒤로"],
+	"choose_device": ["Which controls do you want to change?", "어떤 조작 장치의 키를 바꿀까요?"],
+	"device_hint": ["{LR}: SELECT    {P}: OK    {K} / ESC: BACK", "{LR}: 선택    {P}: 결정    {K} / ESC: 뒤로"],
 	"tab_keyboard": ["KEYBOARD", "키보드"],
 	"tab_stick": ["ARCADE STICK", "아케이드 스틱"],
 	"press_new_key": ["Press a new key for %s  (ESC: cancel)", "%s에 쓸 새 키를 누르세요  (ESC: 취소)"],
@@ -151,12 +153,12 @@ const STRINGS := {
 	"burst": ["BURST (while hit: {D} + any attack)", "버스트 (맞는 중: {D} + 공격 버튼)"],
 	"throw_tech": ["THROW / BREAK  (→/← + {HS} / {HS} when grabbed)", "잡기 / 잡기 풀기  (→/← + {HS} / 잡힐 때 {HS})"],
 	"overhead_kick": ["OVERHEAD  (→ + {K})", "중단 발차기  (→ + {K})"],
-	"taunt": ["TAUNT ({SELECT}, gives foe 10%) / → + {SELECT}: RESPECT", "도발 ({SELECT}, 상대 텐션 +10%) / 앞 + {SELECT}: 리스펙트"],
+	"taunt": ["TAUNT ({SELECT}) / → + {SELECT}: RESPECT", "도발 ({SELECT}) / 앞 + {SELECT}: 리스펙트"],
 	"demo_play": ["DEMO PLAY  -  PRESS ANY BUTTON", "데모 플레이  -  아무 버튼이나 누르세요"],
 	"dash": ["DASH  (→→ / ←← backdash)", "대시  (→→ / ←← 백스텝)"],
 	"guard": ["GUARD  (hold ← = high/overhead, ↙ = high/low)", "가드  (← 서서: 상단·중단 / ↙ 앉아: 상단·하단)"],
 	"start_pause": ["START / PAUSE", "시작 / 일시정지"],
-	"select_back": ["SELECT (BACK / PAUSE)", "SELECT (뒤로 / 일시정지)"],
+	"select_back": ["SELECT (menu: back)", "SELECT (메뉴에서 뒤로)"],
 	"combo_hint": ["COMBO: hit or block, then press a stronger button ({P} > {K} > {S} > {HS})",
 			"콤보: 맞히거나 막히면 더 강한 버튼으로 이어서 ({P} > {K} > {S} > {HS})"],
 
@@ -426,7 +428,9 @@ func _unhandled_input(event: InputEvent) -> void:
 func t(key: String) -> String:
 	if InputManager.mode == InputManager.Mode.KEYBOARD and STRINGS.has(key + "_kb"):
 		key += "_kb"
-	return keys_in(STRINGS[key][language])
+	# 메뉴 안내(…_hint, press_…, help_…)만 키보드 키 이름으로. 기술·조작 설명은 항상 버튼 이름(P K S HS D RC)으로
+	var menu := (key.ends_with("_hint") and key != "combo_hint") or key.begins_with("press_") or key.begins_with("help_")
+	return keys_in(STRINGS[key][language], not menu)
 
 
 ## 버튼 이름: 키보드 모드면 1P 키보드 키 ("Y", "U" ...), 스틱 모드면 버튼 이름 ("P", "K" ...)
@@ -440,11 +444,11 @@ func button_name(action: String, player := 1) -> String:
 
 
 ## 글자 속 {P} {K} {S} {HS} {D} {RC} {START} {SELECT} {LR}를 지금 조작 장치의 버튼 이름으로
-func keys_in(s: String) -> String:
+func keys_in(s: String, buttons_only := false) -> String:
 	if not "{" in s:
 		return s
 	for action: String in BUTTON_NAMES:
-		s = s.replace("{%s}" % BUTTON_NAMES[action], button_name(action))
+		s = s.replace("{%s}" % BUTTON_NAMES[action], BUTTON_NAMES[action] if buttons_only else button_name(action))
 	var lr: String
 	if InputManager.mode == InputManager.Mode.KEYBOARD:
 		lr = "%s/%s" % [button_name_dir("left"), button_name_dir("right")]
@@ -457,18 +461,10 @@ func button_name_dir(action: String) -> String:
 	return OS.get_keycode_string(InputManager.key_for(1, action))
 
 
-## 기술표 커맨드 ("D + HS", "→ + D" 등) 속 버튼 글자를 키보드 모드면 키 이름으로 바꾼다
-## player: 몇 P의 키 이름으로 (기술표·콤보표 오른쪽은 2P 키)
-func command_text(cmd: String, player := 1) -> String:
-	if InputManager.mode != InputManager.Mode.KEYBOARD:
-		return cmd
-	var re := RegEx.create_from_string("\\b(HS|RC|P|K|S|D)\\b")
-	var out := ""
-	var last := 0
-	for m in re.search_all(cmd):
-		out += cmd.substr(last, m.get_start() - last) + button_name(m.get_string().to_lower(), player)
-		last = m.get_end()
-	return (out + cmd.substr(last)).replace("Kp ", "Kp")  # 숫자패드 키 이름 짧게 (Kp 4 → Kp4)
+## 기술표·콤보표 커맨드: 키보드 키로 바꾸지 않고 항상 버튼 이름(P K S HS D RC) 그대로 보여 준다
+## (키보드 D키 = 오른쪽 이동이라 "D"를 "H"로 바꿔 쓰면 헷갈려서). 실제 키는 조작법 화면에서
+func command_text(cmd: String, _player := 1) -> String:
+	return cmd
 
 
 func toggle_language() -> void:

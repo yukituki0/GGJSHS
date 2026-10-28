@@ -1,6 +1,7 @@
 extends Screen
 ## 키 설정: 1P / 2P의 버튼 배치를 바꾼다 (조작법 화면에서 P)
-## 위쪽 탭으로 [키보드] / [아케이드 스틱]을 고른다 (맨 위 줄에서 좌우). 키보드와 스틱은 게임에서 항상 같이 입력된다
+## 먼저 [키보드] / [아케이드 스틱] 중 바꿀 장치를 고르고(좌우 + P), 그 다음 그 장치의 키 목록이 나온다.
+## 키보드와 스틱은 게임에서 항상 같이 입력된다
 ## 칸을 고르고 P → 새 키(키보드 탭) / 새 버튼(스틱 탭)을 누르면 바뀐다. 이미 쓰던 키면 서로 맞바꾼다
 ## 스틱 방향(레버)은 바꾸지 않고 버튼만. ESC는 언제나 뒤로/취소 (키를 잘못 바꿔도 빠져나올 수 있게)
 
@@ -17,7 +18,8 @@ const ROWS := [
 ]
 const DIRECTIONS := ["up", "down", "left", "right"]
 
-var row := 1              # 0 = 탭 줄, 1부터 = 버튼 줄
+var choosing := true      # 처음: 장치 고르기 화면
+var row := 1              # 1부터 = 버튼 줄 (0은 안 씀)
 var col := 0              # 0 = 1P, 1 = 2P
 var tab := 0              # 0 = 키보드, 1 = 아케이드 스틱
 var waiting := false      # 새 키를 기다리는 중
@@ -42,16 +44,25 @@ func _process(delta: float) -> void:
 	if _cooldown > 0:
 		_cooldown -= 1
 		return
-	if Input.is_action_just_pressed("ui_cancel") or Game.menu_back():
-		Game.goto("controls")
-		return
-	var count := _rows().size() + 2  # 탭 줄 + 버튼 줄 + 기본값으로
-	row = move_cursor(row, count)
-	if Game.menu_pressed("left") or Game.menu_pressed("right"):
-		if row == 0:  # 탭 바꾸기
+	if choosing:  # 1단계: 장치 고르기
+		if Input.is_action_just_pressed("ui_cancel") or Game.menu_back():
+			Game.goto("controls")
+		elif Game.menu_pressed("left") or Game.menu_pressed("right"):
 			tab = 1 - tab
-		else:
-			col = 1 - col
+			Sfx.play("menu_move")
+		elif Game.menu_pressed("p"):
+			choosing = false
+			row = 1
+			Sfx.play("menu_ok")
+			_cooldown = 6
+		return
+	if Input.is_action_just_pressed("ui_cancel") or Game.menu_back():
+		choosing = true  # 2단계에서 뒤로 = 장치 고르기로
+		return
+	var count := _rows().size() + 2  # (안 쓰는 0번) + 버튼 줄 + 기본값으로
+	row = maxi(1, move_cursor(row, count))
+	if Game.menu_pressed("left") or Game.menu_pressed("right"):
+		col = 1 - col
 		Sfx.play("menu_move")
 	if Game.menu_pressed("p") and row > 0:
 		Sfx.play("menu_ok")
@@ -92,14 +103,20 @@ func _key_label(player: int, action: String) -> String:
 
 func _draw() -> void:
 	background()
-	header(Game.t("key_config"))
-	# 탭: [키보드] [아케이드 스틱]
-	for t in 2:
-		var tr := Style.slant(400 + t * 250, 92, 230, 40, 10)
-		Style.fill(self, tr, Style.RED if t == tab else Color(Style.PANEL, 0.9))
-		if t == tab and row == 0:
-			Style.outline(self, tr, Style.WHITE, 3.0)
-		text(Game.t(["tab_keyboard", "tab_stick"][t]), 120, 22, Style.WHITE if t == tab else Style.GRAY, 520 + t * 250, 4)
+	if choosing:
+		header(Game.t("key_config"))
+		text(Game.t("choose_device"), 250, 28, Style.WHITE, W / 2, 4)
+		for t in 2:  # 큰 카드 두 개: [키보드] [아케이드 스틱]
+			var card := Style.slant(W / 2 - 430 + t * 450, 300, 400, 200, 24)
+			Style.fill(self, card, Style.RED if t == tab else Color(Style.PANEL, 0.9))
+			if t == tab:
+				Style.outline(self, card, Style.WHITE, 4.0)
+			text(Game.t(["tab_keyboard", "tab_stick"][t]), 418, 44, Style.WHITE if t == tab else Style.GRAY,
+					W / 2 - 230 + t * 450, 6)
+		Style.fill(self, Style.slant(W / 2 - 360, 680, 720, 30, 10), Color(Style.BLACK, 0.8))
+		text(Game.t("device_hint"), 701, 18, Style.GRAY, W / 2, 0)
+		return
+	header("%s  -  %s" % [Game.t("key_config"), Game.t(["tab_keyboard", "tab_stick"][tab])])
 	var cols := [760.0, 1000.0]
 	text("1P", 170, 26, Color(1, 0.45, 0.45), cols[0])
 	text("2P", 170, 26, Color(0.45, 0.7, 1), cols[1])
