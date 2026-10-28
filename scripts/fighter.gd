@@ -761,7 +761,8 @@ func _ground_neutral() -> void:
 	# 가드 버튼, 또는 상대가 공격해 올 때 뒤(↙ 포함)를 누르고 있으면 제자리 가드
 	if _held("guard") or (fwd < 0 and is_threatened()):
 		velocity.x = 0
-		_change_state(State.GUARD)
+		if state != State.GUARD:
+			_change_state(State.GUARD)
 		return
 
 	if _held("down"):
@@ -870,11 +871,12 @@ func _airdash() -> void:
 
 
 ## 가드 중 (↓를 같이 누르면 앉아서 가드). 위협이 끝나거나 뒤를 놓으면 서기로 (그다음엔 다시 뒤로 걷기)
+## 가드 자세(막고 있지 않은 대기 상태)는 스파·길티처럼 언제든 다른 행동으로 바로 넘어갈 수 있다:
+## 공격·필살기·잡기·점프·대시·앉기 전환. 그래서 서 있을 때와 똑같이 처리하고,
+## 계속 뒤를 누르고 있고 상대 공격이 오고 있으면 _ground_neutral()이 다시 가드 자세를 유지한다
+## (예전엔 가드 자세에서 버튼을 눌러도 아무것도 안 나가서, 막은 직후 반격이 안 됐다)
 func _guard() -> void:
-	_face_opponent()
-	velocity.x = 0
-	if not (_held("guard") or (_input_forward() < 0 and is_threatened())):
-		_change_state(State.STAND)
+	_ground_neutral()
 
 
 ## 공격 중: 발생 → 지속 → 후딜이 끝나면 원래 상태로. 맞히거나 막히면 개틀링 가능
@@ -1309,13 +1311,21 @@ func hitbox_rect() -> Rect2:
 
 
 ## 이 공격을 막을 수 있는 상태인가
+## 공중 가드 (길티기어 규칙): 공중에서는 공중 공격과 투사체만 막을 수 있다.
+## 땅에 서 있는 상대의 기술(기본기·필살기, 특히 대공 2H)은 공중에서 못 막는다 (길티기어는 FD가 있어야 막음)
+func can_air_block(attack: AttackData) -> bool:
+	if opponent == null or attack != opponent.current_attack:
+		return true  # 투사체 등 몸으로 치는 공격이 아닌 것
+	return not opponent.is_on_ground()
+
+
 func can_block(level: AttackData.Level) -> bool:
 	var guarding := state == State.GUARD or state == State.BLOCKSTUN \
 			or (_guard_held() and state in [State.STAND, State.CROUCH, State.AIR])
 	if not guarding:
 		return false
 	if not is_on_ground():
-		return true  # 공중 가드는 모든 공격을 막는다
+		return true  # 공중 가드: 단계(상·중·하)는 상관없음. 땅 기술은 receive_attack에서 can_air_block으로 따로 거른다
 	var crouching := _held("down")
 	match level:
 		AttackData.Level.LOW:
@@ -1414,7 +1424,8 @@ func receive_attack(attack: AttackData, from_dir: int, damage_scale := 1.0) -> b
 	if attack.is_throw and attack.name in ["throw_f", "throw_b"] and _hs_age <= THROW_TECH_WINDOW:
 		_throw_break(from_dir)
 		return true
-	if not attack.unblockable and not attack.is_throw and can_block(attack.level):
+	if not attack.unblockable and not attack.is_throw and can_block(attack.level) \
+			and (is_on_ground() or can_air_block(attack)):
 		add_tension(tension_guard_gain)
 		# 긁기 데미지: 필살기·투사체·궁극기는 막아도 조금 깎인다 (기본기는 0). 긁기로는 KO되지 않는다
 		var chip := chip_damage(attack, damage)
