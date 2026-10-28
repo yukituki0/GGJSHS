@@ -27,6 +27,9 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
+	if _accent_cache.size() < 2 and m.p1 != null and m.p2 != null:
+		_cutin_color(m.p1)  # 컷인 색은 그림 픽셀을 훑어서 구하니까, 첫 오버드라이브 때 멈칫하지 않게 미리
+		_cutin_color(m.p2)
 	for f in [m.p1, m.p2]:
 		var hp := float(f.hp)
 		if _trail[f.player] < hp:

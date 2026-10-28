@@ -27,6 +27,10 @@ func _setup() -> void:
 	_bgm.volume_db = -8.0
 	_bgm.finished.connect(func(): _bgm.play())  # 끝나면 처음부터 다시 (반복)
 	add_child(_bgm)
+	# 효과음은 작으니 처음에 다 불러 둔다 (처음 나는 순간 파일을 읽느라 멈칫하지 않게)
+	for f in ResourceLoader.list_directory("res://assets/sound/"):
+		if f.ends_with(".wav"):
+			_stream(f.get_basename())
 
 
 func _stream(sound: String) -> AudioStream:
