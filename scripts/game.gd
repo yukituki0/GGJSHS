@@ -96,7 +96,7 @@ const STAGES: Array[Dictionary] = [
 const STRINGS := {
 	"subtitle": ["- JEJU SCIENCE HIGH SCHOOL CLUB SHOWDOWN -", "- 제주과학고등학교 동아리 최강자 결정전 -"],
 	"press_start": ["PRESS {START}", "{START} 버튼을 누르세요"],
-	"press_start_kb": ["PRESS {P}", "{P} 키를 누르세요"],  # 키보드 모드일 때 (뒤에 _kb가 붙은 글자가 있으면 그걸 쓴다)
+	"press_start_kb": ["PRESS {P}", "{P} 버튼을 누르세요"],  # 키보드 모드일 때 (뒤에 _kb가 붙은 글자가 있으면 그걸 쓴다)
 	"f1_hint": ["F1: KEY NAMES (KEYBOARD / STICK)", "F1: 버튼 이름 표시 (키보드 / 스틱)"],
 
 	"select_mode": ["SELECT MODE", "모드 선택"],
@@ -428,9 +428,8 @@ func _unhandled_input(event: InputEvent) -> void:
 func t(key: String) -> String:
 	if InputManager.mode == InputManager.Mode.KEYBOARD and STRINGS.has(key + "_kb"):
 		key += "_kb"
-	# 메뉴 안내(…_hint, press_…, help_…)만 키보드 키 이름으로. 기술·조작 설명은 항상 버튼 이름(P K S HS D RC)으로
-	var menu := (key.ends_with("_hint") and key != "combo_hint") or key.begins_with("press_") or key.begins_with("help_")
-	return keys_in(STRINGS[key][language], not menu)
+	# 화면 글자는 모두 버튼 이름(P K S HS D RC START SELECT)으로. 실제 키는 조작법 화면에서만 보여 준다
+	return keys_in(STRINGS[key][language], true)
 
 
 ## 버튼 이름: 키보드 모드면 1P 키보드 키 ("Y", "U" ...), 스틱 모드면 버튼 이름 ("P", "K" ...)
@@ -450,7 +449,7 @@ func keys_in(s: String, buttons_only := false) -> String:
 	for action: String in BUTTON_NAMES:
 		s = s.replace("{%s}" % BUTTON_NAMES[action], BUTTON_NAMES[action] if buttons_only else button_name(action))
 	var lr: String
-	if InputManager.mode == InputManager.Mode.KEYBOARD:
+	if InputManager.mode == InputManager.Mode.KEYBOARD and not buttons_only:
 		lr = "%s/%s" % [button_name_dir("left"), button_name_dir("right")]
 	else:
 		lr = "LEFT/RIGHT" if language == Language.EN else "좌우"

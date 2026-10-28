@@ -61,7 +61,7 @@ func _draw() -> void:
 		if frame % 60 < 36:
 			Style.fill(self, Style.slant(W / 2 - 220, START_Y - 40, 440, 56, 18), Style.RED)
 			Style.title(self, Game.t("press_start"), Vector2(0, START_Y + 2), 38, Style.WHITE, HORIZONTAL_ALIGNMENT_CENTER, W, 6)
-	text("%s    F11: FULLSCREEN    %s" % [Game.t("f1_hint"), Game.t("esc_hint")], 700, 16, Style.GRAY, W / 2, 0)
+	text("F11: FULLSCREEN    %s" % Game.t("esc_hint"), 700, 16, Style.GRAY, W / 2, 0)
 	if _quit_confirm:
 		draw_rect(Rect2(0, 0, W, H), Color(0, 0, 0, 0.7))
 		Style.fill(self, Style.slant(-20, 280, W + 40, 150, 24), Style.RED)
