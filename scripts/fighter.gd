@@ -1311,21 +1311,13 @@ func hitbox_rect() -> Rect2:
 
 
 ## 이 공격을 막을 수 있는 상태인가
-## 공중 가드 (길티기어 규칙): 공중에서는 공중 공격과 투사체만 막을 수 있다.
-## 땅에 서 있는 상대의 기술(기본기·필살기, 특히 대공 2H)은 공중에서 못 막는다 (길티기어는 FD가 있어야 막음)
-func can_air_block(attack: AttackData) -> bool:
-	if opponent == null or attack != opponent.current_attack:
-		return true  # 투사체 등 몸으로 치는 공격이 아닌 것
-	return not opponent.is_on_ground()
-
-
 func can_block(level: AttackData.Level) -> bool:
 	var guarding := state == State.GUARD or state == State.BLOCKSTUN \
 			or (_guard_held() and state in [State.STAND, State.CROUCH, State.AIR])
 	if not guarding:
 		return false
 	if not is_on_ground():
-		return true  # 공중 가드: 단계(상·중·하)는 상관없음. 땅 기술은 receive_attack에서 can_air_block으로 따로 거른다
+		return true  # 점프 가드(공중 가드): 공중에서 ←를 누르고 있으면 땅 기술·공중 기술·투사체 모두 막는다
 	var crouching := _held("down")
 	match level:
 		AttackData.Level.LOW:
@@ -1424,8 +1416,7 @@ func receive_attack(attack: AttackData, from_dir: int, damage_scale := 1.0) -> b
 	if attack.is_throw and attack.name in ["throw_f", "throw_b"] and _hs_age <= THROW_TECH_WINDOW:
 		_throw_break(from_dir)
 		return true
-	if not attack.unblockable and not attack.is_throw and can_block(attack.level) \
-			and (is_on_ground() or can_air_block(attack)):
+	if not attack.unblockable and not attack.is_throw and can_block(attack.level):
 		add_tension(tension_guard_gain)
 		# 긁기 데미지: 필살기·투사체·궁극기는 막아도 조금 깎인다 (기본기는 0). 긁기로는 KO되지 않는다
 		var chip := chip_damage(attack, damage)
