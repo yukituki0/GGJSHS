@@ -519,6 +519,11 @@ func _guard_held() -> bool:
 const PROXIMITY_MARGIN := 60.0  # 판정 끝보다 이만큼 더 멀어도 가드 자세 (스파·길티처럼 판정보다 조금 넓게)
 
 
+## 투사체 때문에 자동으로 가드 자세가 되는 거리
+const PROJ_GUARD_RANGE := 230.0   # 나를 향해 날아오는 투사체
+const PROJ_GUARD_MARGIN := 30.0   # 가만히 있는 설치기는 거의 닿을 때만
+
+
 func is_threatened() -> bool:
 	if opponent == null:
 		return false
@@ -533,9 +538,19 @@ func is_threatened() -> bool:
 			return true
 	var match_node := get_parent()
 	if match_node is Match:
+		var me := Rect2(position.x - body_size().x / 2, position.y - body_size().y, body_size().x, body_size().y)
 		for proj in match_node.projectiles:
-			if proj.shooter == opponent and proj.attack != null and not proj.dead \
-					and proj.position.distance_to(position + Vector2(0, -80)) < 230:
+			if proj.shooter != opponent or proj.attack == null or proj.dead or proj.spent:
+				continue
+			# 바로 앞까지 와 있으면 (설치기 위에 서 있어도) 막는다
+			if proj.rect().grow(PROJ_GUARD_MARGIN).intersects(me):
+				return true
+			# 날아오는 것만: 나를 향해 움직이고 PROJ_GUARD_RANGE 안에 있을 때.
+			# 바닥에 가만히 있는 덫(버그, 웅덩이, 씨앗 등)은 멀리 있으면 무시 → 뒤로 걸어서 피할 수 있다
+			var dx: float = position.x - proj.position.x
+			var toward: bool = signf(proj.velocity.x) == signf(dx) and absf(proj.velocity.x) > 0.5
+			var falling: bool = proj.velocity.y > 0.5 and absf(dx) < 150.0
+			if (toward or falling) and proj.position.distance_to(position + Vector2(0, -80)) < PROJ_GUARD_RANGE:
 				return true
 	return false
 
