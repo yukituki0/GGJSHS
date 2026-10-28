@@ -6,6 +6,7 @@ const HP_MAX := 480.0   # 체력 막대 기준 (가장 체력이 많은 캐릭�
 
 var cursor := 0
 var _hp := {}           # 캐릭터 id → 최대 체력 (캐릭터 스크립트에서 한 번 읽어 둔다)
+var show_combos := false  # P: 기술 목록 ↔ 콤보표
 var _turn := 0.0        # 넘길 때 그림이 옆에서 미끄러져 들어오는 연출 (-1 ~ 1)
 
 
@@ -31,6 +32,9 @@ func _process(delta: float) -> void:
 		cursor = (cursor + 1) % n
 		_turn = 1.0
 		Sfx.play("menu_move")
+	if Game.menu_pressed("p"):
+		show_combos = not show_combos
+		Sfx.play("menu_ok")
 	_turn = move_toward(_turn, 0.0, delta * 6.0)
 	if Game.menu_back():
 		Game.goto("mode_select")
@@ -64,8 +68,24 @@ func _draw() -> void:
 	draw_rect(Rect2(px + 80, 298, 400, 16), Color(0, 0, 0, 0.6))
 	draw_rect(Rect2(px + 80, 298, 400 * hp / HP_MAX, 16), info["color"])
 	Style.text(self, str(hp), Vector2(px + 492, 312), 18, Style.WHITE, HORIZONTAL_ALIGNMENT_LEFT, -1, 3)
+	# 콤보표 (P로 전환)
+	if show_combos:
+		var rows: Array = [Game.COMBO_ALL]
+		rows.append_array(Game.COMBO_LISTS.get(info["id"], []))
+		for i in rows.size():
+			var c: Array = rows[i]
+			var y := 352.0 + i * 46.0
+			var easy: bool = c[0] == "beginner"
+			Style.fill(self, Style.slant(px + 10, y - 26, 110, 36, 8), Style.GOLD.darkened(0.2) if easy else Style.RED.darkened(0.3))
+			Style.text(self, Game.t("combo_" + c[0]), Vector2(px + 10, y), 16, Style.BLACK if easy else Style.WHITE,
+					HORIZONTAL_ALIGNMENT_CENTER, 116, 0)
+			Style.text(self, Game.command_text(c[1]), Vector2(px + 136, y - 4), 19, Style.WHITE, HORIZONTAL_ALIGNMENT_LEFT, 470, 3)
+			if c[2] > 0:
+				Style.text(self, str(c[2]), Vector2(px + 136, y - 4), 16, Style.GOLD, HORIZONTAL_ALIGNMENT_RIGHT, 440, 3)
+			var note: String = c[4] if lang == Game.Language.EN else c[3]
+			Style.text(self, note, Vector2(px + 136, y + 14), 13, Style.GRAY, HORIZONTAL_ALIGNMENT_LEFT, 500, 0)
 	# 기술 목록
-	var moves: Array = Game.MOVE_LISTS.get(info["id"], [])
+	var moves: Array = [] if show_combos else Game.MOVE_LISTS.get(info["id"], [])
 	for i in moves.size():
 		var mv: Array = moves[i]
 		var y := 356.0 + i * 44.0

@@ -79,6 +79,8 @@ func _draw() -> void:
 	if m.paused:
 		if m.show_moves:
 			_draw_move_lists()
+		elif m.show_combos:
+			_draw_combo_lists()
 		else:
 			_draw_menu(Game.t("training_settings") if m.training_settings else Game.t("pause"), m.pause_items())
 			if m.training_settings:
@@ -610,7 +612,7 @@ func _draw_move_lists() -> void:
 				HORIZONTAL_ALIGNMENT_LEFT, -1, 6)
 		var moves: Array = Game.MOVE_LISTS.get(info["id"], [])
 		for i in moves.size():
-			_draw_move_row(moves[i], x, 172 + i * 62)
+			_draw_move_row(moves[i], x, 172 + i * 62, f.player)
 	Style.text(self, Game.t("common_moves"), Vector2(40, 562), 22, Style.GOLD, HORIZONTAL_ALIGNMENT_LEFT, -1, 4)
 	for i in Game.COMMON_MOVES.size():
 		var mv: Array = Game.COMMON_MOVES[i]
@@ -620,10 +622,42 @@ func _draw_move_lists() -> void:
 	Style.text(self, Game.t("command_hint"), Vector2(0, 708), 16, Style.GRAY, HORIZONTAL_ALIGNMENT_RIGHT, 1250, 0)
 
 
-func _draw_move_row(mv: Array, x: float, y: float) -> void:
+## 콤보표: 1P(왼쪽) / 2P(오른쪽) 캐릭터 콤보. 맨 위는 모든 캐릭터 공통 입문 콤보
+func _draw_combo_lists() -> void:
+	draw_rect(Rect2(0, 0, 1280, 720), Color(0, 0, 0, 0.85))
+	Style.fill(self, Style.slant(-20, 22, 560, 60, 20), Style.RED)
+	Style.text(self, Game.t("combo_list"), Vector2(40, 66), 38, Style.WHITE, HORIZONTAL_ALIGNMENT_LEFT, -1, 8)
+	Style.text(self, Game.t("combo_rules"), Vector2(0, 62), 16, Style.GRAY, HORIZONTAL_ALIGNMENT_RIGHT, 1250, 0)
+	for f: Fighter in [m.p1, m.p2]:
+		var x := 40.0 if f.player == 1 else 660.0
+		var info := Game.character(f.player)
+		Style.text(self, "%dP  %s" % [f.player, f.display_name], Vector2(x, 124), 28, f.color.lightened(0.3),
+				HORIZONTAL_ALIGNMENT_LEFT, -1, 6)
+		var rows: Array = [Game.COMBO_ALL]
+		rows.append_array(Game.COMBO_LISTS.get(info["id"], []))
+		for i in rows.size():
+			_draw_combo_row(rows[i], x, 168 + i * 86, f.player)
+	Style.text(self, Game.t("command_hint"), Vector2(0, 708), 16, Style.GRAY, HORIZONTAL_ALIGNMENT_RIGHT, 1250, 0)
+
+
+func _draw_combo_row(c: Array, x: float, y: float, player: int) -> void:
+	var easy: bool = c[0] == "beginner"
+	Style.fill(self, Style.slant(x, y - 30, 580, 78, 10), Color(Style.PANEL, 0.9))
+	Style.fill(self, Style.slant(x, y - 30, 120, 26, 8), Style.GOLD.darkened(0.2) if easy else Style.RED.darkened(0.3))
+	Style.text(self, Game.t("combo_" + c[0]), Vector2(x + 4, y - 10), 16, Style.BLACK if easy else Style.WHITE,
+			HORIZONTAL_ALIGNMENT_CENTER, 120, 0)
+	if c[2] > 0:
+		Style.text(self, "%d DMG" % c[2], Vector2(x, y - 10), 16, Style.GOLD, HORIZONTAL_ALIGNMENT_RIGHT, 560, 3)
+	Style.text(self, Game.command_text(c[1], player), Vector2(x + 14, y + 20), 22, Style.WHITE, HORIZONTAL_ALIGNMENT_LEFT, 556, 4)
+	var note: String = c[4] if Game.language == Game.Language.EN else c[3]
+	if note != "":
+		Style.text(self, note, Vector2(x + 14, y + 42), 15, Style.GRAY, HORIZONTAL_ALIGNMENT_LEFT, 556, 0)
+
+
+func _draw_move_row(mv: Array, x: float, y: float, player := 1) -> void:
 	Style.fill(self, Style.slant(x, y - 30, 580, 56, 10), Color(Style.PANEL, 0.9))
 	Style.fill(self, Style.slant(x, y - 30, 110, 56, 10), Style.RED.darkened(0.3))
-	Style.text(self, Game.command_text(mv[0]), Vector2(x + 4, y + 6), 20, Style.WHITE, HORIZONTAL_ALIGNMENT_CENTER, 110, 4)
+	Style.text(self, Game.command_text(mv[0], player), Vector2(x + 4, y + 6), 20, Style.WHITE, HORIZONTAL_ALIGNMENT_CENTER, 110, 4)
 	Style.text(self, mv[1 + Game.language], Vector2(x + 126, y - 4), 22, Style.GOLD, HORIZONTAL_ALIGNMENT_LEFT, -1, 4)
 	if Game.language == Game.Language.KO:  # 설명은 한국어로만 적어 둠
 		Style.text(self, mv[3], Vector2(x + 126, y + 20), 16, Style.WHITE, HORIZONTAL_ALIGNMENT_LEFT, -1, 0)

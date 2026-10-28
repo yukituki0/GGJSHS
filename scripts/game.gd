@@ -196,12 +196,19 @@ const STRINGS := {
 	"back": ["BACK", "뒤로"],
 	"char_book": ["CHARACTER BOOK", "캐릭터 설정집"],
 	"help_char_book": ["Profiles, stats and moves of every character.", "캐릭터마다 설정, 능력치, 기술을 볼 수 있어요."],
-	"book_hint": ["{LR}: CHARACTER    {K}: BACK", "{LR}: 캐릭터    {K}: 뒤로"],
+	"book_hint": ["{LR}: CHARACTER    {P}: MOVES / COMBOS    {K}: BACK", "{LR}: 캐릭터    {P}: 기술 / 콤보    {K}: 뒤로"],
 	"hp": ["HP", "체력"],
 	"profile": ["PROFILE", "설정"],
 	"command_list": ["COMMAND LIST", "기술표"],
 	"command_hint": ["{K} / {START}: CLOSE", "{K} / {START}: 닫기"],
 	"common_moves": ["COMMON", "공통"],
+	"combo_list": ["COMBO LIST", "콤보표"],
+	"combo_beginner": ["EASY", "입문"],
+	"combo_basic": ["BASIC", "기본"],
+	"combo_tension": ["50% TENSION", "텐션 50%"],
+	"combo_air": ["AIR", "공중"],
+	"combo_overhead": ["OVERHEAD", "중단"],
+	"combo_rules": ["Next button the moment the previous hits   ↓ = crouch   → = forward   ↑ = jump (after ↓HS hits)", "앞 기술이 맞는 순간 다음 버튼   ↓ = 앉아서   → = 앞   ↑ = 점프 (↓HS가 맞는 순간)"],
 	"wins": ["%dP %s WINS!", "%dP %s 승리!"],
 	"draw_game": ["DRAW GAME", "무승부"],
 }
@@ -285,6 +292,52 @@ const MOVE_LISTS := {
 		["← + D", "Photosynthesis", "광합성", "체력 회복"],
 		["AIR D", "Double Helix", "DNA 이중나선", "여러 번 타격"],
 		["D + HS", "EVOLUTION", "진화", "6초 강화 (50%)"],
+	],
+}
+
+## 콤보표 (일시정지 → 콤보표, 캐릭터 설정집). 자동 테스트로 실제로 이어지는 걸 확인한 것만 (docs/COMBOS.md)
+## [종류, 입력, 데미지, 한국어 설명, 영어 설명]. 종류: beginner(입문) basic(기본) tension(텐션 50%) air(공중) overhead(중단)
+## 입력: ↓K = 앉아 K, →K = 앞 + K, ↑ = 점프 캔슬(2H가 맞는 순간), 그 뒤 버튼은 공중
+const COMBO_ALL := ["beginner", "P > K > S > HS", 133, "버튼 4개를 순서대로. 맞는 순간 다음 버튼", "Press the 4 buttons in order as each one hits"]
+const COMBO_LISTS := {
+	"chemikid": [
+		["beginner", "S > HS > ↓D", 140, "발열 반응으로 마무리", "Finish with the anti-air"],
+		["basic", "↓K > S > HS > ↓D", 151, "↓K는 하단: 서서 막으면 맞는다", "↓K is low: hits standing guard"],
+		["tension", "↓K > S > HS > D + HS", 178, "테르밋 반응", "Thermite"],
+		["air", "↓P > ↓K > S > HS > ↓HS > ↑ > S > HS > D", 221, "↓HS로 띄우고 ↑, 조금 기다렸다 공중 S", "Launch, jump, wait a moment, then air S"],
+		["overhead", "→K > D", 64, "중단으로 앉아 가드를 깨고 플라스크", "Overhead, then flask"],
+	],
+	"common": [
+		["beginner", "↓K > S > HS > D", 134, "패킷 전송 (붙어서 시작해야 닿는다)", "Packet (start close)"],
+		["tension", "↓K > S > HS > D + HS", 175, "블루스크린", "Blue Screen"],
+		["air", "↓P > ↓K > S > HS > ↓HS > ↑ > S > HS > D", 230, "공중 콤보 데미지 최고", "Highest damage air combo"],
+	],
+	"globe": [
+		["beginner", "S > HS > →D", 140, "지각 돌진으로 마무리", "Finish with the rush"],
+		["basic", "↓K > S > HS > →D", 151, "↓K는 하단", "↓K is low"],
+		["tension", "↓K > S > HS > →D > D + HS", 229, "돌진이 맞으면 바로 태풍", "Rush hits, then Typhoon"],
+		["air", "↓P > ↓K > S > HS > ↓HS > ↑ > S > HS > D", 229, "", ""],
+		["overhead", "→K > →D", 82, "중단 후 돌진", "Overhead, then rush"],
+	],
+	"chaos": [
+		["beginner", "S > HS > ↓D", 124, "전자기 펄스로 마무리 (감전)", "Finish with EM pulse"],
+		["basic", "↓K > S > HS > ↓D", 136, "↓K는 하단", "↓K is low"],
+		["tension", "↓K > S > HS > D + HS", 183, "블랙홀", "Black Hole"],
+		["air", "↓P > ↓K > S > HS > ↓HS > ↑ > S > HS > D", 229, "→D 잡기는 콤보 말고 가드 중인 상대에게", "Use the →D grab on blocking foes, not in combos"],
+	],
+	"root2": [
+		["beginner", "S > HS > D", 141, "부메랑으로 마무리", "Finish with the boomerang"],
+		["basic", "↓K > S > HS > D", 153, "↓K는 하단", "↓K is low"],
+		["tension", "↓K > S > HS > →D > D + HS", 224, "찌르기가 맞으면 랜덤 증명", "Thrust hits, then Random Proof"],
+		["air", "↓P > ↓K > S > HS > ↓HS > ↑ > S > HS > D", 222, "피보나치가 여러 번 맞음", "Fibonacci hits many times"],
+		["overhead", "→K > D", 80, "중단 후 부메랑", "Overhead, then boomerang"],
+	],
+	"seed": [
+		["beginner", "S > HS > →D", 129, "덩굴 채찍으로 마무리", "Finish with the vine whip"],
+		["basic", "↓K > S > HS > →D", 141, "↓K는 하단", "↓K is low"],
+		["tension", "D + HS 먼저 → 아무 콤보", 0, "진화(6초 강화)를 켜고 콤보: 데미지 x1.3", "Evolve first (6s buff), then combo x1.3"],
+		["air", "↓P > ↓K > S > HS > ↓HS > ↑ > S > HS > D", 222, "", ""],
+		["overhead", "→K > →D", 70, "중단 후 채찍", "Overhead, then whip"],
 	],
 }
 
@@ -380,9 +433,9 @@ func t(key: String) -> String:
 const BUTTON_NAMES := {"p": "P", "k": "K", "s": "S", "hs": "HS", "d": "D", "rc": "RC", "start": "START", "select": "SELECT"}
 
 
-func button_name(action: String) -> String:
+func button_name(action: String, player := 1) -> String:
 	if InputManager.mode == InputManager.Mode.KEYBOARD:
-		return OS.get_keycode_string(InputManager.key_for(1, action))
+		return OS.get_keycode_string(InputManager.key_for(player, action))
 	return BUTTON_NAMES[action]
 
 
@@ -405,16 +458,17 @@ func button_name_dir(action: String) -> String:
 
 
 ## 기술표 커맨드 ("D + HS", "→ + D" 등) 속 버튼 글자를 키보드 모드면 키 이름으로 바꾼다
-func command_text(cmd: String) -> String:
+## player: 몇 P의 키 이름으로 (기술표·콤보표 오른쪽은 2P 키)
+func command_text(cmd: String, player := 1) -> String:
 	if InputManager.mode != InputManager.Mode.KEYBOARD:
 		return cmd
 	var re := RegEx.create_from_string("\\b(HS|RC|P|K|S|D)\\b")
 	var out := ""
 	var last := 0
 	for m in re.search_all(cmd):
-		out += cmd.substr(last, m.get_start() - last) + button_name(m.get_string().to_lower())
+		out += cmd.substr(last, m.get_start() - last) + button_name(m.get_string().to_lower(), player)
 		last = m.get_end()
-	return out + cmd.substr(last)
+	return (out + cmd.substr(last)).replace("Kp ", "Kp")  # 숫자패드 키 이름 짧게 (Kp 4 → Kp4)
 
 
 func toggle_language() -> void:

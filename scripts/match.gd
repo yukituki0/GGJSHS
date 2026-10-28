@@ -29,6 +29,7 @@ var timer_frames := 0           # 남은 시간 (프레임)
 var round_result := ""          # "K.O." / "TIME UP" / "DOUBLE K.O." / "DRAW"
 var paused := false
 var show_moves := false         # 일시정지 메뉴에서 기술표를 보는 중
+var show_combos := false        # 일시정지 메뉴에서 콤보표를 보는 중
 var menu_cursor := 0
 
 var _hitstop := 0               # 남은 히트스톱 프레임 (0보다 크면 둘 다 멈춤)
@@ -310,8 +311,8 @@ func pause_items() -> Array:
 	if is_training():
 		if training_settings:
 			return ["dummy", "hitbox", "input_log", "back"]
-		return ["resume", "command_list", "training_settings", "to_char_select", "to_mode_select", "to_title"]
-	return ["resume", "command_list", "to_char_select", "to_mode_select", "to_title"]
+		return ["resume", "command_list", "combo_list", "training_settings", "to_char_select", "to_mode_select", "to_title"]
+	return ["resume", "command_list", "combo_list", "to_char_select", "to_mode_select", "to_title"]
 
 
 ## 메뉴 항목에 보일 글자 (더미는 현재 설정까지)
@@ -328,16 +329,17 @@ func menu_label(key: String) -> String:
 
 
 func _update_pause_menu() -> void:
-	if show_moves:
+	if show_moves or show_combos:
 		if Game.menu_back() or Game.pause_pressed() or Game.menu_pressed("p"):
 			show_moves = false
+			show_combos = false
 		return
 	var items := pause_items()
 	menu_cursor = _move_menu(menu_cursor, items.size())
 	if Game.pause_pressed() or Game.menu_back():
 		if training_settings:  # 설정 화면에서 뒤로 = 일시정지 메뉴로
 			training_settings = false
-			menu_cursor = 2
+			menu_cursor = pause_items().find("training_settings")
 		else:
 			paused = false
 		return
@@ -356,12 +358,14 @@ func _update_pause_menu() -> void:
 				f.debug_draw_boxes = show
 		"command_list":
 			show_moves = true
+		"combo_list":
+			show_combos = true
 		"training_settings":  # ⚙ 트레이닝 설정 (더미 / 판정 보기 / 입력 기록)
 			training_settings = true
 			menu_cursor = 0
 		"back":
 			training_settings = false
-			menu_cursor = 2
+			menu_cursor = pause_items().find("training_settings")
 		"input_log":  # 입력 기록 켜기/끄기
 			if _history != null:
 				_history.visible = not _history.visible
