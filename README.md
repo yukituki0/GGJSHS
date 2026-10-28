@@ -93,7 +93,7 @@
 | 📐 ROOT2 | 수학 | 400 | 컴퍼스 원거리 견제·부메랑·주사위 | 랜덤 증명 (Q.E.D.) |
 | 🌱 SEED | 생명 | 420 | 씨앗·덩굴 채찍·분신·회복 | 진화 (6초 강화) |
 
-기술 전체 목록은 [`docs/MOVES.md`](docs/MOVES.md), 게임 안에서는 **일시정지 → 기술표** 또는 **캐릭터 설정집**.
+기술 전체 목록은 [`docs/MOVES.md`](docs/MOVES.md), 콤보는 [`docs/COMBOS.md`](docs/COMBOS.md), 게임 안에서는 **일시정지 → 기술표** 또는 **캐릭터 설정집**.
 
 ---
 
@@ -161,6 +161,7 @@ docs/           기술표, 그림 가이드, 프롬프트 모음, 베타 테스�
 | 문서 | 내용 |
 |---|---|
 | [`docs/MOVES.md`](docs/MOVES.md) | 캐릭터별 기술표 |
+| [`docs/COMBOS.md`](docs/COMBOS.md) | 캐릭터별 콤보 (테스트로 확인한 것만) |
 | [`docs/PROMPTS.md`](docs/PROMPTS.md) | 그림 프롬프트 모음 (자동 생성) |
 | [`docs/ART_GUIDE.md`](docs/ART_GUIDE.md) | 그림 파일 이름·크기 규칙 |
 | [`docs/BETA_TEST.md`](docs/BETA_TEST.md) | 축제 전 베타 테스트 체크리스트 |
