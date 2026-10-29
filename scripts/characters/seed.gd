@@ -52,7 +52,7 @@ func _build_specials() -> void:
 	a = _add(AttackData.new("OD", 10, 0, 30, 0, Rect2(), M, 0, 0))
 	a.title = "EVOLUTION"
 	a.cost = Fighter.RC_COST
-	a.invuln_frames = 10
+	a.invuln_frames = 40  # 공격이 없는 강화 기술이라 동작 끝까지 무적 (예전 10F: 켜는 동안 공짜로 맞았음)
 	a.event_frame = 10
 
 

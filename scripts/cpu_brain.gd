@@ -47,6 +47,7 @@ var _plan_age := 0
 var _threat_frames := 0    # 위협(상대 공격/투사체)을 본 뒤 지난 프레임
 var _guarding := false
 var _guard_low := false
+var _level_decided_for: Variant = null  # 상·하단 가드를 마지막으로 정한 상대 기술 (바뀌면 다시 정함)
 var _combo_for: AttackData        # 이어갈지 이미 정한 기술 (기술마다 한 번씩 정한다)
 var _aa_decided := false
 var _burst_decided := -1           # 버스트를 쓸지 정한 콤보 히트 수 (같은 히트에서 두 번 안 정하게)
@@ -109,11 +110,24 @@ func think(me: Fighter) -> void:
 		_threat_frames += 1
 		if _threat_frames == p["react"]:
 			_guarding = randf() < p["guard"]
-			var low := opp.current_attack != null and opp.current_attack.level == AttackData.Level.LOW
-			_guard_low = low and randf() < p["low_guard"]
+		# 상·하단은 상대 기술이 바뀔 때마다 다시 판단한다 (예전엔 처음 한 번만 정해서
+		# 5S → 2K처럼 이어지는 하단을 서서 맞았다). 바닥 함정·하단 투사체도 본다
+		var level := _incoming_level(me, opp)
+		var key: Variant = opp.current_attack if opp.state == Fighter.State.ATTACK else level
+		if _threat_frames >= p["react"] and key != _level_decided_for:
+			_level_decided_for = key
+			match level:
+				AttackData.Level.LOW:
+					_guard_low = randf() < p["low_guard"]
+				AttackData.Level.OVERHEAD:
+					_guard_low = randf() > p["low_guard"]  # 중단은 서서 막아야 한다
+				_:
+					# 상단은 서든 앉든 막힌다. 잘하는 CPU일수록 하단에 대비해 앉아서 막는다
+					_guard_low = randf() < p["low_guard"] * 0.8
 	else:
 		_threat_frames = 0
 		_guarding = false
+		_level_decided_for = null
 	var can_act := me.state in [Fighter.State.STAND, Fighter.State.CROUCH, Fighter.State.RUN,
 			Fighter.State.GUARD, Fighter.State.BLOCKSTUN]
 	if _guarding and can_act:
@@ -263,6 +277,19 @@ func _usable_specials(me: Fighter, names: Array) -> Array:
 ## 상대 공격(지속 판정 직전~중) 또는 다가오는 상대 투사체가 있으면 위협
 func _is_threatened(me: Fighter) -> bool:
 	return me.is_threatened()
+
+
+## 지금 막아야 할 공격의 단계: 상대가 기술 중이면 그 기술, 아니면 가까이 오는 투사체 중 하단이 있으면 하단
+func _incoming_level(me: Fighter, opp: Fighter) -> AttackData.Level:
+	if opp.state == Fighter.State.ATTACK and opp.current_attack != null:
+		return opp.current_attack.level
+	var match_node := me.get_parent()
+	if match_node is Match:
+		for proj in match_node.projectiles:
+			if proj.shooter == opp and proj.attack != null and not proj.dead \
+					and absf(proj.position.x - me.position.x) < 200.0 and proj.attack.level == AttackData.Level.LOW:
+				return AttackData.Level.LOW
+	return AttackData.Level.MID
 
 
 ## 맞혔을 때: 개틀링 목록에서 하나, 또는 필살기로 캔슬
