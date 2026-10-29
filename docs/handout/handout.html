@@ -1,0 +1,349 @@
+<!doctype html>
+<!-- 관람객 안내자료 (인쇄용 A4 2장). 정보동아리 다른 부스 안내자료와 같은 디자인.
+     PDF 만들기: node docs/handout/make_pdf.js → docs/handout/handout.pdf -->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>Guilty JSHS 관람객 안내자료</title>
+<style>
+@font-face { font-family: P; font-weight: 400; src: url(fonts/Pretendard-Regular.otf); }
+@font-face { font-family: P; font-weight: 600; src: url(fonts/Pretendard-SemiBold.otf); }
+@font-face { font-family: P; font-weight: 800; src: url(fonts/Pretendard-ExtraBold.otf); }
+:root {
+  --navy: #1f2a7a;
+  --navy-dark: #18216a;
+  --cyan: #a6e2f7;
+  --cyan-soft: #def4fc;
+  --badge: #6fd0f0;
+  --ink: #16205e;
+  --gray: #5c6478;
+  --red: #d8344a;
+  --pink: #fde7ec;
+}
+@page { size: A4; margin: 0; }
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: #fff; font-family: P, sans-serif; color: var(--ink); word-break: keep-all; }
+.page {
+  width: 210mm; height: 297mm; position: relative; overflow: hidden;
+  page-break-after: always; break-after: page; background: var(--navy);
+}
+.page:last-child { page-break-after: auto; break-after: auto; }
+
+/* ── 위: 줄 노트 ── */
+.head {
+  height: 56mm; position: relative; background: #fff;
+  background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 6.3mm, #e2e4ea 6.3mm, #e2e4ea 6.6mm);
+}
+.head::before { /* 왼쪽 세로 여백선 */
+  content: ""; position: absolute; left: 44mm; top: 0; bottom: 0; width: 0.4mm; background: #d9dbe2;
+}
+.head .icon { position: absolute; left: 13mm; top: 4mm; width: 42mm; height: 46mm; }
+.head .title {
+  position: absolute; left: 60mm; right: 60mm; top: 4mm; text-align: center;
+  font-weight: 800; font-size: 21pt; line-height: 1.55; letter-spacing: -0.3pt; color: #1b1b1b;
+}
+.wave { display: block; margin: 0 auto; width: 52mm; height: 4mm; }
+.head .emblem { position: absolute; right: 14mm; top: 5mm; width: 38mm; text-align: center; }
+.head .emblem img { width: 34mm; height: 34mm; }
+.head .emblem div { font-weight: 600; font-size: 7.4pt; color: #222; margin-top: 1mm; white-space: nowrap; }
+
+/* ── 본문 ── */
+.body { position: relative; padding: 6mm 11mm 0; }
+.bubble { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.08); }
+.pill {
+  background: var(--cyan); border-radius: 3.2mm; text-align: center; font-weight: 800;
+  font-size: 11.5pt; padding: 2mm 0; color: var(--ink); position: relative; z-index: 1;
+}
+.card { background: #fff; border-radius: 3.5mm; padding: 3.2mm 5mm; margin-top: 2.5mm; position: relative; z-index: 1; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; column-gap: 7mm; margin-top: 4mm; position: relative; }
+.rings { position: absolute; left: 50%; top: 14mm; bottom: 4mm; width: 9mm; margin-left: -4.5mm; z-index: 2;
+  display: flex; flex-direction: column; justify-content: space-around; }
+.rings i { display: block; width: 9mm; height: 3.2mm; border: 0.7mm solid #111; border-radius: 2mm; background: transparent; }
+.foot { position: absolute; left: 11mm; right: 11mm; bottom: 5mm; display: flex; justify-content: space-between;
+  color: rgba(255,255,255,0.75); font-size: 7pt; font-weight: 600; }
+
+/* 단계 화살표 */
+.steps { display: flex; align-items: center; gap: 2mm; }
+.step { flex: 1; text-align: center; }
+.step small { display: block; font-size: 7pt; color: var(--gray); font-weight: 600; margin-bottom: 1.2mm; }
+.step b { display: block; background: var(--cyan); border-radius: 5mm; padding: 2.3mm 0; font-size: 10pt; font-weight: 800; }
+.chev { width: 5mm; height: 8mm; margin-top: 4mm; }
+.note { margin: 3mm auto 0; width: fit-content; background: var(--cyan-soft); border-radius: 3mm; padding: 1.2mm 4mm;
+  font-size: 8pt; font-weight: 600; }
+
+/* 목록 */
+.list { margin: 0; padding: 0; list-style: none; }
+.list li { display: flex; gap: 2.5mm; align-items: flex-start; padding: 1.25mm 0; border-bottom: 0.25mm dashed #dfe3ec; font-size: 8.6pt; line-height: 1.45; }
+.list li:last-child { border-bottom: none; }
+.key { flex: none; min-width: 15mm; text-align: center; background: var(--ink); color: #fff; border-radius: 1.6mm;
+  font-weight: 800; font-size: 8.6pt; padding: 0.6mm 1.5mm; }
+.key.c { background: var(--badge); color: var(--ink); }
+.num { flex: none; width: 6.5mm; height: 6.5mm; border-radius: 50%; background: var(--badge); color: var(--ink);
+  font-weight: 800; font-size: 9pt; display: flex; align-items: center; justify-content: center; }
+.list b { font-weight: 800; }
+.dim { color: var(--gray); font-weight: 400; }
+
+/* 버튼 줄 */
+.btns { display: flex; justify-content: center; align-items: center; gap: 2.3mm; margin: 1mm 0 2.5mm; }
+.btn { width: 9.5mm; height: 9.5mm; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 8pt; color: #fff; box-shadow: inset 0 -0.8mm 0 rgba(0,0,0,0.25); }
+.lever { width: 11mm; height: 12mm; }
+
+/* 가드 그림 */
+.guard { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; margin-bottom: 2mm; }
+.guard div { background: var(--cyan-soft); border-radius: 3mm; text-align: center; padding: 2mm 1mm 2mm; }
+.guard svg { height: 17mm; }
+.guard b { display: block; font-size: 10pt; font-weight: 800; }
+.guard span { font-size: 8pt; color: var(--gray); font-weight: 600; }
+
+.combo-big { text-align: center; font-weight: 800; font-size: 19pt; letter-spacing: 1pt; background: var(--cyan-soft);
+  border-radius: 3mm; padding: 2.5mm 0 2mm; }
+.combo-cap { text-align: center; font-size: 8.4pt; color: var(--gray); font-weight: 600; margin: 1.5mm 0 3mm; }
+
+.warn { display: flex; gap: 4mm; align-items: flex-start; }
+.warn .mark { flex: none; width: 9mm; height: 9mm; border-radius: 50%; background: var(--red); color: #fff;
+  font-weight: 800; font-size: 13pt; display: flex; align-items: center; justify-content: center; }
+.warn h4 { margin: 0.5mm 0 1mm; font-size: 11pt; font-weight: 800; }
+.warn ul { margin: 0; padding-left: 0; list-style: none; font-size: 8.6pt; line-height: 1.7; }
+
+/* 2쪽 캐릭터 */
+.chars { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5mm; }
+.ch { display: flex; gap: 3.5mm; align-items: center; background: #fff; border-radius: 3.5mm; padding: 4.5mm 4mm; }
+.ch img { width: 24mm; height: 24mm; border-radius: 50%; object-fit: cover; border: 0.8mm solid var(--cyan); flex: none; }
+.ch .n { font-weight: 800; font-size: 13pt; letter-spacing: 0.3pt; }
+.ch .club { font-size: 8pt; color: var(--gray); font-weight: 600; margin-left: 1.5mm; }
+.ch .style { font-size: 9pt; margin: 1.2mm 0 2mm; line-height: 1.35; }
+.ch .cmb { display: inline-block; background: var(--cyan-soft); border-radius: 2mm; padding: 1mm 3mm;
+  font-weight: 800; font-size: 10.5pt; }
+.ch .cmb em { font-style: normal; font-size: 7pt; color: var(--gray); font-weight: 600; margin-right: 1.5mm; }
+.p2 { margin-top: 7mm; }
+.p2 .list li { padding: 2.4mm 0; font-size: 10pt; }
+.p2 .key { min-width: 13mm; font-size: 10pt; }
+.half2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-top: 2.5mm; }
+.half2 > div { background: #fff; padding: 6mm 6mm; }
+.half2 > div:first-child { border-radius: 3.5mm 0 0 3.5mm; border-right: 0.3mm dashed #d5dae5; }
+.half2 > div:last-child { border-radius: 0 3.5mm 3.5mm 0; }
+.half2 h4 { margin: 0 0 1.5mm; font-size: 10.5pt; font-weight: 800; color: var(--red); }
+.half2 p { margin: 0; font-size: 12pt; font-weight: 800; line-height: 1.45; }
+</style>
+</head>
+<body>
+
+<!-- 물결선 (제목 위아래) -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="wave" viewBox="0 0 200 12"><path d="M0 6 q 6.25 -6 12.5 0 t 12.5 0 t 12.5 0 t 12.5 0 t 12.5 0 t 12.5 0 t 12.5 0 t 12.5 0 t 12.5 0 t 12.5 0 t 12.5 0 t 12.5 0 t 12.5 0 t 12.5 0 t 12.5 0 t 12.5 0" fill="none" stroke="#4a8fe0" stroke-width="2.2"/></symbol>
+    <symbol id="chev" viewBox="0 0 10 16"><path d="M2 2 L8 8 L2 14" fill="none" stroke="#7fd3f2" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </defs>
+</svg>
+
+<!-- ═══════════════ 1쪽: 게임 방법 ═══════════════ -->
+<section class="page">
+  <div class="head">
+    <!-- 아케이드 스틱 아이콘 (참고 자료의 로봇팔 아이콘처럼 굵은 선 + 회색) -->
+    <svg class="icon" viewBox="0 0 120 130">
+      <g stroke="#1b1b1b" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+        <path d="M8 78 L22 58 H98 L112 78 Z" fill="#dfe1e6"/>
+        <rect x="8" y="78" width="104" height="32" rx="4" fill="#c9ccd3"/>
+        <line x1="40" y1="64" x2="40" y2="26"/>
+        <circle cx="40" cy="20" r="11" fill="#d8344a"/>
+        <ellipse cx="40" cy="66" rx="10" ry="3.5" fill="#9aa0ab"/>
+        <circle cx="66" cy="66" r="4.5" fill="#fff"/><circle cx="78" cy="64" r="4.5" fill="#fff"/><circle cx="90" cy="66" r="4.5" fill="#fff"/>
+        <circle cx="68" cy="73" r="4.5" fill="#fff"/><circle cx="80" cy="71" r="4.5" fill="#fff"/><circle cx="92" cy="73" r="4.5" fill="#fff"/>
+        <line x1="22" y1="94" x2="98" y2="94" stroke-width="3"/>
+      </g>
+    </svg>
+    <div class="title">
+      <svg class="wave"><use href="#wave"/></svg>
+      길티 JSHS<br>격투 게임 설명서
+      <svg class="wave"><use href="#wave"/></svg>
+    </div>
+    <div class="emblem"><img src="img/emblem.png" alt=""><div>제주과학고등학교 정보동아리 COMMON</div></div>
+  </div>
+
+  <div class="body">
+    <div class="bubble" style="left:-14mm;top:50mm;width:40mm;height:40mm"></div>
+    <div class="bubble" style="right:-18mm;top:118mm;width:50mm;height:50mm"></div>
+    <div class="bubble" style="left:30mm;top:205mm;width:26mm;height:26mm"></div>
+
+    <div class="pill">이렇게 이겨요</div>
+    <div class="card">
+      <div class="steps">
+        <div class="step"><small>1단계</small><b>캐릭터 고르기</b></div>
+        <svg class="chev"><use href="#chev"/></svg>
+        <div class="step"><small>2단계</small><b>공격하고 막기</b></div>
+        <svg class="chev"><use href="#chev"/></svg>
+        <div class="step"><small>3단계</small><b>체력 0 만들기</b></div>
+        <svg class="chev"><use href="#chev"/></svg>
+        <div class="step"><small>4단계</small><b>2라운드 먼저 승리</b></div>
+      </div>
+      <div class="note">한 라운드 60초 · 시간이 끝나면 체력이 많은 쪽이 승리</div>
+    </div>
+
+    <div class="row2">
+      <div class="rings"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div>
+        <div class="pill">버튼 이름</div>
+        <div class="card">
+          <div class="btns">
+            <svg class="lever" viewBox="0 0 40 44"><g stroke="#16205e" stroke-width="3"><line x1="20" y1="36" x2="20" y2="14"/><ellipse cx="20" cy="38" rx="13" ry="4.5" fill="#cfd5e4"/><circle cx="20" cy="11" r="8.5" fill="#d8344a"/></g></svg>
+            <div class="btn" style="background:#3c7be0">P</div>
+            <div class="btn" style="background:#2fae6b">K</div>
+            <div class="btn" style="background:#e3a21a">S</div>
+            <div class="btn" style="background:#d8344a">HS</div>
+            <div class="btn" style="background:#8b4fd6">D</div>
+            <div class="btn" style="background:#4b5468">RC</div>
+          </div>
+          <ul class="list">
+            <li><span class="key">레버</span><span>← → 걷기 · ↑ 점프 · ↓ 앉기 · →→ 대시</span></li>
+            <li><span class="key">P K S HS</span><span>기본 공격 <span class="dim">(왼쪽은 빠르고 약하게, 오른쪽은 느리고 세게)</span></span></li>
+            <li><span class="key">D</span><span>필살기 <span class="dim">(레버와 같이: D / →D / ↓D / ←D)</span></span></li>
+            <li><span class="key">D + HS</span><span>궁극기 <span class="dim">(텐션 50%)</span></span></li>
+            <li><span class="key">RC</span><span>로만 캔슬 <span class="dim">(공격 취소, 텐션 50%)</span></span></li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="pill">막기 (가드)</div>
+        <div class="card">
+          <div class="guard">
+            <div>
+              <svg viewBox="0 0 60 60"><g stroke="#16205e" stroke-width="3.2" stroke-linecap="round" fill="none">
+                <circle cx="30" cy="10" r="6" fill="#fff"/><line x1="30" y1="16" x2="30" y2="36"/>
+                <path d="M30 22 L20 27 L26 16"/><path d="M30 36 L22 54"/><path d="M30 36 L38 54"/></g>
+                <path d="M8 6 Q -2 30 8 56" stroke="#6fd0f0" stroke-width="4" fill="none"/></svg>
+              <b>← 서서 막기</b><span>상단·중단을 막아요</span>
+            </div>
+            <div>
+              <svg viewBox="0 0 60 60"><g stroke="#16205e" stroke-width="3.2" stroke-linecap="round" fill="none">
+                <circle cx="32" cy="24" r="6" fill="#fff"/><path d="M32 30 L34 42"/>
+                <path d="M32 34 L22 38 L28 28"/><path d="M34 42 L22 46 L24 56"/><path d="M34 42 L44 48 L42 56"/></g>
+                <path d="M8 22 Q 0 40 8 56" stroke="#6fd0f0" stroke-width="4" fill="none"/></svg>
+              <b>↙ 앉아서 막기</b><span>상단·하단을 막아요</span>
+            </div>
+          </div>
+          <ul class="list">
+            <li><span class="key c">중단</span><span>점프 공격 · →K → <b>서서</b> 막기</span></li>
+            <li><span class="key c">하단</span><span>↓K · ↓S → <b>앉아서</b> 막기</span></li>
+            <li><span class="key" style="background:var(--red)">잡기</span><span>붙어서 →/← + HS. <b>못 막아요!</b> <span class="dim">잡히는 순간 HS로 풀기</span></span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="row2">
+      <div class="rings"><i></i><i></i><i></i><i></i><i></i></div>
+      <div>
+        <div class="pill">콤보</div>
+        <div class="card">
+          <div class="combo-big">P &gt; K &gt; S &gt; HS</div>
+          <div class="combo-cap">공격이 맞는 순간 더 센 버튼을 누르면 이어져요</div>
+          <div class="combo-big" style="font-size:16pt">S &gt; HS &gt; D</div>
+          <div class="combo-cap" style="margin-bottom:0">마지막은 필살기(D)로!</div>
+        </div>
+      </div>
+      <div>
+        <div class="pill">게이지</div>
+        <div class="card">
+          <ul class="list">
+            <li><span class="num">1</span><span><b>체력 (위)</b><br><span class="dim">0이 되면 그 라운드는 져요</span></span></li>
+            <li><span class="num">2</span><span><b>텐션 (아래)</b><br><span class="dim">앞으로 가고 공격하면 차요. 50%면 궁극기</span></span></li>
+            <li><span class="num">3</span><span><b>마력</b><br><span class="dim">필살기 한 번에 한 칸, 시간이 지나면 다시 차요</span></span></li>
+            <li><span class="num">4</span><span><b>버스트 B</b><br><span class="dim">맞는 중에 D + 공격 버튼 → 콤보 탈출</span></span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card warn" style="margin-top:4mm">
+      <div class="mark">!</div>
+      <div>
+        <h4>처음이라면</h4>
+        <ul>
+          <li>• 모드 선택 → <b>게임 설명서</b> / <b>트레이닝</b>부터 해 보세요</li>
+          <li>• 막 누르기보다 먼저 막고, 상대가 헛치면 반격!</li>
+          <li>• 일시정지(START) → <b>콤보표</b>에 캐릭터별 쉬운 콤보가 있어요</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Guilty JSHS | 관람객 안내자료</span><span>1/2</span></div>
+</section>
+
+<!-- ═══════════════ 2쪽: 캐릭터 & 콤보 ═══════════════ -->
+<section class="page">
+  <div class="head">
+    <!-- VS 아이콘: 엇갈린 칼 두 자루 -->
+    <svg class="icon" viewBox="0 0 120 130">
+      <g stroke="#1b1b1b" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+        <path d="M22 22 L84 84" /><path d="M22 22 L32 20 L88 76 L84 84 L76 88 L20 32 Z" fill="#dfe1e6"/>
+        <path d="M98 22 L36 84"/><path d="M98 22 L100 32 L44 88 L36 84 L32 76 L88 20 Z" fill="#c9ccd3"/>
+        <rect x="70" y="84" width="22" height="9" rx="3" transform="rotate(45 81 88)" fill="#d8344a"/>
+        <rect x="28" y="84" width="22" height="9" rx="3" transform="rotate(-45 39 88)" fill="#3c7be0"/>
+        <circle cx="90" cy="98" r="6" fill="#fff"/><circle cx="30" cy="98" r="6" fill="#fff"/>
+      </g>
+      <text x="60" y="124" text-anchor="middle" font-family="P" font-weight="800" font-size="22" fill="#1b1b1b">VS</text>
+    </svg>
+    <div class="title">
+      <svg class="wave"><use href="#wave"/></svg>
+      캐릭터 &amp;<br>콤보 모음
+      <svg class="wave"><use href="#wave"/></svg>
+    </div>
+    <div class="emblem"><img src="img/emblem.png" alt=""><div>제주과학고등학교 정보동아리 COMMON</div></div>
+  </div>
+
+  <div class="body">
+    <div class="bubble" style="right:-16mm;top:20mm;width:44mm;height:44mm"></div>
+    <div class="bubble" style="left:-16mm;top:140mm;width:46mm;height:46mm"></div>
+
+    <div class="pill">6명의 동아리 대표</div>
+    <div class="chars" style="margin-top:3mm">
+      <div class="ch"><img src="img/chemikid.png" alt=""><div><span class="n">CHEMIKID</span><span class="club">화학 동아리</span>
+        <div class="style">플라스크·불꽃 반응, 느리지만 한 방</div><span class="cmb"><em>입문</em>S &gt; HS &gt; ↓D</span></div></div>
+      <div class="ch"><img src="img/common.png" alt=""><div><span class="n">COMMON</span><span class="club">정보 동아리</span>
+        <div class="style">패킷·버그 함정, 빠른 트릭</div><span class="cmb"><em>입문</em>↓K &gt; S &gt; HS &gt; D</span></div></div>
+      <div class="ch"><img src="img/globe.png" alt=""><div><span class="n">GLOBE</span><span class="club">지구과학 동아리</span>
+        <div class="style">유성·돌진, 체력 최고 헤비급</div><span class="cmb"><em>입문</em>S &gt; HS &gt; →D</span></div></div>
+      <div class="ch"><img src="img/chaos.png" alt=""><div><span class="n">CHAOS</span><span class="club">물리 동아리</span>
+        <div class="style">중력으로 끌어와 잡기</div><span class="cmb"><em>입문</em>S &gt; HS &gt; ↓D</span></div></div>
+      <div class="ch"><img src="img/root2.png" alt=""><div><span class="n">ROOT2</span><span class="club">수학 동아리</span>
+        <div class="style">컴퍼스·부메랑 원거리 견제</div><span class="cmb"><em>입문</em>S &gt; HS &gt; D</span></div></div>
+      <div class="ch"><img src="img/seed.png" alt=""><div><span class="n">SEED</span><span class="club">생명 동아리</span>
+        <div class="style">덩굴·분신·회복, 진화로 강화</div><span class="cmb"><em>입문</em>S &gt; HS &gt; →D</span></div></div>
+    </div>
+
+    <div class="row2 p2">
+      <div class="rings"><i></i><i></i><i></i><i></i><i></i></div>
+      <div>
+        <div class="pill">콤보 읽는 법</div>
+        <div class="card">
+          <ul class="list">
+            <li><span class="key">↓K</span><span>앉아서 K</span></li>
+            <li><span class="key">→D</span><span>앞 + D</span></li>
+            <li><span class="key">&gt;</span><span>앞 기술이 <b>맞는 순간</b> 다음 버튼</span></li>
+            <li><span class="key">↑</span><span>↓HS가 맞는 순간 점프 <span class="dim">(공중 콤보)</span></span></li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="pill">모두 쓸 수 있는 콤보</div>
+        <div class="card">
+          <ul class="list">
+            <li><span class="num">1</span><span><b>입문</b><br>P &gt; K &gt; S &gt; HS</span></li>
+            <li><span class="num">2</span><span><b>띄우기</b><br>↓HS &gt; ↑ &gt; S &gt; HS &gt; D</span></li>
+            <li><span class="num">3</span><span><b>궁극기 마무리</b><br>콤보 끝에 D + HS <span class="dim">(텐션 50%)</span></span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="half2" style="margin-top:7mm">
+      <div><h4>도전 과제</h4><p>CPU 달인을 이겨 보세요!</p></div>
+      <div><h4>핵심 질문</h4><p>막을까, 때릴까?<br>상대의 다음 수를 읽어 보세요</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>Guilty JSHS | 관람객 안내자료</span><span>2/2</span></div>
+</section>
+
+</body>
+</html>
