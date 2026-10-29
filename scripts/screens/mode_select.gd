@@ -1,5 +1,5 @@
 extends Screen
-## 모드 선택: 대전 / CPU 대전 / 트레이닝 / 설정집 / 조작법(키 설정) / 언어
+## 모드 선택: 게임 설명서 / 대전 / CPU 대전 / 트레이닝 / 설정집 / 조작법(키 설정) / 언어
 ## (키보드와 스틱은 항상 같이 입력돼서 조작 장치 전환 항목은 없다)
 
 
@@ -8,13 +8,14 @@ func _init() -> void:
 
 
 ## 항목 순서 (글자는 _items()에서)
-enum Item { VERSUS, CPU, TRAINING, CHAR_BOOK, CONTROLS, LANGUAGE }
+enum Item { GUIDE, VERSUS, CPU, TRAINING, CHAR_BOOK, CONTROLS, LANGUAGE }
 
-var cursor := 0
+var cursor := 1  # 처음엔 대전에 커서 (설명서는 맨 위에 보이게)
 
 
 func _items() -> Array:
 	return [
+		Game.t("guide"),
 		Game.t("versus"),
 		"%s: < %s >" % [Game.t("vs_cpu"), Game.t(Game.CPU_LEVEL_KEYS[Game.cpu_level])],
 		Game.t("training"),
@@ -40,6 +41,8 @@ func _process(delta: float) -> void:
 		Game.goto("title")
 	elif Game.menu_confirm():
 		match cursor:
+			Item.GUIDE:
+				Game.goto("guide")
 			Item.VERSUS:
 				Game.mode = Game.Mode.VERSUS
 				Game.goto("char_select")
@@ -60,8 +63,9 @@ func _process(delta: float) -> void:
 func _draw() -> void:
 	background()
 	header(Game.t("select_mode"))
-	menu_list(_items(), cursor, 190, 54, 26)
+	menu_list(_items(), cursor, 180, 50, 26)
 	var help := [
+		Game.t("help_guide"),
 		Game.t("help_versus") % Game.ROUNDS_TO_WIN,
 		Game.t("help_cpu"),
 		Game.t("help_training"),

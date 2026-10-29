@@ -119,6 +119,9 @@ const STRINGS := {
 	"help_versus": ["1P vs 2P. First to %d rounds wins.", "1P 대 2P. %d라운드를 먼저 이기면 승리!"],
 	"help_training": ["Practice freely. HP refills, tension and mana are always full.", "자유롭게 연습. 체력은 회복되고 텐션과 마력은 항상 가득."],
 	"help_controls": ["Check the button layout and change keys.", "버튼 배치를 확인하고 키를 바꿀 수 있어요."],
+	"guide": ["HOW TO PLAY", "게임 설명서"],
+	"help_guide": ["New to fighting games? Start here!", "격투 게임이 처음이라면 여기부터!"],
+	"guide_hint": ["{LR}: PAGE    {P}: NEXT    {K}: BACK", "{LR}: 페이지    {P}: 다음    {K}: 뒤로"],
 	"help_input": ["Keyboard and stick always work. This only changes the button names shown (auto, or F1).",
 			"키보드와 스틱은 항상 같이 됩니다. 안내에 보일 버튼 이름만 바꿔요 (자동, F1로도 가능)"],
 	"help_language": ["Change the language.", "언어를 바꿉니다."],
@@ -362,6 +365,7 @@ const SCENES := {
 	"stage_select": "res://scenes/stage_select.tscn",
 	"battle": "res://scenes/battle.tscn",
 	"char_book": "res://scenes/char_book.tscn",
+	"guide": "res://scenes/guide.tscn",
 }
 
 var mode: Mode = Mode.VERSUS
