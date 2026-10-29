@@ -3,7 +3,7 @@
 정보동아리 다른 부스 안내자료(로봇팔 블록 코딩 / 사람이·AI가 조종하는 로봇팔 PDF)와 **같은 디자인**으로 맞춘다.
 A4 세로 2장: 1장 = 게임 방법, 2장 = 캐릭터 & 콤보.
 
-> ✅ **이미 만들어 둠:** `docs/handout/handout.pdf` (HTML 원본 `handout.html`, 다시 만들기 `node docs/handout/make_pdf.js`). 아래 프롬프트는 AI 그림으로 따로 뽑고 싶을 때만.
+> ✅ **이미 만들어 둠:** `docs/handout/guilty_jshs_handout.pdf` (게임과 같은 길티기어 스타일, 주아체, 게임 그림). 다시 만들기 `python3 docs/handout/make_handout.py`. 아래 프롬프트는 AI 그림으로 따로 뽑고 싶을 때만.
 
 **첨부할 것:** 참고 PDF 1장(디자인 따라 하기용, 예: 로봇팔 블록 코딩), 학교 엠블럼 그림, (2장) 캐릭터 6명 얼굴 그림(`assets/characters/<id>_face.png`)
 
